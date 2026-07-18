@@ -47,28 +47,8 @@ impl EffectsEngine {
         self.inner.dirty.notify_all();
     }
 
-    pub fn remove_device(&self, device_id: &str) {
-        let mut map = self.inner.assignments.lock();
-        map.remove(device_id);
-        self.inner.dirty.notify_all();
-    }
-
-    pub fn clear(&self) {
-        self.inner.assignments.lock().clear();
-        self.inner.dirty.notify_all();
-    }
-
     pub fn set_fps(&self, fps: u32) {
         self.inner.fps.store(fps.clamp(5, 60), Ordering::Relaxed);
-    }
-
-    pub fn assignments(&self) -> HashMap<String, EffectConfig> {
-        self.inner
-            .assignments
-            .lock()
-            .iter()
-            .map(|(k, (c, _))| (k.clone(), c.clone()))
-            .collect()
     }
 
     pub fn shutdown(&self) {
