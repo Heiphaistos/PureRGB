@@ -1,0 +1,214 @@
+//! Backend OpenRGB : client TCP du serveur SDK OpenRGB (port 6742 par défaut).
+//! Donne accès à tous les contrôleurs gérés par OpenRGB (900+ appareils).
+
+pub mod protocol;
+
+use crate::backends::Backend;
+use crate::core::{Color, DeviceInfo};
+use anyhow::{bail, Context, Result};
+use protocol as p;
+use std::io::{Read, Write};
+use std::net::TcpStream;
+use std::time::Duration;
+
+pub struct OpenRgbBackend {
+    host: String,
+    port: u16,
+    stream: Option<TcpStream>,
+    /// Nb de LEDs par contrôleur, indexé par id local, rempli au scan.
+    led_counts: Vec<u32>,
+    /// Contrôleurs déjà passés en mode custom (Direct).
+    custom_mode_set: Vec<bool>,
+}
+
+impl OpenRgbBackend {
+    pub fn new(host: String, port: u16) -> Self {
+        OpenRgbBackend {
+            host,
+            port,
+            stream: None,
+            led_counts: Vec::new(),
+            custom_mode_set: Vec::new(),
+        }
+    }
+
+    pub fn set_endpoint(&mut self, host: String, port: u16) {
+        self.host = host;
+        self.port = port;
+        self.stream = None;
+    }
+
+    fn connect(&mut self) -> Result<()> {
+        if self.stream.is_some() {
+            return Ok(());
+        }
+        let addr = format!("{}:{}", self.host, self.port);
+        let stream = TcpStream::connect_timeout(
+            &addr
+                .parse()
+                .or_else(|_| {
+                    use std::net::ToSocketAddrs;
+                    addr.to_socket_addrs()
+                        .context("résolution DNS")?
+                        .next()
+                        .context("aucune adresse résolue")
+                })
+                .context("adresse serveur OpenRGB invalide")?,
+            Duration::from_millis(1500),
+        )
+        .with_context(|| format!("connexion au serveur OpenRGB {addr}"))?;
+        stream.set_read_timeout(Some(Duration::from_secs(5)))?;
+        stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+        stream.set_nodelay(true)?;
+        self.stream = Some(stream);
+
+        // Handshake : version protocole puis nom client.
+        self.send(0, p::REQUEST_PROTOCOL_VERSION, &p::PROTOCOL_VERSION.to_le_bytes())?;
+        let (_, _, data) = self.recv_expect(p::REQUEST_PROTOCOL_VERSION)?;
+        let server_ver = data
+            .get(0..4)
+            .and_then(|s| s.try_into().ok())
+            .map(u32::from_le_bytes)
+            .unwrap_or(0);
+        log::info!("OpenRGB connecté, protocole serveur v{server_ver}");
+        let mut name = b"PureRGB".to_vec();
+        name.push(0);
+        self.send(0, p::SET_CLIENT_NAME, &name)?;
+        Ok(())
+    }
+
+    fn send(&mut self, device_id: u32, packet_id: u32, data: &[u8]) -> Result<()> {
+        let stream = self.stream.as_mut().context("non connecté")?;
+        let h = p::header(device_id, packet_id, data.len() as u32);
+        let result = stream.write_all(&h).and_then(|_| stream.write_all(data));
+        if result.is_err() {
+            self.stream = None; // connexion morte, forcer une reconnexion
+        }
+        result.context("écriture socket OpenRGB")
+    }
+
+    /// Lit un paquet complet. Retourne (device_id, packet_id, data).
+    fn recv(&mut self) -> Result<(u32, u32, Vec<u8>)> {
+        let stream = self.stream.as_mut().context("non connecté")?;
+        let mut h = [0u8; 16];
+        if let Err(e) = stream.read_exact(&mut h) {
+            self.stream = None;
+            return Err(e).context("lecture en-tête OpenRGB");
+        }
+        if &h[0..4] != p::MAGIC {
+            self.stream = None;
+            bail!("magic OpenRGB invalide");
+        }
+        let device_id = u32::from_le_bytes(h[4..8].try_into().unwrap());
+        let packet_id = u32::from_le_bytes(h[8..12].try_into().unwrap());
+        let size = u32::from_le_bytes(h[12..16].try_into().unwrap()) as usize;
+        if size > 16 * 1024 * 1024 {
+            self.stream = None;
+            bail!("paquet OpenRGB anormalement grand ({size} octets)");
+        }
+        let mut data = vec![0u8; size];
+        if let Err(e) = self.stream.as_mut().unwrap().read_exact(&mut data) {
+            self.stream = None;
+            return Err(e).context("lecture données OpenRGB");
+        }
+        Ok((device_id, packet_id, data))
+    }
+
+    fn recv_expect(&mut self, packet_id: u32) -> Result<(u32, u32, Vec<u8>)> {
+        // Le serveur peut intercaler des notifications (DeviceListUpdated = 100).
+        for _ in 0..8 {
+            let pkt = self.recv()?;
+            if pkt.1 == packet_id {
+                return Ok(pkt);
+            }
+        }
+        bail!("réponse OpenRGB {packet_id} non reçue");
+    }
+
+    fn controller_count(&mut self) -> Result<u32> {
+        self.send(0, p::REQUEST_CONTROLLER_COUNT, &[])?;
+        let (_, _, data) = self.recv_expect(p::REQUEST_CONTROLLER_COUNT)?;
+        if data.len() < 4 {
+            bail!("réponse count trop courte");
+        }
+        Ok(u32::from_le_bytes(data[0..4].try_into().unwrap()))
+    }
+
+    fn controller_data(&mut self, idx: u32) -> Result<p::ControllerData> {
+        self.send(idx, p::REQUEST_CONTROLLER_DATA, &p::PROTOCOL_VERSION.to_le_bytes())?;
+        let (_, _, data) = self.recv_expect(p::REQUEST_CONTROLLER_DATA)?;
+        p::parse_controller_data(&data)
+    }
+}
+
+impl Backend for OpenRgbBackend {
+    fn name(&self) -> &'static str {
+        "openrgb"
+    }
+
+    fn scan(&mut self) -> Result<Vec<DeviceInfo>> {
+        self.connect()?;
+        let count = self.controller_count()?;
+        let mut devices = Vec::with_capacity(count as usize);
+        self.led_counts.clear();
+        self.custom_mode_set = vec![false; count as usize];
+        for i in 0..count {
+            match self.controller_data(i) {
+                Ok(c) => {
+                    self.led_counts.push(c.led_count);
+                    devices.push(DeviceInfo {
+                        id: i.to_string(),
+                        name: c.name,
+                        vendor: c.vendor,
+                        backend: String::new(), // rempli par le registre
+                        device_type: c.device_type,
+                        zones: c.zones,
+                        led_count: c.led_count,
+                        fan_channels: Vec::new(),
+                        controllable: true,
+                        note: "via OpenRGB".into(),
+                    });
+                }
+                Err(e) => {
+                    log::warn!("contrôleur OpenRGB {i} illisible: {e:#}");
+                    self.led_counts.push(0);
+                }
+            }
+        }
+        Ok(devices)
+    }
+
+    fn set_colors(&mut self, local_id: &str, colors: &[Color]) -> Result<()> {
+        let idx: u32 = local_id.parse().context("id OpenRGB invalide")?;
+        self.connect()?;
+        if let Some(set) = self.custom_mode_set.get_mut(idx as usize) {
+            if !*set {
+                // Mode Direct requis avant l'écriture LED directe.
+                *set = true;
+                let _ = self.send(idx, p::RGBCONTROLLER_SETCUSTOMMODE, &[]);
+            }
+        }
+        // Tronquer/étendre au nombre de LEDs connu du contrôleur.
+        let expected = self
+            .led_counts
+            .get(idx as usize)
+            .copied()
+            .unwrap_or(colors.len() as u32) as usize;
+        let payload = if colors.len() == expected {
+            p::encode_update_leds(colors)
+        } else {
+            let mut fixed = colors.to_vec();
+            fixed.resize(expected, colors.last().copied().unwrap_or(Color::BLACK));
+            p::encode_update_leds(&fixed)
+        };
+        self.send(idx, p::RGBCONTROLLER_UPDATELEDS, &payload)
+    }
+
+    fn is_available(&self) -> bool {
+        self.stream.is_some()
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
+}
