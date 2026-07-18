@@ -148,6 +148,33 @@ impl OpenRgbManager {
         if !exe.is_file() {
             bail!("OpenRGB.exe absent après extraction");
         }
+
+        // VC++ runtime app-local : sans ces DLLs, OpenRGB (Qt/MSVC) reste
+        // vivant mais mort-né (aucun port, aucune fenêtre, aucune erreur).
+        // Sources par priorité : System32, ressources du bundle PureRGB.
+        let mut dll_sources: Vec<PathBuf> = Vec::new();
+        if let Some(win) = std::env::var_os("WINDIR") {
+            dll_sources.push(PathBuf::from(win).join("System32"));
+        }
+        if let Some(res) = self.resource_dir.lock().clone() {
+            dll_sources.push(res.join("openrgb"));
+        }
+        for dll in ["vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll"] {
+            let dest = target.join(dll);
+            if dest.is_file() {
+                continue;
+            }
+            match dll_sources.iter().map(|d| d.join(dll)).find(|p| p.is_file()) {
+                Some(src) => {
+                    if let Err(e) = std::fs::copy(&src, &dest) {
+                        log::warn!("copie {dll}: {e}");
+                    }
+                }
+                None => log::warn!(
+                    "{dll} introuvable — OpenRGB pourrait ne pas démarrer (installer le runtime VC++ 2015-2022)"
+                ),
+            }
+        }
         Ok(exe)
     }
 

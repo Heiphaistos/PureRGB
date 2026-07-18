@@ -75,6 +75,11 @@ impl OpenRgbBackend {
         let mut name = b"PureRGB".to_vec();
         name.push(0);
         self.send(0, p::SET_CLIENT_NAME, &name)?;
+        // Nouvelle connexion = serveur potentiellement relancé : les modes
+        // custom déjà négociés ne sont plus valables.
+        for flag in &mut self.custom_mode_set {
+            *flag = false;
+        }
         Ok(())
     }
 

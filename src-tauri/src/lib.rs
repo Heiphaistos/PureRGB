@@ -40,7 +40,10 @@ struct ConflictReport {
 
 #[tauri::command]
 fn scan_devices(state: State<AppState>) -> Vec<DeviceInfo> {
-    state.registry.lock().scan_all()
+    let devices = state.registry.lock().scan_all();
+    // Le matériel a pu être réinitialisé : forcer la ré-application des effets.
+    state.engine.invalidate();
+    devices
 }
 
 #[tauri::command]
@@ -202,6 +205,10 @@ pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let saved = settings::load();
+    // Créer settings.json dès le premier lancement (valeurs par défaut visibles).
+    if let Err(e) = settings::save(&saved) {
+        log::warn!("écriture settings initiale: {e:#}");
+    }
     let backends: Vec<Box<dyn Backend>> = vec![
         Box::new(OpenRgbBackend::new(
             saved.openrgb_host.clone(),

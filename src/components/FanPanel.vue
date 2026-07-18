@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { reactive } from "vue";
 import type { DeviceInfo } from "../types";
 
-const props = defineProps<{ devices: DeviceInfo[] }>();
+defineProps<{ devices: DeviceInfo[] }>();
 const emit = defineEmits<{ toast: [msg: string] }>();
 
 // duty local par "deviceId:channel"
@@ -26,8 +26,6 @@ async function apply(d: DeviceInfo, ch: number) {
     emit("toast", `Échec : ${e}`);
   }
 }
-
-void props;
 </script>
 
 <template>

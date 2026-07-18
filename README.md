@@ -2,7 +2,7 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.2.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.3.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 

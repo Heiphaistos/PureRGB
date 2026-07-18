@@ -23,6 +23,8 @@ struct EngineInner {
     dirty: Condvar,
     running: AtomicBool,
     fps: AtomicU32,
+    /// Incrémentée par invalidate() : purge le cache des statiques appliqués.
+    generation: AtomicU32,
 }
 
 impl EffectsEngine {
@@ -32,6 +34,7 @@ impl EffectsEngine {
             dirty: Condvar::new(),
             running: AtomicBool::new(true),
             fps: AtomicU32::new(30),
+            generation: AtomicU32::new(0),
         });
         let thread_inner = inner.clone();
         std::thread::Builder::new()
@@ -52,6 +55,14 @@ impl EffectsEngine {
         self.inner.fps.store(fps.clamp(5, 60), Ordering::Relaxed);
     }
 
+    /// Force la ré-application de tous les effets (y compris statiques) au
+    /// prochain tick. À appeler après un re-scan : le matériel a pu être
+    /// réinitialisé ou reconnecté.
+    pub fn invalidate(&self) {
+        self.inner.generation.fetch_add(1, Ordering::Relaxed);
+        self.inner.dirty.notify_all();
+    }
+
     pub fn shutdown(&self) {
         self.inner.running.store(false, Ordering::Relaxed);
         self.inner.dirty.notify_all();
@@ -62,8 +73,14 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
     let start = Instant::now();
     // Ids déjà appliqués en statique (éviter le re-envoi à chaque réveil).
     let mut applied_static: HashMap<String, EffectConfig> = HashMap::new();
+    let mut seen_generation = 0u32;
 
     while inner.running.load(Ordering::Relaxed) {
+        let generation = inner.generation.load(Ordering::Relaxed);
+        if generation != seen_generation {
+            seen_generation = generation;
+            applied_static.clear();
+        }
         let snapshot: Vec<(String, EffectConfig, u32)> = {
             let map = inner.assignments.lock();
             map.iter()

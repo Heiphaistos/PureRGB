@@ -20,9 +20,10 @@ impl NzxtHue2 {
     }
 
     fn write_packet(&self, payload: &[u8]) -> Result<()> {
-        let mut buf = [0u8; PKT_SIZE];
+        // Octet 0 = report ID 0x00 (rapports non numérotés), puis 64 octets.
+        let mut buf = [0u8; PKT_SIZE + 1];
         let n = payload.len().min(PKT_SIZE);
-        buf[..n].copy_from_slice(&payload[..n]);
+        buf[1..1 + n].copy_from_slice(&payload[..n]);
         self.device.write(&buf).context("écriture HID NZXT HUE2")?;
         Ok(())
     }

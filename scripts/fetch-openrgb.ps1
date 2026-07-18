@@ -32,4 +32,12 @@ if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
 Move-Item (Join-Path $tmp "OpenRGB Windows 64-bit") $dest
 Remove-Item $zip -Force
 Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+
+# VC++ runtime app-local : OpenRGB (Qt/MSVC) ne demarre pas sans ces DLLs
+# sur un Windows vierge (aucune erreur visible, process vivant mais mort-ne).
+foreach ($dll in 'vcruntime140.dll','vcruntime140_1.dll','msvcp140.dll') {
+    $src = Join-Path $env:WINDIR "System32\$dll"
+    if (Test-Path $src) { Copy-Item $src $dest -Force }
+    else { Write-Warning "$dll absent de System32 - OpenRGB pourrait ne pas demarrer sur systeme vierge" }
+}
 Write-Host "OpenRGB installe dans $dest"
