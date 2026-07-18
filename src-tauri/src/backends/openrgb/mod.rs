@@ -1,6 +1,7 @@
 //! Backend OpenRGB : client TCP du serveur SDK OpenRGB (port 6742 par défaut).
 //! Donne accès à tous les contrôleurs gérés par OpenRGB (900+ appareils).
 
+pub mod manager;
 pub mod protocol;
 
 use crate::backends::Backend;

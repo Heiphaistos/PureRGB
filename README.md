@@ -2,11 +2,11 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.1.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.2.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 
-- **900+ appareils** via le pont [OpenRGB SDK](https://openrgb.org) (serveur local, port 6742)
+- **900+ appareils** via [OpenRGB](https://openrgb.org) **embarqué** : l'installeur inclut OpenRGB 0.9, démarré automatiquement en arrière-plan (serveur SDK, port 6742). L'exe portable le télécharge au premier besoin (release officielle, SHA-256 vérifié). Un OpenRGB déjà lancé est réutilisé, jamais doublé.
 - **Drivers natifs expérimentaux** (USB direct, sans OpenRGB) :
   - Corsair Lighting Node Pro / Core (LED)
   - NZXT HUE 2, Smart Device V2, RGB & Fan Controller (LED + **ventilateurs PWM**)
@@ -28,11 +28,10 @@ Deux formats dans les [Releases](../../releases) :
 
 ## Démarrage rapide
 
-1. Installer [OpenRGB](https://openrgb.org/releases.html), le lancer, activer **SDK Server**
-2. Lancer PureRGB → **Scanner**
-3. Choisir un appareil, un effet, **Appliquer**
+1. Lancer PureRGB — OpenRGB embarqué démarre tout seul (ou cliquer « Démarrer OpenRGB » dans le bandeau)
+2. **Scanner** → choisir un appareil, un effet, **Appliquer**
 
-Sans OpenRGB : cocher **Drivers natifs** dans Réglages (matériel Corsair Node / NZXT HUE2 uniquement, fermer iCUE/CAM d'abord).
+Optionnel : **Drivers natifs** dans Réglages pour piloter Corsair Node / NZXT HUE2 en USB direct sans OpenRGB (fermer iCUE/CAM d'abord).
 
 ## Anti-conflit — comment ça marche
 
@@ -45,6 +44,7 @@ Sans OpenRGB : cocher **Drivers natifs** dans Réglages (matériel Corsair Node 
 
 ```bash
 npm install
+powershell -File scripts/fetch-openrgb.ps1   # récupère OpenRGB à embarquer
 npx tauri build   # produit setup NSIS + exe dans src-tauri/target/release
 ```
 
@@ -56,4 +56,6 @@ Tauri v2 (Rust) + Vue 3 + TypeScript. Backends : client TCP OpenRGB SDK (protoco
 
 ## Licence
 
-MIT — les protocoles matériels natifs sont réimplémentés d'après la documentation publique des projets OpenRGB et liquidctl (aucun code GPL inclus).
+PureRGB : MIT — les protocoles matériels natifs sont réimplémentés d'après la documentation publique des projets OpenRGB et liquidctl (aucun code GPL inclus dans PureRGB).
+
+OpenRGB est distribué en binaire séparé, non modifié, sous licence **GPLv2** — © CalcProgrammer1 et contributeurs, sources : https://gitlab.com/CalcProgrammer1/OpenRGB. PureRGB communique avec lui uniquement par son API réseau SDK (processus distinct).

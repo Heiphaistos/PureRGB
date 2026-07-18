@@ -12,6 +12,7 @@ use std::time::{Duration, Instant};
 /// - Effets animés => boucle à `fps` images/s.
 /// - Uniquement des effets statiques => une application puis sommeil complet
 ///   (réveil par condvar au prochain changement). 0% CPU au repos.
+#[derive(Clone)]
 pub struct EffectsEngine {
     inner: Arc<EngineInner>,
 }

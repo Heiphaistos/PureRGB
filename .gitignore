@@ -6,6 +6,9 @@ dist/
 src-tauri/target/
 src-tauri/gen/schemas/
 
+# OpenRGB embarqué (téléchargé par scripts/fetch-openrgb.ps1, jamais commité)
+src-tauri/resources/openrgb/
+
 # Logs
 .logs/
 *.log

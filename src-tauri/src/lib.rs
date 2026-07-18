@@ -5,6 +5,7 @@ mod engine;
 mod settings;
 
 use crate::backends::hid::HidBackend;
+use crate::backends::openrgb::manager::{OpenRgbManager, OpenRgbStatus};
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::backends::Backend;
 use crate::core::registry::{DeviceRegistry, SharedRegistry};
@@ -22,6 +23,7 @@ struct AppState {
     registry: SharedRegistry,
     engine: EffectsEngine,
     settings: Mutex<Settings>,
+    openrgb_mgr: std::sync::Arc<OpenRgbManager>,
 }
 
 #[derive(Serialize)]
@@ -108,6 +110,37 @@ fn set_fan_duty(
 }
 
 #[tauri::command]
+fn openrgb_status(state: State<AppState>) -> OpenRgbStatus {
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    state.openrgb_mgr.status(&host, port)
+}
+
+/// Lance (ou installe puis lance) l'OpenRGB embarqué. Bloquant : exécuté
+/// hors du thread principal par Tauri (commande async côté JS).
+#[tauri::command(async)]
+fn openrgb_start(state: State<AppState>) -> Result<bool, String> {
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    let launched = state
+        .openrgb_mgr
+        .ensure_running(&host, port)
+        .map_err(|e| format!("{e:#}"))?;
+    // Serveur prêt : re-scanner pour récupérer les contrôleurs.
+    state.registry.lock().scan_all();
+    Ok(launched)
+}
+
+#[tauri::command]
+fn openrgb_stop(state: State<AppState>) {
+    state.openrgb_mgr.stop();
+}
+
+#[tauri::command]
 fn check_conflicts() -> ConflictReport {
     let (conflicts, openrgb_running) = conflicts::scan();
     ConflictReport {
@@ -126,6 +159,7 @@ fn update_settings(
     state: State<AppState>,
     openrgb_host: String,
     openrgb_port: u16,
+    auto_start_openrgb: bool,
     native_drivers_enabled: bool,
     fps: u32,
     start_minimized: bool,
@@ -156,6 +190,7 @@ fn update_settings(
     let mut s = state.settings.lock();
     s.openrgb_host = host;
     s.openrgb_port = openrgb_port;
+    s.auto_start_openrgb = auto_start_openrgb;
     s.native_drivers_enabled = native_drivers_enabled;
     s.fps = fps;
     s.start_minimized = start_minimized;
@@ -177,21 +212,41 @@ pub fn run() {
     let registry = DeviceRegistry::shared(backends);
     let engine = EffectsEngine::start(registry.clone());
     engine.set_fps(saved.fps);
+    let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
 
-    // Restaurer les effets sauvegardés après un premier scan.
+    // Démarrage matériel en arrière-plan : auto-start OpenRGB embarqué
+    // (si activé et aucun serveur joignable), scan, restauration des effets.
+    // Hors du thread UI — l'init OpenRGB peut prendre 20 s.
     {
-        let devices = registry.lock().scan_all();
-        for d in &devices {
-            if let Some(cfg) = saved.effects.get(&d.id) {
-                engine.set_effect(d.id.clone(), cfg.clone(), d.led_count);
-            }
-        }
+        let registry = registry.clone();
+        let engine = engine.clone();
+        let mgr = openrgb_mgr.clone();
+        let saved = saved.clone();
+        std::thread::Builder::new()
+            .name("hw-init".into())
+            .spawn(move || {
+                if saved.auto_start_openrgb {
+                    match mgr.ensure_running(&saved.openrgb_host, saved.openrgb_port) {
+                        Ok(true) => log::info!("OpenRGB embarqué démarré"),
+                        Ok(false) => log::info!("serveur OpenRGB déjà actif"),
+                        Err(e) => log::warn!("auto-start OpenRGB: {e:#}"),
+                    }
+                }
+                let devices = registry.lock().scan_all();
+                for d in &devices {
+                    if let Some(cfg) = saved.effects.get(&d.id) {
+                        engine.set_effect(d.id.clone(), cfg.clone(), d.led_count);
+                    }
+                }
+            })
+            .expect("spawn hw-init");
     }
 
     let state = AppState {
         registry,
         engine,
         settings: Mutex::new(saved),
+        openrgb_mgr,
     };
 
     tauri::Builder::default()
@@ -205,6 +260,10 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(state)
         .setup(|app| {
+            // Dossier ressources du bundle : contient openrgb/ en install NSIS.
+            if let Ok(res) = app.path().resource_dir() {
+                app.state::<AppState>().openrgb_mgr.set_resource_dir(res);
+            }
             let start_minimized = app.state::<AppState>().settings.lock().start_minimized;
             if start_minimized {
                 if let Some(w) = app.get_webview_window("main") {
@@ -227,7 +286,9 @@ pub fn run() {
                         }
                     }
                     "quit" => {
-                        app.state::<AppState>().engine.shutdown();
+                        let state = app.state::<AppState>();
+                        state.engine.shutdown();
+                        state.openrgb_mgr.stop();
                         app.exit(0);
                     }
                     _ => {}
@@ -250,6 +311,9 @@ pub fn run() {
             apply_effect_all,
             set_fan_duty,
             check_conflicts,
+            openrgb_status,
+            openrgb_start,
+            openrgb_stop,
             get_settings,
             update_settings
         ])

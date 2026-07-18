@@ -10,6 +10,7 @@ import type {
   ConflictReport,
   DeviceInfo,
   EffectConfig,
+  OpenRgbStatus,
   Settings,
 } from "./types";
 
@@ -21,6 +22,8 @@ const selectedId = ref<string | null>(null);
 const tab = ref<"rgb" | "fans" | "settings">("rgb");
 const scanning = ref(false);
 const toast = ref("");
+const orgb = ref<OpenRgbStatus>({ exe_path: null, server_reachable: false, managed: false });
+const orgbStarting = ref(false);
 
 const selected = computed(
   () => devices.value.find((d) => d.id === selectedId.value) ?? null,
@@ -42,6 +45,7 @@ async function refresh() {
     devices.value = await invoke<DeviceInfo[]>("scan_devices");
     backends.value = await invoke<BackendStatus[]>("backend_status");
     conflicts.value = await invoke<ConflictReport>("check_conflicts");
+    orgb.value = await invoke<OpenRgbStatus>("openrgb_status");
     if (!selected.value && devices.value.length > 0) {
       selectedId.value = devices.value[0].id;
     }
@@ -74,9 +78,28 @@ async function onApplyAll(config: EffectConfig) {
   }
 }
 
+async function startOpenRgb() {
+  orgbStarting.value = true;
+  try {
+    await invoke<boolean>("openrgb_start");
+    showToast("OpenRGB démarré");
+    await refresh();
+  } catch (e) {
+    showToast(`OpenRGB : ${e}`);
+  } finally {
+    orgbStarting.value = false;
+  }
+}
+
 onMounted(async () => {
   await loadSettings();
   await refresh();
+  // L'init matériel en arrière-plan peut finir après le premier rendu :
+  // re-scanner tant que le serveur n'est pas joignable (max ~30 s).
+  for (let i = 0; i < 6 && !orgb.value.server_reachable; i++) {
+    await new Promise((r) => setTimeout(r, 5000));
+    await refresh();
+  }
 });
 </script>
 
@@ -119,12 +142,14 @@ onMounted(async () => {
       <strong>{{ conflicts.conflicts.map((c) => c.name).join(", ") }}</strong>
       — risque de conflit d'accès au matériel. Fermez-les pour un contrôle fiable.
     </div>
-    <div
-      v-if="!conflicts.openrgb_running && backends.every((b) => b.name !== 'openrgb' || !b.available)"
-      class="info-banner"
-    >
-      OpenRGB non détecté. Lancez OpenRGB avec « Enable SDK Server » pour piloter
-      900+ appareils, ou activez les drivers natifs dans Réglages.
+    <div v-if="!orgb.server_reachable" class="info-banner">
+      <span>
+        Serveur OpenRGB non joignable — nécessaire pour piloter 900+ appareils.
+        {{ orgb.exe_path ? "OpenRGB embarqué prêt." : "OpenRGB sera téléchargé (officiel, vérifié)." }}
+      </span>
+      <button class="primary" :disabled="orgbStarting" @click="startOpenRgb">
+        {{ orgbStarting ? "Démarrage..." : "Démarrer OpenRGB" }}
+      </button>
     </div>
 
     <main class="content">
@@ -241,6 +266,10 @@ onMounted(async () => {
   color: var(--text-dim);
   padding: 9px 18px;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .content {

@@ -30,18 +30,22 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x1B1C, pid: 0x0C12, name: "Corsair Hydro H150i Pro", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1B1C, pid: 0x0C21, name: "Corsair Hydro Platinum / Pro XT", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1B1C, pid: 0x0C35, name: "Corsair iCUE Elite Capellix", device_type: DeviceType::Aio, native_driver: None },
-    // ---- NZXT (0x1E71) ----
+    // ---- NZXT (0x1E71) — PIDs alignés sur liquidctl ----
     KnownDevice { vid: 0x1E71, pid: 0x2006, name: "NZXT Smart Device V2", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2001, name: "NZXT Smart Device V1", device_type: DeviceType::Hub, native_driver: None },
-    KnownDevice { vid: 0x1E71, pid: 0x2002, name: "NZXT Grid+ V3", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x1714, name: "NZXT Smart Device V1", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x1711, name: "NZXT Grid+ V3", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x170E, name: "NZXT Kraken X42/X52/X62/X72", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x1715, name: "NZXT Kraken M22", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x2007, name: "NZXT Kraken X53/X63/X73", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x3008, name: "NZXT Kraken Z53/Z63/Z73", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x300C, name: "NZXT Kraken 2023", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x300E, name: "NZXT Kraken 2023 Elite", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x2009, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
     KnownDevice { vid: 0x1E71, pid: 0x200E, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
     KnownDevice { vid: 0x1E71, pid: 0x2019, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
     KnownDevice { vid: 0x1E71, pid: 0x2020, name: "NZXT RGB & Fan Controller V2", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2004, name: "NZXT HUE 2", device_type: DeviceType::LedStrip, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2005, name: "NZXT HUE 2 Ambient", device_type: DeviceType::LedStrip, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x2001, name: "NZXT HUE 2", device_type: DeviceType::LedStrip, native_driver: Some(NativeDriver::NzxtHue2) },
+    KnownDevice { vid: 0x1E71, pid: 0x2002, name: "NZXT HUE 2 Ambient", device_type: DeviceType::LedStrip, native_driver: None },
     // ---- ASUS (0x0B05) ----
     KnownDevice { vid: 0x0B05, pid: 0x1867, name: "ASUS Aura LED Controller", device_type: DeviceType::Motherboard, native_driver: None },
     KnownDevice { vid: 0x0B05, pid: 0x1872, name: "ASUS Aura LED Controller", device_type: DeviceType::Motherboard, native_driver: None },
@@ -64,6 +68,12 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     // ---- Cooler Master (0x2516) ----
     KnownDevice { vid: 0x2516, pid: 0x004F, name: "Cooler Master ARGB Controller", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x2516, pid: 0x0173, name: "Cooler Master ARGB Gen2", device_type: DeviceType::Hub, native_driver: None },
+    // ---- Corsair AIO (compléments liquidctl) ----
+    KnownDevice { vid: 0x1B1C, pid: 0x0C18, name: "Corsair H100i Platinum", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1B1C, pid: 0x0C17, name: "Corsair H115i Platinum", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1B1C, pid: 0x0C20, name: "Corsair H100i Pro XT", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1B1C, pid: 0x0C22, name: "Corsair H150i Pro XT", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1B1C, pid: 0x1D00, name: "Corsair Obsidian 1000D", device_type: DeviceType::Case, native_driver: None },
 ];
 
 /// Fabricants reconnus au VID seul (détection générique).

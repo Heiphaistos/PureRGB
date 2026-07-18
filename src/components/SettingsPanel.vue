@@ -9,6 +9,7 @@ const emit = defineEmits<{ saved: [] }>();
 const form = reactive({
   openrgb_host: "127.0.0.1",
   openrgb_port: 6742,
+  auto_start_openrgb: true,
   native_drivers_enabled: false,
   fps: 30,
   start_minimized: false,
@@ -22,6 +23,7 @@ watch(
     if (!s) return;
     form.openrgb_host = s.openrgb_host;
     form.openrgb_port = s.openrgb_port;
+    form.auto_start_openrgb = s.auto_start_openrgb;
     form.native_drivers_enabled = s.native_drivers_enabled;
     form.fps = s.fps;
     form.start_minimized = s.start_minimized;
@@ -36,6 +38,7 @@ async function save() {
     await invoke("update_settings", {
       openrgbHost: form.openrgb_host,
       openrgbPort: form.openrgb_port,
+      autoStartOpenrgb: form.auto_start_openrgb,
       nativeDriversEnabled: form.native_drivers_enabled,
       fps: form.fps,
       startMinimized: form.start_minimized,
@@ -56,9 +59,15 @@ async function save() {
     <div class="card">
       <h3>Serveur OpenRGB</h3>
       <p class="hint">
-        PureRGB pilote 900+ appareils via le SDK OpenRGB. Lancez OpenRGB puis
-        activez « SDK Server » (port 6742 par défaut).
+        PureRGB embarque OpenRGB et pilote 900+ appareils via son SDK. Le serveur
+        est démarré automatiquement en arrière-plan si aucun n'est joignable
+        (installation NSIS : inclus ; portable : téléchargé et vérifié SHA-256 au
+        premier besoin). Un OpenRGB déjà lancé par vous est réutilisé tel quel.
       </p>
+      <div class="inline" style="margin-bottom: 12px">
+        <input id="autostart" type="checkbox" v-model="form.auto_start_openrgb" />
+        <label for="autostart">Démarrer OpenRGB automatiquement avec PureRGB</label>
+      </div>
       <div class="grid2">
         <div>
           <label>Hôte</label>

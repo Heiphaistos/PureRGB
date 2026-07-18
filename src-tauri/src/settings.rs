@@ -11,6 +11,8 @@ use std::path::PathBuf;
 pub struct Settings {
     pub openrgb_host: String,
     pub openrgb_port: u16,
+    /// Lance automatiquement l'OpenRGB embarqué si aucun serveur ne répond.
+    pub auto_start_openrgb: bool,
     pub native_drivers_enabled: bool,
     pub fps: u32,
     pub start_minimized: bool,
@@ -23,6 +25,7 @@ impl Default for Settings {
         Settings {
             openrgb_host: "127.0.0.1".into(),
             openrgb_port: 6742,
+            auto_start_openrgb: true,
             native_drivers_enabled: false,
             fps: 30,
             start_minimized: false,

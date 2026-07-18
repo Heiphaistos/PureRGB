@@ -67,10 +67,17 @@ export interface ConflictReport {
 export interface Settings {
   openrgb_host: string;
   openrgb_port: number;
+  auto_start_openrgb: boolean;
   native_drivers_enabled: boolean;
   fps: number;
   start_minimized: boolean;
   effects: Record<string, EffectConfig>;
+}
+
+export interface OpenRgbStatus {
+  exe_path: string | null;
+  server_reachable: boolean;
+  managed: boolean;
 }
 
 export const EFFECT_LABELS: Record<EffectKind, string> = {

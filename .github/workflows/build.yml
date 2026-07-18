@@ -32,6 +32,9 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Fetch bundled OpenRGB (SHA-256 verified)
+        run: powershell -NoProfile -File scripts/fetch-openrgb.ps1
+
       - name: Rust tests
         run: cargo test --manifest-path src-tauri/Cargo.toml
 
