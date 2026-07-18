@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 22
 
-      - uses: dtolnay/rust-toolchain@a54c7afa936fefeb4456b2dd8068152669aa8ca1 # stable
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable 2026-07
         with:
           toolchain: stable
 
