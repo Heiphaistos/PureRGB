@@ -28,7 +28,6 @@ struct StatusEntry {
 
 #[derive(Debug, Clone, Deserialize)]
 struct DeviceStatus {
-    description: String,
     bus: Option<String>,
     address: Option<String>,
     status: Vec<StatusEntry>,
@@ -289,6 +288,8 @@ impl Backend for LiquidctlBackend {
                     .collect(),
                 controllable: !channels.is_empty(),
                 has_lcd,
+                modes: Vec::new(),
+                active_mode: -1,
                 note: if has_lcd {
                     "ventilateurs/pompe + écran LCD via liquidctl — RGB via OpenRGB".into()
                 } else {

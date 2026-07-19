@@ -120,6 +120,28 @@ pub struct ZoneInfo {
     pub led_count: u32,
 }
 
+/// Flag OpenRGB : le mode accepte des couleurs choisies par l'utilisateur.
+/// (Autres flags décodés côté UI depuis `ModeInfo.flags`.)
+pub const MODE_FLAG_HAS_MODE_SPECIFIC_COLOR: u32 = 1 << 6;
+
+/// Mode matériel natif d'un contrôleur OpenRGB (Rainbow, Breathing, Direct…)
+/// avec ses bornes et réglages courants — pilotable tel quel par le firmware.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ModeInfo {
+    pub index: u32,
+    pub name: String,
+    pub value: i32,
+    pub flags: u32,
+    pub speed_min: u32,
+    pub speed_max: u32,
+    pub colors_min: u32,
+    pub colors_max: u32,
+    pub speed: u32,
+    pub direction: u32,
+    pub color_mode: u32,
+    pub colors: Vec<Color>,
+}
+
 /// Canal ventilateur exposé par un appareil (hub, AIO...).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FanChannel {
@@ -129,6 +151,10 @@ pub struct FanChannel {
     pub duty_percent: Option<u8>,
     /// Dernier RPM lu, None si non supporté.
     pub rpm: Option<u32>,
+}
+
+fn default_active_mode() -> i32 {
+    -1
 }
 
 /// Appareil unifié, quel que soit le backend d'origine.
@@ -148,6 +174,12 @@ pub struct DeviceInfo {
     /// true = écran LCD pilotable (Kraken Z / 2023 via liquidctl).
     #[serde(default)]
     pub has_lcd: bool,
+    /// Modes matériels natifs (OpenRGB uniquement, vide sinon).
+    #[serde(default)]
+    pub modes: Vec<ModeInfo>,
+    /// Index du mode matériel actif, -1 si inconnu.
+    #[serde(default = "default_active_mode")]
+    pub active_mode: i32,
     /// Note affichée à l'utilisateur (ex: "pilotable via OpenRGB", "driver expérimental").
     pub note: String,
 }

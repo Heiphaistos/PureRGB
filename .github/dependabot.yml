@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    schedule:
+      interval: weekly
+    ignore:
+      # glib/gtk : dépendances transitives Linux-only de Tauri, jamais
+      # compilées (app Windows uniquement). L'advisory glib < 0.20 ne
+      # s'applique pas et la mise à jour est bloquée en amont par Tauri.
+      - dependency-name: "glib"
+      - dependency-name: "glib-*"
+      - dependency-name: "gtk*"
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: nuget
+    directory: /sidecars/sensord
+    schedule:
+      interval: weekly

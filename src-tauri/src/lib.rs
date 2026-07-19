@@ -68,24 +68,159 @@ fn backend_status(state: State<AppState>) -> Vec<BackendStatus> {
         .collect()
 }
 
+/// Applique un effet logiciel. `zone: None` = appareil entier (remplace les
+/// effets de zone) ; `Some(i)` = uniquement la zone i (superposée au global).
 #[tauri::command]
 fn apply_effect(
     state: State<AppState>,
     device_id: String,
     config: EffectConfig,
+    zone: Option<u32>,
 ) -> Result<(), String> {
-    let led_count = state
-        .registry
-        .lock()
-        .get(&device_id)
-        .map(|d| d.led_count)
-        .ok_or_else(|| format!("appareil inconnu: {device_id}"))?;
-    state
-        .engine
-        .set_effect(device_id.clone(), config.clone(), led_count);
+    let (led_count, zone_bounds) = {
+        let reg = state.registry.lock();
+        let d = reg
+            .get(&device_id)
+            .ok_or_else(|| format!("appareil inconnu: {device_id}"))?;
+        let bounds = zone.map(|z| {
+            let offset: u32 = d.zones.iter().take(z as usize).map(|zi| zi.led_count).sum();
+            let len = d.zones.get(z as usize).map(|zi| zi.led_count).unwrap_or(0);
+            (offset, len)
+        });
+        (d.led_count, bounds)
+    };
     let mut s = state.settings.lock();
-    s.effects.insert(device_id, config);
+    match (zone, zone_bounds) {
+        (Some(z), Some((offset, len))) => {
+            if len == 0 {
+                return Err(format!("zone {z} inconnue ou vide"));
+            }
+            state
+                .engine
+                .set_zone_effect(device_id.clone(), z, config.clone(), offset, len, led_count);
+            s.effects.insert(format!("{device_id}#z{z}"), config);
+        }
+        _ => {
+            state
+                .engine
+                .set_effect(device_id.clone(), config.clone(), led_count);
+            // Effet global : purge les zones sauvegardées de cet appareil.
+            s.effects.retain(|k, _| !k.starts_with(&format!("{device_id}#z")));
+            s.effects.insert(device_id.clone(), config);
+        }
+    }
+    // Reprendre la main sur un éventuel mode matériel.
+    s.hw_modes.remove(&device_id);
     settings::save(&s).map_err(|e| e.to_string())
+}
+
+/// Applique un mode matériel natif OpenRGB (le firmware anime tout seul).
+#[tauri::command]
+fn set_hardware_mode(
+    state: State<AppState>,
+    device_id: String,
+    mode_index: u32,
+    speed: Option<u32>,
+    direction: Option<u32>,
+    colors: Option<Vec<crate::core::Color>>,
+) -> Result<(), String> {
+    let (backend, local) = device_id
+        .split_once(':')
+        .ok_or_else(|| format!("id invalide: {device_id}"))?;
+    if backend != "openrgb" {
+        return Err("modes matériels disponibles uniquement via OpenRGB".into());
+    }
+    let local = local.to_string();
+    {
+        let mut reg = state.registry.lock();
+        let mut done = false;
+        for b in reg.backends_mut() {
+            if b.name() == "openrgb" {
+                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
+                    orgb.set_mode(&local, mode_index, speed, direction, colors.clone())
+                        .map_err(|e| format!("{e:#}"))?;
+                    done = true;
+                }
+            }
+        }
+        if !done {
+            return Err("backend openrgb indisponible".into());
+        }
+    }
+    // Le firmware pilote : retirer les effets logiciels de cet appareil.
+    state.engine.remove_effect(&device_id);
+    let mut s = state.settings.lock();
+    s.effects
+        .retain(|k, _| k != &device_id && !k.starts_with(&format!("{device_id}#z")));
+    s.hw_modes.insert(
+        device_id,
+        settings::SavedHwMode {
+            mode_index,
+            speed,
+            direction,
+            colors,
+        },
+    );
+    settings::save(&s).map_err(|e| e.to_string())
+}
+
+/// Active/désactive le lancement au démarrage de Windows via une tâche
+/// planifiée niveau Highest (pas de prompt UAC à chaque boot).
+#[tauri::command(async)]
+fn set_autostart(state: State<AppState>, enabled: bool) -> Result<(), String> {
+    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    let run = |args: &[&str]| -> Result<std::process::Output, String> {
+        let mut cmd = std::process::Command::new("schtasks.exe");
+        cmd.args(args);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(0x0800_0000);
+        }
+        cmd.output().map_err(|e| e.to_string())
+    };
+    if enabled {
+        let tr = format!("\"{}\"", exe.display());
+        let out = run(&[
+            "/Create", "/TN", "PureRGB Autostart", "/TR", &tr, "/SC", "ONLOGON",
+            "/RL", "HIGHEST", "/F",
+        ])?;
+        if !out.status.success() {
+            return Err(format!(
+                "schtasks: {}",
+                String::from_utf8_lossy(&out.stderr).trim()
+            ));
+        }
+    } else {
+        let _ = run(&["/Delete", "/TN", "PureRGB Autostart", "/F"]);
+    }
+    let mut s = state.settings.lock();
+    s.autostart = enabled;
+    settings::save(&s).map_err(|e| e.to_string())
+}
+
+/// Exporte la configuration complète (effets, courbes, modes, réglages).
+#[tauri::command]
+fn profile_export(state: State<AppState>, path: String) -> Result<(), String> {
+    let s = state.settings.lock();
+    let json = serde_json::to_string_pretty(&*s).map_err(|e| e.to_string())?;
+    std::fs::write(&path, json).map_err(|e| e.to_string())
+}
+
+/// Importe un profil et l'applique immédiatement.
+#[tauri::command(async)]
+fn profile_import(state: State<AppState>, path: String) -> Result<(), String> {
+    let text = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let imported: Settings = serde_json::from_str(&text).map_err(|e| format!("profil invalide: {e}"))?;
+    {
+        let mut s = state.settings.lock();
+        *s = imported.clone();
+        settings::save(&s).map_err(|e| e.to_string())?;
+    }
+    state.engine.set_fps(imported.fps);
+    state.curve_engine.set_curves(imported.curves.clone());
+    restore_saved_state(&state.registry, &state.engine, &imported);
+    Ok(())
 }
 
 #[tauri::command]
@@ -315,6 +450,51 @@ fn update_settings(
     settings::save(&s).map_err(|e| e.to_string())
 }
 
+/// Restaure effets (globaux + zones) et modes matériels sauvegardés.
+/// Suppose un scan déjà fait (device_list non vide).
+fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEngine, saved: &Settings) {
+    let devices = registry.lock().device_list();
+    for d in &devices {
+        if let Some(cfg) = saved.effects.get(&d.id) {
+            engine.set_effect(d.id.clone(), cfg.clone(), d.led_count);
+        }
+        for (z_idx, zi) in d.zones.iter().enumerate() {
+            let key = format!("{}#z{}", d.id, z_idx);
+            if let Some(cfg) = saved.effects.get(&key) {
+                let offset: u32 = d.zones.iter().take(z_idx).map(|z| z.led_count).sum();
+                engine.set_zone_effect(
+                    d.id.clone(),
+                    z_idx as u32,
+                    cfg.clone(),
+                    offset,
+                    zi.led_count,
+                    d.led_count,
+                );
+            }
+        }
+    }
+    let mut reg = registry.lock();
+    for (device_id, m) in &saved.hw_modes {
+        let Some((backend, local)) = device_id.split_once(':') else {
+            continue;
+        };
+        if backend != "openrgb" {
+            continue;
+        }
+        for b in reg.backends_mut() {
+            if b.name() == "openrgb" {
+                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
+                    if let Err(e) =
+                        orgb.set_mode(local, m.mode_index, m.speed, m.direction, m.colors.clone())
+                    {
+                        log::warn!("restauration mode matériel {device_id}: {e:#}");
+                    }
+                }
+            }
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
@@ -359,12 +539,8 @@ pub fn run() {
                         Err(e) => log::warn!("auto-start OpenRGB: {e:#}"),
                     }
                 }
-                let devices = registry.lock().scan_all();
-                for d in &devices {
-                    if let Some(cfg) = saved.effects.get(&d.id) {
-                        engine.set_effect(d.id.clone(), cfg.clone(), d.led_count);
-                    }
-                }
+                registry.lock().scan_all();
+                restore_saved_state(&registry, &engine, &saved);
             })
             .expect("spawn hw-init");
     }
@@ -469,6 +645,10 @@ pub fn run() {
             get_sensors,
             set_curve,
             lcd_apply,
+            set_hardware_mode,
+            set_autostart,
+            profile_export,
+            profile_import,
             openrgb_status,
             openrgb_start,
             openrgb_stop,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from "vue";
-import type { Color, DeviceInfo, EffectConfig, EffectKind } from "../types";
+import { computed, reactive, ref, watch } from "vue";
+import type { Color, DeviceInfo, EffectConfig, EffectKind, ModeInfo } from "../types";
 import { colorToHex, EFFECT_LABELS, hexToColor } from "../types";
 
 const props = defineProps<{
@@ -9,9 +9,68 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  apply: [deviceId: string, config: EffectConfig];
+  apply: [deviceId: string, config: EffectConfig, zone: number | null];
   applyAll: [config: EffectConfig];
+  applyMode: [
+    deviceId: string,
+    modeIndex: number,
+    speed: number | null,
+    direction: number | null,
+    colors: Color[] | null,
+  ];
 }>();
+
+// Cible : null = appareil entier, sinon index de zone.
+const targetZone = ref<number | null>(null);
+
+// --- Modes matériels (OpenRGB) ---
+const selectedMode = ref<number | null>(null);
+const modeSpeed = ref(0);
+const modeDirection = ref(0);
+const modeColors = ref<Color[]>([]);
+
+const currentMode = computed<ModeInfo | null>(() => {
+  if (selectedMode.value === null) return null;
+  return props.device?.modes?.[selectedMode.value] ?? null;
+});
+const modeHasSpeed = computed(() => ((currentMode.value?.flags ?? 0) & 1) !== 0);
+const modeHasDirection = computed(() => ((currentMode.value?.flags ?? 0) & 0b1110) !== 0);
+const modeHasColors = computed(
+  () => ((currentMode.value?.flags ?? 0) & (1 << 6)) !== 0 && (currentMode.value?.colors_max ?? 0) > 0,
+);
+const modeSpeedMin = computed(() =>
+  Math.min(currentMode.value?.speed_min ?? 0, currentMode.value?.speed_max ?? 0),
+);
+const modeSpeedMax = computed(() =>
+  Math.max(currentMode.value?.speed_min ?? 0, currentMode.value?.speed_max ?? 0),
+);
+
+function selectMode(i: number) {
+  selectedMode.value = i;
+  const m = props.device?.modes?.[i];
+  if (!m) return;
+  modeSpeed.value = m.speed;
+  modeDirection.value = m.direction;
+  modeColors.value = m.colors.length
+    ? m.colors.map((c) => ({ ...c }))
+    : [{ r: 255, g: 80, b: 0 }];
+}
+
+function setModeColor(i: number, hex: string) {
+  modeColors.value[i] = hexToColor(hex);
+}
+
+function applyHardwareMode() {
+  if (!props.device || selectedMode.value === null) return;
+  emit(
+    "applyMode",
+    props.device.id,
+    selectedMode.value,
+    modeHasSpeed.value ? modeSpeed.value : null,
+    modeHasDirection.value ? modeDirection.value : null,
+    modeHasColors.value ? modeColors.value.map((c) => ({ ...c })) : null,
+  );
+}
 
 const state = reactive<EffectConfig>({
   kind: "static",
@@ -47,6 +106,8 @@ const hasDirection = computed(() =>
 watch(
   () => props.device?.id,
   (id) => {
+    targetZone.value = null;
+    selectedMode.value = null;
     if (!id) return;
     const saved = props.savedEffects[id];
     if (saved) {
@@ -94,6 +155,16 @@ function snapshot(): EffectConfig {
             {{ device.zones.map((z) => z.name).join(", ") || "zone unique" }}
           </p>
         </div>
+      </div>
+
+      <div v-if="device.zones.length > 1" class="zone-row">
+        <label>Cible</label>
+        <select v-model="targetZone">
+          <option :value="null">Appareil entier</option>
+          <option v-for="(z, i) in device.zones" :key="i" :value="i">
+            {{ z.name }} ({{ z.led_count }} LED)
+          </option>
+        </select>
       </div>
 
       <div class="effects-grid">
@@ -154,15 +225,89 @@ function snapshot(): EffectConfig {
         <button
           class="primary"
           :disabled="!device.controllable"
-          @click="emit('apply', device.id, snapshot())"
+          @click="emit('apply', device.id, snapshot(), targetZone)"
         >
-          Appliquer à cet appareil
+          {{ targetZone === null ? "Appliquer à cet appareil" : `Appliquer à « ${device.zones[targetZone]?.name} »` }}
         </button>
         <button @click="emit('applyAll', snapshot())">Appliquer à tout</button>
       </div>
       <p v-if="!device.controllable" class="warn-note">
         Appareil détecté mais non pilotable directement — {{ device.note }}.
       </p>
+
+      <div v-if="device.modes.length > 0" class="hw-modes">
+        <h3>Modes matériels natifs</h3>
+        <p class="sub">
+          Animés par le firmware de l'appareil — persistent même app fermée.
+          Tous les paramètres exposés par le matériel sont réglables.
+        </p>
+        <div class="modes-grid">
+          <button
+            v-for="(m, i) in device.modes"
+            :key="i"
+            class="effect-tile"
+            :class="{ active: selectedMode === i, current: device.active_mode === i }"
+            :title="device.active_mode === i ? 'mode actif' : ''"
+            @click="selectMode(i)"
+          >
+            {{ m.name }}
+          </button>
+        </div>
+        <div v-if="currentMode" class="controls">
+          <div v-if="modeHasSpeed" class="row">
+            <label>Vitesse matérielle — {{ modeSpeed }}</label>
+            <input
+              type="range"
+              :min="modeSpeedMin"
+              :max="modeSpeedMax"
+              step="1"
+              v-model.number="modeSpeed"
+            />
+          </div>
+          <div v-if="modeHasDirection" class="row">
+            <label>Direction</label>
+            <select v-model.number="modeDirection">
+              <option :value="0">Gauche</option>
+              <option :value="1">Droite</option>
+              <option :value="2">Haut</option>
+              <option :value="3">Bas</option>
+              <option :value="4">Horizontal</option>
+              <option :value="5">Vertical</option>
+            </select>
+          </div>
+          <div v-if="modeHasColors" class="row">
+            <label>
+              Couleurs ({{ currentMode.colors_min }}–{{ currentMode.colors_max }})
+            </label>
+            <div class="colors">
+              <input
+                v-for="(c, i) in modeColors"
+                :key="i"
+                type="color"
+                :value="colorToHex(c)"
+                @input="setModeColor(i, ($event.target as HTMLInputElement).value)"
+              />
+              <button
+                v-if="modeColors.length < currentMode.colors_max"
+                @click="modeColors.push({ r: 0, g: 144, b: 255 })"
+              >
+                +
+              </button>
+              <button
+                v-if="modeColors.length > Math.max(1, currentMode.colors_min)"
+                @click="modeColors.pop()"
+              >
+                −
+              </button>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary" @click="applyHardwareMode">
+              Appliquer le mode matériel
+            </button>
+          </div>
+        </div>
+      </div>
     </template>
     <p v-else class="empty">Sélectionnez un appareil à gauche.</p>
   </section>
@@ -243,6 +388,39 @@ function snapshot(): EffectConfig {
   margin-top: 12px;
   color: var(--warn);
   font-size: 13px;
+}
+
+.zone-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.zone-row label {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.hw-modes {
+  margin-top: 30px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.hw-modes h3 {
+  font-size: 15px;
+}
+
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.effect-tile.current {
+  outline: 1px dashed var(--ok);
 }
 
 .empty {

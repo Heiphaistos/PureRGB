@@ -2,7 +2,7 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.5.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.6.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 
@@ -12,6 +12,10 @@ Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/
 - **AIO, pompes et hubs via [liquidctl](https://github.com/liquidctl/liquidctl)** (binaire GPLv3 séparé, épinglé) : Kraken, Hydro, Smart Device, Commander — vitesses ventilateurs/pompe, et **écran LCD des Kraken Z / 2023** (température du liquide, image fixe, GIF animé, luminosité, orientation).
 - **Capteurs température/charge via LibreHardwareMonitor** (sidecar MPL 2.0) et **courbes ventilateurs automatiques** : points température → vitesse, capteur au choix (CPU, GPU, liquide…), hystérésis anti-usure, persistées et restaurées au démarrage.
 - **Appareils réseau via OpenRGB** : Philips Hue, Nanoleaf, Yeelight, WLED (à configurer dans OpenRGB).
+- **Modes matériels natifs** : chaque appareil OpenRGB expose ses modes firmware (Rainbow, Breathing, Spectrum…) avec tous leurs paramètres — vitesse, direction, couleurs — réglables et persistants même app fermée.
+- **Effets par zone** : cibler une zone précise (barre ARGB, anneau, dessus/dessous…) avec superposition sur l'effet global.
+- **Profils** : export/import JSON de la configuration complète (effets, zones, modes matériels, courbes, réglages).
+- **Démarrage avec Windows** : tâche planifiée niveau élevé, sans fenêtre UAC à chaque boot.
 - **Drivers natifs expérimentaux** (USB direct, sans OpenRGB) :
   - Corsair Lighting Node Pro / Core (LED)
   - NZXT HUE 2, Smart Device V2, RGB & Fan Controller (LED + **ventilateurs PWM**)

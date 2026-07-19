@@ -2,12 +2,34 @@ pub mod curves;
 pub mod effects;
 
 use crate::core::registry::SharedRegistry;
+use crate::core::Color;
 use effects::{render, EffectConfig};
 use parking_lot::{Condvar, Mutex};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+
+/// Effets d'un appareil : un effet global optionnel + des effets par zone
+/// (offset/longueur en LEDs) qui se superposent au global.
+#[derive(Clone, PartialEq, Default)]
+struct DeviceAssignment {
+    total_leds: u32,
+    whole: Option<EffectConfig>,
+    /// zone index -> (config, offset LED, longueur)
+    zones: HashMap<u32, (EffectConfig, u32, u32)>,
+}
+
+impl DeviceAssignment {
+    fn is_static(&self) -> bool {
+        self.whole.as_ref().map_or(true, |c| c.is_static())
+            && self.zones.values().all(|(c, _, _)| c.is_static())
+    }
+
+    fn is_empty(&self) -> bool {
+        self.whole.is_none() && self.zones.is_empty()
+    }
+}
 
 /// Moteur d'effets : thread unique, tick adaptatif.
 /// - Effets animés => boucle à `fps` images/s.
@@ -19,8 +41,7 @@ pub struct EffectsEngine {
 }
 
 struct EngineInner {
-    /// device_id -> (config, led_count)
-    assignments: Mutex<HashMap<String, (EffectConfig, u32)>>,
+    assignments: Mutex<HashMap<String, DeviceAssignment>>,
     dirty: Condvar,
     running: AtomicBool,
     fps: AtomicU32,
@@ -45,10 +66,36 @@ impl EffectsEngine {
         EffectsEngine { inner }
     }
 
-    /// Assigne un effet à un appareil et réveille le moteur.
+    /// Assigne un effet global à un appareil (remplace les effets de zone).
     pub fn set_effect(&self, device_id: String, cfg: EffectConfig, led_count: u32) {
         let mut map = self.inner.assignments.lock();
-        map.insert(device_id, (cfg, led_count));
+        let entry = map.entry(device_id).or_default();
+        entry.total_leds = led_count;
+        entry.whole = Some(cfg);
+        entry.zones.clear();
+        self.inner.dirty.notify_all();
+    }
+
+    /// Assigne un effet à une zone (se superpose à l'effet global éventuel).
+    pub fn set_zone_effect(
+        &self,
+        device_id: String,
+        zone: u32,
+        cfg: EffectConfig,
+        offset: u32,
+        len: u32,
+        total_leds: u32,
+    ) {
+        let mut map = self.inner.assignments.lock();
+        let entry = map.entry(device_id).or_default();
+        entry.total_leds = total_leds;
+        entry.zones.insert(zone, (cfg, offset, len));
+        self.inner.dirty.notify_all();
+    }
+
+    /// Retire tous les effets d'un appareil (ex: passage en mode matériel).
+    pub fn remove_effect(&self, device_id: &str) {
+        self.inner.assignments.lock().remove(device_id);
         self.inner.dirty.notify_all();
     }
 
@@ -70,10 +117,26 @@ impl EffectsEngine {
     }
 }
 
+/// Rend le buffer complet d'un appareil : effet global (ou noir) puis zones.
+fn render_device(a: &DeviceAssignment, t: f32) -> Vec<Color> {
+    let total = a.total_leds as usize;
+    let mut buf = match &a.whole {
+        Some(cfg) => render(cfg, t, total),
+        None => vec![Color::BLACK; total],
+    };
+    for (cfg, offset, len) in a.zones.values() {
+        let zone_colors = render(cfg, t, *len as usize);
+        let start = (*offset as usize).min(total);
+        let end = (start + *len as usize).min(total);
+        buf[start..end].copy_from_slice(&zone_colors[..end - start]);
+    }
+    buf
+}
+
 fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
     let start = Instant::now();
-    // Ids déjà appliqués en statique (éviter le re-envoi à chaque réveil).
-    let mut applied_static: HashMap<String, EffectConfig> = HashMap::new();
+    // Assignations statiques déjà appliquées (éviter le re-envoi à chaque réveil).
+    let mut applied_static: HashMap<String, DeviceAssignment> = HashMap::new();
     let mut seen_generation = 0u32;
 
     while inner.running.load(Ordering::Relaxed) {
@@ -82,31 +145,29 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
             seen_generation = generation;
             applied_static.clear();
         }
-        let snapshot: Vec<(String, EffectConfig, u32)> = {
-            let map = inner.assignments.lock();
-            map.iter()
-                .map(|(k, (c, n))| (k.clone(), c.clone(), *n))
-                .collect()
+        let snapshot: Vec<(String, DeviceAssignment)> = {
+            let mut map = inner.assignments.lock();
+            map.retain(|_, a| !a.is_empty());
+            map.iter().map(|(k, a)| (k.clone(), a.clone())).collect()
         };
 
         let t = start.elapsed().as_secs_f32();
         let mut any_animated = false;
 
-        for (id, cfg, led_count) in &snapshot {
-            if cfg.is_static() {
-                // N'appliquer qu'une fois tant que la config ne change pas.
-                if applied_static.get(id) == Some(cfg) {
+        for (id, assignment) in &snapshot {
+            if assignment.is_static() {
+                if applied_static.get(id) == Some(assignment) {
                     continue;
                 }
             } else {
                 any_animated = true;
             }
-            let colors = render(cfg, t, *led_count as usize);
+            let colors = render_device(assignment, t);
             let result = registry.lock().set_colors(id, &colors);
             match result {
                 Ok(()) => {
-                    if cfg.is_static() {
-                        applied_static.insert(id.clone(), cfg.clone());
+                    if assignment.is_static() {
+                        applied_static.insert(id.clone(), assignment.clone());
                     }
                 }
                 Err(e) => log::debug!("set_colors {id}: {e:#}"),
@@ -114,7 +175,7 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
         }
 
         // Purge des statiques retirés.
-        applied_static.retain(|id, _| snapshot.iter().any(|(sid, _, _)| sid == id));
+        applied_static.retain(|id, _| snapshot.iter().any(|(sid, _)| sid == id));
 
         if any_animated {
             let fps = inner.fps.load(Ordering::Relaxed).max(1);

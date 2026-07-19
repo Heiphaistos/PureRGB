@@ -191,6 +191,8 @@ impl Backend for HidBackend {
                 fan_channels,
                 controllable,
                 has_lcd: false,
+                modes: Vec::new(),
+                active_mode: -1,
                 note,
             });
         }

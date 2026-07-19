@@ -74,12 +74,29 @@ async function loadSettings() {
   settings.value = await invoke<Settings>("get_settings");
 }
 
-async function onApplyEffect(deviceId: string, config: EffectConfig) {
+async function onApplyEffect(deviceId: string, config: EffectConfig, zone: number | null) {
   try {
-    await invoke("apply_effect", { deviceId, config });
-    showToast("Effet appliqué");
+    await invoke("apply_effect", { deviceId, config, zone });
+    showToast(zone === null ? "Effet appliqué" : "Effet appliqué à la zone");
+    await loadSettings();
   } catch (e) {
     showToast(`Échec : ${e}`);
+  }
+}
+
+async function onApplyMode(
+  deviceId: string,
+  modeIndex: number,
+  speed: number | null,
+  direction: number | null,
+  colors: { r: number; g: number; b: number }[] | null,
+) {
+  try {
+    await invoke("set_hardware_mode", { deviceId, modeIndex, speed, direction, colors });
+    showToast("Mode matériel appliqué");
+    await refresh();
+  } catch (e) {
+    showToast(`Mode matériel : ${e}`);
   }
 }
 
@@ -215,6 +232,7 @@ onMounted(async () => {
           :saved-effects="settings?.effects ?? {}"
           @apply="onApplyEffect"
           @apply-all="onApplyAll"
+          @apply-mode="onApplyMode"
         />
       </template>
       <FanPanel

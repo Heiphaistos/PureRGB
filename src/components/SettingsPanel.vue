@@ -1,10 +1,65 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
+import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { reactive, ref, watch } from "vue";
 import type { Settings } from "../types";
 
 const props = defineProps<{ settings: Settings | null }>();
 const emit = defineEmits<{ saved: [] }>();
+
+const autostartBusy = ref(false);
+const autostartEnabled = ref(false);
+const profileMsg = ref("");
+
+watch(
+  () => props.settings?.autostart,
+  (v) => {
+    autostartEnabled.value = v ?? false;
+  },
+  { immediate: true },
+);
+
+async function toggleAutostart() {
+  autostartBusy.value = true;
+  try {
+    await invoke("set_autostart", { enabled: !autostartEnabled.value });
+    autostartEnabled.value = !autostartEnabled.value;
+    emit("saved");
+  } catch (e) {
+    profileMsg.value = `Autostart : ${e}`;
+  } finally {
+    autostartBusy.value = false;
+  }
+}
+
+async function exportProfile() {
+  const path = await saveDialog({
+    defaultPath: "purergb-profil.json",
+    filters: [{ name: "Profil PureRGB", extensions: ["json"] }],
+  });
+  if (!path) return;
+  try {
+    await invoke("profile_export", { path });
+    profileMsg.value = "Profil exporté.";
+  } catch (e) {
+    profileMsg.value = `Export : ${e}`;
+  }
+}
+
+async function importProfile() {
+  const path = await open({
+    multiple: false,
+    filters: [{ name: "Profil PureRGB", extensions: ["json"] }],
+  });
+  if (typeof path !== "string") return;
+  try {
+    await invoke("profile_import", { path });
+    profileMsg.value = "Profil importé et appliqué.";
+    emit("saved");
+  } catch (e) {
+    profileMsg.value = `Import : ${e}`;
+  }
+}
 
 const form = reactive({
   openrgb_host: "127.0.0.1",
@@ -92,6 +147,31 @@ async function save() {
         <input id="native" type="checkbox" v-model="form.native_drivers_enabled" />
         <label for="native">Activer les drivers natifs</label>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>Système &amp; profils</h3>
+      <div class="inline" style="margin-bottom: 12px">
+        <input
+          id="winstart"
+          type="checkbox"
+          :checked="autostartEnabled"
+          :disabled="autostartBusy"
+          @change="toggleAutostart"
+        />
+        <label for="winstart">
+          Lancer PureRGB au démarrage de Windows (tâche planifiée, sans fenêtre UAC)
+        </label>
+      </div>
+      <div class="inline" style="gap: 10px">
+        <button @click="exportProfile">Exporter le profil…</button>
+        <button @click="importProfile">Importer un profil…</button>
+        <span class="hint" v-if="profileMsg">{{ profileMsg }}</span>
+      </div>
+      <p class="hint">
+        Un profil contient tout : effets (globaux et par zone), modes matériels,
+        courbes ventilateurs et réglages.
+      </p>
     </div>
 
     <div class="card">

@@ -35,6 +35,21 @@ export interface FanChannel {
   rpm: number | null;
 }
 
+export interface ModeInfo {
+  index: number;
+  name: string;
+  value: number;
+  flags: number;
+  speed_min: number;
+  speed_max: number;
+  colors_min: number;
+  colors_max: number;
+  speed: number;
+  direction: number;
+  color_mode: number;
+  colors: Color[];
+}
+
 export interface DeviceInfo {
   id: string;
   name: string;
@@ -46,6 +61,8 @@ export interface DeviceInfo {
   fan_channels: FanChannel[];
   controllable: boolean;
   has_lcd: boolean;
+  modes: ModeInfo[];
+  active_mode: number;
   note: string;
 }
 
@@ -104,6 +121,11 @@ export interface Settings {
   effects: Record<string, EffectConfig>;
   disabled_services: Record<string, string>;
   curves: Record<string, CurveConfig>;
+  hw_modes: Record<
+    string,
+    { mode_index: number; speed: number | null; direction: number | null; colors: Color[] | null }
+  >;
+  autostart: boolean;
 }
 
 export interface OpenRgbStatus {

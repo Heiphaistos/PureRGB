@@ -5,7 +5,7 @@ pub mod manager;
 pub mod protocol;
 
 use crate::backends::Backend;
-use crate::core::{Color, DeviceInfo};
+use crate::core::{Color, DeviceInfo, ModeInfo};
 use anyhow::{bail, Context, Result};
 use protocol as p;
 use std::io::{Read, Write};
@@ -20,6 +20,8 @@ pub struct OpenRgbBackend {
     led_counts: Vec<u32>,
     /// Contrôleurs déjà passés en mode custom (Direct).
     custom_mode_set: Vec<bool>,
+    /// Modes matériels par contrôleur, remplis au scan (base pour UpdateMode).
+    modes_cache: Vec<Vec<ModeInfo>>,
 }
 
 impl OpenRgbBackend {
@@ -30,7 +32,58 @@ impl OpenRgbBackend {
             stream: None,
             led_counts: Vec::new(),
             custom_mode_set: Vec::new(),
+            modes_cache: Vec::new(),
         }
+    }
+
+    /// Applique un mode matériel natif. `speed`/`direction`/`colors` sont des
+    /// surcharges optionnelles du mode tel qu'annoncé par le contrôleur.
+    pub fn set_mode(
+        &mut self,
+        local_id: &str,
+        mode_index: u32,
+        speed: Option<u32>,
+        direction: Option<u32>,
+        colors: Option<Vec<Color>>,
+    ) -> Result<()> {
+        let idx: u32 = local_id.parse().context("id OpenRGB invalide")?;
+        self.connect()?;
+        let mut mode = self
+            .modes_cache
+            .get(idx as usize)
+            .and_then(|m| m.get(mode_index as usize))
+            .with_context(|| format!("mode {mode_index} inconnu pour contrôleur {idx}"))?
+            .clone();
+        if let Some(s) = speed {
+            mode.speed = s.clamp(mode.speed_min.min(mode.speed_max), mode.speed_min.max(mode.speed_max));
+        }
+        if let Some(d) = direction {
+            mode.direction = d;
+        }
+        if let Some(c) = colors {
+            let max = mode.colors_max.max(mode.colors_min).max(1) as usize;
+            let min = mode.colors_min as usize;
+            let mut c = c;
+            c.truncate(max);
+            if c.len() < min {
+                c.resize(min, Color::BLACK);
+            }
+            if !c.is_empty() {
+                // Passer en couleurs choisies par l'utilisateur si le mode le permet.
+                if mode.flags & crate::core::MODE_FLAG_HAS_MODE_SPECIFIC_COLOR != 0 {
+                    mode.color_mode = 1; // MODE_COLORS_MODE_SPECIFIC
+                }
+                mode.colors = c;
+            }
+        }
+        let payload = p::encode_update_mode(&mode);
+        self.send(idx, p::RGBCONTROLLER_UPDATEMODE, &payload)?;
+        // Le firmware pilote désormais l'appareil : le mode Direct devra être
+        // renégocié avant toute écriture LED directe.
+        if let Some(flag) = self.custom_mode_set.get_mut(idx as usize) {
+            *flag = false;
+        }
+        Ok(())
     }
 
     pub fn set_endpoint(&mut self, host: String, port: u16) {
@@ -157,11 +210,13 @@ impl Backend for OpenRgbBackend {
         let count = self.controller_count()?;
         let mut devices = Vec::with_capacity(count as usize);
         self.led_counts.clear();
+        self.modes_cache.clear();
         self.custom_mode_set = vec![false; count as usize];
         for i in 0..count {
             match self.controller_data(i) {
                 Ok(c) => {
                     self.led_counts.push(c.led_count);
+                    self.modes_cache.push(c.modes.clone());
                     devices.push(DeviceInfo {
                         id: i.to_string(),
                         name: c.name,
@@ -173,12 +228,15 @@ impl Backend for OpenRgbBackend {
                         fan_channels: Vec::new(),
                         controllable: true,
                         has_lcd: false,
+                        modes: c.modes,
+                        active_mode: c.active_mode,
                         note: "via OpenRGB".into(),
                     });
                 }
                 Err(e) => {
                     log::warn!("contrôleur OpenRGB {i} illisible: {e:#}");
                     self.led_counts.push(0);
+                    self.modes_cache.push(Vec::new());
                 }
             }
         }

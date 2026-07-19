@@ -24,6 +24,19 @@ pub struct Settings {
     pub disabled_services: HashMap<String, String>,
     /// Courbes ventilateurs : "<device_id>|<canal>" → configuration.
     pub curves: CurveMap,
+    /// Modes matériels appliqués : device_id → réglages, restaurés au boot.
+    pub hw_modes: HashMap<String, SavedHwMode>,
+    /// Lancement au démarrage de Windows (tâche planifiée, sans UAC).
+    pub autostart: bool,
+}
+
+/// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SavedHwMode {
+    pub mode_index: u32,
+    pub speed: Option<u32>,
+    pub direction: Option<u32>,
+    pub colors: Option<Vec<crate::core::Color>>,
 }
 
 impl Default for Settings {
@@ -38,6 +51,8 @@ impl Default for Settings {
             effects: HashMap::new(),
             disabled_services: HashMap::new(),
             curves: CurveMap::new(),
+            hw_modes: HashMap::new(),
+            autostart: false,
         }
     }
 }
