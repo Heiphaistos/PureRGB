@@ -32,8 +32,15 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
       - name: Fetch bundled OpenRGB (SHA-256 verified)
         run: powershell -NoProfile -File scripts/fetch-openrgb.ps1
+
+      - name: Build sidecars (liquidctl + sensord)
+        run: powershell -NoProfile -File scripts/build-sidecars.ps1
 
       - name: Rust tests
         run: cargo test --manifest-path src-tauri/Cargo.toml

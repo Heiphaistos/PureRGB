@@ -1,3 +1,4 @@
+pub mod curves;
 pub mod effects;
 
 use crate::core::registry::SharedRegistry;

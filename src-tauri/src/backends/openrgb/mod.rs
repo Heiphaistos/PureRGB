@@ -172,6 +172,7 @@ impl Backend for OpenRgbBackend {
                         led_count: c.led_count,
                         fan_channels: Vec::new(),
                         controllable: true,
+                        has_lcd: false,
                         note: "via OpenRGB".into(),
                     });
                 }

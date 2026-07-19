@@ -1,5 +1,6 @@
 //! Persistance des réglages + profils dans %APPDATA%/PureRGB.
 
+use crate::engine::curves::CurveMap;
 use crate::engine::effects::EffectConfig;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
@@ -21,6 +22,8 @@ pub struct Settings {
     /// Services constructeur désactivés par PureRGB : nom service → mode de
     /// démarrage d'origine (Auto/Manual), pour pouvoir les réactiver à l'identique.
     pub disabled_services: HashMap<String, String>,
+    /// Courbes ventilateurs : "<device_id>|<canal>" → configuration.
+    pub curves: CurveMap,
 }
 
 impl Default for Settings {
@@ -34,6 +37,7 @@ impl Default for Settings {
             start_minimized: false,
             effects: HashMap::new(),
             disabled_services: HashMap::new(),
+            curves: CurveMap::new(),
         }
     }
 }

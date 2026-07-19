@@ -9,6 +9,13 @@ src-tauri/gen/schemas/
 # OpenRGB embarqué (téléchargé par scripts/fetch-openrgb.ps1, jamais commité)
 src-tauri/resources/openrgb/
 
+# Sidecars construits (scripts/build-sidecars.ps1, jamais commités)
+src-tauri/resources/liquidctl/
+src-tauri/resources/sensord/
+sidecars/sensord/bin/
+sidecars/sensord/obj/
+sidecars/sensord/publish/
+
 # Logs
 .logs/
 *.log

@@ -45,7 +45,27 @@ export interface DeviceInfo {
   led_count: number;
   fan_channels: FanChannel[];
   controllable: boolean;
+  has_lcd: boolean;
   note: string;
+}
+
+export interface Sensor {
+  id: string;
+  hardware: string;
+  name: string;
+  type: string;
+  value: number;
+}
+
+export interface CurvePoint {
+  temp: number;
+  duty: number;
+}
+
+export interface CurveConfig {
+  sensor_id: string;
+  points: CurvePoint[];
+  enabled: boolean;
 }
 
 export interface BackendStatus {
@@ -83,6 +103,7 @@ export interface Settings {
   start_minimized: boolean;
   effects: Record<string, EffectConfig>;
   disabled_services: Record<string, string>;
+  curves: Record<string, CurveConfig>;
 }
 
 export interface OpenRgbStatus {

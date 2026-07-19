@@ -2,16 +2,20 @@ mod backends;
 mod conflicts;
 mod core;
 mod engine;
+mod sensors;
 mod settings;
 
 use crate::backends::hid::HidBackend;
+use crate::backends::liquidctl::LiquidctlBackend;
 use crate::backends::openrgb::manager::{OpenRgbManager, OpenRgbStatus};
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::backends::Backend;
 use crate::core::registry::{DeviceRegistry, SharedRegistry};
 use crate::core::DeviceInfo;
+use crate::engine::curves::{CurveConfig, CurveEngine};
 use crate::engine::effects::EffectConfig;
 use crate::engine::EffectsEngine;
+use crate::sensors::{Sensor, SensorHub};
 use crate::settings::Settings;
 use parking_lot::Mutex;
 use serde::Serialize;
@@ -24,6 +28,8 @@ struct AppState {
     engine: EffectsEngine,
     settings: Mutex<Settings>,
     openrgb_mgr: std::sync::Arc<OpenRgbManager>,
+    sensors: std::sync::Arc<SensorHub>,
+    curve_engine: std::sync::Arc<CurveEngine>,
 }
 
 #[derive(Serialize)]
@@ -191,6 +197,64 @@ fn conflict_stop(state: State<AppState>, family: String, disable: bool) -> Resul
     Ok(())
 }
 
+/// Dernier relevé capteurs (sensord). Vide si le sidecar est absent.
+#[tauri::command]
+fn get_sensors(state: State<AppState>) -> Vec<Sensor> {
+    state.sensors.snapshot()
+}
+
+/// Définit ou supprime (config=None) la courbe d'un canal ventilateur.
+#[tauri::command]
+fn set_curve(
+    state: State<AppState>,
+    device_id: String,
+    channel: u8,
+    config: Option<CurveConfig>,
+) -> Result<(), String> {
+    let key = format!("{device_id}|{channel}");
+    let mut s = state.settings.lock();
+    match config {
+        Some(cfg) => {
+            cfg.validate()?;
+            s.curves.insert(key, cfg);
+        }
+        None => {
+            s.curves.remove(&key);
+        }
+    }
+    state.curve_engine.set_curves(s.curves.clone());
+    settings::save(&s).map_err(|e| e.to_string())
+}
+
+/// Commande écran LCD (Kraken Z / 2023 via liquidctl).
+/// kind: liquid | static | gif | brightness | orientation. arg: chemin ou valeur.
+#[tauri::command(async)]
+fn lcd_apply(
+    state: State<AppState>,
+    device_id: String,
+    kind: String,
+    arg: Option<String>,
+) -> Result<(), String> {
+    let (backend, local) = device_id
+        .split_once(':')
+        .ok_or_else(|| format!("id invalide: {device_id}"))?;
+    if backend != "liquidctl" {
+        return Err("LCD disponible uniquement via liquidctl".into());
+    }
+    let local = local.to_string();
+    let mut reg = state.registry.lock();
+    for b in reg.backends_mut() {
+        if b.name() == "liquidctl" {
+            if let Some(lc) = b.as_any_mut().downcast_mut::<LiquidctlBackend>() {
+                return lc
+                    .lcd_apply(&local, &kind, arg.as_deref())
+                    .map_err(|e| format!("{e:#}"));
+            }
+        }
+    }
+    Err("backend liquidctl indisponible".into())
+}
+
 /// Réactive une famille : StartupType restauré + services relancés.
 #[tauri::command(async)]
 fn conflict_restore(state: State<AppState>, family: String) -> Result<(), String> {
@@ -266,11 +330,14 @@ pub fn run() {
             saved.openrgb_port,
         )),
         Box::new(HidBackend::new(saved.native_drivers_enabled)),
+        Box::new(LiquidctlBackend::new()),
     ];
     let registry = DeviceRegistry::shared(backends);
     let engine = EffectsEngine::start(registry.clone());
     engine.set_fps(saved.fps);
     let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
+    let sensors = SensorHub::new();
+    let curve_engine = CurveEngine::start(registry.clone(), sensors.clone(), saved.curves.clone());
 
     // Démarrage matériel en arrière-plan : auto-start OpenRGB embarqué
     // (si activé et aucun serveur joignable), scan, restauration des effets.
@@ -279,10 +346,12 @@ pub fn run() {
         let registry = registry.clone();
         let engine = engine.clone();
         let mgr = openrgb_mgr.clone();
+        let sensors_hub = sensors.clone();
         let saved = saved.clone();
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
+                let _ = sensors_hub; // démarré dans setup() une fois resource_dir connu
                 if saved.auto_start_openrgb {
                     match mgr.ensure_running(&saved.openrgb_host, saved.openrgb_port) {
                         Ok(true) => log::info!("OpenRGB embarqué démarré"),
@@ -305,6 +374,8 @@ pub fn run() {
         engine,
         settings: Mutex::new(saved),
         openrgb_mgr,
+        sensors,
+        curve_engine,
     };
 
     tauri::Builder::default()
@@ -316,11 +387,33 @@ pub fn run() {
             }
         }))
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(state)
         .setup(|app| {
-            // Dossier ressources du bundle : contient openrgb/ en install NSIS.
+            // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
             if let Ok(res) = app.path().resource_dir() {
-                app.state::<AppState>().openrgb_mgr.set_resource_dir(res);
+                let state = app.state::<AppState>();
+                state.openrgb_mgr.set_resource_dir(res.clone());
+                state.sensors.set_resource_dir(res.clone());
+                let mut reg = state.registry.lock();
+                for b in reg.backends_mut() {
+                    if b.name() == "liquidctl" {
+                        if let Some(lc) = b.as_any_mut().downcast_mut::<LiquidctlBackend>() {
+                            lc.set_resource_dir(res.clone());
+                        }
+                    }
+                }
+            }
+            // Capteurs : démarrage différé hors du thread UI (init LHM ~2-5 s).
+            {
+                let sensors = app.state::<AppState>().sensors.clone();
+                std::thread::Builder::new()
+                    .name("sensord-start".into())
+                    .spawn(move || match sensors.start() {
+                        Ok(true) => log::info!("sensord démarré"),
+                        Ok(false) => log::info!("sensord absent"),
+                        Err(e) => log::warn!("sensord: {e:#}"),
+                    })?;
             }
             let start_minimized = app.state::<AppState>().settings.lock().start_minimized;
             if start_minimized {
@@ -346,6 +439,8 @@ pub fn run() {
                     "quit" => {
                         let state = app.state::<AppState>();
                         state.engine.shutdown();
+                        state.curve_engine.shutdown();
+                        state.sensors.stop();
                         state.openrgb_mgr.stop();
                         app.exit(0);
                     }
@@ -371,6 +466,9 @@ pub fn run() {
             check_conflicts,
             conflict_stop,
             conflict_restore,
+            get_sensors,
+            set_curve,
+            lcd_apply,
             openrgb_status,
             openrgb_start,
             openrgb_stop,

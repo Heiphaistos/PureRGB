@@ -190,6 +190,7 @@ impl Backend for HidBackend {
                 led_count,
                 fan_channels,
                 controllable,
+                has_lcd: false,
                 note,
             });
         }

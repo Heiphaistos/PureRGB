@@ -145,6 +145,9 @@ pub struct DeviceInfo {
     pub fan_channels: Vec<FanChannel>,
     /// true = contrôle réel possible; false = détecté mais non pilotable (driver manquant).
     pub controllable: bool,
+    /// true = écran LCD pilotable (Kraken Z / 2023 via liquidctl).
+    #[serde(default)]
+    pub has_lcd: bool,
     /// Note affichée à l'utilisateur (ex: "pilotable via OpenRGB", "driver expérimental").
     pub note: String,
 }

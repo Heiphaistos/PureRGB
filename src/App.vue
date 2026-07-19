@@ -5,6 +5,7 @@ import ConflictPanel from "./components/ConflictPanel.vue";
 import DeviceList from "./components/DeviceList.vue";
 import EffectPanel from "./components/EffectPanel.vue";
 import FanPanel from "./components/FanPanel.vue";
+import LcdPanel from "./components/LcdPanel.vue";
 import SettingsPanel from "./components/SettingsPanel.vue";
 import type {
   BackendStatus,
@@ -20,7 +21,7 @@ const backends = ref<BackendStatus[]>([]);
 const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false });
 const settings = ref<Settings | null>(null);
 const selectedId = ref<string | null>(null);
-const tab = ref<"rgb" | "fans" | "conflicts" | "settings">("rgb");
+const tab = ref<"rgb" | "fans" | "lcd" | "conflicts" | "settings">("rgb");
 const scanning = ref(false);
 const toast = ref("");
 const orgb = ref<OpenRgbStatus>({
@@ -43,6 +44,7 @@ const selected = computed(
 const fanDevices = computed(() =>
   devices.value.filter((d) => d.fan_channels.length > 0),
 );
+const lcdDevices = computed(() => devices.value.filter((d) => d.has_lcd));
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
 function showToast(msg: string) {
@@ -145,6 +147,9 @@ onMounted(async () => {
         <button :class="{ active: tab === 'fans' }" @click="tab = 'fans'">
           Ventilateurs
         </button>
+        <button v-if="lcdDevices.length" :class="{ active: tab === 'lcd' }" @click="tab = 'lcd'">
+          Écran LCD
+        </button>
         <button :class="{ active: tab === 'conflicts' }" @click="tab = 'conflicts'">
           Conflits<span v-if="activeConflicts > 0" class="badge">{{ activeConflicts }}</span>
         </button>
@@ -212,7 +217,14 @@ onMounted(async () => {
           @apply-all="onApplyAll"
         />
       </template>
-      <FanPanel v-else-if="tab === 'fans'" :devices="fanDevices" @toast="showToast" />
+      <FanPanel
+        v-else-if="tab === 'fans'"
+        :devices="fanDevices"
+        :settings="settings"
+        @toast="showToast"
+        @saved="loadSettings"
+      />
+      <LcdPanel v-else-if="tab === 'lcd'" :devices="lcdDevices" @toast="showToast" />
       <ConflictPanel
         v-else-if="tab === 'conflicts'"
         :conflicts="conflicts"

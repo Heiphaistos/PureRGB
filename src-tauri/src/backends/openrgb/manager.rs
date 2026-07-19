@@ -75,9 +75,13 @@ impl OpenRgbManager {
             exe.is_file() && exe.with_file_name("PawnIOLib.dll").is_file()
         };
         if let Some(res) = self.resource_dir.lock().clone() {
-            let exe = res.join("openrgb").join("OpenRGB.exe");
-            if ours_ok(&exe) {
-                return Some(exe);
+            // Selon le bundling, resource_dir() est le dossier d'install (les
+            // fichiers sont sous resources/) ou directement resources/.
+            for base in [res.join("resources"), res] {
+                let exe = base.join("openrgb").join("OpenRGB.exe");
+                if ours_ok(&exe) {
+                    return Some(exe);
+                }
             }
         }
         if let Some(app) = Self::appdata_dir() {
