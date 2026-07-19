@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { invoke } from "@tauri-apps/api/core";
 import { computed, reactive, ref, watch } from "vue";
 import type { Color, DeviceInfo, EffectConfig, EffectKind, ModeInfo } from "../types";
-import { colorToHex, EFFECT_LABELS, hexToColor } from "../types";
+import { colorToHex, EFFECT_LABELS, hexToColor, zoneResizable } from "../types";
 
 const props = defineProps<{
   device: DeviceInfo | null;
@@ -18,7 +19,42 @@ const emit = defineEmits<{
     direction: number | null,
     colors: Color[] | null,
   ];
+  toast: [msg: string];
+  refresh: [];
 }>();
+
+// --- Zones ARGB redimensionnables (ventilos/bandeaux sur connecteur carte
+// mère ou canal de hub : OpenRGB ne peut pas deviner le nombre de LEDs). ---
+const resizableZones = computed(() =>
+  (props.device?.zones ?? [])
+    .map((z, i) => ({ z, i }))
+    .filter(({ z }) => zoneResizable(z)),
+);
+const emptyResizable = computed(() =>
+  resizableZones.value.filter(({ z }) => z.led_count === 0),
+);
+const zoneSizeEdits = ref<Record<number, number>>({});
+const resizingZone = ref<number | null>(null);
+
+async function applyZoneSize(zoneIdx: number) {
+  if (!props.device) return;
+  const wanted = zoneSizeEdits.value[zoneIdx];
+  if (wanted === undefined) return;
+  resizingZone.value = zoneIdx;
+  try {
+    await invoke("resize_zone", {
+      deviceId: props.device.id,
+      zone: zoneIdx,
+      newSize: wanted,
+    });
+    emit("toast", `Zone « ${props.device.zones[zoneIdx]?.name} » : ${wanted} LED`);
+    emit("refresh");
+  } catch (e) {
+    emit("toast", `Redimensionnement : ${e}`);
+  } finally {
+    resizingZone.value = null;
+  }
+}
 
 // Cible : null = appareil entier, sinon index de zone.
 const targetZone = ref<number | null>(null);
@@ -108,6 +144,11 @@ watch(
   (id) => {
     targetZone.value = null;
     selectedMode.value = null;
+    zoneSizeEdits.value = Object.fromEntries(
+      (props.device?.zones ?? [])
+        .map((z, i) => [i, Math.max(z.led_count, z.leds_min)])
+        .filter((_, i) => zoneResizable(props.device!.zones[i])),
+    );
     if (!id) return;
     const saved = props.savedEffects[id];
     if (saved) {
@@ -165,6 +206,37 @@ function snapshot(): EffectConfig {
             {{ z.name }} ({{ z.led_count }} LED)
           </option>
         </select>
+      </div>
+
+      <div v-if="resizableZones.length" class="argb-box">
+        <p v-if="emptyResizable.length" class="argb-alert">
+          🌀 Des ventilateurs ou bandeaux ARGB branchés sur
+          {{ emptyResizable.map(({ z }) => `« ${z.name} »`).join(", ") }} ?
+          Ils sont invisibles tant que le nombre de LEDs est à 0 — indiquez-le
+          ci-dessous pour les allumer.
+        </p>
+        <details :open="emptyResizable.length > 0">
+          <summary>Connecteurs ARGB — nombre de LEDs branchées</summary>
+          <p class="argb-hint">
+            1 ventilateur ARGB ≈ 8 à 16 LED (voir sa fiche). Plusieurs
+            ventilateurs chaînés sur le même connecteur : additionnez.
+          </p>
+          <div v-for="{ z, i } in resizableZones" :key="i" class="argb-row">
+            <span class="argb-name">{{ z.name }} <em>({{ z.led_count }} LED)</em></span>
+            <input
+              type="number"
+              :min="z.leds_min"
+              :max="z.leds_max"
+              v-model.number="zoneSizeEdits[i]"
+            />
+            <button
+              :disabled="resizingZone !== null || zoneSizeEdits[i] === z.led_count"
+              @click="applyZoneSize(i)"
+            >
+              {{ resizingZone === i ? "…" : "Appliquer" }}
+            </button>
+          </div>
+        </details>
       </div>
 
       <div class="effects-grid">
@@ -395,6 +467,53 @@ function snapshot(): EffectConfig {
   align-items: center;
   gap: 10px;
   margin-top: 14px;
+}
+
+.argb-box {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+}
+
+.argb-alert {
+  color: var(--warn);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.argb-box summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.argb-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 8px 0;
+}
+
+.argb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.argb-name {
+  flex: 1;
+}
+
+.argb-name em {
+  color: var(--text-dim);
+  font-style: normal;
+}
+
+.argb-row input {
+  width: 90px;
 }
 
 .zone-row label {

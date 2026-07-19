@@ -26,6 +26,13 @@ export interface EffectConfig {
 export interface ZoneInfo {
   name: string;
   led_count: number;
+  zone_type: number;
+  leds_min: number;
+  leds_max: number;
+}
+
+export function zoneResizable(z: ZoneInfo): boolean {
+  return z.leds_min !== z.leds_max;
 }
 
 export interface FanChannel {
@@ -126,7 +133,53 @@ export interface Settings {
     { mode_index: number; speed: number | null; direction: number | null; colors: Color[] | null }
   >;
   autostart: boolean;
+  zone_sizes: Record<string, number>;
+  network_devices: NetworkDevice[];
 }
+
+export type NetworkDeviceKind =
+  | "hue"
+  | "nanoleaf"
+  | "yeelight"
+  | "lifx"
+  | "govee"
+  | "wiz"
+  | "elgato_key_light"
+  | "elgato_light_strip"
+  | "kasa"
+  | "e131";
+
+/// Union taguée alignée sur l'enum Rust NetworkDevice (tag "kind").
+export interface NetworkDevice {
+  kind: NetworkDeviceKind;
+  ip: string;
+  mac?: string;
+  entertainment?: boolean;
+  port?: number;
+  auth_token?: string;
+  music_mode?: boolean;
+  name?: string;
+  multizone?: boolean;
+  extended_multizone?: boolean;
+  num_leds?: number;
+  start_universe?: number;
+  start_channel?: number;
+  universe_size?: number;
+  keepalive_time?: number;
+}
+
+export const NETWORK_KIND_LABELS: Record<NetworkDeviceKind, string> = {
+  hue: "Philips Hue (pont)",
+  nanoleaf: "Nanoleaf (panneaux)",
+  yeelight: "Yeelight",
+  lifx: "LIFX",
+  govee: "Govee",
+  wiz: "Philips Wiz",
+  elgato_key_light: "Elgato Key Light",
+  elgato_light_strip: "Elgato Light Strip",
+  kasa: "TP-Link Kasa",
+  e131: "WLED / E1.31 (sACN)",
+};
 
 export interface OpenRgbStatus {
   exe_path: string | null;

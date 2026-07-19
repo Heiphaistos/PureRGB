@@ -13,6 +13,7 @@ pub const REQUEST_CONTROLLER_COUNT: u32 = 0;
 pub const REQUEST_CONTROLLER_DATA: u32 = 1;
 pub const REQUEST_PROTOCOL_VERSION: u32 = 40;
 pub const SET_CLIENT_NAME: u32 = 50;
+pub const RGBCONTROLLER_RESIZEZONE: u32 = 1000;
 pub const RGBCONTROLLER_UPDATELEDS: u32 = 1050;
 pub const RGBCONTROLLER_SETCUSTOMMODE: u32 = 1100;
 pub const RGBCONTROLLER_UPDATEMODE: u32 = 1101;
@@ -37,6 +38,15 @@ pub fn encode_update_leds(colors: &[crate::core::Color]) -> Vec<u8> {
     for c in colors {
         data.extend_from_slice(&[c.r, c.g, c.b, 0]);
     }
+    data
+}
+
+/// Payload ResizeZone : u32 index de zone + u32 nouvelle taille (pas de
+/// préfixe de taille, contrairement à UpdateLeds).
+pub fn encode_resize_zone(zone: u32, new_size: u32) -> [u8; 8] {
+    let mut data = [0u8; 8];
+    data[0..4].copy_from_slice(&zone.to_le_bytes());
+    data[4..8].copy_from_slice(&new_size.to_le_bytes());
     data
 }
 
@@ -186,15 +196,18 @@ pub fn parse_controller_data(buf: &[u8]) -> Result<ControllerData> {
     let mut zones = Vec::with_capacity(num_zones as usize);
     for _ in 0..num_zones {
         let zname = r.string().context("nom zone")?;
-        r.i32()?; // zone type
-        r.u32()?; // leds_min
-        r.u32()?; // leds_max
+        let zone_type = r.i32()?;
+        let leds_min = r.u32()?;
+        let leds_max = r.u32()?;
         let leds_count = r.u32()?;
         let matrix_len = r.u16()? as usize;
         r.skip(matrix_len)?;
         zones.push(ZoneInfo {
             name: zname,
             led_count: leds_count,
+            zone_type,
+            leds_min,
+            leds_max,
         });
     }
 
@@ -336,6 +349,28 @@ mod tests {
     fn truncated_buffer_errors_cleanly() {
         let buf = build_controller("X", "V", &[("Z", 4)], 4);
         assert!(parse_controller_data(&buf[..20]).is_err());
+    }
+
+    #[test]
+    fn zone_bounds_parsed() {
+        // build_controller écrit leds_min=0, leds_max=count : zone redimensionnable.
+        let buf = build_controller("Mobo", "V", &[("ARGB Header 1", 0)], 0);
+        let c = parse_controller_data(&buf).unwrap();
+        assert_eq!(c.zones[0].led_count, 0);
+        assert_eq!(c.zones[0].leds_min, 0);
+        assert!(!c.zones[0].resizable()); // min == max == 0
+
+        let buf = build_controller("Mobo", "V", &[("ARGB Header 1", 60)], 60);
+        let c = parse_controller_data(&buf).unwrap();
+        assert_eq!(c.zones[0].leds_max, 60);
+        assert!(c.zones[0].resizable());
+    }
+
+    #[test]
+    fn resize_zone_encoding() {
+        let data = encode_resize_zone(2, 34);
+        assert_eq!(u32::from_le_bytes(data[0..4].try_into().unwrap()), 2);
+        assert_eq!(u32::from_le_bytes(data[4..8].try_into().unwrap()), 34);
     }
 
     #[test]

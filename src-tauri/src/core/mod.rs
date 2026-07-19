@@ -118,6 +118,33 @@ impl DeviceType {
 pub struct ZoneInfo {
     pub name: String,
     pub led_count: u32,
+    /// Type OpenRGB : 0 = single, 1 = linear, 2 = matrix.
+    #[serde(default)]
+    pub zone_type: i32,
+    /// Bornes de redimensionnement. leds_min != leds_max = zone redimensionnable
+    /// (typiquement un connecteur ARGB de carte mère ou un canal de hub, où
+    /// OpenRGB ne peut pas deviner combien de LEDs sont branchées).
+    #[serde(default)]
+    pub leds_min: u32,
+    #[serde(default)]
+    pub leds_max: u32,
+}
+
+impl ZoneInfo {
+    /// Zone à taille fixe (drivers natifs : pas de redimensionnement).
+    pub fn fixed(name: impl Into<String>, led_count: u32) -> Self {
+        ZoneInfo {
+            name: name.into(),
+            led_count,
+            zone_type: 1,
+            leds_min: led_count,
+            leds_max: led_count,
+        }
+    }
+
+    pub fn resizable(&self) -> bool {
+        self.leds_min != self.leds_max
+    }
 }
 
 /// Flag OpenRGB : le mode accepte des couleurs choisies par l'utilisateur.

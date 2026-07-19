@@ -2,6 +2,7 @@ mod backends;
 mod conflicts;
 mod core;
 mod engine;
+mod netdev;
 mod sensors;
 mod settings;
 
@@ -44,12 +45,124 @@ struct ConflictReport {
     openrgb_running: bool,
 }
 
+/// Ré-applique les tailles de zones ARGB sauvegardées (clé nom appareil +
+/// nom zone : stable entre les redémarrages, contrairement à l'index).
+/// Retourne true si au moins un resize a été envoyé (=> re-scan nécessaire).
+fn apply_saved_zone_sizes(
+    reg: &mut crate::core::registry::DeviceRegistry,
+    sizes: &std::collections::HashMap<String, u32>,
+) -> bool {
+    if sizes.is_empty() {
+        return false;
+    }
+    let devices = reg.device_list();
+    let mut resized = false;
+    for d in devices.iter().filter(|d| d.backend == "openrgb") {
+        let Some(local) = d.id.strip_prefix("openrgb:") else {
+            continue;
+        };
+        for (z_idx, z) in d.zones.iter().enumerate() {
+            let key = format!("{}|{}", d.name, z.name);
+            let Some(&wanted) = sizes.get(&key) else {
+                continue;
+            };
+            if wanted == z.led_count || !z.resizable() {
+                continue;
+            }
+            let clamped = wanted.clamp(z.leds_min, z.leds_max);
+            for b in reg.backends_mut() {
+                if b.name() == "openrgb" {
+                    if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
+                        match orgb.resize_zone(local, z_idx as u32, clamped) {
+                            Ok(()) => resized = true,
+                            Err(e) => log::warn!("resize zone {key}: {e:#}"),
+                        }
+                    }
+                }
+            }
+        }
+    }
+    resized
+}
+
+/// Scan complet + ré-application des tailles de zones sauvegardées.
+fn scan_with_zone_sizes(
+    reg: &mut crate::core::registry::DeviceRegistry,
+    sizes: &std::collections::HashMap<String, u32>,
+) -> Vec<DeviceInfo> {
+    let devices = reg.scan_all();
+    if apply_saved_zone_sizes(reg, sizes) {
+        return reg.scan_all();
+    }
+    devices
+}
+
 #[tauri::command]
 fn scan_devices(state: State<AppState>) -> Vec<DeviceInfo> {
-    let devices = state.registry.lock().scan_all();
+    let sizes = state.settings.lock().zone_sizes.clone();
+    let devices = scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
     // Le matériel a pu être réinitialisé : forcer la ré-application des effets.
     state.engine.invalidate();
     devices
+}
+
+/// Redimensionne une zone ARGB (nombre de LEDs branchées sur un connecteur
+/// carte mère ou un canal de hub) et persiste le choix.
+#[tauri::command(async)]
+fn resize_zone(
+    state: State<AppState>,
+    device_id: String,
+    zone: u32,
+    new_size: u32,
+) -> Result<(), String> {
+    let (backend, local) = device_id
+        .split_once(':')
+        .ok_or_else(|| format!("id invalide: {device_id}"))?;
+    if backend != "openrgb" {
+        return Err("zones redimensionnables uniquement via OpenRGB".into());
+    }
+    let local = local.to_string();
+    let key = {
+        let reg = state.registry.lock();
+        let d = reg
+            .get(&device_id)
+            .ok_or_else(|| format!("appareil inconnu: {device_id}"))?;
+        let z = d
+            .zones
+            .get(zone as usize)
+            .ok_or_else(|| format!("zone {zone} inconnue"))?;
+        if !z.resizable() {
+            return Err(format!("la zone « {} » n'est pas redimensionnable", z.name));
+        }
+        if new_size < z.leds_min || new_size > z.leds_max {
+            return Err(format!(
+                "taille hors bornes ({}-{})",
+                z.leds_min, z.leds_max
+            ));
+        }
+        format!("{}|{}", d.name, z.name)
+    };
+    {
+        let mut reg = state.registry.lock();
+        let mut done = false;
+        for b in reg.backends_mut() {
+            if b.name() == "openrgb" {
+                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
+                    orgb.resize_zone(&local, zone, new_size)
+                        .map_err(|e| format!("{e:#}"))?;
+                    done = true;
+                }
+            }
+        }
+        if !done {
+            return Err("backend openrgb indisponible".into());
+        }
+        reg.scan_all();
+    }
+    state.engine.invalidate();
+    let mut s = state.settings.lock();
+    s.zone_sizes.insert(key, new_size);
+    settings::save(&s).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -275,7 +388,8 @@ fn openrgb_start(state: State<AppState>) -> Result<bool, String> {
         .ensure_running(&host, port)
         .map_err(|e| format!("{e:#}"))?;
     // Serveur prêt : re-scanner pour récupérer les contrôleurs.
-    state.registry.lock().scan_all();
+    let sizes = state.settings.lock().zone_sizes.clone();
+    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
     Ok(launched)
 }
 
@@ -297,9 +411,83 @@ fn openrgb_restart(state: State<AppState>) -> Result<bool, String> {
         .openrgb_mgr
         .ensure_running(&host, port)
         .map_err(|e| format!("{e:#}"))?;
-    state.registry.lock().scan_all();
+    let sizes = state.settings.lock().zone_sizes.clone();
+    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
     state.engine.invalidate();
     Ok(launched)
+}
+
+/// Synchronise les appareils réseau vers OpenRGB.json puis relance le
+/// serveur géré pour re-détecter (les détecteurs réseau ne lisent la config
+/// qu'au démarrage).
+fn netdev_sync_and_reload(state: &State<AppState>) -> Result<(), String> {
+    let (devices, host, port) = {
+        let s = state.settings.lock();
+        (s.network_devices.clone(), s.openrgb_host.clone(), s.openrgb_port)
+    };
+    let path = netdev::openrgb_config_path().map_err(|e| e.to_string())?;
+    netdev::sync_openrgb_config(&devices, &path).map_err(|e| format!("{e:#}"))?;
+    let status = state.openrgb_mgr.status(&host, port);
+    if status.managed {
+        state.openrgb_mgr.stop();
+        state
+            .openrgb_mgr
+            .ensure_running(&host, port)
+            .map_err(|e| format!("{e:#}"))?;
+    }
+    let sizes = state.settings.lock().zone_sizes.clone();
+    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
+    state.engine.invalidate();
+    Ok(())
+}
+
+#[tauri::command]
+fn netdev_list(state: State<AppState>) -> Vec<netdev::NetworkDevice> {
+    state.settings.lock().network_devices.clone()
+}
+
+/// Ajoute un appareil réseau, écrit la config OpenRGB et relance le serveur.
+#[tauri::command(async)]
+fn netdev_add(state: State<AppState>, device: netdev::NetworkDevice) -> Result<(), String> {
+    device.validate().map_err(|e| e.to_string())?;
+    {
+        let mut s = state.settings.lock();
+        // Doublon exact (même kind + même IP) : remplacer au lieu d'empiler.
+        s.network_devices.retain(|d| {
+            !(d.ip() == device.ip()
+                && std::mem::discriminant(d) == std::mem::discriminant(&device))
+        });
+        s.network_devices.push(device);
+        settings::save(&s).map_err(|e| e.to_string())?;
+    }
+    netdev_sync_and_reload(&state)
+}
+
+#[tauri::command(async)]
+fn netdev_remove(state: State<AppState>, index: usize) -> Result<(), String> {
+    {
+        let mut s = state.settings.lock();
+        if index >= s.network_devices.len() {
+            return Err("index invalide".into());
+        }
+        s.network_devices.remove(index);
+        settings::save(&s).map_err(|e| e.to_string())?;
+    }
+    netdev_sync_and_reload(&state)
+}
+
+/// Étape 1 de l'appairage Hue : récupère la MAC du pont. L'utilisateur doit
+/// ensuite appuyer sur le bouton du pont — OpenRGB crée le username au
+/// redémarrage suivant.
+#[tauri::command(async)]
+fn hue_pair(ip: String) -> Result<String, String> {
+    netdev::hue_fetch_mac(&ip).map_err(|e| format!("{e:#}"))
+}
+
+/// Appairage Nanoleaf : récupère l'auth_token (appareil en mode appairage).
+#[tauri::command(async)]
+fn nanoleaf_pair(ip: String, port: u16) -> Result<String, String> {
+    netdev::nanoleaf_request_token(&ip, port).map_err(|e| format!("{e:#}"))
 }
 
 /// Installe le driver PawnIO (SMBus : RAM, carte mère). Admin requis.
@@ -532,6 +720,18 @@ pub fn run() {
             .name("hw-init".into())
             .spawn(move || {
                 let _ = sensors_hub; // démarré dans setup() une fois resource_dir connu
+                // Config réseau à jour AVANT le démarrage du serveur : les
+                // détecteurs réseau ne lisent OpenRGB.json qu'au boot.
+                if !saved.network_devices.is_empty() {
+                    match netdev::openrgb_config_path() {
+                        Ok(path) => {
+                            if let Err(e) = netdev::sync_openrgb_config(&saved.network_devices, &path) {
+                                log::warn!("synchro appareils réseau: {e:#}");
+                            }
+                        }
+                        Err(e) => log::warn!("chemin OpenRGB.json: {e:#}"),
+                    }
+                }
                 if saved.auto_start_openrgb {
                     match mgr.ensure_running(&saved.openrgb_host, saved.openrgb_port) {
                         Ok(true) => log::info!("OpenRGB embarqué démarré"),
@@ -539,7 +739,7 @@ pub fn run() {
                         Err(e) => log::warn!("auto-start OpenRGB: {e:#}"),
                     }
                 }
-                registry.lock().scan_all();
+                scan_with_zone_sizes(&mut registry.lock(), &saved.zone_sizes);
                 restore_saved_state(&registry, &engine, &saved);
             })
             .expect("spawn hw-init");
@@ -655,7 +855,13 @@ pub fn run() {
             openrgb_restart,
             pawnio_install,
             get_settings,
-            update_settings
+            update_settings,
+            resize_zone,
+            netdev_list,
+            netdev_add,
+            netdev_remove,
+            hue_pair,
+            nanoleaf_pair
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");

@@ -2,7 +2,7 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.6.1-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.7.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 
@@ -11,7 +11,9 @@ Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/
 - **Gestion des conflits intégrée** (onglet Conflits) : stoppe et/ou désactive au démarrage les services et processus constructeur qui verrouillent le matériel (iCUE, CAM, Armoury Crate, Mystic Light, RGB Fusion, Synapse, G HUB, SignalRGB…), avec restauration en un clic (mode de démarrage d'origine sauvegardé).
 - **AIO, pompes et hubs via [liquidctl](https://github.com/liquidctl/liquidctl)** (binaire GPLv3 séparé, épinglé) : Kraken, Hydro, Smart Device, Commander — vitesses ventilateurs/pompe, et **écran LCD des Kraken Z / 2023** (température du liquide, image fixe, GIF animé, luminosité, orientation).
 - **Capteurs température/charge via LibreHardwareMonitor** (sidecar MPL 2.0) et **courbes ventilateurs automatiques** : points température → vitesse, capteur au choix (CPU, GPU, liquide…), hystérésis anti-usure, persistées et restaurées au démarrage.
-- **Appareils réseau via OpenRGB** : Philips Hue, Nanoleaf, Yeelight, WLED (à configurer dans OpenRGB).
+- **Maison connectée intégrée** (onglet dédié) : ampoules, bandeaux et panneaux Wi-Fi pilotés comme n'importe quel appareil — Philips Hue (appairage du pont intégré), Nanoleaf (obtention du token intégrée), Yeelight, LIFX, Govee (API LAN), Philips Wiz, Elgato Key Light / Light Strip, TP-Link Kasa, WLED et tout récepteur E1.31/sACN. PureRGB écrit la configuration OpenRGB et redémarre le serveur automatiquement.
+- **Connecteurs ARGB redimensionnables** : les ventilateurs/bandeaux branchés sur les headers ARGB de la carte mère ou sur un hub apparaissent dès qu'on indique le nombre de LEDs (bornes proposées, choix persistant et ré-appliqué à chaque démarrage) — sans ça OpenRGB les laisse invisibles à 0 LED.
+- **24 thèmes prédéfinis** (onglet Thèmes) : Cyberpunk, Océan, Lave, Aurore boréale, Matrix, Halloween, Noël… appliqués à tous les appareils en un clic.
 - **Modes matériels natifs** : chaque appareil OpenRGB expose ses modes firmware (Rainbow, Breathing, Spectrum…) avec tous leurs paramètres — vitesse, direction, couleurs — réglables et persistants même app fermée.
 - **Effets par zone** : cibler une zone précise (barre ARGB, anneau, dessus/dessous…) avec superposition sur l'effet global.
 - **Profils** : export/import JSON de la configuration complète (effets, zones, modes matériels, courbes, réglages).
