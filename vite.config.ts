@@ -10,6 +10,7 @@ export default defineConfig({
   },
   build: {
     target: "chrome110",
-    minify: "esbuild",
+    // vite 8 (rolldown) : minification oxc intégrée, esbuild retiré
+    minify: true,
   },
 });
