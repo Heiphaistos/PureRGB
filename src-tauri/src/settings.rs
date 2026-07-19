@@ -28,6 +28,11 @@ pub struct Settings {
     pub hw_modes: HashMap<String, SavedHwMode>,
     /// Lancement au démarrage de Windows (tâche planifiée, sans UAC).
     pub autostart: bool,
+    /// Tailles de zones ARGB choisies : "<nom appareil>|<nom zone>" → nb LEDs.
+    /// Ré-appliquées après chaque scan (OpenRGB repart à 0 via le SDK).
+    pub zone_sizes: HashMap<String, u32>,
+    /// Appareils réseau / maison connectée, synchronisés vers OpenRGB.json.
+    pub network_devices: Vec<crate::netdev::NetworkDevice>,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -53,6 +58,8 @@ impl Default for Settings {
             curves: CurveMap::new(),
             hw_modes: HashMap::new(),
             autostart: false,
+            zone_sizes: HashMap::new(),
+            network_devices: Vec::new(),
         }
     }
 }

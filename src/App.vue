@@ -7,6 +7,8 @@ import EffectPanel from "./components/EffectPanel.vue";
 import FanPanel from "./components/FanPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
 import SettingsPanel from "./components/SettingsPanel.vue";
+import SmartPanel from "./components/SmartPanel.vue";
+import ThemePanel from "./components/ThemePanel.vue";
 import type {
   BackendStatus,
   ConflictReport,
@@ -21,7 +23,7 @@ const backends = ref<BackendStatus[]>([]);
 const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false });
 const settings = ref<Settings | null>(null);
 const selectedId = ref<string | null>(null);
-const tab = ref<"rgb" | "fans" | "lcd" | "conflicts" | "settings">("rgb");
+const tab = ref<"rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings">("rgb");
 const scanning = ref(false);
 const toast = ref("");
 const orgb = ref<OpenRgbStatus>({
@@ -161,6 +163,12 @@ onMounted(async () => {
         <button :class="{ active: tab === 'rgb' }" @click="tab = 'rgb'">
           Éclairage
         </button>
+        <button :class="{ active: tab === 'themes' }" @click="tab = 'themes'">
+          Thèmes
+        </button>
+        <button :class="{ active: tab === 'smart' }" @click="tab = 'smart'">
+          Maison connectée
+        </button>
         <button :class="{ active: tab === 'fans' }" @click="tab = 'fans'">
           Ventilateurs
         </button>
@@ -233,8 +241,12 @@ onMounted(async () => {
           @apply="onApplyEffect"
           @apply-all="onApplyAll"
           @apply-mode="onApplyMode"
+          @toast="showToast"
+          @refresh="refresh"
         />
       </template>
+      <ThemePanel v-else-if="tab === 'themes'" @apply-all="onApplyAll" />
+      <SmartPanel v-else-if="tab === 'smart'" @toast="showToast" @refresh="refresh" />
       <FanPanel
         v-else-if="tab === 'fans'"
         :devices="fanDevices"

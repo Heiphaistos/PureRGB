@@ -86,6 +86,24 @@ impl OpenRgbBackend {
         Ok(())
     }
 
+    /// Redimensionne une zone ARGB (connecteur carte mère, canal de hub) au
+    /// nombre de LEDs réellement branchées. Sans ça, OpenRGB laisse la zone
+    /// à 0 LED et les ventilateurs/bandeaux branchés dessus restent invisibles.
+    pub fn resize_zone(&mut self, local_id: &str, zone_idx: u32, new_size: u32) -> Result<()> {
+        let idx: u32 = local_id.parse().context("id OpenRGB invalide")?;
+        self.connect()?;
+        let payload = p::encode_resize_zone(zone_idx, new_size);
+        self.send(idx, p::RGBCONTROLLER_RESIZEZONE, &payload)?;
+        // Le nombre total de LEDs du contrôleur a changé : invalider le cache
+        // pour que set_colors retaille correctement au prochain envoi.
+        if let Ok(c) = self.controller_data(idx) {
+            if let Some(n) = self.led_counts.get_mut(idx as usize) {
+                *n = c.led_count;
+            }
+        }
+        Ok(())
+    }
+
     pub fn set_endpoint(&mut self, host: String, port: u16) {
         self.host = host;
         self.port = port;

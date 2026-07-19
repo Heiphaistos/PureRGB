@@ -133,8 +133,8 @@ impl Backend for HidBackend {
             let (zones, led_count, fan_channels, controllable, note) = match driver {
                 Some(NativeDriver::CorsairLightingNode) => (
                     vec![
-                        ZoneInfo { name: "Canal 1".into(), led_count: CORSAIR_NODE_LEDS_PER_CHANNEL },
-                        ZoneInfo { name: "Canal 2".into(), led_count: CORSAIR_NODE_LEDS_PER_CHANNEL },
+                        ZoneInfo::fixed("Canal 1", CORSAIR_NODE_LEDS_PER_CHANNEL),
+                        ZoneInfo::fixed("Canal 2", CORSAIR_NODE_LEDS_PER_CHANNEL),
                     ],
                     CORSAIR_NODE_LEDS_PER_CHANNEL * 2,
                     Vec::new(),
@@ -147,8 +147,8 @@ impl Backend for HidBackend {
                 ),
                 Some(NativeDriver::NzxtHue2) => (
                     vec![
-                        ZoneInfo { name: "LED 1".into(), led_count: NZXT_HUE2_LEDS_PER_CHANNEL },
-                        ZoneInfo { name: "LED 2".into(), led_count: NZXT_HUE2_LEDS_PER_CHANNEL },
+                        ZoneInfo::fixed("LED 1", NZXT_HUE2_LEDS_PER_CHANNEL),
+                        ZoneInfo::fixed("LED 2", NZXT_HUE2_LEDS_PER_CHANNEL),
                     ],
                     NZXT_HUE2_LEDS_PER_CHANNEL * 2,
                     (0..3)
