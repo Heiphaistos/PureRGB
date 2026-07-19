@@ -2,11 +2,13 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.3.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.4.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 
-- **900+ appareils** via [OpenRGB](https://openrgb.org) **embarqué** : l'installeur inclut OpenRGB 0.9, démarré automatiquement en arrière-plan (serveur SDK, port 6742). L'exe portable le télécharge au premier besoin (release officielle, SHA-256 vérifié). Un OpenRGB déjà lancé est réutilisé, jamais doublé.
+- **900+ appareils** via [OpenRGB](https://openrgb.org) **embarqué** : l'installeur inclut OpenRGB **1.0rc3** (support matériel 2024-2026 : Corsair iCUE Link, contrôleurs récents…), démarré automatiquement en arrière-plan (serveur SDK, port 6742). L'exe portable le télécharge au premier besoin (release officielle, SHA-256 vérifié). Un OpenRGB déjà lancé est réutilisé, jamais doublé.
+- **RAM et carte mère** : PureRGB s'exécute en administrateur et installe le driver signé [PawnIO](https://pawnio.eu) (SHA-256 vérifié) — indispensable à l'accès SMBus qu'OpenRGB 1.0rc utilise pour la RAM RGB et de nombreuses cartes mères.
+- **Gestion des conflits intégrée** (onglet Conflits) : stoppe et/ou désactive au démarrage les services et processus constructeur qui verrouillent le matériel (iCUE, CAM, Armoury Crate, Mystic Light, RGB Fusion, Synapse, G HUB, SignalRGB…), avec restauration en un clic (mode de démarrage d'origine sauvegardé).
 - **Drivers natifs expérimentaux** (USB direct, sans OpenRGB) :
   - Corsair Lighting Node Pro / Core (LED)
   - NZXT HUE 2, Smart Device V2, RGB & Fan Controller (LED + **ventilateurs PWM**)
@@ -23,8 +25,10 @@ Deux formats dans les [Releases](../../releases) :
 
 | Fichier | Usage |
 |---|---|
-| `PureRGB_x.y.z_x64-setup.exe` | Installeur NSIS (par utilisateur, sans admin) |
+| `PureRGB_x.y.z_x64-setup.exe` | Installeur NSIS (par utilisateur) |
 | `PureRGB.exe` | Portable — un seul fichier, aucune installation |
+
+L'application demande les droits **administrateur** au lancement (UAC) : requis pour l'accès SMBus (RAM, carte mère) et la gestion des services en conflit.
 
 ## Démarrage rapide
 

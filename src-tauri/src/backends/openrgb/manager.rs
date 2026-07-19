@@ -18,8 +18,13 @@ use std::process::{Child, Command};
 use std::time::{Duration, Instant};
 
 const OPENRGB_URL: &str =
-    "https://openrgb.org/releases/release_0.9/OpenRGB_0.9_Windows_64_b5f46e3.zip";
-const OPENRGB_SHA256: &str = "4a42df973bf9e0694268993478f03a71dafbf2ddbcb1512835b4bbabdc6dc6de";
+    "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc3/OpenRGB_1.0rc3_Windows_64_6fbcf62.zip";
+const OPENRGB_SHA256: &str = "a6bb0fbcb7b6eb84214287e3808fadae2777c902efb3dd6cd1e2976f14271c8c";
+/// PawnIO : driver noyau signé requis par OpenRGB 1.0rc pour l'accès SMBus
+/// (RAM RGB, cartes mères). Installé une fois au niveau système.
+const PAWNIO_URL: &str =
+    "https://github.com/namazso/PawnIO.Setup/releases/download/2.2.0/PawnIO_setup.exe";
+const PAWNIO_SHA256: &str = "1f519a22e47187f70a1379a48ca604981c4fcf694f4e65b734aaa74a9fba3032";
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 #[derive(Debug, Clone, Serialize)]
@@ -30,6 +35,12 @@ pub struct OpenRgbStatus {
     pub server_reachable: bool,
     /// true si le processus a été lancé par PureRGB.
     pub managed: bool,
+    /// true si le service driver PawnIO est enregistré.
+    pub pawnio_installed: bool,
+    /// true si le device \\.\PawnIO répond — seule preuve fiable : le devnode
+    /// PnP peut manquer même service enregistré (SwDeviceCreate asynchrone du
+    /// setup, parfois incomplet en install silencieuse).
+    pub pawnio_ready: bool,
 }
 
 pub struct OpenRgbManager {
@@ -55,14 +66,27 @@ impl OpenRgbManager {
     }
 
     /// Cherche OpenRGB.exe sans rien installer.
+    /// Nos copies (ressources, APPDATA) doivent être en 1.0rc (PawnIOLib.dll
+    /// présente) — une 0.9 restée d'une version précédente est ignorée pour
+    /// déclencher la réinstallation. Les installations de l'utilisateur sont
+    /// acceptées telles quelles.
     pub fn locate(&self) -> Option<PathBuf> {
-        let mut candidates: Vec<PathBuf> = Vec::new();
+        let ours_ok = |exe: &PathBuf| {
+            exe.is_file() && exe.with_file_name("PawnIOLib.dll").is_file()
+        };
         if let Some(res) = self.resource_dir.lock().clone() {
-            candidates.push(res.join("openrgb").join("OpenRGB.exe"));
+            let exe = res.join("openrgb").join("OpenRGB.exe");
+            if ours_ok(&exe) {
+                return Some(exe);
+            }
         }
         if let Some(app) = Self::appdata_dir() {
-            candidates.push(app.join("OpenRGB.exe"));
+            let exe = app.join("OpenRGB.exe");
+            if ours_ok(&exe) {
+                return Some(exe);
+            }
         }
+        let mut candidates: Vec<PathBuf> = Vec::new();
         for base in ["ProgramFiles", "ProgramFiles(x86)", "LocalAppData"] {
             if let Some(p) = std::env::var_os(base) {
                 candidates.push(PathBuf::from(&p).join("OpenRGB").join("OpenRGB.exe"));
@@ -90,13 +114,101 @@ impl OpenRgbManager {
             exe_path: self.locate().map(|p| p.display().to_string()),
             server_reachable: Self::server_reachable(host, port),
             managed: self.child.lock().is_some(),
+            pawnio_installed: Self::pawnio_installed(),
+            pawnio_ready: Self::pawnio_ready(),
         }
+    }
+
+    /// Le driver PawnIO est enregistré comme service noyau `PawnIO`.
+    pub fn pawnio_installed() -> bool {
+        Command::new("sc.exe")
+            .args(["query", "PawnIO"])
+            .creation_flags_no_window()
+            .output()
+            .map(|o| o.status.success())
+            .unwrap_or(false)
+    }
+
+    /// Le device est réellement utilisable (devnode PnP présent, driver chargé).
+    pub fn pawnio_ready() -> bool {
+        std::fs::OpenOptions::new()
+            .read(true)
+            .open(r"\\.\PawnIO")
+            .is_ok()
+    }
+
+    /// Télécharge (SHA-256 pinné) puis installe PawnIO en silencieux.
+    /// Ré-exécute le setup si le device manque (répare un devnode absent —
+    /// cas observé après une première install silencieuse).
+    /// Nécessite les droits administrateur (PureRGB les demande au lancement).
+    pub fn pawnio_install() -> Result<()> {
+        if Self::pawnio_ready() {
+            return Ok(());
+        }
+        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        std::fs::create_dir_all(&dir)?;
+        let setup = dir.join("PawnIO_setup.exe");
+        let script = format!(
+            "$ProgressPreference='SilentlyContinue'; \
+             Invoke-WebRequest -Uri '{url}' -OutFile '{exe}' -UseBasicParsing; \
+             $h = (Get-FileHash '{exe}' -Algorithm SHA256).Hash.ToLower(); \
+             if ($h -ne '{sha}') {{ Remove-Item '{exe}' -Force; throw \"hash mismatch: $h\" }}",
+            url = PAWNIO_URL,
+            exe = setup.display(),
+            sha = PAWNIO_SHA256,
+        );
+        let output = Command::new("powershell.exe")
+            .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+            .creation_flags_no_window()
+            .output()
+            .context("téléchargement PawnIO")?;
+        if !output.status.success() {
+            bail!(
+                "téléchargement PawnIO échoué: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+        // Jusqu'à 2 passes : la création du devnode (SwDeviceCreate) est
+        // asynchrone et échoue parfois à la première install silencieuse ;
+        // relancer le setup (uninstallPrevious + install) la répare.
+        let mut last_err = String::new();
+        for attempt in 1..=2u8 {
+            let status = Command::new(&setup)
+                .args(["-install", "-silent"])
+                .creation_flags_no_window()
+                .status()
+                .context("lancement PawnIO_setup.exe")?;
+            if !status.success() {
+                last_err = format!("setup code {status}");
+                continue;
+            }
+            // Laisser le temps au devnode d'apparaître.
+            let deadline = Instant::now() + Duration::from_secs(5);
+            while Instant::now() < deadline {
+                if Self::pawnio_ready() {
+                    let _ = std::fs::remove_file(&setup);
+                    log::info!("PawnIO opérationnel (tentative {attempt})");
+                    return Ok(());
+                }
+                std::thread::sleep(Duration::from_millis(500));
+            }
+            last_err = "device \\\\.\\PawnIO absent".into();
+        }
+        let _ = std::fs::remove_file(&setup);
+        bail!(
+            "PawnIO installé mais device inactif ({last_err}) — un redémarrage \
+             de Windows peut être nécessaire"
+        );
     }
 
     /// Installe OpenRGB dans %APPDATA%\PureRGB\openrgb (téléchargement officiel
     /// + vérification SHA-256 + extraction). Utilisé par l'exe portable.
     pub fn install(&self) -> Result<PathBuf> {
         let target = Self::appdata_dir().context("APPDATA introuvable")?;
+        // Purger une ancienne version (0.9 sans PawnIOLib.dll) avant extraction.
+        if target.join("OpenRGB.exe").is_file() && !target.join("PawnIOLib.dll").is_file() {
+            let _ = std::fs::remove_dir_all(&target);
+        }
         std::fs::create_dir_all(&target)?;
         let zip_path = target.join("openrgb_download.zip");
 
@@ -188,6 +300,12 @@ impl OpenRgbManager {
             Some(e) => e,
             None => self.install().context("installation OpenRGB")?,
         };
+        // Best-effort : sans PawnIO actif, OpenRGB démarre mais ignore RAM/carte mère.
+        if !Self::pawnio_ready() {
+            if let Err(e) = Self::pawnio_install() {
+                log::warn!("installation PawnIO: {e:#} — RAM et carte mère non détectables");
+            }
+        }
         let child = Command::new(&exe)
             .args([
                 "--server",

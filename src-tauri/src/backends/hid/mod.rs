@@ -171,7 +171,10 @@ impl Backend for HidBackend {
                     0,
                     Vec::new(),
                     false,
-                    "détecté — pilotable via OpenRGB".to_string(),
+                    "vu en USB (info) — s'il n'apparaît pas aussi côté OpenRGB : \
+                     logiciel constructeur en conflit (onglet Conflits), droits admin \
+                     ou matériel non supporté"
+                        .to_string(),
                 ),
             };
 

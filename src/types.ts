@@ -53,10 +53,20 @@ export interface BackendStatus {
   available: boolean;
 }
 
-export interface ConflictingSoftware {
+export interface ServiceInfo {
   name: string;
-  process: string;
+  display_name: string;
+  state: string;
+  start_mode: string;
+}
+
+export interface ConflictingSoftware {
+  family: string;
+  name: string;
+  processes: string[];
+  services: ServiceInfo[];
   affects: string[];
+  active: boolean;
 }
 
 export interface ConflictReport {
@@ -72,12 +82,15 @@ export interface Settings {
   fps: number;
   start_minimized: boolean;
   effects: Record<string, EffectConfig>;
+  disabled_services: Record<string, string>;
 }
 
 export interface OpenRgbStatus {
   exe_path: string | null;
   server_reachable: boolean;
   managed: boolean;
+  pawnio_installed: boolean;
+  pawnio_ready: boolean;
 }
 
 export const EFFECT_LABELS: Record<EffectKind, string> = {

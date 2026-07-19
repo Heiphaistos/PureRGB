@@ -33,6 +33,7 @@ impl DeviceRegistry {
             let bname = backend.name();
             match backend.scan() {
                 Ok(devs) => {
+                    log::info!("scan backend {bname}: {} appareil(s)", devs.len());
                     for mut d in devs {
                         d.backend = bname.to_string();
                         d.id = format!("{}:{}", bname, d.id);

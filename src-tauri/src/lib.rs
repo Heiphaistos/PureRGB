@@ -143,13 +143,64 @@ fn openrgb_stop(state: State<AppState>) {
     state.openrgb_mgr.stop();
 }
 
-#[tauri::command]
+/// Redémarre l'OpenRGB géré (après arrêt d'un logiciel en conflit, les
+/// contrôleurs libérés ne sont vus qu'après une nouvelle détection).
+#[tauri::command(async)]
+fn openrgb_restart(state: State<AppState>) -> Result<bool, String> {
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    state.openrgb_mgr.stop();
+    let launched = state
+        .openrgb_mgr
+        .ensure_running(&host, port)
+        .map_err(|e| format!("{e:#}"))?;
+    state.registry.lock().scan_all();
+    state.engine.invalidate();
+    Ok(launched)
+}
+
+/// Installe le driver PawnIO (SMBus : RAM, carte mère). Admin requis.
+#[tauri::command(async)]
+fn pawnio_install() -> Result<(), String> {
+    OpenRgbManager::pawnio_install().map_err(|e| format!("{e:#}"))
+}
+
+/// Énumère processus ET services : passe par PowerShell, donc async.
+#[tauri::command(async)]
 fn check_conflicts() -> ConflictReport {
     let (conflicts, openrgb_running) = conflicts::scan();
     ConflictReport {
         conflicts,
         openrgb_running,
     }
+}
+
+/// Stoppe une famille de logiciels en conflit (services + processus).
+/// `disable` : désactive aussi le démarrage automatique des services
+/// (mode d'origine sauvegardé pour `conflict_restore`).
+#[tauri::command(async)]
+fn conflict_stop(state: State<AppState>, family: String, disable: bool) -> Result<(), String> {
+    let modes = conflicts::stop_family(&family, disable).map_err(|e| format!("{e:#}"))?;
+    if !modes.is_empty() {
+        let mut s = state.settings.lock();
+        s.disabled_services.extend(modes);
+        settings::save(&s).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+/// Réactive une famille : StartupType restauré + services relancés.
+#[tauri::command(async)]
+fn conflict_restore(state: State<AppState>, family: String) -> Result<(), String> {
+    let saved = state.settings.lock().disabled_services.clone();
+    let restored = conflicts::restore_family(&family, &saved).map_err(|e| format!("{e:#}"))?;
+    let mut s = state.settings.lock();
+    for name in restored {
+        s.disabled_services.remove(&name);
+    }
+    settings::save(&s).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -318,9 +369,13 @@ pub fn run() {
             apply_effect_all,
             set_fan_duty,
             check_conflicts,
+            conflict_stop,
+            conflict_restore,
             openrgb_status,
             openrgb_start,
             openrgb_stop,
+            openrgb_restart,
+            pawnio_install,
             get_settings,
             update_settings
         ])

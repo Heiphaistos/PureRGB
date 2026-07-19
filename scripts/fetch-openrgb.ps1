@@ -1,18 +1,20 @@
-# Télécharge OpenRGB 0.9 portable dans src-tauri/resources/openrgb/
+# Télécharge OpenRGB 1.0rc3 portable dans src-tauri/resources/openrgb/
 # (embarqué ensuite dans l'installeur NSIS par tauri build).
 # Vérifie le SHA-256 officiel avant extraction.
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$url = "https://openrgb.org/releases/release_0.9/OpenRGB_0.9_Windows_64_b5f46e3.zip"
-$sha = "4A42DF973BF9E0694268993478F03A71DAFBF2DDBCB1512835B4BBABDC6DC6DE"
+$url = "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc3/OpenRGB_1.0rc3_Windows_64_6fbcf62.zip"
+$sha = "A6BB0FBCB7B6EB84214287E3808FADAE2777C902EFB3DD6CD1E2976F14271C8C"
 $root = Split-Path $PSScriptRoot -Parent
 $dest = Join-Path $root "src-tauri\resources\openrgb"
 
-if (Test-Path (Join-Path $dest "OpenRGB.exe")) {
+# PawnIOLib.dll n'existe que depuis 1.0rc : son absence = ancienne version 0.9 a purger.
+if ((Test-Path (Join-Path $dest "OpenRGB.exe")) -and (Test-Path (Join-Path $dest "PawnIOLib.dll"))) {
     Write-Host "OpenRGB deja present: $dest"
     exit 0
 }
+if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
 
 $zip = Join-Path $env:TEMP "openrgb_fetch.zip"
 $tmp = Join-Path $env:TEMP "openrgb_fetch"

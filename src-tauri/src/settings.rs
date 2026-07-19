@@ -18,6 +18,9 @@ pub struct Settings {
     pub start_minimized: bool,
     /// Effets par appareil, restaurés au démarrage.
     pub effects: HashMap<String, EffectConfig>,
+    /// Services constructeur désactivés par PureRGB : nom service → mode de
+    /// démarrage d'origine (Auto/Manual), pour pouvoir les réactiver à l'identique.
+    pub disabled_services: HashMap<String, String>,
 }
 
 impl Default for Settings {
@@ -30,6 +33,7 @@ impl Default for Settings {
             fps: 30,
             start_minimized: false,
             effects: HashMap::new(),
+            disabled_services: HashMap::new(),
         }
     }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, ref } from "vue";
+import ConflictPanel from "./components/ConflictPanel.vue";
 import DeviceList from "./components/DeviceList.vue";
 import EffectPanel from "./components/EffectPanel.vue";
 import FanPanel from "./components/FanPanel.vue";
@@ -19,11 +20,22 @@ const backends = ref<BackendStatus[]>([]);
 const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false });
 const settings = ref<Settings | null>(null);
 const selectedId = ref<string | null>(null);
-const tab = ref<"rgb" | "fans" | "settings">("rgb");
+const tab = ref<"rgb" | "fans" | "conflicts" | "settings">("rgb");
 const scanning = ref(false);
 const toast = ref("");
-const orgb = ref<OpenRgbStatus>({ exe_path: null, server_reachable: false, managed: false });
+const orgb = ref<OpenRgbStatus>({
+  exe_path: null,
+  server_reachable: false,
+  managed: false,
+  pawnio_installed: true,
+  pawnio_ready: true,
+});
 const orgbStarting = ref(false);
+const pawnioInstalling = ref(false);
+
+const activeConflicts = computed(
+  () => conflicts.value.conflicts.filter((c) => c.active).length,
+);
 
 const selected = computed(
   () => devices.value.find((d) => d.id === selectedId.value) ?? null,
@@ -78,6 +90,22 @@ async function onApplyAll(config: EffectConfig) {
   }
 }
 
+async function installPawnio() {
+  pawnioInstalling.value = true;
+  try {
+    await invoke("pawnio_install");
+    showToast("PawnIO installé — redémarrage d'OpenRGB…");
+    if (orgb.value.managed) {
+      await invoke("openrgb_restart");
+    }
+    await refresh();
+  } catch (e) {
+    showToast(`PawnIO : ${e}`);
+  } finally {
+    pawnioInstalling.value = false;
+  }
+}
+
 async function startOpenRgb() {
   orgbStarting.value = true;
   try {
@@ -117,6 +145,9 @@ onMounted(async () => {
         <button :class="{ active: tab === 'fans' }" @click="tab = 'fans'">
           Ventilateurs
         </button>
+        <button :class="{ active: tab === 'conflicts' }" @click="tab = 'conflicts'">
+          Conflits<span v-if="activeConflicts > 0" class="badge">{{ activeConflicts }}</span>
+        </button>
         <button :class="{ active: tab === 'settings' }" @click="tab = 'settings'">
           Réglages
         </button>
@@ -137,10 +168,25 @@ onMounted(async () => {
       </div>
     </header>
 
-    <div v-if="conflicts.conflicts.length > 0" class="conflict-banner">
-      ⚠️ Logiciels RGB actifs détectés :
-      <strong>{{ conflicts.conflicts.map((c) => c.name).join(", ") }}</strong>
-      — risque de conflit d'accès au matériel. Fermez-les pour un contrôle fiable.
+    <div v-if="activeConflicts > 0" class="conflict-banner">
+      <span>
+        ⚠️ Logiciels RGB actifs :
+        <strong>{{ conflicts.conflicts.filter((c) => c.active).map((c) => c.name).join(", ") }}</strong>
+        — ils masquent des appareils à OpenRGB.
+      </span>
+      <button @click="tab = 'conflicts'">Gérer les conflits</button>
+    </div>
+    <div
+      v-if="orgb.server_reachable && !orgb.pawnio_ready"
+      class="info-banner"
+    >
+      <span>
+        Driver PawnIO {{ orgb.pawnio_installed ? "inactif" : "absent" }} — la RAM
+        et la carte mère ne peuvent pas être détectées sans lui (accès SMBus).
+      </span>
+      <button class="primary" :disabled="pawnioInstalling" @click="installPawnio">
+        {{ pawnioInstalling ? "Installation..." : orgb.pawnio_installed ? "Réparer PawnIO" : "Installer PawnIO" }}
+      </button>
     </div>
     <div v-if="!orgb.server_reachable" class="info-banner">
       <span>
@@ -167,6 +213,13 @@ onMounted(async () => {
         />
       </template>
       <FanPanel v-else-if="tab === 'fans'" :devices="fanDevices" @toast="showToast" />
+      <ConflictPanel
+        v-else-if="tab === 'conflicts'"
+        :conflicts="conflicts"
+        :openrgb-managed="orgb.managed"
+        @refresh="refresh"
+        @toast="showToast"
+      />
       <SettingsPanel
         v-else
         :settings="settings"
@@ -258,6 +311,23 @@ onMounted(async () => {
   color: var(--warn);
   padding: 9px 18px;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--warn);
+  color: #1a1206;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .info-banner {
