@@ -127,8 +127,43 @@ const FAMILIES: &[Family] = &[
         key: "coolermaster",
         name: "Cooler Master MasterPlus",
         affects: &["Cooler Master"],
-        processes: &["masterplus.exe"],
+        processes: &["masterplus.exe", "masterplus+.exe", "renew.exe", "cmheadsetcontrol.exe"],
         service_keywords: &["masterplus", "cooler master"],
+    },
+    Family {
+        key: "asrock",
+        name: "ASRock Polychrome Sync",
+        affects: &["ASRock"],
+        processes: &["asrpolychromesync.exe", "polychromerc.exe", "polychromesync.exe"],
+        service_keywords: &["polychrome"],
+    },
+    Family {
+        key: "adata_xpg",
+        name: "ADATA XPG RGB Sync / Prime",
+        affects: &["ADATA", "XFX"],
+        processes: &["xpgprimeapp.exe", "xpg rgb sync.exe", "rgbsync.exe", "adataxpgapp.exe"],
+        service_keywords: &["xpg", "adata"],
+    },
+    Family {
+        key: "hyperx",
+        name: "HyperX NGENUITY",
+        affects: &["HyperX"],
+        processes: &["ngenuity.exe", "hyperx ngenuity.exe"],
+        service_keywords: &["ngenuity", "hyperx"],
+    },
+    Family {
+        key: "deepcool",
+        name: "DeepCool logiciel RGB",
+        affects: &["DeepCool"],
+        processes: &["deepcoolrgb.exe", "gamerstorm.exe", "deepcoolportal.exe"],
+        service_keywords: &["deepcool", "gamerstorm"],
+    },
+    Family {
+        key: "cougar",
+        name: "Cougar UIX",
+        affects: &["Cougar"],
+        processes: &["cougaruix.exe", "cougarcore.exe"],
+        service_keywords: &["cougar"],
     },
     Family {
         key: "signalrgb",
@@ -264,9 +299,93 @@ pub fn scan() -> (Vec<ConflictingSoftware>, bool) {
     (found, openrgb_running(&sys))
 }
 
+/// Neutralise les actions de reprise Windows sur un service (Auto-Restart) :
+/// sans ça, tuer un service marqué "redémarrer en cas d'échec" le fait
+/// revenir tout seul quelques secondes après (cause vue chez Corsair.Service).
+fn reset_service_recovery(service_name: &str) {
+    let mut cmd = Command::new("sc.exe");
+    cmd.args([
+        "failure",
+        service_name,
+        "reset=",
+        "0",
+        "actions=",
+        "",
+    ]);
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+    if let Ok(out) = cmd.output() {
+        if !out.status.success() {
+            log::debug!(
+                "sc failure {service_name}: {}",
+                String::from_utf8_lossy(&out.stderr).trim()
+            );
+        }
+    }
+}
+
+/// Désactive les tâches planifiées dont le nom ou l'action correspond aux
+/// mots-clés de la famille — deuxième vecteur de relance après les services
+/// (Corsair, ASUS et NZXT créent des tâches ONLOGON pour leur UI).
+fn disable_matching_tasks(fam: &Family) -> Vec<String> {
+    let script = "Get-ScheduledTask | Select-Object TaskName,TaskPath,State,\
+        @{n='Actions';e={($_.Actions | ForEach-Object { $_.Execute }) -join ';'}} \
+        | ConvertTo-Json -Compress";
+    let Ok(out) = run_powershell(script) else {
+        return Vec::new();
+    };
+    let text = String::from_utf8_lossy(&out.stdout);
+    let text = text.trim();
+    if text.is_empty() {
+        return Vec::new();
+    }
+    #[derive(Deserialize)]
+    struct RawTask {
+        #[serde(rename = "TaskName")]
+        name: Option<String>,
+        #[serde(rename = "TaskPath")]
+        path: Option<String>,
+        #[serde(rename = "Actions")]
+        actions: Option<String>,
+    }
+    let tasks: Vec<RawTask> = if text.starts_with('[') {
+        serde_json::from_str(text).unwrap_or_default()
+    } else {
+        serde_json::from_str(text).map(|t| vec![t]).unwrap_or_default()
+    };
+    let mut disabled = Vec::new();
+    for t in tasks {
+        let (Some(name), Some(path)) = (&t.name, &t.path) else {
+            continue;
+        };
+        let hay = format!(
+            "{} {}",
+            name.to_lowercase(),
+            t.actions.unwrap_or_default().to_lowercase()
+        );
+        if !fam.service_keywords.iter().any(|k| hay.contains(k)) {
+            continue;
+        }
+        let full = format!("{path}{name}");
+        let script = format!(
+            "Disable-ScheduledTask -TaskName '{}' -TaskPath '{}' -ErrorAction SilentlyContinue",
+            name.replace('\'', "''"),
+            path.replace('\'', "''")
+        );
+        if run_powershell(&script).map(|o| o.status.success()).unwrap_or(false) {
+            disabled.push(full);
+        }
+    }
+    disabled
+}
+
 /// Stoppe une famille : services arrêtés (+ désactivés si `disable`) puis
-/// processus tués. Renvoie la map service → mode d'origine (à persister)
-/// quand `disable` est vrai.
+/// processus tués. `disable` neutralise aussi les actions de reprise
+/// Windows et les tâches planifiées de relance. Renvoie la map service →
+/// mode d'origine (à persister) quand `disable` est vrai.
 pub fn stop_family(key: &str, disable: bool) -> Result<HashMap<String, String>> {
     let fam = find_family(key)?;
     let all = list_services()?;
@@ -294,6 +413,16 @@ pub fn stop_family(key: &str, disable: bool) -> Result<HashMap<String, String>> 
                 svc.name,
                 String::from_utf8_lossy(&out.stderr)
             );
+        }
+        if disable {
+            reset_service_recovery(&svc.name);
+        }
+    }
+
+    if disable {
+        let tasks = disable_matching_tasks(fam);
+        if !tasks.is_empty() {
+            log::info!("tâches planifiées désactivées pour {}: {tasks:?}", fam.key);
         }
     }
 

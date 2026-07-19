@@ -8,6 +8,7 @@ mod settings;
 
 use crate::backends::hid::HidBackend;
 use crate::backends::liquidctl::LiquidctlBackend;
+use crate::backends::mobo::MoboFanBackend;
 use crate::backends::openrgb::manager::{OpenRgbManager, OpenRgbStatus};
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::backends::Backend;
@@ -43,6 +44,7 @@ struct BackendStatus {
 struct ConflictReport {
     conflicts: Vec<conflicts::ConflictingSoftware>,
     openrgb_running: bool,
+    guarded_families: std::collections::HashSet<String>,
 }
 
 /// Ré-applique les tailles de zones ARGB sauvegardées (clé nom appareil +
@@ -476,6 +478,56 @@ fn netdev_remove(state: State<AppState>, index: usize) -> Result<(), String> {
     netdev_sync_and_reload(&state)
 }
 
+#[derive(Serialize)]
+struct HardwareDiagnostics {
+    liquidctl: crate::backends::liquidctl::LiquidctlDiag,
+    sensord: crate::sensors::SensorDiag,
+    openrgb: OpenRgbStatus,
+    hid_raw: Vec<crate::backends::hid::RawHidDevice>,
+}
+
+/// Diagnostic complet : capture les erreurs réelles de chaque sous-système
+/// (liquidctl, sensord, OpenRGB, énumération HID brute) au lieu de les
+/// avaler dans les logs serveur — pour comprendre pourquoi un binaire "ne
+/// se charge pas" sur une machine donnée sans accès à la console.
+#[tauri::command(async)]
+fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
+    let liquidctl = {
+        let mut reg = state.registry.lock();
+        reg.backends_mut()
+            .iter_mut()
+            .find(|b| b.name() == "liquidctl")
+            .and_then(|b| b.as_any_mut().downcast_mut::<LiquidctlBackend>())
+            .map(|lc| lc.diagnose())
+            .unwrap_or(crate::backends::liquidctl::LiquidctlDiag {
+                exe_path: None,
+                version: Err("backend liquidctl absent du registre".into()),
+                list: Err("—".into()),
+                initialize: Err("—".into()),
+                status: Err("—".into()),
+            })
+    };
+    let hid_raw = {
+        let mut reg = state.registry.lock();
+        reg.backends_mut()
+            .iter_mut()
+            .find(|b| b.name() == "hid")
+            .and_then(|b| b.as_any_mut().downcast_mut::<HidBackend>())
+            .and_then(|hid| hid.list_raw().ok())
+            .unwrap_or_default()
+    };
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    HardwareDiagnostics {
+        liquidctl,
+        sensord: state.sensors.diag(),
+        openrgb: state.openrgb_mgr.status(&host, port),
+        hid_raw,
+    }
+}
+
 /// Étape 1 de l'appairage Hue : récupère la MAC du pont. L'utilisateur doit
 /// ensuite appuyer sur le bouton du pont — OpenRGB crée le username au
 /// redémarrage suivant.
@@ -498,11 +550,12 @@ fn pawnio_install() -> Result<(), String> {
 
 /// Énumère processus ET services : passe par PowerShell, donc async.
 #[tauri::command(async)]
-fn check_conflicts() -> ConflictReport {
+fn check_conflicts(state: State<AppState>) -> ConflictReport {
     let (conflicts, openrgb_running) = conflicts::scan();
     ConflictReport {
         conflicts,
         openrgb_running,
+        guarded_families: state.settings.lock().guarded_families.clone(),
     }
 }
 
@@ -587,6 +640,22 @@ fn conflict_restore(state: State<AppState>, family: String) -> Result<(), String
     for name in restored {
         s.disabled_services.remove(&name);
     }
+    // Réactiver = incohérent avec la garde active : la retirer.
+    s.guarded_families.remove(&family);
+    settings::save(&s).map_err(|e| e.to_string())
+}
+
+/// Active/désactive la garde continue d'une famille (re-tue le processus en
+/// boucle tant que l'app tourne) — pour les logiciels qui se relancent
+/// malgré service désactivé + tâche planifiée neutralisée.
+#[tauri::command(async)]
+fn conflict_guard_set(state: State<AppState>, family: String, enabled: bool) -> Result<(), String> {
+    let mut s = state.settings.lock();
+    if enabled {
+        s.guarded_families.insert(family);
+    } else {
+        s.guarded_families.remove(&family);
+    }
     settings::save(&s).map_err(|e| e.to_string())
 }
 
@@ -610,7 +679,7 @@ fn update_settings(
     if host.is_empty() || host.len() > 253 {
         return Err("hôte OpenRGB invalide".into());
     }
-    let fps = fps.clamp(5, 60);
+    let fps = fps.clamp(5, 144);
 
     {
         let mut reg = state.registry.lock();
@@ -692,6 +761,7 @@ pub fn run() {
     if let Err(e) = settings::save(&saved) {
         log::warn!("écriture settings initiale: {e:#}");
     }
+    let sensors = SensorHub::new();
     let backends: Vec<Box<dyn Backend>> = vec![
         Box::new(OpenRgbBackend::new(
             saved.openrgb_host.clone(),
@@ -699,12 +769,12 @@ pub fn run() {
         )),
         Box::new(HidBackend::new(saved.native_drivers_enabled)),
         Box::new(LiquidctlBackend::new()),
+        Box::new(MoboFanBackend::new(sensors.clone())),
     ];
     let registry = DeviceRegistry::shared(backends);
     let engine = EffectsEngine::start(registry.clone());
     engine.set_fps(saved.fps);
     let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
-    let sensors = SensorHub::new();
     let curve_engine = CurveEngine::start(registry.clone(), sensors.clone(), saved.curves.clone());
 
     // Démarrage matériel en arrière-plan : auto-start OpenRGB embarqué
@@ -782,15 +852,44 @@ pub fn run() {
             }
             // Capteurs : démarrage différé hors du thread UI (init LHM ~2-5 s).
             {
-                let sensors = app.state::<AppState>().sensors.clone();
+                let state = app.state::<AppState>();
+                let sensors = state.sensors.clone();
+                let registry = state.registry.clone();
                 std::thread::Builder::new()
                     .name("sensord-start".into())
                     .spawn(move || match sensors.start() {
-                        Ok(true) => log::info!("sensord démarré"),
+                        Ok(true) => {
+                            log::info!("sensord démarré");
+                            // Premier relevé après ~2 s : re-scanner pour faire
+                            // apparaître les ventilateurs carte mère (backend mobo).
+                            std::thread::sleep(std::time::Duration::from_secs(6));
+                            registry.lock().scan_all();
+                        }
                         Ok(false) => log::info!("sensord absent"),
                         Err(e) => log::warn!("sensord: {e:#}"),
                     })?;
             }
+            // Garde anti-relance : certains logiciels (Corsair.Service) se
+            // relancent seuls malgré service désactivé + tâche neutralisée.
+            // Balayage périodique tant que l'app tourne, familles opt-in.
+            {
+                let app_handle = app.handle().clone();
+                std::thread::Builder::new()
+                    .name("conflict-guard".into())
+                    .spawn(move || loop {
+                        std::thread::sleep(std::time::Duration::from_secs(12));
+                        let state = app_handle.state::<AppState>();
+                        let families: Vec<String> =
+                            state.settings.lock().guarded_families.iter().cloned().collect();
+                        drop(state);
+                        for key in families {
+                            if let Err(e) = conflicts::stop_family(&key, false) {
+                                log::debug!("garde conflit {key}: {e:#}");
+                            }
+                        }
+                    })?;
+            }
+
             let start_minimized = app.state::<AppState>().settings.lock().start_minimized;
             if start_minimized {
                 if let Some(w) = app.get_webview_window("main") {
@@ -816,6 +915,15 @@ pub fn run() {
                         let state = app.state::<AppState>();
                         state.engine.shutdown();
                         state.curve_engine.shutdown();
+                        // Rendre les headers PWM au BIOS avant de couper sensord.
+                        {
+                            let mut reg = state.registry.lock();
+                            for b in reg.backends_mut() {
+                                if let Some(m) = b.as_any_mut().downcast_mut::<MoboFanBackend>() {
+                                    m.release_all();
+                                }
+                            }
+                        }
                         state.sensors.stop();
                         state.openrgb_mgr.stop();
                         app.exit(0);
@@ -861,7 +969,9 @@ pub fn run() {
             netdev_add,
             netdev_remove,
             hue_pair,
-            nanoleaf_pair
+            nanoleaf_pair,
+            conflict_guard_set,
+            hardware_diagnostics
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");

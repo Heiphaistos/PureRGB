@@ -68,6 +68,8 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     // ---- Cooler Master (0x2516) ----
     KnownDevice { vid: 0x2516, pid: 0x004F, name: "Cooler Master ARGB Controller", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x2516, pid: 0x0173, name: "Cooler Master ARGB Gen2", device_type: DeviceType::Hub, native_driver: None },
+    // ---- ASRock (0x26CE) ----
+    KnownDevice { vid: 0x26CE, pid: 0x01A2, name: "ASRock Polychrome LED Controller", device_type: DeviceType::Motherboard, native_driver: None },
     // ---- Corsair AIO (compléments liquidctl) ----
     KnownDevice { vid: 0x1B1C, pid: 0x0C18, name: "Corsair H100i Platinum", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1B1C, pid: 0x0C17, name: "Corsair H115i Platinum", device_type: DeviceType::Aio, native_driver: None },
@@ -92,6 +94,7 @@ pub const KNOWN_VENDORS: &[(u16, &str, DeviceType)] = &[
     (0x2516, "Cooler Master", DeviceType::Unknown),
     (0x3633, "DeepCool", DeviceType::Unknown),
     (0x3842, "EVGA", DeviceType::Unknown),
+    (0x26CE, "ASRock", DeviceType::Unknown),
 ];
 
 pub fn find_known(vid: u16, pid: u16) -> Option<&'static KnownDevice> {

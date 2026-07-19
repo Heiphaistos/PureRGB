@@ -4,7 +4,7 @@ use crate::engine::curves::CurveMap;
 use crate::engine::effects::EffectConfig;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -33,6 +33,10 @@ pub struct Settings {
     pub zone_sizes: HashMap<String, u32>,
     /// Appareils réseau / maison connectée, synchronisés vers OpenRGB.json.
     pub network_devices: Vec<crate::netdev::NetworkDevice>,
+    /// Familles de conflit gardées : re-tuées en continu tant que l'app
+    /// tourne (certains logiciels — Corsair.Service — se relancent seuls
+    /// malgré service désactivé + tâche planifiée neutralisée).
+    pub guarded_families: HashSet<String>,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -60,6 +64,7 @@ impl Default for Settings {
             autostart: false,
             zone_sizes: HashMap::new(),
             network_devices: Vec::new(),
+            guarded_families: HashSet::new(),
         }
     }
 }

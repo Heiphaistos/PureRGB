@@ -1,5 +1,6 @@
 pub mod hid;
 pub mod liquidctl;
+pub mod mobo;
 pub mod openrgb;
 
 use crate::core::{Color, DeviceInfo};

@@ -116,6 +116,7 @@ export interface ConflictingSoftware {
 export interface ConflictReport {
   conflicts: ConflictingSoftware[];
   openrgb_running: boolean;
+  guarded_families: string[];
 }
 
 export interface Settings {
@@ -180,6 +181,46 @@ export const NETWORK_KIND_LABELS: Record<NetworkDeviceKind, string> = {
   kasa: "TP-Link Kasa",
   e131: "WLED / E1.31 (sACN)",
 };
+
+export type DiagResult = { Ok: string } | { Err: string };
+
+export function diagOk(r: DiagResult): boolean {
+  return "Ok" in r;
+}
+
+export function diagText(r: DiagResult): string {
+  return "Ok" in r ? r.Ok : r.Err;
+}
+
+export interface LiquidctlDiag {
+  exe_path: string | null;
+  version: DiagResult;
+  list: DiagResult;
+  initialize: DiagResult;
+  status: DiagResult;
+}
+
+export interface SensorDiag {
+  exe_path: string | null;
+  running: boolean;
+  sensor_count: number;
+}
+
+export interface RawHidDevice {
+  vid: string;
+  pid: string;
+  manufacturer: string;
+  product: string;
+  recognized: boolean;
+  has_native_driver: boolean;
+}
+
+export interface HardwareDiagnostics {
+  liquidctl: LiquidctlDiag;
+  sensord: SensorDiag;
+  openrgb: OpenRgbStatus;
+  hid_raw: RawHidDevice[];
+}
 
 export interface OpenRgbStatus {
   exe_path: string | null;

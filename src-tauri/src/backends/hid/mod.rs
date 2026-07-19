@@ -16,7 +16,24 @@ use corsair_node::CorsairLightingNode;
 use hidapi::HidApi;
 use known::NativeDriver;
 use nzxt_hue2::NzxtHue2;
+use serde::Serialize;
 use std::collections::HashMap;
+
+/// Appareil HID brut, tel qu'énuméré par Windows — diagnostic uniquement.
+/// Permet de voir ce qui est branché même quand ce n'est reconnu par
+/// aucune table (accessoires bas de gamme, clones, marques absentes de
+/// `known::KNOWN_VENDORS`) pour signaler précisément le VID/PID manquant.
+#[derive(Debug, Clone, Serialize)]
+pub struct RawHidDevice {
+    pub vid: String,
+    pub pid: String,
+    pub manufacturer: String,
+    pub product: String,
+    /// true si présent dans KNOWN_DEVICES ou KNOWN_VENDORS.
+    pub recognized: bool,
+    /// true si un driver natif PureRGB existe pour ce couple VID/PID exact.
+    pub has_native_driver: bool,
+}
 
 const CORSAIR_NODE_LEDS_PER_CHANNEL: u32 = 60;
 const NZXT_HUE2_LEDS_PER_CHANNEL: u32 = 40;
@@ -55,6 +72,42 @@ impl HidBackend {
             // aux logiciels constructeur.
             self.open_drivers.clear();
         }
+    }
+
+    /// Liste TOUS les périphériques HID vus par Windows (dédoublonnés),
+    /// reconnus ou non — pour diagnostic, jamais utilisé pour piloter quoi
+    /// que ce soit.
+    pub fn list_raw(&mut self) -> Result<Vec<RawHidDevice>> {
+        let api = self.ensure_api()?;
+        let mut seen: HashMap<(u16, u16, String), (String, String)> = HashMap::new();
+        for info in api.device_list() {
+            let key = (
+                info.vendor_id(),
+                info.product_id(),
+                info.serial_number().unwrap_or("").to_string(),
+            );
+            seen.entry(key).or_insert_with(|| {
+                (
+                    info.manufacturer_string().unwrap_or("").to_string(),
+                    info.product_string().unwrap_or("").to_string(),
+                )
+            });
+        }
+        let mut out: Vec<RawHidDevice> = seen
+            .into_iter()
+            .map(|((vid, pid, _), (manufacturer, product))| RawHidDevice {
+                vid: format!("{vid:04x}"),
+                pid: format!("{pid:04x}"),
+                manufacturer,
+                product,
+                recognized: known::find_known(vid, pid).is_some() || known::find_vendor(vid).is_some(),
+                has_native_driver: known::find_known(vid, pid)
+                    .and_then(|k| k.native_driver)
+                    .is_some(),
+            })
+            .collect();
+        out.sort_by(|a, b| (a.recognized, &a.vid, &a.pid).cmp(&(b.recognized, &b.vid, &b.pid)));
+        Ok(out)
     }
 
     fn ensure_api(&mut self) -> Result<&HidApi> {
