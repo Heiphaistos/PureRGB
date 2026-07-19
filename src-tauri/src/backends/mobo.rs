@@ -126,17 +126,33 @@ mod tests {
 
     #[test]
     fn rpm_pairing_by_number() {
+        // Vérifié contre le source LHM (SuperIOHardware.cs / Nct677X.cs) :
+        // le capteur RPM et le canal Control d'un même ventilateur portent
+        // le MÊME nom "Fan #N" (seul le SensorType diffère) — la mise en
+        // correspondance par suffixe fonctionne donc trivialement.
         let sensors = vec![
-            sensor("/lpc/nct/0/fan/1", "Nuvoton NCT6798D", "Fan #2", "Fan", 820.0, false),
-            sensor("/lpc/nct/0/control/1", "Nuvoton NCT6798D", "Fan Control #2", "Control", 45.0, true),
+            sensor("/lpc/nct6798d/0/fan/1", "Nuvoton NCT6798D", "Fan #2", "Fan", 820.0, false),
+            sensor("/lpc/nct6798d/0/control/1", "Nuvoton NCT6798D", "Fan #2", "Control", 45.0, true),
         ];
         assert_eq!(
-            MoboFanBackend::rpm_for("Nuvoton NCT6798D", "Fan Control #2", &sensors),
+            MoboFanBackend::rpm_for("Nuvoton NCT6798D", "Fan #2", &sensors),
             Some(820)
         );
         assert_eq!(
-            MoboFanBackend::rpm_for("Nuvoton NCT6798D", "Fan Control #9", &sensors),
+            MoboFanBackend::rpm_for("Nuvoton NCT6798D", "Fan #9", &sensors),
             None
         );
+    }
+
+    #[test]
+    fn control_id_prefix_matches_lhm_identifier_scheme() {
+        // SuperIOHardware.cs: base(..., new Identifier("lpc", chip, index), ...)
+        // => tout capteur d'un Super I/O carte mère est sous "/lpc/...".
+        // Les GPU/AIO utilisent d'autres préfixes (/nvidiagpu/, etc.) et ne
+        // doivent jamais apparaître dans ce backend.
+        let mobo = sensor("/lpc/nct6798d/0/control/1", "Nuvoton NCT6798D", "Fan #2", "Control", 45.0, true);
+        let gpu = sensor("/nvidiagpu/0/control/0", "NVIDIA GeForce RTX", "GPU Fan", "Control", 60.0, true);
+        assert!(mobo.id.starts_with("/lpc/"));
+        assert!(!gpu.id.starts_with("/lpc/"));
     }
 }

@@ -327,13 +327,23 @@ fn reset_service_recovery(service_name: &str) {
     }
 }
 
-/// Désactive les tâches planifiées dont le nom ou l'action correspond aux
-/// mots-clés de la famille — deuxième vecteur de relance après les services
-/// (Corsair, ASUS et NZXT créent des tâches ONLOGON pour leur UI).
+/// Désactive les tâches planifiées dont le nom ou la commande exécutée
+/// correspond aux mots-clés de la famille — deuxième vecteur de relance
+/// après les services (Corsair, ASUS et NZXT créent des tâches ONLOGON
+/// pour leur UI).
+///
+/// Utilise `schtasks /query /fo CSV /v` plutôt que `Get-ScheduledTask` :
+/// vérifié empiriquement que la propriété CIM `.Actions` de ce dernier
+/// revient `null` de façon non déterministe sur un grand nombre de tâches
+/// (jusqu'à 40% de faux négatifs sur ~250 tâches), un artefact de
+/// matérialisation paresseuse du fournisseur CIM. La sortie CSV de
+/// schtasks.exe est fiable ; on indexe les colonnes par POSITION (1 = nom
+/// complet, 8 = commande) plutôt que par nom d'en-tête, celui-ci étant
+/// traduit selon la langue de Windows.
 fn disable_matching_tasks(fam: &Family) -> Vec<String> {
-    let script = "Get-ScheduledTask | Select-Object TaskName,TaskPath,State,\
-        @{n='Actions';e={($_.Actions | ForEach-Object { $_.Execute }) -join ';'}} \
-        | ConvertTo-Json -Compress";
+    let script = "schtasks.exe /query /fo CSV /v | ConvertFrom-Csv | ForEach-Object { \
+        $p = $_.psobject.Properties.Value; \
+        [pscustomobject]@{ Name = $p[1]; ToRun = $p[8] } } | ConvertTo-Json -Compress";
     let Ok(out) = run_powershell(script) else {
         return Vec::new();
     };
@@ -344,12 +354,10 @@ fn disable_matching_tasks(fam: &Family) -> Vec<String> {
     }
     #[derive(Deserialize)]
     struct RawTask {
-        #[serde(rename = "TaskName")]
+        #[serde(rename = "Name")]
         name: Option<String>,
-        #[serde(rename = "TaskPath")]
-        path: Option<String>,
-        #[serde(rename = "Actions")]
-        actions: Option<String>,
+        #[serde(rename = "ToRun")]
+        to_run: Option<String>,
     }
     let tasks: Vec<RawTask> = if text.starts_with('[') {
         serde_json::from_str(text).unwrap_or_default()
@@ -357,26 +365,29 @@ fn disable_matching_tasks(fam: &Family) -> Vec<String> {
         serde_json::from_str(text).map(|t| vec![t]).unwrap_or_default()
     };
     let mut disabled = Vec::new();
+    let mut seen = std::collections::HashSet::new();
     for t in tasks {
-        let (Some(name), Some(path)) = (&t.name, &t.path) else {
-            continue;
-        };
+        let Some(name) = &t.name else { continue };
+        if !seen.insert(name.clone()) {
+            continue; // /v répète une ligne par déclencheur, dédoublonner
+        }
         let hay = format!(
             "{} {}",
             name.to_lowercase(),
-            t.actions.unwrap_or_default().to_lowercase()
+            t.to_run.unwrap_or_default().to_lowercase()
         );
         if !fam.service_keywords.iter().any(|k| hay.contains(k)) {
             continue;
         }
-        let full = format!("{path}{name}");
-        let script = format!(
-            "Disable-ScheduledTask -TaskName '{}' -TaskPath '{}' -ErrorAction SilentlyContinue",
-            name.replace('\'', "''"),
-            path.replace('\'', "''")
-        );
-        if run_powershell(&script).map(|o| o.status.success()).unwrap_or(false) {
-            disabled.push(full);
+        let mut cmd = Command::new("schtasks.exe");
+        cmd.args(["/Change", "/TN", name, "/Disable"]);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        if cmd.output().map(|o| o.status.success()).unwrap_or(false) {
+            disabled.push(name.clone());
         }
     }
     disabled
