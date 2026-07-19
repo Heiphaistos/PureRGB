@@ -6,9 +6,22 @@
 use crate::backends::Backend;
 use crate::core::{Color, DeviceInfo, DeviceType, FanChannel};
 use anyhow::{bail, Context, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::process::Command;
+
+/// Résultat brut d'une étape liquidctl — capturé même en cas d'échec, pour
+/// diagnostiquer précisément pourquoi le binaire "ne se charge pas" plutôt
+/// que de l'avaler dans un log serveur invisible depuis l'UI.
+#[derive(Debug, Clone, Serialize)]
+pub struct LiquidctlDiag {
+    pub exe_path: Option<String>,
+    /// "--version" : sortie ou message d'erreur (échec de lancement du process).
+    pub version: Result<String, String>,
+    pub list: Result<String, String>,
+    pub initialize: Result<String, String>,
+    pub status: Result<String, String>,
+}
 
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
@@ -107,6 +120,60 @@ impl LiquidctlBackend {
             );
         }
         Ok(String::from_utf8_lossy(&out.stdout).into_owned())
+    }
+
+    /// Comme `run`, mais ne bascule jamais en erreur : capture le résultat
+    /// exact (process introuvable / plante au lancement / stderr non-vide)
+    /// pour le diagnostic. Ne jamais utiliser pour le pilotage normal.
+    fn run_diag(exe: &PathBuf, args: &[&str]) -> Result<String, String> {
+        let mut cmd = Command::new(exe);
+        cmd.args(args);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        match cmd.output() {
+            Ok(out) if out.status.success() => {
+                Ok(String::from_utf8_lossy(&out.stdout).trim().to_string())
+            }
+            Ok(out) => Err(format!(
+                "code {} — {}",
+                out.status.code().unwrap_or(-1),
+                String::from_utf8_lossy(&out.stderr).trim()
+            )),
+            Err(e) => Err(format!("lancement impossible : {e} (DLL VC++ manquante ?)")),
+        }
+    }
+
+    /// Exécute chaque étape séparément et capture le résultat exact — pour
+    /// comprendre pourquoi liquidctl "ne se charge pas" sur une machine
+    /// donnée (binaire présent mais process mort-né, ou aucun appareil
+    /// listé, ou initialize/status en échec).
+    pub fn diagnose(&mut self) -> LiquidctlDiag {
+        if self.exe.is_none() {
+            self.exe = self.locate();
+        }
+        let Some(exe) = self.exe.clone() else {
+            return LiquidctlDiag {
+                exe_path: None,
+                version: Err("binaire liquidctl.exe introuvable (resources/, %APPDATA%)".into()),
+                list: Err("—".into()),
+                initialize: Err("—".into()),
+                status: Err("—".into()),
+            };
+        };
+        let version = Self::run_diag(&exe, &["--version"]);
+        let list = Self::run_diag(&exe, &["list", "--json"]);
+        let initialize = Self::run_diag(&exe, &["initialize", "all"]);
+        let status = Self::run_diag(&exe, &["status", "--json"]);
+        LiquidctlDiag {
+            exe_path: Some(exe.display().to_string()),
+            version,
+            list,
+            initialize,
+            status,
+        }
     }
 
     fn device_args<'a>(entry: &'a Entry) -> [&'a str; 4] {

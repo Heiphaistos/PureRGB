@@ -21,6 +21,9 @@ pub struct Sensor {
     #[serde(rename = "type")]
     pub kind: String,
     pub value: f64,
+    /// true = canal pilotable logiciellement (ventilateur carte mère via LHM).
+    #[serde(default)]
+    pub controllable: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -28,10 +31,18 @@ struct Frame {
     sensors: Vec<Sensor>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct SensorDiag {
+    pub exe_path: Option<String>,
+    pub running: bool,
+    pub sensor_count: usize,
+}
+
 #[derive(Default)]
 pub struct SensorHub {
     snapshot: Arc<Mutex<Vec<Sensor>>>,
     child: Mutex<Option<Child>>,
+    stdin: Mutex<Option<std::process::ChildStdin>>,
     resource_dir: Mutex<Option<PathBuf>>,
 }
 
@@ -93,6 +104,7 @@ impl SensorHub {
         }
         let mut child = cmd.spawn().context("lancement sensord")?;
         let stdout = child.stdout.take().context("stdout sensord")?;
+        *self.stdin.lock() = child.stdin.take();
         *self.child.lock() = Some(child);
 
         let snapshot = self.snapshot.clone();
@@ -114,8 +126,47 @@ impl SensorHub {
         Ok(true)
     }
 
+    /// true si sensord tourne (stdin ouvert).
+    pub fn running(&self) -> bool {
+        self.child.lock().is_some()
+    }
+
+    /// Diagnostic : chemin localisé (ou None si absent partout), état de
+    /// marche, nombre de capteurs dans le dernier relevé.
+    pub fn diag(&self) -> SensorDiag {
+        SensorDiag {
+            exe_path: self.locate().map(|p| p.display().to_string()),
+            running: self.running(),
+            sensor_count: self.snapshot.lock().len(),
+        }
+    }
+
+    /// Envoie une commande JSON à sensord (une ligne).
+    fn send(&self, payload: &serde_json::Value) -> Result<()> {
+        use std::io::Write;
+        let mut guard = self.stdin.lock();
+        let stdin = guard.as_mut().context("sensord non démarré")?;
+        writeln!(stdin, "{payload}").context("écriture stdin sensord")?;
+        stdin.flush().context("flush stdin sensord")
+    }
+
+    /// Pilote un canal Control LHM (ventilateur carte mère) en %.
+    pub fn set_control(&self, sensor_id: &str, percent: u8) -> Result<()> {
+        self.send(&serde_json::json!({
+            "cmd": "set",
+            "id": sensor_id,
+            "value": percent.min(100),
+        }))
+    }
+
+    /// Rend la main au BIOS sur un canal.
+    pub fn reset_control(&self, sensor_id: &str) -> Result<()> {
+        self.send(&serde_json::json!({ "cmd": "reset", "id": sensor_id }))
+    }
+
     /// Arrête sensord : fermer stdin le fait sortir proprement, kill en secours.
     pub fn stop(&self) {
+        drop(self.stdin.lock().take());
         if let Some(mut child) = self.child.lock().take() {
             drop(child.stdin.take());
             std::thread::sleep(std::time::Duration::from_millis(400));

@@ -2,7 +2,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { reactive, ref, watch } from "vue";
-import type { Settings } from "../types";
+import type { HardwareDiagnostics, Settings } from "../types";
+import { diagOk, diagText } from "../types";
 
 const props = defineProps<{ settings: Settings | null }>();
 const emit = defineEmits<{ saved: [] }>();
@@ -60,6 +61,26 @@ async function importProfile() {
     profileMsg.value = `Import : ${e}`;
   }
 }
+
+const diag = ref<HardwareDiagnostics | null>(null);
+const diagRunning = ref(false);
+const showUnrecognizedOnly = ref(true);
+
+async function runDiagnostics() {
+  diagRunning.value = true;
+  try {
+    diag.value = await invoke<HardwareDiagnostics>("hardware_diagnostics");
+  } catch (e) {
+    profileMsg.value = `Diagnostic : ${e}`;
+  } finally {
+    diagRunning.value = false;
+  }
+}
+
+const hidRows = () =>
+  diag.value
+    ? diag.value.hid_raw.filter((d) => !showUnrecognizedOnly.value || !d.recognized)
+    : [];
 
 const form = reactive({
   openrgb_host: "127.0.0.1",
@@ -179,10 +200,12 @@ async function save() {
       <div class="grid2">
         <div>
           <label>Images/seconde des animations — {{ form.fps }} FPS</label>
-          <input type="range" min="5" max="60" step="5" v-model.number="form.fps" />
+          <input type="range" min="5" max="144" step="5" v-model.number="form.fps" />
           <p class="hint">
-            Plus bas = moins de CPU/USB. 30 FPS est fluide. Les effets statiques
-            ne consomment rien quel que soit ce réglage.
+            Plus bas = moins de CPU/USB. 30 FPS est fluide, 60+ pour des
+            transitions très nettes. Cadence à échéance fixe (pas de dérive
+            même avec plusieurs appareils). Les effets statiques ne
+            consomment rien quel que soit ce réglage.
           </p>
         </div>
         <div class="inline top">
@@ -197,6 +220,75 @@ async function save() {
         {{ saving ? "Enregistrement..." : "Enregistrer" }}
       </button>
       <span v-if="error" class="error">{{ error }}</span>
+    </div>
+
+    <div class="card">
+      <h3>Diagnostic matériel</h3>
+      <p class="hint">
+        Interroge directement liquidctl, sensord, OpenRGB et l'énumération USB
+        brute — utile quand un module « ne se charge pas » silencieusement :
+        le message d'erreur exact apparaît ici au lieu de rester dans les logs.
+      </p>
+      <button :disabled="diagRunning" @click="runDiagnostics">
+        {{ diagRunning ? "Diagnostic en cours…" : "Lancer le diagnostic" }}
+      </button>
+
+      <div v-if="diag" class="diag-out">
+        <h4>liquidctl</h4>
+        <table class="diag-table">
+          <tr>
+            <td>Binaire</td>
+            <td>{{ diag.liquidctl.exe_path ?? "introuvable" }}</td>
+          </tr>
+          <tr v-for="key in (['version', 'list', 'initialize', 'status'] as const)" :key="key">
+            <td>{{ key }}</td>
+            <td :class="{ ok: diagOk(diag.liquidctl[key]), fail: !diagOk(diag.liquidctl[key]) }">
+              <pre>{{ diagText(diag.liquidctl[key]) || "(vide)" }}</pre>
+            </td>
+          </tr>
+        </table>
+
+        <h4>sensord</h4>
+        <table class="diag-table">
+          <tr><td>Binaire</td><td>{{ diag.sensord.exe_path ?? "introuvable" }}</td></tr>
+          <tr><td>En cours</td><td :class="{ ok: diag.sensord.running, fail: !diag.sensord.running }">{{ diag.sensord.running ? "oui" : "non" }}</td></tr>
+          <tr><td>Capteurs remontés</td><td>{{ diag.sensord.sensor_count }}</td></tr>
+        </table>
+
+        <h4>OpenRGB</h4>
+        <table class="diag-table">
+          <tr><td>Binaire</td><td>{{ diag.openrgb.exe_path ?? "introuvable" }}</td></tr>
+          <tr><td>Serveur joignable</td><td :class="{ ok: diag.openrgb.server_reachable, fail: !diag.openrgb.server_reachable }">{{ diag.openrgb.server_reachable ? "oui" : "non" }}</td></tr>
+          <tr><td>Géré par PureRGB</td><td>{{ diag.openrgb.managed ? "oui" : "non" }}</td></tr>
+          <tr><td>PawnIO prêt</td><td :class="{ ok: diag.openrgb.pawnio_ready, fail: !diag.openrgb.pawnio_ready }">{{ diag.openrgb.pawnio_ready ? "oui" : "non" }}</td></tr>
+        </table>
+
+        <h4>
+          Périphériques USB bruts ({{ diag.hid_raw.length }})
+          <label class="filter-toggle">
+            <input type="checkbox" v-model="showUnrecognizedOnly" />
+            non reconnus seulement
+          </label>
+        </h4>
+        <p class="hint">
+          Un appareil listé ici « non reconnu » n'est identifié par aucune
+          table PureRGB — souvent une marque bas de gamme ou un connecteur
+          ARGB direct (pas de VID/PID propre). Communiquez le VID/PID pour
+          l'ajouter à une prochaine version.
+        </p>
+        <table class="diag-table hid-table">
+          <tr><th>VID:PID</th><th>Fabricant</th><th>Produit</th><th>État</th></tr>
+          <tr v-for="d in hidRows()" :key="`${d.vid}:${d.pid}`">
+            <td>{{ d.vid }}:{{ d.pid }}</td>
+            <td>{{ d.manufacturer || "—" }}</td>
+            <td>{{ d.product || "—" }}</td>
+            <td :class="{ ok: d.recognized, fail: !d.recognized }">
+              {{ d.recognized ? (d.has_native_driver ? "driver natif" : "reconnu") : "non reconnu" }}
+            </td>
+          </tr>
+        </table>
+        <p v-if="hidRows().length === 0" class="hint">Aucun appareil dans ce filtre.</p>
+      </div>
     </div>
   </section>
 </template>
@@ -272,5 +364,60 @@ label {
 .error {
   color: var(--err);
   font-size: 13px;
+}
+
+.diag-out {
+  margin-top: 16px;
+}
+
+.diag-out h4 {
+  font-size: 13px;
+  margin: 16px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-toggle {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.diag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.diag-table td,
+.diag-table th {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.diag-table pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.diag-table .ok {
+  color: var(--ok);
+}
+
+.diag-table .fail {
+  color: var(--warn);
+}
+
+.hid-table td {
+  font-family: monospace;
 }
 </style>

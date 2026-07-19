@@ -20,7 +20,7 @@ import type {
 
 const devices = ref<DeviceInfo[]>([]);
 const backends = ref<BackendStatus[]>([]);
-const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false });
+const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false, guarded_families: [] });
 const settings = ref<Settings | null>(null);
 const selectedId = ref<string | null>(null);
 const tab = ref<"rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings">("rgb");

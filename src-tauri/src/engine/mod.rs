@@ -100,7 +100,7 @@ impl EffectsEngine {
     }
 
     pub fn set_fps(&self, fps: u32) {
-        self.inner.fps.store(fps.clamp(5, 60), Ordering::Relaxed);
+        self.inner.fps.store(fps.clamp(5, 144), Ordering::Relaxed);
     }
 
     /// Force la ré-application de tous les effets (y compris statiques) au
@@ -138,6 +138,10 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
     // Assignations statiques déjà appliquées (éviter le re-envoi à chaque réveil).
     let mut applied_static: HashMap<String, DeviceAssignment> = HashMap::new();
     let mut seen_generation = 0u32;
+    // Cadence à échéance fixe : évite la dérive d'un sleep(render_time +
+    // frame_time) répété, qui ralentit visiblement l'animation quand le
+    // rendu/l'écriture réseau prend du temps (plusieurs appareils OpenRGB).
+    let mut next_tick = Instant::now();
 
     while inner.running.load(Ordering::Relaxed) {
         let generation = inner.generation.load(Ordering::Relaxed);
@@ -179,11 +183,21 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
 
         if any_animated {
             let fps = inner.fps.load(Ordering::Relaxed).max(1);
-            std::thread::sleep(Duration::from_millis(1000 / fps as u64));
+            let frame = Duration::from_micros(1_000_000 / fps as u64);
+            next_tick += frame;
+            let now = Instant::now();
+            if next_tick > now {
+                std::thread::sleep(next_tick - now);
+            } else {
+                // Rendu plus lent que la cadence visée (matériel lent / trop
+                // d'appareils) : ne pas accumuler de retard, repartir de now.
+                next_tick = now;
+            }
         } else {
             // Rien d'animé : sommeil jusqu'au prochain set_effect / shutdown.
             let mut guard = inner.assignments.lock();
             inner.dirty.wait(&mut guard);
+            next_tick = Instant::now();
         }
     }
 }

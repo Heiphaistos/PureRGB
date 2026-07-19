@@ -12,6 +12,29 @@ const emit = defineEmits<{ refresh: []; toast: [msg: string] }>();
 
 const busy = ref<string | null>(null);
 
+function isGuarded(family: string): boolean {
+  return props.conflicts.guarded_families.includes(family);
+}
+
+async function toggleGuard(c: ConflictingSoftware) {
+  busy.value = c.family;
+  const next = !isGuarded(c.family);
+  try {
+    await invoke("conflict_guard_set", { family: c.family, enabled: next });
+    emit(
+      "toast",
+      next
+        ? `${c.name} : re-tué en continu tant que PureRGB tourne (relance forcée)`
+        : `${c.name} : garde continue désactivée`,
+    );
+    emit("refresh");
+  } catch (e) {
+    emit("toast", `Garde : ${e}`);
+  } finally {
+    busy.value = null;
+  }
+}
+
 function serviceSummary(c: ConflictingSoftware): string {
   if (c.services.length === 0) return "aucun service";
   return c.services
@@ -99,7 +122,20 @@ async function restartOpenRgb() {
         <button :disabled="busy !== null" @click="act(c, 'restore')">
           Réactiver
         </button>
+        <button
+          class="guard"
+          :class="{ on: isGuarded(c.family) }"
+          :disabled="busy !== null"
+          @click="toggleGuard(c)"
+          title="Re-tue le processus toutes les 12 s tant que PureRGB tourne — pour les logiciels qui se relancent seuls malgré service désactivé"
+        >
+          {{ isGuarded(c.family) ? "🛡️ Garde active" : "Garder désactivé" }}
+        </button>
       </div>
+      <p v-if="isGuarded(c.family)" class="guard-note">
+        🛡️ PureRGB re-tue {{ c.name }} en continu — s'il revient quand même,
+        redémarrez Windows après « Stopper + désactiver ».
+      </p>
     </article>
 
     <div class="rescan" v-if="props.conflicts.conflicts.length > 0">
@@ -188,6 +224,18 @@ h2 {
 .actions .warn {
   border-color: var(--warn);
   color: var(--warn);
+}
+
+.actions .guard.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.guard-note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--accent);
 }
 
 .rescan {
