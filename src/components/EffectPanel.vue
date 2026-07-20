@@ -46,7 +46,7 @@ const presetQty = ref<Record<number, number>>({});
 function applyPresetCalc(zoneIdx: number) {
   const preset = presetChoice.value[zoneIdx];
   const qty = presetQty.value[zoneIdx];
-  if (!preset || !qty) return;
+  if (!preset || !qty || qty <= 0) return;
   zoneSizeEdits.value[zoneIdx] = ledsFor(preset, qty);
 }
 
@@ -163,6 +163,8 @@ watch(
         .map((z, i) => [i, Math.max(z.led_count, z.leds_min)])
         .filter((_, i) => zoneResizable(props.device!.zones[i])),
     );
+    presetChoice.value = {};
+    presetQty.value = {};
     if (!id) return;
     const saved = props.savedEffects[id];
     if (saved) {
