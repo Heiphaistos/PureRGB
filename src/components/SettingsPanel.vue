@@ -97,6 +97,7 @@ const form = reactive({
   native_drivers_enabled: false,
   fps: 30,
   start_minimized: false,
+  auto_manage_conflicts: true,
 });
 const saving = ref(false);
 const error = ref("");
@@ -111,6 +112,7 @@ watch(
     form.native_drivers_enabled = s.native_drivers_enabled;
     form.fps = s.fps;
     form.start_minimized = s.start_minimized;
+    form.auto_manage_conflicts = s.auto_manage_conflicts;
   },
   { immediate: true },
 );
@@ -126,6 +128,7 @@ async function save() {
       nativeDriversEnabled: form.native_drivers_enabled,
       fps: form.fps,
       startMinimized: form.start_minimized,
+      autoManageConflicts: form.auto_manage_conflicts,
     });
     emit("saved");
   } catch (e) {
@@ -208,6 +211,13 @@ async function save() {
         />
         <label for="winstart">
           Lancer PureRGB au démarrage de Windows (tâche planifiée, sans fenêtre UAC)
+        </label>
+      </div>
+      <div class="inline" style="margin-bottom: 12px">
+        <input id="automanage" type="checkbox" v-model="form.auto_manage_conflicts" />
+        <label for="automanage">
+          Gérer automatiquement les conflits (arrête les logiciels constructeur au
+          lancement, les relance à la fermeture)
         </label>
       </div>
       <div class="inline" style="gap: 10px">

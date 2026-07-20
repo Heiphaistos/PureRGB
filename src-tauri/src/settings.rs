@@ -37,6 +37,10 @@ pub struct Settings {
     /// tourne (certains logiciels — Corsair.Service — se relancent seuls
     /// malgré service désactivé + tâche planifiée neutralisée).
     pub guarded_families: HashSet<String>,
+    /// Arrête automatiquement les logiciels constructeur en conflit au
+    /// lancement (arrêt réversible, non permanent) et les redémarre à la
+    /// fermeture de l'app.
+    pub auto_manage_conflicts: bool,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -65,6 +69,7 @@ impl Default for Settings {
             zone_sizes: HashMap::new(),
             network_devices: Vec::new(),
             guarded_families: HashSet::new(),
+            auto_manage_conflicts: true,
         }
     }
 }

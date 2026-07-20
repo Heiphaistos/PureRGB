@@ -142,6 +142,7 @@ export interface Settings {
   autostart: boolean;
   zone_sizes: Record<string, number>;
   network_devices: NetworkDevice[];
+  auto_manage_conflicts: boolean;
 }
 
 export type NetworkDeviceKind =

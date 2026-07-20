@@ -32,6 +32,9 @@ struct AppState {
     openrgb_mgr: std::sync::Arc<OpenRgbManager>,
     sensors: std::sync::Arc<SensorHub>,
     curve_engine: std::sync::Arc<CurveEngine>,
+    /// Familles de conflit arrêtées automatiquement au lancement cette
+    /// session (auto_manage_conflicts) — à redémarrer à la fermeture.
+    auto_stopped: std::sync::Arc<Mutex<Vec<String>>>,
 }
 
 #[derive(Serialize)]
@@ -676,6 +679,7 @@ fn update_settings(
     native_drivers_enabled: bool,
     fps: u32,
     start_minimized: bool,
+    auto_manage_conflicts: bool,
 ) -> Result<(), String> {
     // Validation input : host non vide, fps borné.
     let host = openrgb_host.trim().to_string();
@@ -707,6 +711,7 @@ fn update_settings(
     s.native_drivers_enabled = native_drivers_enabled;
     s.fps = fps;
     s.start_minimized = start_minimized;
+    s.auto_manage_conflicts = auto_manage_conflicts;
     settings::save(&s).map_err(|e| e.to_string())
 }
 
@@ -780,6 +785,8 @@ pub fn run() {
     let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
     let curve_engine = CurveEngine::start(registry.clone(), sensors.clone(), saved.curves.clone());
 
+    let auto_stopped: std::sync::Arc<Mutex<Vec<String>>> = std::sync::Arc::new(Mutex::new(Vec::new()));
+
     // Démarrage matériel en arrière-plan : auto-start OpenRGB embarqué
     // (si activé et aucun serveur joignable), scan, restauration des effets.
     // Hors du thread UI — l'init OpenRGB peut prendre 20 s.
@@ -789,10 +796,27 @@ pub fn run() {
         let mgr = openrgb_mgr.clone();
         let sensors_hub = sensors.clone();
         let saved = saved.clone();
+        let auto_stopped = auto_stopped.clone();
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
                 let _ = sensors_hub; // démarré dans setup() une fois resource_dir connu
+                // Arrêt auto des logiciels constructeur en conflit AVANT le scan
+                // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
+                // Réversible (disable=false), redémarrés au "Quitter" du tray.
+                if saved.auto_manage_conflicts {
+                    let (found, _) = conflicts::scan();
+                    let mut stopped = auto_stopped.lock();
+                    for fam in found.iter().filter(|f| f.active) {
+                        match conflicts::stop_family(&fam.family, false) {
+                            Ok(_) => {
+                                log::info!("conflit auto-arrêté au lancement: {}", fam.name);
+                                stopped.push(fam.family.clone());
+                            }
+                            Err(e) => log::warn!("auto-arrêt {}: {e:#}", fam.name),
+                        }
+                    }
+                }
                 // Config réseau à jour AVANT le démarrage du serveur : les
                 // détecteurs réseau ne lisent OpenRGB.json qu'au boot.
                 if !saved.network_devices.is_empty() {
@@ -825,6 +849,7 @@ pub fn run() {
         openrgb_mgr,
         sensors,
         curve_engine,
+        auto_stopped,
     };
 
     tauri::Builder::default()
@@ -916,6 +941,16 @@ pub fn run() {
                     }
                     "quit" => {
                         let state = app.state::<AppState>();
+                        // Redémarrer les logiciels constructeur auto-arrêtés au
+                        // lancement — best-effort, ne bloque jamais la fermeture.
+                        {
+                            let families = state.auto_stopped.lock().clone();
+                            for key in families {
+                                if let Err(e) = conflicts::restore_family(&key, &std::collections::HashMap::new()) {
+                                    log::warn!("redémarrage auto {key}: {e:#}");
+                                }
+                            }
+                        }
                         state.engine.shutdown();
                         state.curve_engine.shutdown();
                         // Rendre les headers PWM au BIOS avant de couper sensord.
