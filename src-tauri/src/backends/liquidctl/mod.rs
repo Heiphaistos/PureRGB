@@ -77,6 +77,7 @@ pub struct LiquidctlBackend {
     resource_dir: Option<PathBuf>,
     entries: Vec<Entry>,
     initialized: bool,
+    last_install_failure: Option<(std::time::Instant, String)>,
 }
 
 impl LiquidctlBackend {
@@ -86,6 +87,7 @@ impl LiquidctlBackend {
             resource_dir: None,
             entries: Vec::new(),
             initialized: false,
+            last_install_failure: None,
         }
     }
 
@@ -159,11 +161,27 @@ impl LiquidctlBackend {
     /// laisser le backend mort silencieusement comme avant (portable sans
     /// resources/, cause confirmée d'un retour terrain "0 AIO/hub détecté").
     /// Retourne Result pour que le diagnostic puisse surfacer l'erreur réelle.
-    fn locate_or_install(&self) -> Result<PathBuf, String> {
+    fn locate_or_install(&mut self) -> Result<PathBuf, String> {
         if let Some(p) = self.locate() {
             return Ok(p);
         }
-        Self::install().map_err(|e| format!("{e:#}"))
+        const COOLDOWN: std::time::Duration = std::time::Duration::from_secs(30);
+        if let Some((at, err)) = &self.last_install_failure {
+            if at.elapsed() < COOLDOWN {
+                return Err(err.clone());
+            }
+        }
+        match Self::install() {
+            Ok(p) => {
+                self.last_install_failure = None;
+                Ok(p)
+            }
+            Err(e) => {
+                let msg = format!("{e:#}");
+                self.last_install_failure = Some((std::time::Instant::now(), msg.clone()));
+                Err(msg)
+            }
+        }
     }
 
     fn run(&self, args: &[&str]) -> Result<String> {
@@ -239,7 +257,15 @@ impl LiquidctlBackend {
         };
         let version = Self::run_diag(&exe, &["--version"]);
         let list = Self::run_diag(&exe, &["list", "--json"]);
-        let initialize = Self::run_diag(&exe, &["initialize", "all"]);
+        let initialize = if self.initialized {
+            Ok("déjà initialisé cette session".to_string())
+        } else {
+            let r = Self::run_diag(&exe, &["initialize", "all"]);
+            if r.is_ok() {
+                self.initialized = true;
+            }
+            r
+        };
         let status = Self::run_diag(&exe, &["status", "--json"]);
         LiquidctlDiag {
             exe_path: Some(exe.display().to_string()),
