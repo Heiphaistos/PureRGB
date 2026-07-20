@@ -73,6 +73,12 @@ export interface DeviceInfo {
   note: string;
 }
 
+/** Faux si l'appareil n'a aucune zone RGB (ex. ventilo mobo/AIO liquidctl —
+ * pilotage PWM/vitesse uniquement, RGB détecté séparément par OpenRGB si présent). */
+export function deviceHasRgb(d: DeviceInfo): boolean {
+  return d.led_count > 0 || d.zones.length > 0;
+}
+
 export interface Sensor {
   id: string;
   hardware: string;

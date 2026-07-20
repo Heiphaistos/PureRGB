@@ -19,6 +19,7 @@ import type {
   OpenRgbStatus,
   Settings,
 } from "./types";
+import { deviceHasRgb } from "./types";
 
 type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings";
 
@@ -142,6 +143,13 @@ async function loadSettings() {
 }
 
 async function onApplyEffect(deviceId: string, config: EffectConfig, zone: number | null) {
+  if (zone === null) {
+    const target = devices.value.find((d) => d.id === deviceId);
+    if (target && !deviceHasRgb(target)) {
+      showToast("Pas de RGB sur cet appareil (pilotage PWM/vitesse uniquement)");
+      return;
+    }
+  }
   try {
     await invoke("apply_effect", { deviceId, config, zone });
     showToast(zone === null ? "Effet appliqué" : "Effet appliqué à la zone");

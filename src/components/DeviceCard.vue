@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { DeviceInfo, EffectConfig } from "../types";
-import { DEVICE_TYPE_LABELS } from "../types";
+import { DEVICE_TYPE_LABELS, deviceHasRgb } from "../types";
 import { brandChip } from "../assets/brands";
 import DeviceIcon from "./DeviceIcon.vue";
 
@@ -17,6 +17,7 @@ const typeLabel = computed(
   () => DEVICE_TYPE_LABELS[props.device.device_type] ?? props.device.device_type,
 );
 const chip = computed(() => brandChip(props.device.vendor, props.device.name));
+const hasRgb = computed(() => deviceHasRgb(props.device));
 const isOff = computed(() => !props.effect || props.effect.kind === "off");
 const swatch = computed(() => {
   const c = props.effect?.colors[0];
@@ -36,7 +37,10 @@ const swatch = computed(() => {
     </span>
     <span class="dc-body">
       <span class="dc-name">{{ device.name }}</span>
-      <span class="dc-type">{{ typeLabel }}</span>
+      <span class="dc-type">
+        {{ typeLabel }}
+        <span v-if="!hasRgb" class="dc-no-rgb" title="Pilotage PWM/vitesse uniquement — RGB non disponible sur cet appareil">Pas de RGB</span>
+      </span>
     </span>
     <span
       v-if="!compact"
@@ -120,6 +124,20 @@ const swatch = computed(() => {
 .dc-type {
   font-size: 11px;
   color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dc-no-rgb {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  background: rgba(240, 86, 74, 0.15);
+  color: var(--err);
 }
 
 .dc-swatch {
