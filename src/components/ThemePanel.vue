@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { THEMES, type Theme } from "../themes";
+import { computed, ref } from "vue";
+import { THEME_CATEGORY_LABELS, THEMES, type Theme, type ThemeCategory } from "../themes";
 import type { EffectConfig } from "../types";
 import { colorToHex } from "../types";
 
@@ -9,6 +9,19 @@ const emit = defineEmits<{
 }>();
 
 const lastApplied = ref<string | null>(null);
+const activeCategory = ref<ThemeCategory | "all">("all");
+
+const categories = computed(() => {
+  const counts = new Map<ThemeCategory, number>();
+  for (const t of THEMES) counts.set(t.category, (counts.get(t.category) ?? 0) + 1);
+  return (Object.keys(THEME_CATEGORY_LABELS) as ThemeCategory[])
+    .filter((cat) => counts.has(cat))
+    .map((cat) => ({ id: cat, label: THEME_CATEGORY_LABELS[cat], count: counts.get(cat)! }));
+});
+
+const filtered = computed(() =>
+  activeCategory.value === "all" ? THEMES : THEMES.filter((t) => t.category === activeCategory.value),
+);
 
 function apply(t: Theme) {
   lastApplied.value = t.id;
@@ -34,9 +47,30 @@ function preview(t: Theme): string {
       (PC + maison connectée). Ajustez ensuite appareil par appareil dans
       l'onglet Éclairage.
     </p>
+    <div class="category-filter">
+      <button
+        type="button"
+        class="cat-chip"
+        :class="{ active: activeCategory === 'all' }"
+        @click="activeCategory = 'all'"
+      >
+        Tous<span class="count">{{ THEMES.length }}</span>
+      </button>
+      <button
+        v-for="cat in categories"
+        :key="cat.id"
+        type="button"
+        class="cat-chip"
+        :class="{ active: activeCategory === cat.id }"
+        @click="activeCategory = cat.id"
+      >
+        {{ cat.label }}<span class="count">{{ cat.count }}</span>
+      </button>
+    </div>
+
     <div class="grid">
       <button
-        v-for="t in THEMES"
+        v-for="t in filtered"
         :key="t.id"
         class="theme-card"
         :class="{ active: lastApplied === t.id }"
@@ -68,11 +102,43 @@ function preview(t: Theme): string {
   margin-top: 4px;
 }
 
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.cat-chip {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cat-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cat-chip .count {
+  font-size: 10px;
+  color: inherit;
+  opacity: 0.7;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .theme-card {
