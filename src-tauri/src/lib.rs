@@ -216,6 +216,9 @@ fn apply_effect(
             s.effects.insert(format!("{device_id}#z{z}"), config);
         }
         _ => {
+            if led_count == 0 {
+                return Err("appareil sans LED pilotable — RGB non disponible".into());
+            }
             state
                 .engine
                 .set_effect(device_id.clone(), config.clone(), led_count);
