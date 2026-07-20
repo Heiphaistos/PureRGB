@@ -49,4 +49,13 @@ Aucune logique backend touchée → aucun nouveau test Rust requis. Vérificatio
 
 ## Statut
 
-Approuvé par Momo (toutes sections) le 2026-07-20. Prêt pour plan d'implémentation.
+Approuvé par Momo (toutes sections) le 2026-07-20. Implémenté et validé visuellement (mocks temporaires, retirés après validation) le 2026-07-20 — "ok pas mal".
+
+## Addendum livré (hors scope initial, demandé en cours d'implémentation)
+
+- **Nav latérale gauche** au lieu du bandeau haut horizontal — icônes SVG inline (7 sections) + label, badge conflits repositionné.
+- **3 dispositions pour l'onglet Éclairage**, choix persisté `localStorage` (`purergb-layout`), sélecteur dans Réglages → carte "Disposition" :
+  - `grid` — grille de cartes (implémentation initiale de ce spec).
+  - `list` — même composant `DeviceGrid.vue` avec prop `dense`, `DeviceCard.vue` variante `.dense` (ligne pleine largeur).
+  - `canvas` — nouveau `DeviceCanvas.vue`, tuiles larges, clic = expansion inline de `EffectPanel` dans la tuile (span pleine largeur de grille), pas de tiroir séparé ; `EffectDrawer` désactivé quand `layoutMode==='canvas'`.
+- Brand chip = abréviation texte teintée (pas de vrai logo vectoriel — marques déposées, même raisonnement que l'absence de photos produit).

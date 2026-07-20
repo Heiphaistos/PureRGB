@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { ref } from "vue";
 import type { DeviceInfo } from "../types";
+import DeviceCard from "./DeviceCard.vue";
 
 const props = defineProps<{ devices: DeviceInfo[] }>();
 const emit = defineEmits<{ toast: [msg: string] }>();
@@ -47,7 +48,9 @@ async function pickAndApply(d: DeviceInfo, kind: "static" | "gif") {
     </p>
 
     <div v-for="d in props.devices" :key="d.id" class="lcd-device">
-      <h3>{{ d.name }}</h3>
+      <div class="lcd-device-head">
+        <DeviceCard :device="d" compact />
+      </div>
       <div class="row">
         <button class="primary" :disabled="busy" @click="run(d, 'liquid')">
           Température du liquide
@@ -113,9 +116,8 @@ async function pickAndApply(d: DeviceInfo, kind: "static" | "gif") {
   max-width: 620px;
 }
 
-.lcd-device h3 {
-  font-size: 14px;
-  margin-bottom: 12px;
+.lcd-device-head {
+  margin-bottom: var(--space-3);
 }
 
 .row {

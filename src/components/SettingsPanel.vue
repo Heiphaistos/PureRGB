@@ -5,8 +5,16 @@ import { reactive, ref, watch } from "vue";
 import type { HardwareDiagnostics, Settings } from "../types";
 import { diagOk, diagText } from "../types";
 
-const props = defineProps<{ settings: Settings | null }>();
-const emit = defineEmits<{ saved: [] }>();
+export type LayoutMode = "grid" | "list" | "canvas";
+
+const props = defineProps<{ settings: Settings | null; layout: LayoutMode }>();
+const emit = defineEmits<{ saved: []; "layout-change": [mode: LayoutMode] }>();
+
+const LAYOUTS: { id: LayoutMode; label: string; hint: string }[] = [
+  { id: "grid", label: "Grille", hint: "Cartes périphérique groupées par catégorie." },
+  { id: "list", label: "Liste dense", hint: "Lignes compactes, idéal avec beaucoup d'appareils." },
+  { id: "canvas", label: "Canvas immersif", hint: "Grosses tuiles, effet appliqué directement dessus." },
+];
 
 const autostartBusy = ref(false);
 const autostartEnabled = ref(false);
@@ -131,6 +139,24 @@ async function save() {
 <template>
   <section class="settings">
     <h2>Réglages</h2>
+
+    <div class="card">
+      <h3>Disposition</h3>
+      <p class="hint">Agencement de l'onglet Éclairage.</p>
+      <div class="layout-options">
+        <button
+          v-for="l in LAYOUTS"
+          :key="l.id"
+          type="button"
+          class="layout-option"
+          :class="{ active: layout === l.id }"
+          @click="emit('layout-change', l.id)"
+        >
+          <strong>{{ l.label }}</strong>
+          <span>{{ l.hint }}</span>
+        </button>
+      </div>
+    </div>
 
     <div class="card">
       <h3>Serveur OpenRGB</h3>
@@ -317,6 +343,38 @@ async function save() {
 .card h3 {
   font-size: 14px;
   margin-bottom: 8px;
+}
+
+.layout-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-2);
+}
+
+.layout-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.layout-option strong {
+  font-size: 13px;
+}
+
+.layout-option span {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.layout-option.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .hint {
