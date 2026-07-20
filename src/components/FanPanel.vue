@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import type { CurveConfig, DeviceInfo, Sensor, Settings } from "../types";
+import type { CurveConfig, DeviceInfo, HardwareDiagnostics, Sensor, Settings } from "../types";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -9,6 +9,7 @@ const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
 // duty local par "deviceId:channel"
 const duties = reactive<Record<string, number>>({});
 const sensors = ref<Sensor[]>([]);
+const diag = ref<HardwareDiagnostics | null>(null);
 // éditeurs de courbe ouverts, état local par clé "deviceId|channel"
 const editors = reactive<Record<string, CurveConfig>>({});
 let timer: ReturnType<typeof setInterval> | undefined;
@@ -21,6 +22,20 @@ const mainTemps = computed(() =>
     /cpu package|cpu core$|gpu core|gpu hot|liquid/i.test(s.name),
   ),
 );
+
+const emptyFanMessage = computed(() => {
+  const s = diag.value?.sensord;
+  if (!s || !s.exe_path) {
+    return "Capteurs carte mère indisponibles (sensord introuvable — l'app tente de le réinstaller automatiquement au prochain lancement, une connexion réseau est nécessaire).";
+  }
+  if (!s.running) {
+    return "sensord trouvé mais pas démarré — redémarrez l'application.";
+  }
+  if (s.sensor_count === 0) {
+    return "sensord tourne mais ne remonte aucun capteur sur cette machine — matériel non supporté par LibreHardwareMonitor.";
+  }
+  return "Capteurs détectés, mais aucun header ventilateur pilotable trouvé sur cette carte mère (RGB reste possible via OpenRGB, seul le contrôle de vitesse est indisponible ici). AIO/hubs NZXT & Corsair : détectés via liquidctl au scan. Hubs en driver natif : activer dans Réglages.";
+});
 
 function key(d: DeviceInfo, ch: number) {
   return `${d.id}:${ch}`;
@@ -95,6 +110,11 @@ async function refreshSensors() {
   } catch {
     /* sidecar absent */
   }
+  try {
+    diag.value = await invoke<HardwareDiagnostics>("hardware_diagnostics");
+  } catch {
+    diag.value = null;
+  }
 }
 
 onMounted(() => {
@@ -122,9 +142,7 @@ onUnmounted(() => clearInterval(timer));
     </p>
 
     <p v-if="devices.length === 0" class="empty">
-      Aucun appareil à ventilateurs pilotables détecté.<br />
-      AIO/hubs NZXT &amp; Corsair : détectés via liquidctl au scan. Hubs en
-      driver natif : activer dans Réglages.
+      {{ emptyFanMessage }}
     </p>
 
     <div v-for="d in devices" :key="d.id" class="fan-device">
