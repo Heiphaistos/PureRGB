@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { computed, reactive, ref, watch } from "vue";
 import type { Color, DeviceInfo, EffectConfig, EffectKind, ModeInfo } from "../types";
 import { colorToHex, EFFECT_LABELS, hexToColor, zoneResizable } from "../types";
+import { FAN_PRESETS, ledsFor, type FanPreset } from "../data/fanPresets";
 
 const props = defineProps<{
   device: DeviceInfo | null;
@@ -35,6 +36,19 @@ const emptyResizable = computed(() =>
 );
 const zoneSizeEdits = ref<Record<number, number>>({});
 const resizingZone = ref<number | null>(null);
+
+// Sélecteur de modèle connu — calcule le nombre de LEDs à la place de
+// l'utilisateur (détection matérielle automatique impossible sur un
+// header 3-pin passif, voir fanPresets.ts).
+const presetChoice = ref<Record<number, FanPreset>>({});
+const presetQty = ref<Record<number, number>>({});
+
+function applyPresetCalc(zoneIdx: number) {
+  const preset = presetChoice.value[zoneIdx];
+  const qty = presetQty.value[zoneIdx];
+  if (!preset || !qty || qty <= 0) return;
+  zoneSizeEdits.value[zoneIdx] = ledsFor(preset, qty);
+}
 
 async function applyZoneSize(zoneIdx: number) {
   if (!props.device) return;
@@ -149,6 +163,8 @@ watch(
         .map((z, i) => [i, Math.max(z.led_count, z.leds_min)])
         .filter((_, i) => zoneResizable(props.device!.zones[i])),
     );
+    presetChoice.value = {};
+    presetQty.value = {};
     if (!id) return;
     const saved = props.savedEffects[id];
     if (saved) {
@@ -221,20 +237,37 @@ function snapshot(): EffectConfig {
             1 ventilateur ARGB ≈ 8 à 16 LED (voir sa fiche). Plusieurs
             ventilateurs chaînés sur le même connecteur : additionnez.
           </p>
-          <div v-for="{ z, i } in resizableZones" :key="i" class="argb-row">
+          <div v-for="{ z, i } in resizableZones" :key="i" class="argb-zone">
             <span class="argb-name">{{ z.name }} <em>({{ z.led_count }} LED)</em></span>
-            <input
-              type="number"
-              :min="z.leds_min"
-              :max="z.leds_max"
-              v-model.number="zoneSizeEdits[i]"
-            />
-            <button
-              :disabled="resizingZone !== null || zoneSizeEdits[i] === z.led_count"
-              @click="applyZoneSize(i)"
-            >
-              {{ resizingZone === i ? "…" : "Appliquer" }}
-            </button>
+            <div class="argb-preset-row">
+              <select v-model="presetChoice[i]" @change="applyPresetCalc(i)">
+                <option :value="undefined" disabled selected>Modèle connu…</option>
+                <option v-for="p in FAN_PRESETS" :key="p.model" :value="p">
+                  {{ p.brand }} — {{ p.model }} ({{ p.ledsPerUnit }} LED/unité)
+                </option>
+              </select>
+              <input
+                type="number"
+                min="1"
+                placeholder="qté"
+                v-model.number="presetQty[i]"
+                @input="applyPresetCalc(i)"
+              />
+            </div>
+            <div class="argb-row">
+              <input
+                type="number"
+                :min="z.leds_min"
+                :max="z.leds_max"
+                v-model.number="zoneSizeEdits[i]"
+              />
+              <button
+                :disabled="resizingZone !== null || zoneSizeEdits[i] === z.led_count"
+                @click="applyZoneSize(i)"
+              >
+                {{ resizingZone === i ? "…" : "Appliquer" }}
+              </button>
+            </div>
           </div>
         </details>
       </div>
@@ -514,6 +547,25 @@ function snapshot(): EffectConfig {
 
 .argb-row input {
   width: 90px;
+}
+
+.argb-zone {
+  margin-top: 10px;
+}
+
+.argb-preset-row {
+  display: flex;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.argb-preset-row select {
+  flex: 1;
+  font-size: 12px;
+}
+
+.argb-preset-row input {
+  width: 70px;
 }
 
 .zone-row label {

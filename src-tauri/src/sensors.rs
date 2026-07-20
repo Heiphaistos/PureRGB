@@ -2,7 +2,7 @@
 //! sensord émet une ligne JSON toutes les 2 s sur stdout ; on garde le dernier
 //! relevé en mémoire. Il se termine seul quand son stdin se ferme.
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use std::io::BufRead;
@@ -11,6 +11,12 @@ use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
 
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+/// Même limitation que liquidctl (voir backends/liquidctl/mod.rs) : exe
+/// portable sans resources/. sensord est notre propre build .NET self-contained.
+const SENSORD_URL: &str =
+    "https://github.com/Heiphaistos/PureRGB/releases/download/sidecars-v1/sensord.exe";
+const SENSORD_SHA256: &str = "c60ecbea5f4d4608467bcea106ad6b8f53ac22eb27977840065192f17475f2a5";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Sensor {
@@ -86,6 +92,52 @@ impl SensorHub {
         candidates.into_iter().find(|p| p.is_file())
     }
 
+    fn appdata_dir() -> Option<PathBuf> {
+        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("sensord"))
+    }
+
+    /// Télécharge sensord.exe (SHA-256 pinné) vers %APPDATA%\PureRGB\sensord\.
+    /// Publish self-contained .NET 8 : runtime déjà inclus, pas de DLL à part.
+    /// Téléchargement vers un fichier temporaire puis renommage seulement
+    /// après vérification du hash (Move-Item = rename NTFS quasi-atomique) —
+    /// un download interrompu ne doit jamais laisser un binaire corrompu au
+    /// chemin que `locate()` fait confiance ensuite sans re-vérifier.
+    fn install() -> Result<PathBuf> {
+        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        std::fs::create_dir_all(&dir)?;
+        let exe = dir.join("sensord.exe");
+        let tmp = dir.join("sensord.exe.download");
+        let script = format!(
+            "$ProgressPreference='SilentlyContinue'; \
+             Invoke-WebRequest -Uri '{url}' -OutFile '{tmp}' -UseBasicParsing; \
+             $h = (Get-FileHash '{tmp}' -Algorithm SHA256).Hash.ToLower(); \
+             if ($h -ne '{sha}') {{ Remove-Item '{tmp}' -Force; throw \"hash mismatch: $h\" }}; \
+             Move-Item '{tmp}' '{exe}' -Force",
+            url = SENSORD_URL,
+            tmp = tmp.display(),
+            exe = exe.display(),
+            sha = SENSORD_SHA256,
+        );
+        let mut cmd = Command::new("powershell.exe");
+        cmd.args(["-NoProfile", "-NonInteractive", "-Command", &script]);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        let output = cmd.output().context("téléchargement sensord")?;
+        if !output.status.success() {
+            bail!(
+                "téléchargement sensord échoué: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+        if !exe.is_file() {
+            bail!("sensord.exe absent après téléchargement");
+        }
+        Ok(exe)
+    }
+
     /// Démarre sensord + thread lecteur. No-op si déjà lancé ou exe absent.
     pub fn start(self: &Arc<Self>) -> Result<bool> {
         if self.child.lock().is_some() {
@@ -93,7 +145,13 @@ impl SensorHub {
         }
         let exe = match self.locate() {
             Some(e) => e,
-            None => return Ok(false), // sidecar absent : capteurs indisponibles
+            None => match Self::install() {
+                Ok(e) => e,
+                Err(e) => {
+                    log::warn!("installation sensord: {e:#}");
+                    return Ok(false);
+                }
+            },
         };
         let mut cmd = Command::new(&exe);
         cmd.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null());
