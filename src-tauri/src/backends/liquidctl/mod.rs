@@ -25,6 +25,15 @@ pub struct LiquidctlDiag {
 
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
+/// Filet de sécurité pour l'exe portable : NSIS copie resources/liquidctl/
+/// à côté du binaire, mais le portable n'a pas de dossier resources/ du
+/// tout (voir OpenRgbManager::install, même limitation déjà compensée pour
+/// OpenRGB). Binaire hébergé sur nos propres releases GitHub (PyInstaller
+/// onefile, aucune release Windows officielle liquidctl à épingler).
+const LIQUIDCTL_URL: &str =
+    "https://github.com/Heiphaistos/PureRGB/releases/download/sidecars-v1/liquidctl.exe";
+const LIQUIDCTL_SHA256: &str = "efcde9918537997a47a4e965deec457c8fd30e42af8103a5c738d5ea86c5e0a2";
+
 #[derive(Debug, Clone, Deserialize)]
 struct ListedDevice {
     description: String,
@@ -68,6 +77,7 @@ pub struct LiquidctlBackend {
     resource_dir: Option<PathBuf>,
     entries: Vec<Entry>,
     initialized: bool,
+    last_install_failure: Option<(std::time::Instant, String)>,
 }
 
 impl LiquidctlBackend {
@@ -77,6 +87,7 @@ impl LiquidctlBackend {
             resource_dir: None,
             entries: Vec::new(),
             initialized: false,
+            last_install_failure: None,
         }
     }
 
@@ -101,6 +112,76 @@ impl LiquidctlBackend {
             );
         }
         candidates.into_iter().find(|p| p.is_file())
+    }
+
+    fn appdata_dir() -> Option<PathBuf> {
+        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("liquidctl"))
+    }
+
+    /// Télécharge liquidctl.exe (SHA-256 pinné) vers %APPDATA%\PureRGB\liquidctl\.
+    /// Onefile PyInstaller statique : pas de DLL runtime à copier séparément.
+    /// Atomique : télécharge vers .download, vérifie SHA, ne déplace que si OK.
+    fn install() -> Result<PathBuf> {
+        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        std::fs::create_dir_all(&dir)?;
+        let exe = dir.join("liquidctl.exe");
+        let tmp = dir.join("liquidctl.exe.download");
+        let script = format!(
+            "$ProgressPreference='SilentlyContinue'; \
+             Invoke-WebRequest -Uri '{url}' -OutFile '{tmp}' -UseBasicParsing; \
+             $h = (Get-FileHash '{tmp}' -Algorithm SHA256).Hash.ToLower(); \
+             if ($h -ne '{sha}') {{ Remove-Item '{tmp}' -Force; throw \"hash mismatch: $h\" }}; \
+             Move-Item '{tmp}' '{exe}' -Force",
+            url = LIQUIDCTL_URL,
+            tmp = tmp.display(),
+            exe = exe.display(),
+            sha = LIQUIDCTL_SHA256,
+        );
+        let mut cmd = Command::new("powershell.exe");
+        cmd.args(["-NoProfile", "-NonInteractive", "-Command", &script]);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        let output = cmd.output().context("téléchargement liquidctl")?;
+        if !output.status.success() {
+            bail!(
+                "téléchargement liquidctl échoué: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+        if !exe.is_file() {
+            bail!("liquidctl.exe absent après téléchargement");
+        }
+        Ok(exe)
+    }
+
+    /// `locate()` puis, si absent, tentative de téléchargement — ne jamais
+    /// laisser le backend mort silencieusement comme avant (portable sans
+    /// resources/, cause confirmée d'un retour terrain "0 AIO/hub détecté").
+    /// Retourne Result pour que le diagnostic puisse surfacer l'erreur réelle.
+    fn locate_or_install(&mut self) -> Result<PathBuf, String> {
+        if let Some(p) = self.locate() {
+            return Ok(p);
+        }
+        const COOLDOWN: std::time::Duration = std::time::Duration::from_secs(30);
+        if let Some((at, err)) = &self.last_install_failure {
+            if at.elapsed() < COOLDOWN {
+                return Err(err.clone());
+            }
+        }
+        match Self::install() {
+            Ok(p) => {
+                self.last_install_failure = None;
+                Ok(p)
+            }
+            Err(e) => {
+                let msg = format!("{e:#}");
+                self.last_install_failure = Some((std::time::Instant::now(), msg.clone()));
+                Err(msg)
+            }
+        }
     }
 
     fn run(&self, args: &[&str]) -> Result<String> {
@@ -152,7 +233,18 @@ impl LiquidctlBackend {
     /// listé, ou initialize/status en échec).
     pub fn diagnose(&mut self) -> LiquidctlDiag {
         if self.exe.is_none() {
-            self.exe = self.locate();
+            match self.locate_or_install() {
+                Ok(p) => self.exe = Some(p),
+                Err(e) => {
+                    return LiquidctlDiag {
+                        exe_path: None,
+                        version: Err(format!("binaire liquidctl.exe introuvable : {e}")),
+                        list: Err("—".into()),
+                        initialize: Err("—".into()),
+                        status: Err("—".into()),
+                    };
+                }
+            }
         }
         let Some(exe) = self.exe.clone() else {
             return LiquidctlDiag {
@@ -165,7 +257,15 @@ impl LiquidctlBackend {
         };
         let version = Self::run_diag(&exe, &["--version"]);
         let list = Self::run_diag(&exe, &["list", "--json"]);
-        let initialize = Self::run_diag(&exe, &["initialize", "all"]);
+        let initialize = if self.initialized {
+            Ok("déjà initialisé cette session".to_string())
+        } else {
+            let r = Self::run_diag(&exe, &["initialize", "all"]);
+            if r.is_ok() {
+                self.initialized = true;
+            }
+            r
+        };
         let status = Self::run_diag(&exe, &["status", "--json"]);
         LiquidctlDiag {
             exe_path: Some(exe.display().to_string()),
@@ -269,7 +369,10 @@ impl Backend for LiquidctlBackend {
     fn scan(&mut self) -> Result<Vec<DeviceInfo>> {
         self.entries.clear();
         if self.exe.is_none() {
-            self.exe = self.locate();
+            match self.locate_or_install() {
+                Ok(p) => self.exe = Some(p),
+                Err(e) => log::warn!("installation liquidctl: {e}"),
+            }
         }
         if self.exe.is_none() {
             return Ok(Vec::new()); // binaire absent : backend silencieux
