@@ -31,3 +31,6 @@ desktop.ini
 # Env
 .env
 .env.*
+
+# Worktrees (superpowers:using-git-worktrees)
+.worktrees/
