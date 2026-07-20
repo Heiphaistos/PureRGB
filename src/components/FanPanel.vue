@@ -9,6 +9,7 @@ import type {
   SensorDiag,
   Settings,
 } from "../types";
+import DeviceCard from "./DeviceCard.vue";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -156,7 +157,10 @@ onUnmounted(() => clearInterval(timer));
     </p>
 
     <div v-for="d in devices" :key="d.id" class="fan-device">
-      <h3>{{ d.name }} <span class="backend-tag">{{ d.backend }}</span></h3>
+      <div class="fan-device-head">
+        <DeviceCard :device="d" compact />
+        <span class="backend-tag">{{ d.backend }}</span>
+      </div>
       <div v-for="fc in d.fan_channels" :key="fc.index" class="fan-block">
         <div class="fan-row">
           <span class="fan-name">
@@ -261,9 +265,11 @@ onUnmounted(() => clearInterval(timer));
   max-width: 680px;
 }
 
-.fan-device h3 {
-  font-size: 14px;
-  margin-bottom: 12px;
+.fan-device-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .backend-tag {

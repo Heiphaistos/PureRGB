@@ -2,11 +2,13 @@
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, ref } from "vue";
 import ConflictPanel from "./components/ConflictPanel.vue";
-import DeviceList from "./components/DeviceList.vue";
-import EffectPanel from "./components/EffectPanel.vue";
+import DeviceCanvas from "./components/DeviceCanvas.vue";
+import DeviceGrid from "./components/DeviceGrid.vue";
+import EffectDrawer from "./components/EffectDrawer.vue";
 import FanPanel from "./components/FanPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
 import SettingsPanel from "./components/SettingsPanel.vue";
+import type { LayoutMode } from "./components/SettingsPanel.vue";
 import SmartPanel from "./components/SmartPanel.vue";
 import ThemePanel from "./components/ThemePanel.vue";
 import type {
@@ -18,12 +20,61 @@ import type {
   Settings,
 } from "./types";
 
+type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings";
+
+// Chemins SVG (stroke, viewBox 0 0 24 24) pour la nav latérale.
+const TABS: { id: TabId; label: string; icon: string[] }[] = [
+  {
+    id: "rgb",
+    label: "Éclairage",
+    icon: ["M12 3a6 6 0 0 0-4 10.5c.5.5 1 1.5 1 2.5h6c0-1 .5-2 1-2.5A6 6 0 0 0 12 3z", "M9 18h6", "M10 21h4"],
+  },
+  { id: "themes", label: "Thèmes", icon: ["M3 7l9-4 9 4-9 4-9-4z", "M3 12l9 4 9-4", "M3 17l9 4 9-4"] },
+  { id: "smart", label: "Maison", icon: ["M3 11l9-7 9 7", "M5 10v10h14V10", "M10 20v-5h4v5"] },
+  {
+    id: "fans",
+    label: "Ventilateurs",
+    icon: [
+      "M12 12m-1.6 0a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0",
+      "M12 10.4C12 6 14 3 17 4c2 .7 1 3-1 4.4-1.3.9-2.7 1.4-4 2z",
+      "M10.3 12.9C6.4 14 3.4 13 4 10c.5-2 3.1-1.4 4.7.4.9 1 1.4 1.6 1.6 2.5z",
+      "M13.7 12.9c3.9 1.1 6.9.1 6.3-2.9-.5-2-3.1-1.4-4.7.4-.9 1-1.4 1.6-1.6 2.5z",
+    ],
+  },
+  { id: "lcd", label: "Écran LCD", icon: ["M3 4h18v12H3z", "M8 20h8", "M12 16v4"] },
+  { id: "conflicts", label: "Conflits", icon: ["M12 2 1 21h22L12 2z", "M12 9v5", "M12 17h.01"] },
+  {
+    id: "settings",
+    label: "Réglages",
+    icon: [
+      "M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+      "M12 3v3",
+      "M12 18v3",
+      "M3 12h3",
+      "M18 12h3",
+      "M5.6 5.6l2.1 2.1",
+      "M16.3 16.3l2.1 2.1",
+      "M5.6 18.4l2.1-2.1",
+      "M16.3 7.7l2.1-2.1",
+    ],
+  },
+];
+
 const devices = ref<DeviceInfo[]>([]);
 const backends = ref<BackendStatus[]>([]);
 const conflicts = ref<ConflictReport>({ conflicts: [], openrgb_running: false, guarded_families: [] });
 const settings = ref<Settings | null>(null);
 const selectedId = ref<string | null>(null);
-const tab = ref<"rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings">("rgb");
+const drawerOpen = ref(false);
+const tab = ref<TabId>("rgb");
+const layoutMode = ref<LayoutMode>(
+  (localStorage.getItem("purergb-layout") as LayoutMode | null) ?? "grid",
+);
+
+function setLayout(mode: LayoutMode) {
+  layoutMode.value = mode;
+  localStorage.setItem("purergb-layout", mode);
+}
 const scanning = ref(false);
 const toast = ref("");
 const orgb = ref<OpenRgbStatus>({
@@ -43,6 +94,7 @@ const activeConflicts = computed(
 const selected = computed(
   () => devices.value.find((d) => d.id === selectedId.value) ?? null,
 );
+const gridEffects = computed(() => settings.value?.effects ?? {});
 const fanDevices = computed(() =>
   devices.value.filter((d) => d.fan_channels.length > 0),
 );
@@ -53,6 +105,19 @@ function showToast(msg: string) {
   toast.value = msg;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => (toast.value = ""), 3500);
+}
+
+function onSelectDevice(id: string) {
+  if (selectedId.value === id && drawerOpen.value) {
+    drawerOpen.value = false;
+  } else {
+    selectedId.value = id;
+    drawerOpen.value = true;
+  }
+}
+
+function closeDrawer() {
+  drawerOpen.value = false;
 }
 
 async function refresh() {
@@ -154,34 +219,30 @@ onMounted(async () => {
 
 <template>
   <div class="layout">
-    <header class="topbar">
+    <aside class="sidebar">
       <div class="brand">
         <span class="brand-dot"></span>
-        <h1>PureRGB</h1>
       </div>
       <nav class="tabs">
-        <button :class="{ active: tab === 'rgb' }" @click="tab = 'rgb'">
-          Éclairage
-        </button>
-        <button :class="{ active: tab === 'themes' }" @click="tab = 'themes'">
-          Thèmes
-        </button>
-        <button :class="{ active: tab === 'smart' }" @click="tab = 'smart'">
-          Maison connectée
-        </button>
-        <button :class="{ active: tab === 'fans' }" @click="tab = 'fans'">
-          Ventilateurs
-        </button>
-        <button v-if="lcdDevices.length" :class="{ active: tab === 'lcd' }" @click="tab = 'lcd'">
-          Écran LCD
-        </button>
-        <button :class="{ active: tab === 'conflicts' }" @click="tab = 'conflicts'">
-          Conflits<span v-if="activeConflicts > 0" class="badge">{{ activeConflicts }}</span>
-        </button>
-        <button :class="{ active: tab === 'settings' }" @click="tab = 'settings'">
-          Réglages
+        <button
+          v-for="t in TABS"
+          v-show="t.id !== 'lcd' || lcdDevices.length"
+          :key="t.id"
+          :class="{ active: tab === t.id }"
+          :title="t.label"
+          @click="tab = t.id"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path v-for="d in t.icon" :key="d" :d="d" />
+          </svg>
+          <span class="tab-label">{{ t.label }}</span>
+          <span v-if="t.id === 'conflicts' && activeConflicts > 0" class="badge">{{ activeConflicts }}</span>
         </button>
       </nav>
+    </aside>
+
+    <div class="main-col">
+    <header class="topbar">
       <div class="top-actions">
         <span
           v-for="b in backends"
@@ -229,22 +290,24 @@ onMounted(async () => {
     </div>
 
     <main class="content">
-      <template v-if="tab === 'rgb'">
-        <DeviceList
-          :devices="devices"
-          :selected-id="selectedId"
-          @select="selectedId = $event"
-        />
-        <EffectPanel
-          :device="selected"
-          :saved-effects="settings?.effects ?? {}"
-          @apply="onApplyEffect"
-          @apply-all="onApplyAll"
-          @apply-mode="onApplyMode"
-          @toast="showToast"
-          @refresh="refresh"
-        />
-      </template>
+      <DeviceGrid
+        v-if="tab === 'rgb' && layoutMode !== 'canvas'"
+        :devices="devices"
+        :selected-id="selectedId"
+        :effects="gridEffects"
+        :dense="layoutMode === 'list'"
+        @select="onSelectDevice"
+      />
+      <DeviceCanvas
+        v-else-if="tab === 'rgb' && layoutMode === 'canvas'"
+        :devices="devices"
+        :saved-effects="gridEffects"
+        @apply="onApplyEffect"
+        @apply-all="onApplyAll"
+        @apply-mode="onApplyMode"
+        @toast="showToast"
+        @refresh="refresh"
+      />
       <ThemePanel v-else-if="tab === 'themes'" @apply-all="onApplyAll" />
       <SmartPanel v-else-if="tab === 'smart'" @toast="showToast" @refresh="refresh" />
       <FanPanel
@@ -265,9 +328,24 @@ onMounted(async () => {
       <SettingsPanel
         v-else
         :settings="settings"
+        :layout="layoutMode"
         @saved="loadSettings(); refresh(); showToast('Réglages enregistrés')"
+        @layout-change="setLayout"
       />
     </main>
+    </div>
+
+    <EffectDrawer
+      :open="drawerOpen && tab === 'rgb' && layoutMode !== 'canvas'"
+      :device="selected"
+      :saved-effects="settings?.effects ?? {}"
+      @apply="onApplyEffect"
+      @apply-all="onApplyAll"
+      @apply-mode="onApplyMode"
+      @toast="showToast"
+      @refresh="refresh"
+      @close="closeDrawer"
+    />
 
     <transition name="fade">
       <div v-if="toast" class="toast">{{ toast }}</div>
@@ -278,6 +356,27 @@ onMounted(async () => {
 <style scoped>
 .layout {
   display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 88px;
+  min-width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
   flex-direction: column;
   height: 100vh;
 }
@@ -286,39 +385,54 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 12px 18px;
+  padding: var(--space-3) var(--space-4);
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  margin-bottom: var(--space-3);
 }
 
 .brand-dot {
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: conic-gradient(#ff5000, #ff00c8, #0090ff, #3ecf6e, #ff5000);
 }
 
-.brand h1 {
-  font-size: 17px;
-  letter-spacing: 0.5px;
-}
-
 .tabs {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
 }
 
 .tabs button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
   border: none;
   background: transparent;
   color: var(--text-dim);
-  padding: 8px 14px;
+  padding: var(--space-2) 2px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.tabs button svg {
+  width: 20px;
+  height: 20px;
 }
 
 .tabs button.active {
@@ -351,7 +465,7 @@ onMounted(async () => {
   background: rgba(245, 185, 74, 0.12);
   border-bottom: 1px solid rgba(245, 185, 74, 0.4);
   color: var(--warn);
-  padding: 9px 18px;
+  padding: var(--space-2) var(--space-4);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -360,15 +474,18 @@ onMounted(async () => {
 }
 
 .badge {
-  display: inline-block;
-  margin-left: 6px;
-  min-width: 18px;
-  padding: 1px 5px;
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
   border-radius: 999px;
   background: var(--warn);
   color: #1a1206;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
+  line-height: 15px;
   text-align: center;
 }
 
@@ -376,7 +493,7 @@ onMounted(async () => {
   background: var(--accent-soft);
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
-  padding: 9px 18px;
+  padding: var(--space-2) var(--space-4);
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -400,7 +517,7 @@ onMounted(async () => {
   border-radius: 999px;
   padding: 9px 20px;
   font-size: 13px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-md);
 }
 
 .fade-enter-active,

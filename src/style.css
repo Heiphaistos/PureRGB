@@ -12,6 +12,17 @@
   --warn: #f5b94a;
   --err: #f0564a;
   --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-drawer: -8px 0 32px rgba(0, 0, 0, 0.55);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --transition-fast: 0.15s ease;
+  --transition-drawer: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
