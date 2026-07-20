@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import type { CurveConfig, DeviceInfo, HardwareDiagnostics, Sensor, Settings } from "../types";
+import type {
+  CurveConfig,
+  DeviceInfo,
+  HardwareDiagnostics,
+  Sensor,
+  SensorDiag,
+  Settings,
+} from "../types";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -23,8 +30,7 @@ const mainTemps = computed(() =>
   ),
 );
 
-const emptyFanMessage = computed(() => {
-  const s = diag.value?.sensord;
+function emptyFanMessageFor(s: SensorDiag | null | undefined): string {
   if (!s || !s.exe_path) {
     return "Capteurs carte mère indisponibles (sensord introuvable — l'app tente de le réinstaller automatiquement au prochain lancement, une connexion réseau est nécessaire).";
   }
@@ -35,7 +41,9 @@ const emptyFanMessage = computed(() => {
     return "sensord tourne mais ne remonte aucun capteur sur cette machine — matériel non supporté par LibreHardwareMonitor.";
   }
   return "Capteurs détectés, mais aucun header ventilateur pilotable trouvé sur cette carte mère (RGB reste possible via OpenRGB, seul le contrôle de vitesse est indisponible ici). AIO/hubs NZXT & Corsair : détectés via liquidctl au scan. Hubs en driver natif : activer dans Réglages.";
-});
+}
+
+const emptyFanMessage = computed(() => emptyFanMessageFor(diag.value?.sensord));
 
 function key(d: DeviceInfo, ch: number) {
   return `${d.id}:${ch}`;
@@ -110,10 +118,12 @@ async function refreshSensors() {
   } catch {
     /* sidecar absent */
   }
-  try {
-    diag.value = await invoke<HardwareDiagnostics>("hardware_diagnostics");
-  } catch {
-    diag.value = null;
+  if (props.devices.length === 0) {
+    try {
+      diag.value = await invoke<HardwareDiagnostics>("hardware_diagnostics");
+    } catch {
+      diag.value = null;
+    }
   }
 }
 
