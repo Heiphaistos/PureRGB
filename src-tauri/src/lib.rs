@@ -888,11 +888,30 @@ pub fn run() {
         let registry = registry.clone();
         let engine = engine.clone();
         let mgr = openrgb_mgr.clone();
-        let saved = saved.clone();
+        let mut saved = saved.clone();
         let auto_stopped = auto_stopped.clone();
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
+                // Auto-update OpenRGB AVANT tout le reste : doit précéder
+                // ensure_running/scan/restore_saved_state pour que le scan
+                // matériel se fasse contre la version définitive de la
+                // session, jamais contre une version sur le point d'être
+                // remplacée. Ne touche jamais un serveur déjà joignable
+                // (install OpenRGB indépendante de l'utilisateur).
+                if saved.auto_start_openrgb {
+                    if let Some(new_version) = crate::backends::openrgb::updater::update_if_needed(
+                        &mgr,
+                        &saved.openrgb_host,
+                        saved.openrgb_port,
+                        &saved.openrgb_version,
+                    ) {
+                        saved.openrgb_version = Some(new_version);
+                        if let Err(e) = crate::settings::save(&saved) {
+                            log::warn!("sauvegarde version OpenRGB: {e:#}");
+                        }
+                    }
+                }
                 // Arrêt auto des logiciels constructeur en conflit AVANT le scan
                 // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
                 // Réversible (disable=false), redémarrés au "Quitter" du tray.
