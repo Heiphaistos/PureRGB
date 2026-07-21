@@ -46,6 +46,8 @@ jobs:
         run: cargo test --manifest-path src-tauri/Cargo.toml
 
       - name: Build Tauri app
+        env:
+          CAPTURE_UPLOAD_TOKEN: ${{ secrets.CAPTURE_UPLOAD_TOKEN }}
         run: npx tauri build
 
       - name: Upload artifacts
