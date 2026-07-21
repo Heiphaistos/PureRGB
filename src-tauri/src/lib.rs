@@ -26,7 +26,7 @@ use parking_lot::Mutex;
 use serde::Serialize;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
-use tauri::{Manager, State};
+use tauri::{Emitter, Manager, State};
 
 struct AppState {
     registry: SharedRegistry,
@@ -1072,6 +1072,73 @@ pub fn run() {
                         for key in families {
                             if let Err(e) = conflicts::stop_family(&key, false) {
                                 log::debug!("garde conflit {key}: {e:#}");
+                            }
+                        }
+                    })?;
+            }
+            // Sondage périodique des nouveaux appareils USB non reconnus —
+            // propose un diagnostic sans attendre que l'utilisateur remarque
+            // lui-même qu'un appareil ne fonctionne pas. Premier sondage =
+            // référence silencieuse (tout ce qui est déjà branché n'est pas
+            // "nouveau"). Voir hotplug::diff_new_unrecognized.
+            {
+                let app_handle = app.handle().clone();
+                std::thread::Builder::new()
+                    .name("usb-hotplug".into())
+                    .spawn(move || {
+                        let mut previous: std::collections::HashSet<(String, String)> =
+                            std::collections::HashSet::new();
+                        let mut first = true;
+                        loop {
+                            std::thread::sleep(std::time::Duration::from_secs(5));
+                            let state = app_handle.state::<AppState>();
+                            let current: Vec<crate::backends::hid::RawHidDevice> = {
+                                let mut reg = state.registry.lock();
+                                reg.backends_mut()
+                                    .iter_mut()
+                                    .find(|b| b.name() == "hid")
+                                    .and_then(|b| b.as_any_mut().downcast_mut::<HidBackend>())
+                                    .and_then(|hid| hid.list_raw().ok())
+                                    .unwrap_or_default()
+                            };
+                            drop(state);
+                            let current_keys: std::collections::HashSet<(String, String)> = current
+                                .iter()
+                                .map(|d| (d.vid.clone(), d.pid.clone()))
+                                .collect();
+                            if first {
+                                previous = current_keys;
+                                first = false;
+                                continue;
+                            }
+                            let new_unrecognized = hotplug::diff_new_unrecognized(&previous, &current);
+                            previous = current_keys;
+                            if new_unrecognized.is_empty() {
+                                continue;
+                            }
+                            log::info!(
+                                "hotplug: {} nouvel(x) appareil(s) non reconnu(s)",
+                                new_unrecognized.len()
+                            );
+                            if let Err(e) = app_handle.emit("unknown-device-detected", &new_unrecognized) {
+                                log::debug!("émission événement hotplug: {e:#}");
+                            }
+                            let body = if new_unrecognized.len() == 1 {
+                                format!(
+                                    "{} {} ({}:{})",
+                                    new_unrecognized[0].manufacturer,
+                                    new_unrecognized[0].product,
+                                    new_unrecognized[0].vid,
+                                    new_unrecognized[0].pid
+                                )
+                            } else {
+                                format!("{} nouveaux appareils non reconnus", new_unrecognized.len())
+                            };
+                            use tauri_plugin_notification::NotificationExt;
+                            if let Err(e) =
+                                app_handle.notification().builder().title("PureRGB").body(body).show()
+                            {
+                                log::debug!("notification OS hotplug: {e:#}");
                             }
                         }
                     })?;
