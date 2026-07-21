@@ -7,6 +7,7 @@
 
 pub mod corsair_node;
 pub mod known;
+pub mod known_remote;
 pub mod nzxt_hue2;
 
 use crate::backends::Backend;
@@ -100,7 +101,9 @@ impl HidBackend {
                 pid: format!("{pid:04x}"),
                 manufacturer,
                 product,
-                recognized: known::find_known(vid, pid).is_some() || known::find_vendor(vid).is_some(),
+                recognized: known::find_known(vid, pid).is_some()
+                    || known::find_vendor(vid).is_some()
+                    || known_remote::is_known_remote(vid, pid),
                 has_native_driver: known::find_known(vid, pid)
                     .and_then(|k| k.native_driver)
                     .is_some(),
