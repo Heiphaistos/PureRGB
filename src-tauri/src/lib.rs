@@ -37,6 +37,8 @@ struct AppState {
     /// Familles de conflit arrêtées automatiquement au lancement cette
     /// session (auto_manage_conflicts) — à redémarrer à la fermeture.
     auto_stopped: std::sync::Arc<Mutex<Vec<String>>>,
+    /// Capture USB en cours (panneau Diagnostic) — une seule à la fois.
+    active_capture: Mutex<Option<usbcapture::CaptureSession>>,
 }
 
 #[derive(Serialize)]
@@ -539,6 +541,60 @@ fn compute_hardware_diagnostics(
     }
 }
 
+#[derive(Serialize)]
+struct CaptureFileInfo {
+    path: String,
+    hub: u32,
+    size_bytes: u64,
+}
+
+#[tauri::command(async)]
+fn usb_capture_ready() -> bool {
+    usbcapture::usbpcap_ready()
+}
+
+#[tauri::command(async)]
+fn usb_capture_install() -> Result<(), String> {
+    usbcapture::usbpcap_install().map_err(|e| format!("{e:#}"))
+}
+
+#[tauri::command(async)]
+fn usb_capture_start(state: State<AppState>) -> Result<(), String> {
+    let mut active = state.active_capture.lock();
+    if active.is_some() {
+        return Err("Une capture est déjà en cours".into());
+    }
+    let session = usbcapture::start_capture().map_err(|e| format!("{e:#}"))?;
+    *active = Some(session);
+    Ok(())
+}
+
+#[tauri::command(async)]
+fn usb_capture_stop(state: State<AppState>) -> Result<Vec<CaptureFileInfo>, String> {
+    let session = {
+        let mut active = state.active_capture.lock();
+        active.take()
+    };
+    let Some(session) = session else {
+        return Err("Aucune capture en cours".into());
+    };
+    let files = usbcapture::stop_capture(session);
+    Ok(files
+        .into_iter()
+        .map(|f| CaptureFileInfo {
+            path: f.path.display().to_string(),
+            hub: f.hub,
+            size_bytes: f.size_bytes,
+        })
+        .collect())
+}
+
+#[tauri::command(async)]
+fn usb_capture_upload(vid: String, pid: String, device_name: String, path: String) -> Result<(), String> {
+    usbcapture::upload_capture(std::path::Path::new(&path), &vid, &pid, &device_name)
+        .map_err(|e| format!("{e:#}"))
+}
+
 #[tauri::command(async)]
 fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
     let (host, port) = {
@@ -926,6 +982,7 @@ pub fn run() {
         sensors,
         curve_engine,
         auto_stopped,
+        active_capture: Mutex::new(None),
     };
 
     tauri::Builder::default()
@@ -1086,7 +1143,12 @@ pub fn run() {
             nanoleaf_pair,
             conflict_guard_set,
             hardware_diagnostics,
-            send_telemetry_report
+            send_telemetry_report,
+            usb_capture_ready,
+            usb_capture_install,
+            usb_capture_start,
+            usb_capture_stop,
+            usb_capture_upload
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");
