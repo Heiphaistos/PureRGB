@@ -30,7 +30,7 @@ use tauri::{Manager, State};
 struct AppState {
     registry: SharedRegistry,
     engine: EffectsEngine,
-    settings: Mutex<Settings>,
+    settings: std::sync::Arc<Mutex<Settings>>,
     openrgb_mgr: std::sync::Arc<OpenRgbManager>,
     sensors: std::sync::Arc<SensorHub>,
     curve_engine: std::sync::Arc<CurveEngine>,
@@ -863,6 +863,8 @@ pub fn run() {
     if let Err(e) = settings::save(&saved) {
         log::warn!("écriture settings initiale: {e:#}");
     }
+    let settings_shared: std::sync::Arc<Mutex<Settings>> =
+        std::sync::Arc::new(Mutex::new(saved.clone()));
     let sensors = SensorHub::new();
     let backends: Vec<Box<dyn Backend>> = vec![
         Box::new(OpenRgbBackend::new(
@@ -888,11 +890,12 @@ pub fn run() {
         let registry = registry.clone();
         let engine = engine.clone();
         let mgr = openrgb_mgr.clone();
-        let mut saved = saved.clone();
+        let settings_shared = settings_shared.clone();
         let auto_stopped = auto_stopped.clone();
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
+                let mut saved = settings_shared.lock().clone();
                 // Auto-update OpenRGB AVANT tout le reste : doit précéder
                 // ensure_running/scan/restore_saved_state pour que le scan
                 // matériel se fasse contre la version définitive de la
@@ -906,8 +909,10 @@ pub fn run() {
                         saved.openrgb_port,
                         &saved.openrgb_version,
                     ) {
-                        saved.openrgb_version = Some(new_version);
-                        if let Err(e) = crate::settings::save(&saved) {
+                        saved.openrgb_version = Some(new_version.clone());
+                        let mut shared = settings_shared.lock();
+                        shared.openrgb_version = Some(new_version);
+                        if let Err(e) = crate::settings::save(&shared) {
                             log::warn!("sauvegarde version OpenRGB: {e:#}");
                         }
                     }
@@ -996,7 +1001,7 @@ pub fn run() {
     let state = AppState {
         registry,
         engine,
-        settings: Mutex::new(saved),
+        settings: settings_shared,
         openrgb_mgr,
         sensors,
         curve_engine,
