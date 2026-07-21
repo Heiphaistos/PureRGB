@@ -85,6 +85,22 @@ async function runDiagnostics() {
   }
 }
 
+const telemetrySending = ref(false);
+const telemetryMsg = ref("");
+
+async function sendTelemetryNow() {
+  telemetrySending.value = true;
+  telemetryMsg.value = "";
+  try {
+    await invoke("send_telemetry_report");
+    telemetryMsg.value = "Rapport envoyé.";
+  } catch (e) {
+    telemetryMsg.value = `Envoi : ${e}`;
+  } finally {
+    telemetrySending.value = false;
+  }
+}
+
 const hidRows = () =>
   diag.value
     ? diag.value.hid_raw.filter((d) => !showUnrecognizedOnly.value || !d.recognized)
@@ -98,6 +114,7 @@ const form = reactive({
   fps: 30,
   start_minimized: false,
   auto_manage_conflicts: true,
+  telemetry_opt_in: false,
 });
 const saving = ref(false);
 const error = ref("");
@@ -113,6 +130,7 @@ watch(
     form.fps = s.fps;
     form.start_minimized = s.start_minimized;
     form.auto_manage_conflicts = s.auto_manage_conflicts;
+    form.telemetry_opt_in = s.telemetry_opt_in;
   },
   { immediate: true },
 );
@@ -129,6 +147,7 @@ async function save() {
       fps: form.fps,
       startMinimized: form.start_minimized,
       autoManageConflicts: form.auto_manage_conflicts,
+      telemetryOptIn: form.telemetry_opt_in,
     });
     emit("saved");
   } catch (e) {
@@ -220,6 +239,14 @@ async function save() {
           lancement, les relance à la fermeture)
         </label>
       </div>
+      <div class="inline" style="margin-bottom: 12px">
+        <input id="telemetry" type="checkbox" v-model="form.telemetry_opt_in" />
+        <label for="telemetry">
+          Envoyer les informations de diagnostic matériel (VID/PID détectés,
+          état OpenRGB/liquidctl/sensord) pour aider à identifier le matériel
+          non reconnu. Aucune donnée personnelle, désactivé par défaut.
+        </label>
+      </div>
       <div class="inline" style="gap: 10px">
         <button @click="exportProfile">Exporter le profil…</button>
         <button @click="importProfile">Importer un profil…</button>
@@ -268,6 +295,15 @@ async function save() {
       <button :disabled="diagRunning" @click="runDiagnostics">
         {{ diagRunning ? "Diagnostic en cours…" : "Lancer le diagnostic" }}
       </button>
+      <button
+        v-if="props.settings?.telemetry_opt_in"
+        :disabled="telemetrySending"
+        @click="sendTelemetryNow"
+        style="margin-left: 8px"
+      >
+        {{ telemetrySending ? "Envoi…" : "Envoyer maintenant" }}
+      </button>
+      <span v-if="telemetryMsg" class="hint">{{ telemetryMsg }}</span>
 
       <div v-if="diag" class="diag-out">
         <h4>liquidctl</h4>
