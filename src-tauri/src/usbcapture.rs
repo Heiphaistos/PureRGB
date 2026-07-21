@@ -211,6 +211,43 @@ pub fn stop_capture(mut session: CaptureSession) -> Vec<CaptureFile> {
     collect_capture_files(&session.dir)
 }
 
+/// Envoie un fichier de capture vers le service télémétrie pour analyse
+/// manuelle. Best-effort, jamais automatique — appelé uniquement suite à
+/// un clic explicite "Envoyer pour analyse" côté UI.
+/// Secret partagé app↔serveur, injecté à la compilation via la variable
+/// d'environnement CI `CAPTURE_UPLOAD_TOKEN` (jamais commité en clair —
+/// ce repo est public, un token en dur dans le source serait lisible par
+/// n'importe qui sur GitHub). En dev local sans la variable définie,
+/// résout à une chaîne vide — `upload_capture` refuse alors explicitement
+/// plutôt que d'envoyer une requête avec un header d'auth vide.
+pub fn upload_capture(path: &Path, vid: &str, pid: &str, device_name: &str) -> Result<()> {
+    let token = option_env!("CAPTURE_UPLOAD_TOKEN").unwrap_or("");
+    if token.is_empty() {
+        bail!("CAPTURE_UPLOAD_TOKEN non configuré au build — impossible d'envoyer la capture");
+    }
+    let url = format!("{}/capture-upload", crate::telemetry::TELEMETRY_BASE_URL);
+    let auth = format!("Authorization: Bearer {token}");
+    let file_field = format!("file=@{}", path.display());
+    crate::netdev::curl(&[
+        "-X",
+        "POST",
+        "-H",
+        &auth,
+        "--max-time",
+        "60",
+        "-F",
+        &format!("vid={vid}"),
+        "-F",
+        &format!("pid={pid}"),
+        "-F",
+        &format!("device_name={device_name}"),
+        "-F",
+        &file_field,
+        &url,
+    ])
+    .map(|_| ())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
