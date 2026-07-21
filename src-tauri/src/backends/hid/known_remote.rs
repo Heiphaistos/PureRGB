@@ -50,9 +50,17 @@ pub fn is_known_remote(vid: u16, pid: u16) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
+
+    // Les tests de ce module partagent l'état global REGISTRY — sans
+    // synchronisation, le test-runner parallèle de Rust les fait courser
+    // (un set_remote() concurrent écrase l'état d'un autre test avant son
+    // assert). Ce verrou les sérialise sans ralentir le reste du crate.
+    static TEST_LOCK: Mutex<()> = Mutex::new(());
 
     #[test]
     fn reconnait_un_appareil_ajoute_a_distance() {
+        let _guard = TEST_LOCK.lock().unwrap();
         set_remote(vec![RemoteDevice {
             vid: "dead".into(),
             pid: "beef".into(),
@@ -66,6 +74,7 @@ mod tests {
 
     #[test]
     fn set_remote_remplace_completement_le_registre_precedent() {
+        let _guard = TEST_LOCK.lock().unwrap();
         set_remote(vec![RemoteDevice {
             vid: "0001".into(),
             pid: "0001".into(),
@@ -80,6 +89,7 @@ mod tests {
 
     #[test]
     fn set_remote_normalise_cas_vid_pid() {
+        let _guard = TEST_LOCK.lock().unwrap();
         set_remote(vec![RemoteDevice {
             vid: "DEAD".into(),
             pid: "BEEF".into(),
