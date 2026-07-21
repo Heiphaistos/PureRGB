@@ -74,4 +74,8 @@ Flux :
 
 ## Statut
 
+Implémenté et déployé (v0.15.0). Service VPS `PureRGB-Telemetry` a l'endpoint `/capture-upload` + dashboard captures en production, conteneur healthy, secret token posé. Build backend (cargo check/test, 34/34) et frontend (npm build) verts côté app PureRGB. Bugs réels trouvés en revue et corrigés : mauvais flag d'installation silencieuse NSIS (`-install -silent` au lieu de `/S`, aurait ouvert un assistant graphique inattendu), fuite de process si l'installation d'un des hubs échouait en cours de boucle, secret `CAPTURE_UPLOAD_TOKEN` d'abord commité en dur dans le code source d'un repo **public** (trouvé et corrigé — historique git réécrit, token tourné, injecté désormais via `option_env!` + secret GitHub Actions), fuite possible de fichiers non re-tentés correctement en cas d'échec partiel d'upload multi-fichiers, workflow CI ne transmettait pas le secret au build (corrigé en dernier, sinon chaque release aurait un binaire avec token vide). Vérification manuelle réelle (capturer un appareil non supporté, confirmer des paquets exploitables dans Wireshark) reste à faire par Momo avec du matériel réel branché.
+
+## Statut
+
 Design validé section par section avec Momo (gestion du risque clavier, destination des captures via dashboard, consentement séparé à chaque capture confirmé deux fois après un bug de sélection, déclenchement manuel démarrer/arrêter, capture multi-hub plutôt que corrélation précise). URL et SHA-256 USBPcap vérifiés en direct cette session (téléchargement réel + hash calculé, pas une valeur supposée). Prêt pour plan d'implémentation.
