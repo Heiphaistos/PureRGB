@@ -5,6 +5,11 @@
 //! OpenRGB indépendante de l'utilisateur.
 
 use anyhow::{bail, Context, Result};
+use std::path::{Path, PathBuf};
+use std::process::Command;
+use std::time::{Duration, Instant};
+
+use super::manager::{CreationFlagsExt, OpenRgbManager};
 
 const RELEASES_API: &str =
     "https://codeberg.org/api/v1/repos/OpenRGB/OpenRGB/releases?limit=1";
@@ -58,6 +63,138 @@ pub fn check_latest_version() -> Result<(String, String)> {
     let (_, download_url) = pick_windows_asset(&assets)
         .context("aucun asset Windows 64-bit trouvé dans la release")?;
     Ok((tag_name, download_url))
+}
+
+/// Télécharge l'asset vers `staging/openrgb_update.zip`, l'extrait, puis
+/// aplatit le sous-dossier "OpenRGB Windows 64-bit" du zip (même structure
+/// que `fetch-openrgb.ps1`/`OpenRgbManager::install()`). HTTPS seul comme
+/// garantie (pas de checksum officiel publié par OpenRGB).
+fn download_and_extract(url: &str, staging: &Path) -> Result<()> {
+    let zip_path = staging.join("openrgb_update.zip");
+    let script = format!(
+        "$ProgressPreference='SilentlyContinue'; \
+         Invoke-WebRequest -Uri '{url}' -OutFile '{zip}' -UseBasicParsing -TimeoutSec 20; \
+         Expand-Archive '{zip}' '{dir}' -Force; \
+         Remove-Item '{zip}' -Force",
+        url = url,
+        zip = zip_path.display(),
+        dir = staging.display(),
+    );
+    let output = Command::new("powershell.exe")
+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+        .creation_flags_no_window()
+        .output()
+        .context("lancement PowerShell pour téléchargement OpenRGB (auto-update)")?;
+    if !output.status.success() {
+        bail!(
+            "téléchargement OpenRGB (auto-update) échoué: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    let nested = staging.join("OpenRGB Windows 64-bit");
+    if nested.is_dir() {
+        for entry in std::fs::read_dir(&nested)? {
+            let entry = entry?;
+            let dest = staging.join(entry.file_name());
+            if dest.exists() {
+                if dest.is_dir() {
+                    std::fs::remove_dir_all(&dest)?;
+                } else {
+                    std::fs::remove_file(&dest)?;
+                }
+            }
+            std::fs::rename(entry.path(), dest)?;
+        }
+        std::fs::remove_dir_all(&nested)?;
+    }
+    if !staging.join("OpenRGB.exe").is_file() {
+        bail!("OpenRGB.exe absent après extraction (auto-update)");
+    }
+    Ok(())
+}
+
+fn copy_dir_all(src: &Path, dst: &Path) -> Result<()> {
+    std::fs::create_dir_all(dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let dest = dst.join(entry.file_name());
+        if entry.file_type()?.is_dir() {
+            copy_dir_all(&entry.path(), &dest)?;
+        } else {
+            std::fs::copy(entry.path(), &dest)?;
+        }
+    }
+    Ok(())
+}
+
+/// Le zip OpenRGB ne contient pas les DLL runtime VC++ app-local : sans
+/// elles, OpenRGB (Qt/MSVC) reste vivant mais mort-né (aucun port). Même
+/// logique de sourcing que `OpenRgbManager::install()`.
+fn copy_vc_runtime_dlls(target: &Path, resource_dir: &Option<PathBuf>) {
+    let mut dll_sources: Vec<PathBuf> = Vec::new();
+    if let Some(win) = std::env::var_os("WINDIR") {
+        dll_sources.push(PathBuf::from(win).join("System32"));
+    }
+    if let Some(res) = resource_dir {
+        dll_sources.push(res.join("openrgb"));
+    }
+    for dll in ["vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll"] {
+        let dest = target.join(dll);
+        if dest.is_file() {
+            continue;
+        }
+        match dll_sources.iter().map(|d| d.join(dll)).find(|p| p.is_file()) {
+            Some(src) => {
+                if let Err(e) = std::fs::copy(&src, &dest) {
+                    log::warn!("auto-update OpenRGB: copie {dll}: {e}");
+                }
+            }
+            None => log::warn!(
+                "auto-update OpenRGB: {dll} introuvable — le serveur basculé pourrait ne pas démarrer"
+            ),
+        }
+    }
+}
+
+/// Emplacements OpenRGB gérés par PureRGB (jamais une install indépendante
+/// de l'utilisateur) : bundle NSIS si présent, `%APPDATA%\PureRGB\openrgb`
+/// si présent. Chacun validé par la présence de `PawnIOLib.dll` (marqueur
+/// 1.0rc, même critère que `OpenRgbManager::locate()`).
+fn update_targets(mgr: &OpenRgbManager, appdata: &Path) -> Vec<PathBuf> {
+    let ours_ok = |dir: &Path| dir.join("OpenRGB.exe").is_file() && dir.join("PawnIOLib.dll").is_file();
+    let mut targets = Vec::new();
+    if let Some(res) = mgr.resource_dir() {
+        for base in [res.join("resources"), res] {
+            let dir = base.join("openrgb");
+            if ours_ok(&dir) {
+                targets.push(dir);
+                break;
+            }
+        }
+    }
+    let app_dir = appdata.join("openrgb");
+    if ours_ok(&app_dir) {
+        targets.push(app_dir);
+    }
+    targets
+}
+
+fn restore_backups(backups: &[(PathBuf, PathBuf)]) {
+    for (backup, target) in backups {
+        let _ = std::fs::remove_dir_all(target);
+        let _ = std::fs::rename(backup, target);
+    }
+}
+
+fn wait_for_port(host: &str, port: u16, timeout: Duration) -> bool {
+    let start = Instant::now();
+    while start.elapsed() < timeout {
+        if OpenRgbManager::server_reachable(host, port) {
+            return true;
+        }
+        std::thread::sleep(Duration::from_millis(300));
+    }
+    false
 }
 
 #[cfg(test)]
