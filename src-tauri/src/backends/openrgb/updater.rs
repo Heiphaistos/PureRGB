@@ -119,6 +119,12 @@ pub fn update_if_needed(
         return None;
     }
 
+    // Laisse une chance à resource_dir() de se peupler (hook .setup() de
+    // Tauri, concurrent à ce thread) avant de chercher les emplacements à
+    // mettre à jour — sinon la copie setup NSIS pourrait être ratée en
+    // silence sur ce lancement (se rattrape au suivant, mais autant éviter).
+    let _ = wait_for_resource_dir(mgr, Duration::from_secs(3));
+
     let targets = update_targets(mgr, &appdata);
     if targets.is_empty() {
         log::info!("auto-update OpenRGB: aucune copie gérée par PureRGB trouvée, rien à faire");
@@ -326,6 +332,26 @@ fn wait_for_port(host: &str, port: u16, timeout: Duration) -> bool {
         std::thread::sleep(Duration::from_millis(300));
     }
     false
+}
+
+/// `resource_dir` n'est peuplé que par le hook `.setup()` de Tauri, qui ne
+/// s'exécute qu'au tout dernier appel `.run()` de `lib.rs::run()` — le
+/// thread `hw-init` (qui appelle `update_if_needed` en tout premier) peut
+/// donc démarrer avant que `resource_dir` soit renseigné. Attente bornée
+/// pour éviter de rater silencieusement la copie installée par le setup
+/// NSIS lors de la bascule (l'auto-update doit mettre à jour les deux
+/// emplacements gérés par PureRGB, pas seulement APPDATA).
+fn wait_for_resource_dir(mgr: &OpenRgbManager, timeout: Duration) -> Option<PathBuf> {
+    let start = Instant::now();
+    loop {
+        if let Some(dir) = mgr.resource_dir() {
+            return Some(dir);
+        }
+        if start.elapsed() >= timeout {
+            return None;
+        }
+        std::thread::sleep(Duration::from_millis(100));
+    }
 }
 
 #[cfg(test)]
