@@ -27,6 +27,7 @@ log = "0.4"
 env_logger = "0.11"
 sysinfo = "0.39"
 tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
