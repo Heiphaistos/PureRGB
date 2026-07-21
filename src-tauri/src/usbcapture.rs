@@ -58,13 +58,16 @@ pub fn usbpcap_install() -> Result<()> {
     let dir = usbpcap_setup_dir()?;
     std::fs::create_dir_all(&dir)?;
     let setup = dir.join("USBPcapSetup-1.5.4.0.exe");
+    // Les apostrophes sont valides dans un nom de compte Windows (ex: O'Brien) ;
+    // on les double pour rester une chaîne PowerShell à guillemets simples valide.
+    let exe_str = setup.display().to_string().replace('\'', "''");
     let script = format!(
         "$ProgressPreference='SilentlyContinue'; \
          Invoke-WebRequest -Uri '{url}' -OutFile '{exe}' -UseBasicParsing; \
          $h = (Get-FileHash '{exe}' -Algorithm SHA256).Hash.ToLower(); \
          if ($h -ne '{sha}') {{ Remove-Item '{exe}' -Force; throw \"hash mismatch: $h\" }}",
         url = USBPCAP_URL,
-        exe = setup.display(),
+        exe = exe_str,
         sha = USBPCAP_SHA256,
     );
     let mut dl_cmd = Command::new("powershell.exe");
@@ -82,7 +85,7 @@ pub fn usbpcap_install() -> Result<()> {
         );
     }
     let mut install_cmd = Command::new(&setup);
-    install_cmd.args(["-install", "-silent"]);
+    install_cmd.args(["/S"]);
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
