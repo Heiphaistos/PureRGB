@@ -2,7 +2,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { reactive, ref, watch } from "vue";
-import type { HardwareDiagnostics, Settings } from "../types";
+import type { CaptureFileInfo, HardwareDiagnostics, Settings } from "../types";
 import { diagOk, diagText } from "../types";
 
 export type LayoutMode = "grid" | "list" | "canvas";
@@ -98,6 +98,92 @@ async function sendTelemetryNow() {
     telemetryMsg.value = `Envoi : ${e}`;
   } finally {
     telemetrySending.value = false;
+  }
+}
+
+const captureTargetDevice = ref<{ vid: string; pid: string; manufacturer: string; product: string } | null>(null);
+const captureStep = ref<"idle" | "warning" | "installing" | "running" | "summary">("idle");
+const captureFiles = ref<CaptureFileInfo[]>([]);
+const captureMsg = ref("");
+const captureStartedAt = ref(0);
+const captureElapsed = ref(0);
+let captureTimerHandle: ReturnType<typeof setInterval> | null = null;
+
+const CAPTURE_MAX_SECONDS = 300;
+
+function openCaptureWarning(d: { vid: string; pid: string; manufacturer: string; product: string }) {
+  captureTargetDevice.value = d;
+  captureStep.value = "warning";
+  captureMsg.value = "";
+}
+
+function closeCaptureFlow() {
+  if (captureTimerHandle) {
+    clearInterval(captureTimerHandle);
+    captureTimerHandle = null;
+  }
+  captureStep.value = "idle";
+  captureTargetDevice.value = null;
+  captureFiles.value = [];
+}
+
+async function beginCapture() {
+  captureStep.value = "installing";
+  captureMsg.value = "";
+  try {
+    const ready = await invoke<boolean>("usb_capture_ready");
+    if (!ready) {
+      await invoke("usb_capture_install");
+    }
+    await invoke("usb_capture_start");
+    captureStep.value = "running";
+    captureStartedAt.value = Date.now();
+    captureElapsed.value = 0;
+    captureTimerHandle = setInterval(() => {
+      captureElapsed.value = Math.floor((Date.now() - captureStartedAt.value) / 1000);
+      if (captureElapsed.value >= CAPTURE_MAX_SECONDS) {
+        stopCapture();
+      }
+    }, 1000);
+  } catch (e) {
+    captureMsg.value = `Installation : ${e}`;
+    captureStep.value = "warning";
+  }
+}
+
+async function stopCapture() {
+  if (captureTimerHandle) {
+    clearInterval(captureTimerHandle);
+    captureTimerHandle = null;
+  }
+  try {
+    captureFiles.value = await invoke<CaptureFileInfo[]>("usb_capture_stop");
+    captureStep.value = "summary";
+  } catch (e) {
+    captureMsg.value = `Arrêt : ${e}`;
+  }
+}
+
+const captureUploading = ref(false);
+
+async function uploadCaptureFiles() {
+  if (!captureTargetDevice.value) return;
+  captureUploading.value = true;
+  captureMsg.value = "";
+  try {
+    for (const f of captureFiles.value) {
+      await invoke("usb_capture_upload", {
+        vid: captureTargetDevice.value.vid,
+        pid: captureTargetDevice.value.pid,
+        deviceName: captureTargetDevice.value.product || captureTargetDevice.value.manufacturer || "inconnu",
+        path: f.path,
+      });
+    }
+    captureMsg.value = "Fichiers envoyés.";
+  } catch (e) {
+    captureMsg.value = `Envoi : ${e}`;
+  } finally {
+    captureUploading.value = false;
   }
 }
 
@@ -349,7 +435,7 @@ async function save() {
           l'ajouter à une prochaine version.
         </p>
         <table class="diag-table hid-table">
-          <tr><th>VID:PID</th><th>Fabricant</th><th>Produit</th><th>État</th></tr>
+          <tr><th>VID:PID</th><th>Fabricant</th><th>Produit</th><th>État</th><th></th></tr>
           <tr v-for="d in hidRows()" :key="`${d.vid}:${d.pid}`">
             <td>{{ d.vid }}:{{ d.pid }}</td>
             <td>{{ d.manufacturer || "—" }}</td>
@@ -357,9 +443,64 @@ async function save() {
             <td :class="{ ok: d.recognized, fail: !d.recognized }">
               {{ d.recognized ? (d.has_native_driver ? "driver natif" : "reconnu") : "non reconnu" }}
             </td>
+            <td>
+              <button v-if="!d.recognized" @click="openCaptureWarning(d)">Capturer le protocole USB</button>
+            </td>
           </tr>
         </table>
         <p v-if="hidRows().length === 0" class="hint">Aucun appareil dans ce filtre.</p>
+
+        <div v-if="captureStep !== 'idle'" class="capture-modal">
+          <div class="capture-modal-inner">
+            <template v-if="captureStep === 'warning'">
+              <h4>Capturer le protocole USB — {{ captureTargetDevice?.product || captureTargetDevice?.manufacturer }}</h4>
+              <p class="hint">
+                Cette capture enregistre TOUT le trafic USB de cet ordinateur pendant la
+                fenêtre, pas seulement cet appareil — d'autres périphériques branchés sur
+                le même port apparaîtront aussi. Si un clavier est branché, vos frappes
+                peuvent être incluses dans la capture. <strong>Ne tapez rien de sensible</strong>
+                (mots de passe, etc.) pendant que la capture est active. Le fichier reste
+                en local — vous choisirez ensuite de l'envoyer ou non.
+              </p>
+              <p v-if="captureMsg" class="hint" style="color: #c00">{{ captureMsg }}</p>
+              <div class="inline" style="gap: 10px">
+                <button @click="beginCapture">Démarrer</button>
+                <button @click="closeCaptureFlow">Annuler</button>
+              </div>
+            </template>
+            <template v-else-if="captureStep === 'installing'">
+              <p>Installation d'USBPcap si nécessaire…</p>
+            </template>
+            <template v-else-if="captureStep === 'running'">
+              <h4>Capture en cours — {{ captureElapsed }}s / {{ CAPTURE_MAX_SECONDS }}s</h4>
+              <p class="hint">
+                Ouvrez maintenant le logiciel officiel de cet appareil et changez une
+                couleur ou un effet, puis cliquez Arrêter.
+              </p>
+              <button @click="stopCapture">Arrêter</button>
+            </template>
+            <template v-else-if="captureStep === 'summary'">
+              <h4>Capture terminée ({{ captureFiles.length }} fichier(s))</h4>
+              <table class="diag-table">
+                <tr><th>Hub</th><th>Taille</th></tr>
+                <tr v-for="f in captureFiles" :key="f.path">
+                  <td>{{ f.hub }}</td>
+                  <td>{{ (f.size_bytes / 1024).toFixed(1) }} Ko</td>
+                </tr>
+              </table>
+              <p v-if="captureFiles.length === 0" class="hint">
+                Aucun trafic capturé — réessayez en changeant bien une couleur pendant la fenêtre.
+              </p>
+              <p v-if="captureMsg" class="hint">{{ captureMsg }}</p>
+              <div class="inline" style="gap: 10px">
+                <button :disabled="captureUploading || captureFiles.length === 0" @click="uploadCaptureFiles">
+                  {{ captureUploading ? "Envoi…" : "Envoyer pour analyse" }}
+                </button>
+                <button @click="closeCaptureFlow">Garder en local seulement</button>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -523,5 +664,22 @@ label {
 
 .hid-table td {
   font-family: monospace;
+}
+
+.capture-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.capture-modal-inner {
+  background: #1a1a1a;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 480px;
+  width: 90%;
 }
 </style>
