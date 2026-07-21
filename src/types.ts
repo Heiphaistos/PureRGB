@@ -223,6 +223,12 @@ export interface RawHidDevice {
   has_native_driver: boolean;
 }
 
+export interface CaptureFileInfo {
+  path: string;
+  hub: number;
+  size_bytes: number;
+}
+
 export interface HardwareDiagnostics {
   liquidctl: LiquidctlDiag;
   sensord: SensorDiag;
