@@ -6,6 +6,7 @@ mod netdev;
 mod sensors;
 mod settings;
 mod telemetry;
+mod usbcapture;
 
 use crate::backends::hid::HidBackend;
 use crate::backends::liquidctl::LiquidctlBackend;
