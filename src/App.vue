@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
 import { computed, onMounted, ref } from "vue";
 import ConflictPanel from "./components/ConflictPanel.vue";
 import DeviceCanvas from "./components/DeviceCanvas.vue";
@@ -22,6 +24,13 @@ import type {
 import { deviceHasRgb } from "./types";
 
 type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings";
+
+interface UnknownDeviceAlert {
+  vid: string;
+  pid: string;
+  manufacturer: string;
+  product: string;
+}
 
 // Chemins SVG (stroke, viewBox 0 0 24 24) pour la nav latérale.
 const TABS: { id: TabId; label: string; icon: string[] }[] = [
@@ -78,6 +87,18 @@ function setLayout(mode: LayoutMode) {
 }
 const scanning = ref(false);
 const toast = ref("");
+const pendingAlerts = ref<UnknownDeviceAlert[]>([]);
+const diagnosticTrigger = ref(0);
+
+function openDiagnosticFor(index: number) {
+  pendingAlerts.value.splice(index, 1);
+  tab.value = "settings";
+  diagnosticTrigger.value++;
+}
+
+function dismissAlert(index: number) {
+  pendingAlerts.value.splice(index, 1);
+}
 const orgb = ref<OpenRgbStatus>({
   exe_path: null,
   server_reachable: false,
@@ -222,6 +243,20 @@ onMounted(async () => {
     await new Promise((r) => setTimeout(r, 5000));
     await refresh();
   }
+
+  // Notification OS best-effort — l'événement in-app ci-dessous reste le
+  // canal garanti même si la permission est refusée ou jamais accordée.
+  try {
+    if (!(await isPermissionGranted())) {
+      await requestPermission();
+    }
+  } catch {
+    /* plateforme sans notifications ou permission indisponible — ignoré */
+  }
+
+  await listen<UnknownDeviceAlert[]>("unknown-device-detected", (event) => {
+    pendingAlerts.value.push(...event.payload);
+  });
 });
 </script>
 
@@ -337,6 +372,7 @@ onMounted(async () => {
         v-else
         :settings="settings"
         :layout="layoutMode"
+        :diagnostic-trigger="diagnosticTrigger"
         @saved="loadSettings(); refresh(); showToast('Réglages enregistrés')"
         @layout-change="setLayout"
       />
@@ -358,6 +394,20 @@ onMounted(async () => {
     <transition name="fade">
       <div v-if="toast" class="toast">{{ toast }}</div>
     </transition>
+
+    <div v-if="pendingAlerts.length" class="hotplug-alerts">
+      <div v-for="(alert, i) in pendingAlerts" :key="`${alert.vid}:${alert.pid}`" class="hotplug-alert">
+        <span
+          >Nouveau matériel non reconnu détecté : {{ alert.manufacturer }} {{ alert.product }} ({{ alert.vid }}:{{
+            alert.pid
+          }})</span
+        >
+        <div class="hotplug-alert-actions">
+          <button @click="openDiagnosticFor(i)">Ouvrir le diagnostic</button>
+          <button @click="dismissAlert(i)">Ignorer</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -536,5 +586,29 @@ onMounted(async () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.hotplug-alerts {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 50;
+  max-width: 360px;
+}
+.hotplug-alert {
+  background: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px;
+  color: #eee;
+  font-size: 0.9em;
+}
+.hotplug-alert-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 </style>
