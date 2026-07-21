@@ -35,7 +35,7 @@ fn registry() -> &'static RwLock<HashMap<(String, String), RemoteDevice>> {
 pub fn set_remote(devices: Vec<RemoteDevice>) {
     let map = devices
         .into_iter()
-        .map(|d| ((d.vid.clone(), d.pid.clone()), d))
+        .map(|d| ((d.vid.to_lowercase(), d.pid.to_lowercase()), d))
         .collect();
     *registry().write() = map;
 }
@@ -76,5 +76,28 @@ mod tests {
         assert!(is_known_remote(0x0001, 0x0001));
         set_remote(vec![]);
         assert!(!is_known_remote(0x0001, 0x0001));
+    }
+
+    #[test]
+    fn set_remote_normalise_cas_vid_pid() {
+        set_remote(vec![RemoteDevice {
+            vid: "DEAD".into(),
+            pid: "BEEF".into(),
+            name: "UpperCase".into(),
+            device_type: "hub".into(),
+            vendor: "Test".into(),
+        }]);
+        // Uppercase input should match lowercase lookup
+        assert!(is_known_remote(0xDEAD, 0xBEEF));
+
+        set_remote(vec![RemoteDevice {
+            vid: "DeAd".into(),
+            pid: "BeEf".into(),
+            name: "MixedCase".into(),
+            device_type: "hub".into(),
+            vendor: "Test".into(),
+        }]);
+        // Mixed case input should also match
+        assert!(is_known_remote(0xDEAD, 0xBEEF));
     }
 }
