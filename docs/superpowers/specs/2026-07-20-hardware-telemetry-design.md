@@ -42,7 +42,7 @@ Solution retenue : au lieu de collecter les VID/PID un par un manuellement, ajou
 
 ### 2. Service VPS (nouveau)
 
-Pattern identique aux micro-services existants (ForgeHook, PureRSS) : Hono + SQLite, PM2, port **3022** (confirmé libre — `ss -tlnp` VPS vérifié), bind 127.0.0.1, nginx devant, repo privé `Heiphaistos/PureRGB-Telemetry`, sous-domaine `telemetry.purergb.heiphaistos.org`.
+Pattern identique aux micro-services existants (ForgeHook, PureRSS) : Hono + SQLite, PM2, port **3022** (confirmé libre — `ss -tlnp` VPS vérifié), bind 127.0.0.1, nginx devant, repo privé `Heiphaistos/PureRGB-Telemetry`, sous-domaine `telemetry-purergb.heiphaistos.org`.
 
 **Endpoints** :
 - `POST /report` — valide schéma (taille payload plafonnée ~64 Ko, champs attendus), rate-limit par IP (ex. 10/heure — un rapport par lancement d'app, pas un flux continu), stocke en SQLite (`reports` : id, report_id, ip_hash — pour rate-limit seulement, pas affiché —, app_version, diagnostics_json, created_at).

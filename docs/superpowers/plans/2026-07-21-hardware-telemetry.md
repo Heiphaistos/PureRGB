@@ -17,7 +17,7 @@
 - `struct HardwareDiagnostics` (`src-tauri/src/lib.rs:487-493`) est déjà exactement le payload à envoyer — sérialise en `{ liquidctl: {exe_path, version:{Ok|Err}, list, initialize, status}, sensord: {exe_path, running, sensor_count}, openrgb: {exe_path, server_reachable, managed, pawnio_installed, pawnio_ready}, hid_raw: [{vid,pid,manufacturer,product,recognized,has_native_driver}] }`.
 - `fn curl(args: &[&str]) -> Result<String>` existe déjà dans `src-tauri/src/netdev.rs:312-328` (via `curl.exe`, présent nativement sur Windows 10/11) — le rendre `pub(crate)` et le réutiliser au lieu d'en écrire un deuxième.
 - `fn dirs_dir() -> Option<PathBuf>` existe déjà dans `src-tauri/src/settings.rs:83-85` (résout `%APPDATA%\PureRGB`) — le rendre `pub(crate)` et le réutiliser.
-- Nginx : snippet partagé `/etc/nginx/snippets/security-headers.conf` déjà utilisé par tous les sous-domaines — même pattern à reprendre pour `telemetry.purergb.heiphaistos.org`.
+- Nginx : snippet partagé `/etc/nginx/snippets/security-headers.conf` déjà utilisé par tous les sous-domaines — même pattern à reprendre pour `telemetry-purergb.heiphaistos.org`.
 - Spec source : `docs/superpowers/specs/2026-07-20-hardware-telemetry-design.md`.
 
 ---
@@ -1149,8 +1149,8 @@ git push -u origin main
 
 - [ ] **Step 4: Vérifier la résolution DNS du sous-domaine**
 
-Run: `nslookup telemetry.purergb.heiphaistos.org`
-Expected: résout vers `212.227.140.45` (wildcard DNS déjà en place comme les autres sous-domaines). Si NXDOMAIN : ajouter un enregistrement A `telemetry.purergb` → `212.227.140.45` chez le registrar avant de continuer.
+Run: `nslookup telemetry-purergb.heiphaistos.org`
+Expected: résout vers `212.227.140.45` (wildcard DNS déjà en place comme les autres sous-domaines). Si NXDOMAIN : ajouter un enregistrement A `telemetry-purergb` → `212.227.140.45` chez le registrar avant de continuer.
 
 - [ ] **Step 5: Cloner et démarrer sur le VPS**
 
@@ -1175,11 +1175,11 @@ Expected : `docker compose ps` montre le conteneur `healthy`.
 - [ ] **Step 6: Config nginx (HTTP d'abord, certbot ajoute le bloc SSL)**
 
 ```bash
-ssh root@212.227.140.45 "cat > /etc/nginx/sites-available/telemetry.purergb << 'EOF'
+ssh root@212.227.140.45 "cat > /etc/nginx/sites-available/telemetry-purergb << 'EOF'
 server {
     listen 80;
     listen [::]:80;
-    server_name telemetry.purergb.heiphaistos.org;
+    server_name telemetry-purergb.heiphaistos.org;
 
     proxy_hide_header Strict-Transport-Security;
     proxy_hide_header X-Frame-Options;
@@ -1199,24 +1199,24 @@ server {
     }
 }
 EOF"
-ssh root@212.227.140.45 "ln -sf /etc/nginx/sites-available/telemetry.purergb /etc/nginx/sites-enabled/telemetry.purergb && nginx -t && systemctl reload nginx"
+ssh root@212.227.140.45 "ln -sf /etc/nginx/sites-available/telemetry-purergb /etc/nginx/sites-enabled/telemetry-purergb && nginx -t && systemctl reload nginx"
 ```
 
 - [ ] **Step 7: Certbot (ajoute automatiquement le bloc SSL + redirection 80→443)**
 
 ```bash
-ssh root@212.227.140.45 "certbot --nginx -d telemetry.purergb.heiphaistos.org --non-interactive --agree-tos -m admin@heiphaistos.org"
+ssh root@212.227.140.45 "certbot --nginx -d telemetry-purergb.heiphaistos.org --non-interactive --agree-tos -m admin@heiphaistos.org"
 ```
 Expected : succès, `nginx -t` toujours vert après.
 
 - [ ] **Step 8: Vérification E2E — healthcheck HTTPS + setup admin**
 
 ```bash
-curl -s https://telemetry.purergb.heiphaistos.org/health
+curl -s https://telemetry-purergb.heiphaistos.org/health
 ```
 Expected: `{"ok":true,"app":"purergb-telemetry"}`
 
-Ouvrir `https://telemetry.purergb.heiphaistos.org/setup` dans un navigateur, créer le mot de passe admin (12+ caractères, à choisir maintenant — c'est la seule fois où `/setup` répond, il se verrouille après). Vérifier la redirection vers `/login`, se connecter, confirmer l'affichage du dashboard vide ("Appareils non reconnus (0)").
+Ouvrir `https://telemetry-purergb.heiphaistos.org/setup` dans un navigateur, créer le mot de passe admin (12+ caractères, à choisir maintenant — c'est la seule fois où `/setup` répond, il se verrouille après). Vérifier la redirection vers `/login`, se connecter, confirmer l'affichage du dashboard vide ("Appareils non reconnus (0)").
 
 ---
 
@@ -1445,7 +1445,7 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
-const TELEMETRY_BASE_URL: &str = "https://telemetry.purergb.heiphaistos.org";
+const TELEMETRY_BASE_URL: &str = "https://telemetry-purergb.heiphaistos.org";
 
 /// Hash non cryptographique (zéro dépendance) — sert uniquement à éviter
 /// de renvoyer un rapport identique à chaque lancement, pas à la sécurité.
@@ -1918,7 +1918,7 @@ Expected: vert.
 1. `npm run tauri dev`
 2. Réglages → cocher "Envoyer les informations de diagnostic matériel"
 3. Réglages → Diagnostic → "Lancer le diagnostic" puis "Envoyer maintenant"
-4. Ouvrir `https://telemetry.purergb.heiphaistos.org/dashboard`, vérifier qu'une ligne apparaît pour chaque VID/PID non reconnu de la machine de test
+4. Ouvrir `https://telemetry-purergb.heiphaistos.org/dashboard`, vérifier qu'une ligne apparaît pour chaque VID/PID non reconnu de la machine de test
 5. Ajouter un nom + type pour une des lignes, cliquer "Ajouter"
 6. Relancer `npm run tauri dev`, relancer le diagnostic, vérifier que ce VID/PID passe à "reconnu" (sans nouvelle release — preuve que le fetch dynamique fonctionne)
 
@@ -1944,7 +1944,7 @@ Dans `docs/superpowers/specs/2026-07-20-hardware-telemetry-design.md`, remplacer
 ```markdown
 ## Statut
 
-Implémenté et déployé (v0.14.0). Service VPS `PureRGB-Telemetry` en production sur `telemetry.purergb.heiphaistos.org` (port 3022). Vérifié en conditions réelles : envoi de rapport, ajout dashboard, reconnaissance propagée au lancement suivant sans nouvelle release.
+Implémenté et déployé (v0.14.0). Service VPS `PureRGB-Telemetry` en production sur `telemetry-purergb.heiphaistos.org` (port 3022). Vérifié en conditions réelles : envoi de rapport, ajout dashboard, reconnaissance propagée au lancement suivant sans nouvelle release.
 ```
 
 ```bash
