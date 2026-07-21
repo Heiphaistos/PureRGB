@@ -61,6 +61,12 @@ impl OpenRgbManager {
         *self.resource_dir.lock() = Some(dir);
     }
 
+    /// Dossier ressources du bundle, si résolu (utilisé par l'auto-update
+    /// pour retrouver l'emplacement setup NSIS en plus d'APPDATA).
+    pub(crate) fn resource_dir(&self) -> Option<PathBuf> {
+        self.resource_dir.lock().clone()
+    }
+
     fn appdata_dir() -> Option<PathBuf> {
         std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("openrgb"))
     }
@@ -349,7 +355,7 @@ impl Drop for OpenRgbManager {
 }
 
 /// Extension : CREATE_NO_WINDOW sur Windows, no-op ailleurs.
-trait CreationFlagsExt {
+pub(crate) trait CreationFlagsExt {
     fn creation_flags_no_window(&mut self) -> &mut Self;
 }
 
