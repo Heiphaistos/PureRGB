@@ -830,14 +830,11 @@ pub fn run() {
         let registry = registry.clone();
         let engine = engine.clone();
         let mgr = openrgb_mgr.clone();
-        let sensors_hub = sensors.clone();
         let saved = saved.clone();
         let auto_stopped = auto_stopped.clone();
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
-                // sensors_hub : démarré dans setup() une fois resource_dir connu ;
-                // réutilisé ici pour le snapshot diagnostic télémétrie.
                 // Arrêt auto des logiciels constructeur en conflit AVANT le scan
                 // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
                 // Réversible (disable=false), redémarrés au "Quitter" du tray.
@@ -875,6 +872,24 @@ pub fn run() {
                 }
                 scan_with_zone_sizes(&mut registry.lock(), &saved.zone_sizes);
 
+                restore_saved_state(&registry, &engine, &saved);
+            })
+            .expect("spawn hw-init");
+    }
+
+    // Télémétrie de démarrage : entièrement séparée de `hw-init` pour ne
+    // jamais retarder scan_with_zone_sizes()/restore_saved_state() (le curl
+    // 3 s de refresh_known_devices() + le curl 5 s de maybe_send_report()
+    // bloqueraient sinon la restauration visible des effets RGB, même pour
+    // les utilisateurs hors-ligne ou non opt-in). Tourne en parallèle.
+    {
+        let registry = registry.clone();
+        let mgr = openrgb_mgr.clone();
+        let sensors_hub = sensors.clone();
+        let saved = saved.clone();
+        std::thread::Builder::new()
+            .name("telemetry-init".into())
+            .spawn(move || {
                 // Table de reconnaissance distante (diagnostic uniquement,
                 // jamais utilisée pour le pilotage réel — voir known_remote.rs).
                 telemetry::refresh_known_devices();
@@ -896,10 +911,8 @@ pub fn run() {
                         Err(e) => log::warn!("sérialisation diagnostic télémétrie: {e:#}"),
                     }
                 }
-
-                restore_saved_state(&registry, &engine, &saved);
             })
-            .expect("spawn hw-init");
+            .expect("spawn telemetry-init");
     }
 
     let state = AppState {

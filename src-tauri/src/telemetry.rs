@@ -104,6 +104,8 @@ pub fn send_report_now(diagnostics_json: &str, app_version: &str) -> Result<()> 
     let result = curl(&[
         "-X",
         "POST",
+        "--max-time",
+        "5",
         "-H",
         "Content-Type: application/json",
         "--data-binary",
