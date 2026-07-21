@@ -2,6 +2,7 @@ mod backends;
 mod conflicts;
 mod core;
 mod engine;
+mod hotplug;
 mod netdev;
 mod sensors;
 mod settings;
