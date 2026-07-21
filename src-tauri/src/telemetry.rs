@@ -86,6 +86,26 @@ pub fn maybe_send_report(diagnostics_json: &str, app_version: &str) -> Result<bo
     Ok(true)
 }
 
+/// Réduit les chemins de binaires au nom de fichier seul avant envoi —
+/// un chemin complet contient presque toujours le nom du compte Windows
+/// (`%APPDATA%\<nom>\...` ou le dossier où l'exe portable a été placé),
+/// une donnée personnelle que le panneau diagnostic local n'a pas besoin
+/// de cacher mais que la télémétrie externe ne doit jamais recevoir.
+pub fn redact_paths_for_telemetry(diag: &mut crate::HardwareDiagnostics) {
+    for path in [
+        &mut diag.liquidctl.exe_path,
+        &mut diag.sensord.exe_path,
+        &mut diag.openrgb.exe_path,
+    ] {
+        if let Some(p) = path {
+            *p = std::path::Path::new(p)
+                .file_name()
+                .map(|f| f.to_string_lossy().into_owned())
+                .unwrap_or_else(|| "?".to_string());
+        }
+    }
+}
+
 /// Envoi immédiat, sans vérification de hash — utilisé par le bouton
 /// "Envoyer maintenant".
 pub fn send_report_now(diagnostics_json: &str, app_version: &str) -> Result<()> {
@@ -166,5 +186,37 @@ mod tests {
         let a = hash_diagnostics(r#"{"hid_raw":[]}"#);
         let b = hash_diagnostics(r#"{"hid_raw":[{"vid":"dead"}]}"#);
         assert_ne!(a, b);
+    }
+
+    #[test]
+    fn redact_reduit_les_chemins_complets_au_nom_de_fichier() {
+        let mut diag = crate::HardwareDiagnostics {
+            liquidctl: crate::backends::liquidctl::LiquidctlDiag {
+                exe_path: Some(r"C:\Users\Momo\AppData\Roaming\PureRGB\liquidctl.exe".into()),
+                version: Ok(String::new()),
+                list: Ok(String::new()),
+                initialize: Ok(String::new()),
+                status: Ok(String::new()),
+            },
+            sensord: crate::sensors::SensorDiag {
+                exe_path: Some(r"C:\Users\Momo\Desktop\portable\sensord.exe".into()),
+                running: false,
+                sensor_count: 0,
+            },
+            openrgb: crate::backends::openrgb::manager::OpenRgbStatus {
+                exe_path: None,
+                server_reachable: false,
+                managed: false,
+                pawnio_installed: false,
+                pawnio_ready: false,
+            },
+            hid_raw: Vec::new(),
+        };
+
+        redact_paths_for_telemetry(&mut diag);
+
+        assert_eq!(diag.liquidctl.exe_path.as_deref(), Some("liquidctl.exe"));
+        assert_eq!(diag.sensord.exe_path.as_deref(), Some("sensord.exe"));
+        assert_eq!(diag.openrgb.exe_path, None);
     }
 }
