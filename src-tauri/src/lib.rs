@@ -1097,6 +1097,15 @@ pub fn run() {
                         }
                         state.sensors.stop();
                         state.openrgb_mgr.stop();
+                        // Arrêter une éventuelle capture USB en cours pour ne pas
+                        // laisser un USBPcapCMD.exe orphelin écrire indéfiniment.
+                        {
+                            let session = state.active_capture.lock().take();
+                            if let Some(session) = session {
+                                log::info!("capture USB en cours arrêtée à la fermeture de l'app");
+                                usbcapture::stop_capture(session);
+                            }
+                        }
                         app.exit(0);
                     }
                     _ => {}
