@@ -181,8 +181,21 @@ fn update_targets(mgr: &OpenRgbManager, appdata: &Path) -> Vec<PathBuf> {
 
 fn restore_backups(backups: &[(PathBuf, PathBuf)]) {
     for (backup, target) in backups {
-        let _ = std::fs::remove_dir_all(target);
-        let _ = std::fs::rename(backup, target);
+        if let Err(e) = std::fs::remove_dir_all(target) {
+            if target.exists() {
+                log::warn!(
+                    "auto-update OpenRGB: restauration {} — suppression échouée: {e}",
+                    target.display()
+                );
+            }
+        }
+        if let Err(e) = std::fs::rename(backup, target) {
+            log::warn!(
+                "auto-update OpenRGB: restauration {} échouée, sauvegarde restée en {}: {e}",
+                target.display(),
+                backup.display()
+            );
+        }
     }
 }
 
