@@ -131,7 +131,7 @@ pub fn update_if_needed(
     for target in &targets {
         let backup = target.with_file_name(format!(
             "{}_backup",
-            target.file_name().unwrap().to_string_lossy()
+            target.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "openrgb".to_string())
         ));
         let _ = std::fs::remove_dir_all(&backup);
         if target.is_dir() {
@@ -142,6 +142,7 @@ pub fn update_if_needed(
                 return None;
             }
         }
+        backups.push((backup.clone(), target.clone()));
         if let Err(e) = copy_dir_all(&staging, target) {
             log::warn!(
                 "auto-update OpenRGB: copie nouvelle version vers {} échouée: {e:#}",
@@ -152,7 +153,6 @@ pub fn update_if_needed(
             return None;
         }
         copy_vc_runtime_dlls(target, &resource_dir);
-        backups.push((backup, target.clone()));
     }
 
     mgr.stop();
@@ -176,7 +176,9 @@ pub fn update_if_needed(
         log::warn!("auto-update OpenRGB: la nouvelle version ne démarre pas, restauration");
         mgr.stop();
         restore_backups(&backups);
-        let _ = mgr.ensure_running(host, port);
+        if let Err(e) = mgr.ensure_running(host, port) {
+            log::error!("auto-update OpenRGB: relance après restauration échouée: {e:#}");
+        }
         None
     }
 }
