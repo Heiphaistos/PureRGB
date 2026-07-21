@@ -309,7 +309,7 @@ pub fn sync_openrgb_config(devices: &[NetworkDevice], path: &Path) -> Result<()>
 
 /// Requête HTTP locale via curl.exe (présent sur Windows 10/11) — évite
 /// d'embarquer un client HTTP complet pour deux appels d'appairage LAN.
-fn curl(args: &[&str]) -> Result<String> {
+pub(crate) fn curl(args: &[&str]) -> Result<String> {
     let mut cmd = std::process::Command::new("curl.exe");
     cmd.args(["-s", "--max-time", "8"]).args(args);
     #[cfg(windows)]
