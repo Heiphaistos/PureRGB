@@ -563,7 +563,8 @@ fn send_telemetry_report(state: State<AppState>) -> Result<(), String> {
     if !opt_in {
         return Err("Télémétrie désactivée dans les réglages".into());
     }
-    let diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
+    let mut diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
+    telemetry::redact_paths_for_telemetry(&mut diag);
     let json = serde_json::to_string(&diag).map_err(|e| e.to_string())?;
     telemetry::send_report_now(&json, env!("CARGO_PKG_VERSION")).map_err(|e| format!("{e:#}"))
 }
@@ -895,13 +896,14 @@ pub fn run() {
                 telemetry::refresh_known_devices();
 
                 if saved.telemetry_opt_in {
-                    let diag = compute_hardware_diagnostics(
+                    let mut diag = compute_hardware_diagnostics(
                         &registry,
                         &sensors_hub,
                         &mgr,
                         &saved.openrgb_host,
                         saved.openrgb_port,
                     );
+                    telemetry::redact_paths_for_telemetry(&mut diag);
                     match serde_json::to_string(&diag) {
                         Ok(json) => match telemetry::maybe_send_report(&json, env!("CARGO_PKG_VERSION")) {
                             Ok(true) => log::info!("rapport télémétrie envoyé"),
