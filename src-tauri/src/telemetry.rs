@@ -10,7 +10,7 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
-const TELEMETRY_BASE_URL: &str = "https://telemetry-purergb.heiphaistos.org";
+pub(crate) const TELEMETRY_BASE_URL: &str = "https://telemetry-purergb.heiphaistos.org";
 
 /// Hash non cryptographique (zéro dépendance) — sert uniquement à éviter
 /// de renvoyer un rapport identique à chaque lancement, pas à la sécurité.
