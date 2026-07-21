@@ -8,11 +8,11 @@
 //! l'étiquetage "reconnu / non reconnu" du panneau diagnostic.
 
 use parking_lot::RwLock;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RemoteDevice {
     pub vid: String,
     pub pid: String,

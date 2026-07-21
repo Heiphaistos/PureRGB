@@ -5,6 +5,7 @@ mod engine;
 mod netdev;
 mod sensors;
 mod settings;
+mod telemetry;
 
 use crate::backends::hid::HidBackend;
 use crate::backends::liquidctl::LiquidctlBackend;
