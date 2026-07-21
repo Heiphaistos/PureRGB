@@ -143,6 +143,7 @@ export interface Settings {
   zone_sizes: Record<string, number>;
   network_devices: NetworkDevice[];
   auto_manage_conflicts: boolean;
+  telemetry_opt_in: boolean;
 }
 
 export type NetworkDeviceKind =

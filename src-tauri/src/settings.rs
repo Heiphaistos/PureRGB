@@ -41,6 +41,10 @@ pub struct Settings {
     /// lancement (arrêt réversible, non permanent) et les redémarre à la
     /// fermeture de l'app.
     pub auto_manage_conflicts: bool,
+    /// Envoie un snapshot diagnostic matériel (VID/PID, état
+    /// liquidctl/sensord/OpenRGB) à un service opt-in pour aider à
+    /// identifier le matériel non reconnu. Aucune donnée personnelle.
+    pub telemetry_opt_in: bool,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -70,6 +74,7 @@ impl Default for Settings {
             network_devices: Vec::new(),
             guarded_families: HashSet::new(),
             auto_manage_conflicts: true,
+            telemetry_opt_in: false,
         }
     }
 }
@@ -80,7 +85,7 @@ fn settings_path() -> Result<PathBuf> {
     Ok(dir.join("settings.json"))
 }
 
-fn dirs_dir() -> Option<PathBuf> {
+pub(crate) fn dirs_dir() -> Option<PathBuf> {
     std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB"))
 }
 
