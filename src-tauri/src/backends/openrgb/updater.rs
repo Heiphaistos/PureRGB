@@ -4,6 +4,11 @@
 //! la nouvelle version ne démarre pas. Ne touche jamais une installation
 //! OpenRGB indépendante de l'utilisateur.
 
+use anyhow::{bail, Context, Result};
+
+const RELEASES_API: &str =
+    "https://codeberg.org/api/v1/repos/OpenRGB/OpenRGB/releases?limit=1";
+
 /// Sélectionne l'asset Windows 64-bit dans la liste des assets d'une
 /// release Codeberg. Le hash de commit dans le nom change à chaque
 /// release (`OpenRGB_1.0rc3_Windows_64_6fbcf62.zip`) — sélection par motif,
@@ -21,6 +26,38 @@ pub fn pick_windows_asset(assets: &[(String, String)]) -> Option<(String, String
 /// aucune version n'a jamais été enregistrée).
 pub fn needs_update(latest_tag: &str, saved_version: &Option<String>) -> bool {
     saved_version.as_deref() != Some(latest_tag)
+}
+
+/// Interroge l'API Codeberg pour la dernière release OpenRGB publiée.
+/// Retourne `(tag_name, download_url)` de l'asset Windows 64-bit.
+/// Aucun fichier de checksums n'est publié par OpenRGB : seule garantie,
+/// HTTPS vers `codeberg.org` (décision validée dans la spec).
+pub fn check_latest_version() -> Result<(String, String)> {
+    let body = crate::netdev::curl(&[RELEASES_API]).context("requête releases Codeberg")?;
+    let releases: serde_json::Value =
+        serde_json::from_str(&body).context("parsing réponse Codeberg")?;
+    let release = releases
+        .get(0)
+        .context("aucune release Codeberg trouvée")?;
+    let tag_name = release
+        .get("tag_name")
+        .and_then(|v| v.as_str())
+        .context("tag_name absent de la réponse Codeberg")?
+        .to_string();
+    let assets: Vec<(String, String)> = release
+        .get("assets")
+        .and_then(|v| v.as_array())
+        .context("assets absents de la réponse Codeberg")?
+        .iter()
+        .filter_map(|a| {
+            let name = a.get("name")?.as_str()?.to_string();
+            let url = a.get("browser_download_url")?.as_str()?.to_string();
+            Some((name, url))
+        })
+        .collect();
+    let (_, download_url) = pick_windows_asset(&assets)
+        .context("aucun asset Windows 64-bit trouvé dans la release")?;
+    Ok((tag_name, download_url))
 }
 
 #[cfg(test)]
