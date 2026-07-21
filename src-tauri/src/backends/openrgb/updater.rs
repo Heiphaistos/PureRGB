@@ -65,6 +65,122 @@ pub fn check_latest_version() -> Result<(String, String)> {
     Ok((tag_name, download_url))
 }
 
+/// Vérifie, télécharge et bascule l'OpenRGB embarqué si une nouvelle
+/// version est disponible. Ne fait jamais rien si un serveur répond déjà
+/// sur `host:port` — ça ne peut arriver ici (appelé avant le premier
+/// `ensure_running` du thread `hw-init`) que si l'utilisateur a sa propre
+/// installation OpenRGB indépendante déjà lancée : jamais touchée.
+/// Retourne `Some(nouveau_tag)` en cas de bascule réussie (à persister
+/// dans `settings.json`), `None` sinon (rien à faire, ou échec — l'ancienne
+/// version reste en place, nouvelle tentative au prochain lancement).
+pub fn update_if_needed(
+    mgr: &OpenRgbManager,
+    host: &str,
+    port: u16,
+    saved_version: &Option<String>,
+) -> Option<String> {
+    if OpenRgbManager::server_reachable(host, port) {
+        log::info!(
+            "auto-update OpenRGB: serveur déjà joignable sur {host}:{port}, vérification différée"
+        );
+        return None;
+    }
+
+    let (tag_name, download_url) = match check_latest_version() {
+        Ok(v) => v,
+        Err(e) => {
+            log::warn!("auto-update OpenRGB: vérification version échouée: {e:#}");
+            return None;
+        }
+    };
+
+    if !needs_update(&tag_name, saved_version) {
+        return None;
+    }
+    log::info!("auto-update OpenRGB: nouvelle version détectée ({tag_name})");
+
+    let appdata = match std::env::var_os("APPDATA") {
+        Some(a) => PathBuf::from(a).join("PureRGB"),
+        None => {
+            log::warn!("auto-update OpenRGB: APPDATA introuvable");
+            return None;
+        }
+    };
+    let staging = appdata.join("openrgb_update_staging");
+    let _ = std::fs::remove_dir_all(&staging);
+    if let Err(e) = std::fs::create_dir_all(&staging) {
+        log::warn!("auto-update OpenRGB: création staging échouée: {e:#}");
+        return None;
+    }
+
+    if let Err(e) = download_and_extract(&download_url, &staging) {
+        log::warn!("auto-update OpenRGB: téléchargement/extraction échoués: {e:#}");
+        let _ = std::fs::remove_dir_all(&staging);
+        return None;
+    }
+
+    let targets = update_targets(mgr, &appdata);
+    if targets.is_empty() {
+        log::info!("auto-update OpenRGB: aucune copie gérée par PureRGB trouvée, rien à faire");
+        let _ = std::fs::remove_dir_all(&staging);
+        return None;
+    }
+
+    let resource_dir = mgr.resource_dir();
+    let mut backups: Vec<(PathBuf, PathBuf)> = Vec::new();
+    for target in &targets {
+        let backup = target.with_file_name(format!(
+            "{}_backup",
+            target.file_name().unwrap().to_string_lossy()
+        ));
+        let _ = std::fs::remove_dir_all(&backup);
+        if target.is_dir() {
+            if let Err(e) = std::fs::rename(target, &backup) {
+                log::warn!("auto-update OpenRGB: sauvegarde {} échouée: {e:#}", target.display());
+                restore_backups(&backups);
+                let _ = std::fs::remove_dir_all(&staging);
+                return None;
+            }
+        }
+        if let Err(e) = copy_dir_all(&staging, target) {
+            log::warn!(
+                "auto-update OpenRGB: copie nouvelle version vers {} échouée: {e:#}",
+                target.display()
+            );
+            restore_backups(&backups);
+            let _ = std::fs::remove_dir_all(&staging);
+            return None;
+        }
+        copy_vc_runtime_dlls(target, &resource_dir);
+        backups.push((backup, target.clone()));
+    }
+
+    mgr.stop();
+    let ok = match mgr.ensure_running(host, port) {
+        Ok(_) => wait_for_port(host, port, Duration::from_secs(10)),
+        Err(e) => {
+            log::warn!("auto-update OpenRGB: relance après bascule échouée: {e:#}");
+            false
+        }
+    };
+
+    let _ = std::fs::remove_dir_all(&staging);
+
+    if ok {
+        for (backup, _) in &backups {
+            let _ = std::fs::remove_dir_all(backup);
+        }
+        log::info!("auto-update OpenRGB: bascule vers {tag_name} réussie");
+        Some(tag_name)
+    } else {
+        log::warn!("auto-update OpenRGB: la nouvelle version ne démarre pas, restauration");
+        mgr.stop();
+        restore_backups(&backups);
+        let _ = mgr.ensure_running(host, port);
+        None
+    }
+}
+
 /// Télécharge l'asset vers `staging/openrgb_update.zip`, l'extrait, puis
 /// aplatit le sous-dossier "OpenRGB Windows 64-bit" du zip (même structure
 /// que `fetch-openrgb.ps1`/`OpenRgbManager::install()`). HTTPS seul comme
