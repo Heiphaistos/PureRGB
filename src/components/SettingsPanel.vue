@@ -170,21 +170,30 @@ async function uploadCaptureFiles() {
   if (!captureTargetDevice.value) return;
   captureUploading.value = true;
   captureMsg.value = "";
-  try {
-    for (const f of captureFiles.value) {
+  const remaining: CaptureFileInfo[] = [];
+  let succeeded = 0;
+  let firstError = "";
+  for (const f of captureFiles.value) {
+    try {
       await invoke("usb_capture_upload", {
         vid: captureTargetDevice.value.vid,
         pid: captureTargetDevice.value.pid,
         deviceName: captureTargetDevice.value.product || captureTargetDevice.value.manufacturer || "inconnu",
         path: f.path,
       });
+      succeeded++;
+    } catch (e) {
+      remaining.push(f);
+      if (!firstError) firstError = String(e);
     }
-    captureMsg.value = "Fichiers envoyés.";
-  } catch (e) {
-    captureMsg.value = `Envoi : ${e}`;
-  } finally {
-    captureUploading.value = false;
   }
+  captureFiles.value = remaining;
+  if (remaining.length === 0) {
+    captureMsg.value = "Fichiers envoyés.";
+  } else {
+    captureMsg.value = `${succeeded}/${succeeded + remaining.length} envoyés, échec sur ${remaining.length} fichier(s) : ${firstError}`;
+  }
+  captureUploading.value = false;
 }
 
 const hidRows = () =>
