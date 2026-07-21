@@ -183,10 +183,20 @@ pub fn start_capture() -> Result<CaptureSession> {
             use std::os::windows::process::CommandExt;
             cmd.creation_flags(CREATE_NO_WINDOW);
         }
-        let child = cmd
-            .spawn()
-            .with_context(|| format!("lancement capture hub {hub}"))?;
-        children.push(child);
+        match cmd.spawn() {
+            Ok(child) => children.push(child),
+            Err(e) => {
+                // Un hub précédent a peut-être déjà démarré : Child::drop ne tue
+                // pas le process (comportement std documenté), donc sans ce
+                // nettoyage explicite USBPcapCMD.exe continuerait de tourner et
+                // d'écrire indéfiniment, orphelin et hors de portée.
+                for mut c in children {
+                    let _ = c.kill();
+                    let _ = c.wait();
+                }
+                return Err(e).with_context(|| format!("lancement capture hub {hub}"));
+            }
+        }
     }
     Ok(CaptureSession { dir, children })
 }
