@@ -1019,6 +1019,7 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
         .manage(state)
         .setup(|app| {
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.

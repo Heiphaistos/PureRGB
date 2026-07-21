@@ -11,6 +11,7 @@
     "core:window:allow-set-focus",
     "core:tray:default",
     "opener:default",
-    "dialog:default"
+    "dialog:default",
+    "notification:default"
   ]
 }
