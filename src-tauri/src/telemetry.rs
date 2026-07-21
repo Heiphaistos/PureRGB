@@ -21,7 +21,9 @@ pub fn hash_diagnostics(diagnostics_json: &str) -> String {
 }
 
 fn cache_dir() -> Result<PathBuf> {
-    dirs_dir().context("répertoire de config introuvable")
+    let dir = dirs_dir().context("répertoire de config introuvable")?;
+    std::fs::create_dir_all(&dir).context("création du dossier de config")?;
+    Ok(dir)
 }
 
 fn report_id_path() -> Result<PathBuf> {
@@ -69,6 +71,9 @@ pub fn report_id() -> String {
 /// a changé depuis le dernier envoi. Best-effort : toute erreur réseau est
 /// retournée à l'appelant pour log uniquement, jamais de panique.
 pub fn maybe_send_report(diagnostics_json: &str, app_version: &str) -> Result<bool> {
+    if !crate::settings::load().telemetry_opt_in {
+        return Ok(false);
+    }
     let hash = hash_diagnostics(diagnostics_json);
     let last_hash_path = last_hash_path()?;
     if let Ok(previous) = std::fs::read_to_string(&last_hash_path) {
@@ -90,7 +95,10 @@ pub fn send_report_now(diagnostics_json: &str, app_version: &str) -> Result<()> 
         app_version,
         diagnostics_json
     );
-    let tmp_path = std::env::temp_dir().join("purergb_telemetry_payload.json");
+    let tmp_path = std::env::temp_dir().join(format!(
+        "purergb_telemetry_payload_{}.json",
+        std::process::id()
+    ));
     std::fs::write(&tmp_path, &payload).context("écriture du payload temporaire")?;
     let url = format!("{TELEMETRY_BASE_URL}/report");
     let result = curl(&[
