@@ -497,10 +497,17 @@ struct HardwareDiagnostics {
 /// (liquidctl, sensord, OpenRGB, énumération HID brute) au lieu de les
 /// avaler dans les logs serveur — pour comprendre pourquoi un binaire "ne
 /// se charge pas" sur une machine donnée sans accès à la console.
-#[tauri::command(async)]
-fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
+/// Extrait pour être réutilisable par le thread `hw-init` (envoi auto au
+/// démarrage) ET par les commandes Tauri (diagnostic manuel, envoi manuel).
+fn compute_hardware_diagnostics(
+    registry: &SharedRegistry,
+    sensors: &SensorHub,
+    openrgb_mgr: &OpenRgbManager,
+    openrgb_host: &str,
+    openrgb_port: u16,
+) -> HardwareDiagnostics {
     let liquidctl = {
-        let mut reg = state.registry.lock();
+        let mut reg = registry.lock();
         reg.backends_mut()
             .iter_mut()
             .find(|b| b.name() == "liquidctl")
@@ -515,7 +522,7 @@ fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
             })
     };
     let hid_raw = {
-        let mut reg = state.registry.lock();
+        let mut reg = registry.lock();
         reg.backends_mut()
             .iter_mut()
             .find(|b| b.name() == "hid")
@@ -523,16 +530,42 @@ fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
             .and_then(|hid| hid.list_raw().ok())
             .unwrap_or_default()
     };
+    HardwareDiagnostics {
+        liquidctl,
+        sensord: sensors.diag(),
+        openrgb: openrgb_mgr.status(openrgb_host, openrgb_port),
+        hid_raw,
+    }
+}
+
+#[tauri::command(async)]
+fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
     let (host, port) = {
         let s = state.settings.lock();
         (s.openrgb_host.clone(), s.openrgb_port)
     };
-    HardwareDiagnostics {
-        liquidctl,
-        sensord: state.sensors.diag(),
-        openrgb: state.openrgb_mgr.status(&host, port),
-        hid_raw,
+    compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port)
+}
+
+/// Commande manuelle du bouton "Envoyer maintenant" — ignore le hash de
+/// déduplication, envoie toujours si l'opt-in est actif. Point d'application
+/// réel de l'opt-in pour cette commande : `telemetry::send_report_now` ne
+/// vérifie rien lui-même (par design, c'est l'appel qui vaut consentement),
+/// donc c'est ici que le refus doit avoir lieu si l'utilisateur a désactivé
+/// la télémétrie entre-temps (l'UI masque le bouton, mais `invoke()` reste
+/// appelable directement, p. ex. depuis les devtools).
+#[tauri::command(async)]
+fn send_telemetry_report(state: State<AppState>) -> Result<(), String> {
+    let (host, port, opt_in) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port, s.telemetry_opt_in)
+    };
+    if !opt_in {
+        return Err("Télémétrie désactivée dans les réglages".into());
     }
+    let diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
+    let json = serde_json::to_string(&diag).map_err(|e| e.to_string())?;
+    telemetry::send_report_now(&json, env!("CARGO_PKG_VERSION")).map_err(|e| format!("{e:#}"))
 }
 
 /// Étape 1 de l'appairage Hue : récupère la MAC du pont. L'utilisateur doit
@@ -681,6 +714,7 @@ fn update_settings(
     fps: u32,
     start_minimized: bool,
     auto_manage_conflicts: bool,
+    telemetry_opt_in: bool,
 ) -> Result<(), String> {
     // Validation input : host non vide, fps borné.
     let host = openrgb_host.trim().to_string();
@@ -713,6 +747,7 @@ fn update_settings(
     s.fps = fps;
     s.start_minimized = start_minimized;
     s.auto_manage_conflicts = auto_manage_conflicts;
+    s.telemetry_opt_in = telemetry_opt_in;
     settings::save(&s).map_err(|e| e.to_string())
 }
 
@@ -801,7 +836,8 @@ pub fn run() {
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
-                let _ = sensors_hub; // démarré dans setup() une fois resource_dir connu
+                // sensors_hub : démarré dans setup() une fois resource_dir connu ;
+                // réutilisé ici pour le snapshot diagnostic télémétrie.
                 // Arrêt auto des logiciels constructeur en conflit AVANT le scan
                 // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
                 // Réversible (disable=false), redémarrés au "Quitter" du tray.
@@ -838,6 +874,29 @@ pub fn run() {
                     }
                 }
                 scan_with_zone_sizes(&mut registry.lock(), &saved.zone_sizes);
+
+                // Table de reconnaissance distante (diagnostic uniquement,
+                // jamais utilisée pour le pilotage réel — voir known_remote.rs).
+                telemetry::refresh_known_devices();
+
+                if saved.telemetry_opt_in {
+                    let diag = compute_hardware_diagnostics(
+                        &registry,
+                        &sensors_hub,
+                        &mgr,
+                        &saved.openrgb_host,
+                        saved.openrgb_port,
+                    );
+                    match serde_json::to_string(&diag) {
+                        Ok(json) => match telemetry::maybe_send_report(&json, env!("CARGO_PKG_VERSION")) {
+                            Ok(true) => log::info!("rapport télémétrie envoyé"),
+                            Ok(false) => log::debug!("rapport télémétrie inchangé, pas d'envoi"),
+                            Err(e) => log::warn!("envoi télémétrie: {e:#}"),
+                        },
+                        Err(e) => log::warn!("sérialisation diagnostic télémétrie: {e:#}"),
+                    }
+                }
+
                 restore_saved_state(&registry, &engine, &saved);
             })
             .expect("spawn hw-init");
@@ -1010,7 +1069,8 @@ pub fn run() {
             hue_pair,
             nanoleaf_pair,
             conflict_guard_set,
-            hardware_diagnostics
+            hardware_diagnostics,
+            send_telemetry_report
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");
