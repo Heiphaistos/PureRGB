@@ -152,6 +152,7 @@ async function confirmWizard(allLit: boolean) {
   } catch (e) {
     emit("toast", `Assistant de détection : ${e}`);
     emit("refresh");
+    wizardZone.value = null;
   } finally {
     wizardBusy.value = false;
   }
@@ -269,6 +270,16 @@ watch(
     );
     presetChoice.value = {};
     presetQty.value = {};
+    // Le composant n'est pas re-clé au changement d'appareil — sans ce reset,
+    // un assistant de détection actif sur la zone i de l'appareil précédent
+    // resterait affiché pour la zone i (même index, mauvaise zone physique)
+    // du nouvel appareil, avec des bornes de recherche périmées.
+    wizardZone.value = null;
+    wizardLow.value = 0;
+    wizardHigh.value = 0;
+    wizardMid.value = 0;
+    wizardOriginalSize.value = null;
+    wizardBusy.value = false;
     if (!id) return;
     const saved = props.savedEffects[id];
     if (saved) {
