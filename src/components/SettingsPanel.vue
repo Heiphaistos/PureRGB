@@ -7,7 +7,11 @@ import { diagOk, diagText } from "../types";
 
 export type LayoutMode = "grid" | "list" | "canvas";
 
-const props = defineProps<{ settings: Settings | null; layout: LayoutMode }>();
+const props = defineProps<{
+  settings: Settings | null;
+  layout: LayoutMode;
+  diagnosticTrigger?: number;
+}>();
 const emit = defineEmits<{ saved: []; "layout-change": [mode: LayoutMode] }>();
 
 const LAYOUTS: { id: LayoutMode; label: string; hint: string }[] = [
@@ -84,6 +88,13 @@ async function runDiagnostics() {
     diagRunning.value = false;
   }
 }
+
+watch(
+  () => props.diagnosticTrigger,
+  (v, old) => {
+    if (v !== undefined && v !== old) runDiagnostics();
+  },
+);
 
 const telemetrySending = ref(false);
 const telemetryMsg = ref("");
