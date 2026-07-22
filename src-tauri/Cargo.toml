@@ -1,6 +1,6 @@
 [package]
 name = "purergb"
-version = "0.17.0"
+version = "0.18.0"
 description = "PureRGB — contrôle RGB, ARGB, ventilateurs, AIO et hubs pour Windows 10/11"
 authors = ["Heiphaistos"]
 edition = "2021"
