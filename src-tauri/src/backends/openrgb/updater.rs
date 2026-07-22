@@ -193,6 +193,38 @@ pub fn update_if_needed(
 /// aplatit le sous-dossier "OpenRGB Windows 64-bit" du zip (même structure
 /// que `fetch-openrgb.ps1`/`OpenRgbManager::install()`). HTTPS seul comme
 /// garantie (pas de checksum officiel publié par OpenRGB).
+/// Lance `powershell.exe` borné par un timeout global — `-TimeoutSec` sur
+/// Invoke-WebRequest ne couvre que la requête HTTP, jamais `Expand-Archive`
+/// ni un blocage du process lui-même (zip corrompu/énorme, quirk OS) : sans
+/// cette borne, un script qui ne rend jamais la main gèlerait `hw-init`
+/// indéfiniment (violerait l'invariant "jamais bloquant" de l'auto-update).
+fn run_powershell_with_timeout(script: &str, timeout: Duration) -> Result<std::process::Output> {
+    use std::process::Stdio;
+    let mut child = Command::new("powershell.exe")
+        .args(["-NoProfile", "-NonInteractive", "-Command", script])
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .creation_flags_no_window()
+        .spawn()
+        .context("lancement PowerShell (auto-update)")?;
+
+    let start = Instant::now();
+    loop {
+        if child.try_wait().context("attente PowerShell (auto-update)")?.is_some() {
+            break;
+        }
+        if start.elapsed() >= timeout {
+            let _ = child.kill();
+            let _ = child.wait();
+            bail!("PowerShell (auto-update) n'a pas terminé sous {timeout:?}, processus arrêté");
+        }
+        std::thread::sleep(Duration::from_millis(200));
+    }
+    child
+        .wait_with_output()
+        .context("récupération sortie PowerShell (auto-update)")
+}
+
 fn download_and_extract(url: &str, staging: &Path) -> Result<()> {
     let zip_path = staging.join("openrgb_update.zip");
     let script = format!(
@@ -204,11 +236,8 @@ fn download_and_extract(url: &str, staging: &Path) -> Result<()> {
         zip = zip_path.display(),
         dir = staging.display(),
     );
-    let output = Command::new("powershell.exe")
-        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-        .creation_flags_no_window()
-        .output()
-        .context("lancement PowerShell pour téléchargement OpenRGB (auto-update)")?;
+    let output = run_powershell_with_timeout(&script, Duration::from_secs(60))
+        .context("téléchargement OpenRGB (auto-update)")?;
     if !output.status.success() {
         bail!(
             "téléchargement OpenRGB (auto-update) échoué: {}",
@@ -357,6 +386,22 @@ fn wait_for_resource_dir(mgr: &OpenRgbManager, timeout: Duration) -> Option<Path
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn run_powershell_with_timeout_returns_success_for_fast_script() {
+        let result = run_powershell_with_timeout("exit 0", Duration::from_secs(10));
+        assert!(result.is_ok());
+        assert!(result.unwrap().status.success());
+    }
+
+    #[test]
+    fn run_powershell_with_timeout_kills_and_errors_on_hang() {
+        let start = Instant::now();
+        let result = run_powershell_with_timeout("Start-Sleep -Seconds 60", Duration::from_secs(2));
+        assert!(result.is_err());
+        // Doit revenir peu après le timeout, pas attendre les 60s du script.
+        assert!(start.elapsed() < Duration::from_secs(10));
+    }
 
     #[test]
     fn pick_windows_asset_selects_zip_by_pattern() {
