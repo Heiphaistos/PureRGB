@@ -37,10 +37,19 @@ const emptyResizable = computed(() =>
 const zoneSizeEdits = ref<Record<number, number>>({});
 const resizingZone = ref<number | null>(null);
 const wizardZone = ref<number | null>(null);
+// Instantané de l'appareil ciblé au lancement — jamais relu depuis
+// props.device après un premier `await` (un changement d'appareil pendant
+// la recherche ne doit jamais faire dériver le wizard vers le mauvais
+// appareil physique).
+const wizardDeviceId = ref<string | null>(null);
 const wizardLow = ref(0);
 const wizardHigh = ref(0);
 const wizardMid = ref(0);
 const wizardOriginalSize = ref<number | null>(null);
+// Effet configuré sur cette zone avant le lancement de l'assistant —
+// restauré à la fin (succès, annulation ou échec) pour que le motif de
+// test blanc/noir ne devienne jamais l'effet persistant de la zone.
+const wizardPreviousEffect = ref<EffectConfig | null>(null);
 const wizardBusy = ref(false);
 
 // Sélecteur de modèle connu — calcule le nombre de LEDs à la place de
@@ -76,21 +85,42 @@ async function applyZoneSize(zoneIdx: number) {
   }
 }
 
-async function testCandidate(zoneIdx: number, n: number) {
-  if (!props.device) return;
-  await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: n });
+async function testCandidate(deviceId: string, zoneIdx: number, n: number) {
+  await invoke("resize_zone", { deviceId, zone: zoneIdx, newSize: n });
   await invoke("apply_effect", {
-    deviceId: props.device.id,
+    deviceId,
     config: { kind: "static", colors: [{ r: 255, g: 255, b: 255 }], speed: 1, brightness: 1, reverse: false },
     zone: zoneIdx,
   });
   wizardMid.value = n;
 }
 
+// `apply_effect` persiste toujours son résultat dans settings.json — sans
+// cette restauration, le motif de test blanc/noir deviendrait l'effet
+// permanent de la zone (survivrait même à un redémarrage de l'app).
+async function restoreWizardEffect(deviceId: string, zoneIdx: number) {
+  try {
+    await invoke("apply_effect", {
+      deviceId,
+      config: wizardPreviousEffect.value ?? { kind: "off", colors: [], speed: 1, brightness: 1, reverse: false },
+      zone: zoneIdx,
+    });
+  } catch (e) {
+    emit("toast", `Restauration de l'effet précédent : ${e}`);
+  }
+}
+
 async function startWizard(zoneIdx: number) {
   if (!props.device) return;
+  // Instantané pris avant tout `await` — jamais relu depuis props.device
+  // ensuite (un changement d'appareil pendant la recherche ne doit jamais
+  // faire dériver le wizard vers le mauvais appareil physique).
+  const deviceId = props.device.id;
   const z = props.device.zones[zoneIdx];
+  wizardDeviceId.value = deviceId;
   wizardOriginalSize.value = z.led_count;
+  wizardPreviousEffect.value =
+    props.savedEffects[`${deviceId}#z${zoneIdx}`] ?? props.savedEffects[deviceId] ?? null;
   wizardLow.value = z.leds_min;
   wizardHigh.value = z.leds_max;
   wizardZone.value = zoneIdx;
@@ -99,25 +129,28 @@ async function startWizard(zoneIdx: number) {
     // Nettoyage : tout éteindre à la taille maximale avant de commencer, pour
     // qu'une frontière blanc/noir nette apparaisse à chaque test (sinon des
     // LEDs au-delà du candidat testé pourraient garder une ancienne couleur).
-    await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: z.leds_max });
+    await invoke("resize_zone", { deviceId, zone: zoneIdx, newSize: z.leds_max });
     await invoke("apply_effect", {
-      deviceId: props.device.id,
+      deviceId,
       config: { kind: "off", colors: [], speed: 1, brightness: 1, reverse: false },
       zone: zoneIdx,
     });
-    await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
+    await testCandidate(deviceId, zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
   } catch (e) {
     emit("toast", `Assistant de détection : ${e}`);
-    emit("refresh");
     wizardZone.value = null;
+    wizardDeviceId.value = null;
+    await restoreWizardEffect(deviceId, zoneIdx);
+    emit("refresh");
   } finally {
     wizardBusy.value = false;
   }
 }
 
 async function confirmWizard(allLit: boolean) {
-  if (wizardZone.value === null || !props.device) return;
+  if (wizardZone.value === null || !wizardDeviceId.value) return;
   const zoneIdx = wizardZone.value;
+  const deviceId = wizardDeviceId.value;
   if (allLit) {
     wizardLow.value = wizardMid.value;
   } else {
@@ -131,16 +164,19 @@ async function confirmWizard(allLit: boolean) {
     wizardBusy.value = true;
     try {
       if (wizardMid.value !== wizardLow.value) {
-        await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: wizardLow.value });
+        await invoke("resize_zone", { deviceId, zone: zoneIdx, newSize: wizardLow.value });
       }
-      emit("toast", `Zone « ${props.device.zones[zoneIdx]?.name} » : ${wizardLow.value} LED détectées`);
+      await restoreWizardEffect(deviceId, zoneIdx);
+      emit("toast", `${wizardLow.value} LED détectées`);
       emit("refresh");
     } catch (e) {
       zoneSizeEdits.value[zoneIdx] = wizardLow.value;
+      await restoreWizardEffect(deviceId, zoneIdx);
       emit("toast", `Nombre détecté : ${wizardLow.value} LED — bascule ré-appliquée manuellement (${e})`);
       emit("refresh");
     } finally {
       wizardZone.value = null;
+      wizardDeviceId.value = null;
       wizardBusy.value = false;
     }
     return;
@@ -148,28 +184,35 @@ async function confirmWizard(allLit: boolean) {
 
   wizardBusy.value = true;
   try {
-    await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
+    await testCandidate(deviceId, zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
   } catch (e) {
     emit("toast", `Assistant de détection : ${e}`);
     emit("refresh");
     wizardZone.value = null;
+    wizardDeviceId.value = null;
+    await restoreWizardEffect(deviceId, zoneIdx);
   } finally {
     wizardBusy.value = false;
   }
 }
 
 async function cancelWizard() {
-  if (wizardZone.value === null || wizardOriginalSize.value === null || !props.device) {
+  if (wizardZone.value === null || wizardOriginalSize.value === null || !wizardDeviceId.value) {
     wizardZone.value = null;
+    wizardDeviceId.value = null;
     return;
   }
   const zoneIdx = wizardZone.value;
+  const deviceId = wizardDeviceId.value;
   const original = wizardOriginalSize.value;
   wizardZone.value = null;
+  wizardDeviceId.value = null;
   try {
-    await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: original });
+    await invoke("resize_zone", { deviceId, zone: zoneIdx, newSize: original });
+    await restoreWizardEffect(deviceId, zoneIdx);
     emit("refresh");
   } catch (e) {
+    await restoreWizardEffect(deviceId, zoneIdx);
     emit("toast", `Annulation : ${e}`);
     emit("refresh");
   }
@@ -273,12 +316,20 @@ watch(
     // Le composant n'est pas re-clé au changement d'appareil — sans ce reset,
     // un assistant de détection actif sur la zone i de l'appareil précédent
     // resterait affiché pour la zone i (même index, mauvaise zone physique)
-    // du nouvel appareil, avec des bornes de recherche périmées.
+    // du nouvel appareil, avec des bornes de recherche périmées. Si un
+    // assistant tournait sur l'appareil qu'on quitte, restaurer son effet
+    // avant d'abandonner l'état — sinon cette zone reste bloquée sur le
+    // motif de test blanc/noir pour toujours (persisté par apply_effect).
+    if (wizardZone.value !== null && wizardDeviceId.value) {
+      restoreWizardEffect(wizardDeviceId.value, wizardZone.value);
+    }
     wizardZone.value = null;
+    wizardDeviceId.value = null;
     wizardLow.value = 0;
     wizardHigh.value = 0;
     wizardMid.value = 0;
     wizardOriginalSize.value = null;
+    wizardPreviousEffect.value = null;
     wizardBusy.value = false;
     if (!id) return;
     const saved = props.savedEffects[id];
@@ -377,7 +428,7 @@ function snapshot(): EffectConfig {
                 v-model.number="zoneSizeEdits[i]"
               />
               <button
-                :disabled="resizingZone !== null || zoneSizeEdits[i] === z.led_count"
+                :disabled="resizingZone !== null || wizardZone !== null || zoneSizeEdits[i] === z.led_count"
                 @click="applyZoneSize(i)"
               >
                 {{ resizingZone === i ? "…" : "Appliquer" }}
