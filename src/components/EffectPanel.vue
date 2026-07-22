@@ -36,6 +36,12 @@ const emptyResizable = computed(() =>
 );
 const zoneSizeEdits = ref<Record<number, number>>({});
 const resizingZone = ref<number | null>(null);
+const wizardZone = ref<number | null>(null);
+const wizardLow = ref(0);
+const wizardHigh = ref(0);
+const wizardMid = ref(0);
+const wizardOriginalSize = ref<number | null>(null);
+const wizardBusy = ref(false);
 
 // Sélecteur de modèle connu — calcule le nombre de LEDs à la place de
 // l'utilisateur (détection matérielle automatique impossible sur un
@@ -67,6 +73,99 @@ async function applyZoneSize(zoneIdx: number) {
     emit("toast", `Redimensionnement : ${e}`);
   } finally {
     resizingZone.value = null;
+  }
+}
+
+async function testCandidate(zoneIdx: number, n: number) {
+  if (!props.device) return;
+  await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: n });
+  await invoke("apply_effect", {
+    deviceId: props.device.id,
+    config: { kind: "static", colors: [{ r: 255, g: 255, b: 255 }], speed: 1, brightness: 1, reverse: false },
+    zone: zoneIdx,
+  });
+  wizardMid.value = n;
+}
+
+async function startWizard(zoneIdx: number) {
+  if (!props.device) return;
+  const z = props.device.zones[zoneIdx];
+  wizardOriginalSize.value = z.led_count;
+  wizardLow.value = z.leds_min;
+  wizardHigh.value = z.leds_max;
+  wizardZone.value = zoneIdx;
+  wizardBusy.value = true;
+  try {
+    // Nettoyage : tout éteindre à la taille maximale avant de commencer, pour
+    // qu'une frontière blanc/noir nette apparaisse à chaque test (sinon des
+    // LEDs au-delà du candidat testé pourraient garder une ancienne couleur).
+    await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: z.leds_max });
+    await invoke("apply_effect", {
+      deviceId: props.device.id,
+      config: { kind: "off", colors: [], speed: 1, brightness: 1, reverse: false },
+      zone: zoneIdx,
+    });
+    await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
+  } catch (e) {
+    emit("toast", `Assistant de détection : ${e}`);
+    wizardZone.value = null;
+  } finally {
+    wizardBusy.value = false;
+  }
+}
+
+async function confirmWizard(allLit: boolean) {
+  if (wizardZone.value === null || !props.device) return;
+  const zoneIdx = wizardZone.value;
+  if (allLit) {
+    wizardLow.value = wizardMid.value;
+  } else {
+    wizardHigh.value = wizardMid.value - 1;
+  }
+
+  if (wizardLow.value >= wizardHigh.value) {
+    // Recherche terminée. Le dernier test affiché correspondait à wizardMid,
+    // qui peut différer de wizardLow (réponse "Non" décale la borne haute
+    // sans re-tester) — s'assurer que la zone est bien à la taille finale.
+    wizardBusy.value = true;
+    try {
+      if (wizardMid.value !== wizardLow.value) {
+        await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: wizardLow.value });
+      }
+      emit("toast", `Zone « ${props.device.zones[zoneIdx]?.name} » : ${wizardLow.value} LED détectées`);
+      emit("refresh");
+    } catch (e) {
+      emit("toast", `Assistant de détection : ${e}`);
+    } finally {
+      wizardZone.value = null;
+      wizardBusy.value = false;
+    }
+    return;
+  }
+
+  wizardBusy.value = true;
+  try {
+    await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
+  } catch (e) {
+    emit("toast", `Assistant de détection : ${e}`);
+  } finally {
+    wizardBusy.value = false;
+  }
+}
+
+async function cancelWizard() {
+  if (wizardZone.value === null || wizardOriginalSize.value === null || !props.device) {
+    wizardZone.value = null;
+    return;
+  }
+  const zoneIdx = wizardZone.value;
+  const original = wizardOriginalSize.value;
+  wizardZone.value = null;
+  try {
+    await invoke("resize_zone", { deviceId: props.device.id, zone: zoneIdx, newSize: original });
+    emit("refresh");
+  } catch (e) {
+    emit("toast", `Annulation : ${e}`);
   }
 }
 
@@ -268,6 +367,20 @@ function snapshot(): EffectConfig {
                 {{ resizingZone === i ? "…" : "Appliquer" }}
               </button>
             </div>
+            <div v-if="wizardZone === i" class="wizard-box">
+              <p>
+                Test en cours : <strong>{{ wizardMid }}</strong> LED allumées en blanc.<br />
+                Est-ce que TOUTES les LEDs de la bande sont allumées, y compris la toute dernière ?
+              </p>
+              <div class="wizard-actions">
+                <button :disabled="wizardBusy" @click="confirmWizard(true)">Oui, toutes allumées</button>
+                <button :disabled="wizardBusy" @click="confirmWizard(false)">Non, ça s'arrête avant</button>
+                <button :disabled="wizardBusy" @click="cancelWizard">Annuler</button>
+              </div>
+            </div>
+            <button v-else :disabled="wizardZone !== null" class="wizard-start" @click="startWizard(i)">
+              Assistant de détection
+            </button>
           </div>
         </details>
       </div>
@@ -599,5 +712,22 @@ function snapshot(): EffectConfig {
   padding: 40px;
   text-align: center;
   width: 100%;
+}
+
+.wizard-box {
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+.wizard-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.wizard-start {
+  margin-top: 4px;
 }
 </style>
