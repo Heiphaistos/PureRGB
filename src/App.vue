@@ -258,7 +258,9 @@ onMounted(async () => {
   }
 
   unlisten = await listen<UnknownDeviceAlert[]>("unknown-device-detected", (event) => {
-    pendingAlerts.value.push(...event.payload);
+    const existingKeys = new Set(pendingAlerts.value.map((a) => `${a.vid}:${a.pid}`));
+    const fresh = event.payload.filter((a) => !existingKeys.has(`${a.vid}:${a.pid}`));
+    pendingAlerts.value.push(...fresh);
   });
 });
 
