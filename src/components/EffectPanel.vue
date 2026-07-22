@@ -108,6 +108,7 @@ async function startWizard(zoneIdx: number) {
     await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
   } catch (e) {
     emit("toast", `Assistant de détection : ${e}`);
+    emit("refresh");
     wizardZone.value = null;
   } finally {
     wizardBusy.value = false;
@@ -135,7 +136,9 @@ async function confirmWizard(allLit: boolean) {
       emit("toast", `Zone « ${props.device.zones[zoneIdx]?.name} » : ${wizardLow.value} LED détectées`);
       emit("refresh");
     } catch (e) {
-      emit("toast", `Assistant de détection : ${e}`);
+      zoneSizeEdits.value[zoneIdx] = wizardLow.value;
+      emit("toast", `Nombre détecté : ${wizardLow.value} LED — bascule ré-appliquée manuellement (${e})`);
+      emit("refresh");
     } finally {
       wizardZone.value = null;
       wizardBusy.value = false;
@@ -148,6 +151,7 @@ async function confirmWizard(allLit: boolean) {
     await testCandidate(zoneIdx, Math.ceil((wizardLow.value + wizardHigh.value) / 2));
   } catch (e) {
     emit("toast", `Assistant de détection : ${e}`);
+    emit("refresh");
   } finally {
     wizardBusy.value = false;
   }
@@ -166,6 +170,7 @@ async function cancelWizard() {
     emit("refresh");
   } catch (e) {
     emit("toast", `Annulation : ${e}`);
+    emit("refresh");
   }
 }
 
