@@ -2,7 +2,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import ConflictPanel from "./components/ConflictPanel.vue";
 import DeviceCanvas from "./components/DeviceCanvas.vue";
 import DeviceGrid from "./components/DeviceGrid.vue";
@@ -89,15 +89,18 @@ const scanning = ref(false);
 const toast = ref("");
 const pendingAlerts = ref<UnknownDeviceAlert[]>([]);
 const diagnosticTrigger = ref(0);
+let unlisten: (() => void) | undefined;
 
-function openDiagnosticFor(index: number) {
-  pendingAlerts.value.splice(index, 1);
+function openDiagnosticFor(vid: string, pid: string) {
+  const idx = pendingAlerts.value.findIndex((a) => a.vid === vid && a.pid === pid);
+  if (idx !== -1) pendingAlerts.value.splice(idx, 1);
   tab.value = "settings";
   diagnosticTrigger.value++;
 }
 
-function dismissAlert(index: number) {
-  pendingAlerts.value.splice(index, 1);
+function dismissAlert(vid: string, pid: string) {
+  const idx = pendingAlerts.value.findIndex((a) => a.vid === vid && a.pid === pid);
+  if (idx !== -1) pendingAlerts.value.splice(idx, 1);
 }
 const orgb = ref<OpenRgbStatus>({
   exe_path: null,
@@ -254,9 +257,13 @@ onMounted(async () => {
     /* plateforme sans notifications ou permission indisponible — ignoré */
   }
 
-  await listen<UnknownDeviceAlert[]>("unknown-device-detected", (event) => {
+  unlisten = await listen<UnknownDeviceAlert[]>("unknown-device-detected", (event) => {
     pendingAlerts.value.push(...event.payload);
   });
+});
+
+onUnmounted(() => {
+  unlisten?.();
 });
 </script>
 
@@ -396,15 +403,15 @@ onMounted(async () => {
     </transition>
 
     <div v-if="pendingAlerts.length" class="hotplug-alerts">
-      <div v-for="(alert, i) in pendingAlerts" :key="`${alert.vid}:${alert.pid}`" class="hotplug-alert">
+      <div v-for="alert in pendingAlerts" :key="`${alert.vid}:${alert.pid}`" class="hotplug-alert">
         <span
           >Nouveau matériel non reconnu détecté : {{ alert.manufacturer }} {{ alert.product }} ({{ alert.vid }}:{{
             alert.pid
           }})</span
         >
         <div class="hotplug-alert-actions">
-          <button @click="openDiagnosticFor(i)">Ouvrir le diagnostic</button>
-          <button @click="dismissAlert(i)">Ignorer</button>
+          <button @click="openDiagnosticFor(alert.vid, alert.pid)">Ouvrir le diagnostic</button>
+          <button @click="dismissAlert(alert.vid, alert.pid)">Ignorer</button>
         </div>
       </div>
     </div>
