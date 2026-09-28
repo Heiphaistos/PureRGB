@@ -325,9 +325,46 @@ fn set_autostart(state: State<AppState>, enabled: bool) -> Result<(), String> {
     settings::save(&s).map_err(|e| e.to_string())
 }
 
+/// L'application tourne en administrateur : un chemin venu de la WebView ne
+/// doit ni lire ni écrire hors du dossier de l'utilisateur. Seuls les `.json`
+/// sous `home` sont acceptés, après résolution des liens (le dossier home est
+/// canonicalisé lui aussi, sinon le préfixe `\\?\` de `canonicalize` fait
+/// échouer toute comparaison).
+fn confine_profile_path(path: &str, home: &std::path::Path) -> Result<std::path::PathBuf, String> {
+    let p = std::path::Path::new(path);
+    let is_json = p.extension().and_then(|e| e.to_str()).is_some_and(|e| e.eq_ignore_ascii_case("json"));
+    if !p.is_absolute() || !is_json {
+        return Err("chemin de profil refusé (fichier .json attendu)".into());
+    }
+    let home = home.canonicalize().map_err(|e| format!("dossier utilisateur : {e}"))?;
+    let name = p.file_name().ok_or("chemin de profil refusé")?;
+    let parent = p
+        .parent()
+        .ok_or("chemin de profil refusé")?
+        .canonicalize()
+        .map_err(|e| format!("dossier du profil : {e}"))?;
+    let target = if p.exists() {
+        p.canonicalize().map_err(|e| e.to_string())?
+    } else {
+        parent.join(name)
+    };
+    if !target.starts_with(&home) {
+        return Err("chemin de profil refusé : hors du dossier utilisateur".into());
+    }
+    Ok(target)
+}
+
+fn user_home() -> Result<std::path::PathBuf, String> {
+    std::env::var_os("USERPROFILE")
+        .or_else(|| std::env::var_os("HOME"))
+        .map(std::path::PathBuf::from)
+        .ok_or_else(|| "dossier utilisateur introuvable".to_string())
+}
+
 /// Exporte la configuration complète (effets, courbes, modes, réglages).
 #[tauri::command]
 fn profile_export(state: State<AppState>, path: String) -> Result<(), String> {
+    let path = confine_profile_path(&path, &user_home()?)?;
     let s = state.settings.lock();
     let json = serde_json::to_string_pretty(&*s).map_err(|e| e.to_string())?;
     std::fs::write(&path, json).map_err(|e| e.to_string())
@@ -336,6 +373,7 @@ fn profile_export(state: State<AppState>, path: String) -> Result<(), String> {
 /// Importe un profil et l'applique immédiatement.
 #[tauri::command(async)]
 fn profile_import(state: State<AppState>, path: String) -> Result<(), String> {
+    let path = confine_profile_path(&path, &user_home()?)?;
     let text = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
     let imported: Settings = serde_json::from_str(&text).map_err(|e| format!("profil invalide: {e}"))?;
     {
@@ -1254,4 +1292,29 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");
+}
+
+#[cfg(test)]
+mod profile_path_tests {
+    use super::confine_profile_path;
+
+    #[test]
+    fn profile_path_must_be_a_json_inside_home() {
+        let base = std::env::temp_dir().join(format!("purergb-prof-{}", std::process::id()));
+        let home = base.join("home");
+        let outside = base.join("outside");
+        std::fs::create_dir_all(&home).unwrap();
+        std::fs::create_dir_all(&outside).unwrap();
+        let ok = confine_profile_path(&home.join("p.json").to_string_lossy(), &home);
+        let other_dir = confine_profile_path(&outside.join("p.json").to_string_lossy(), &home);
+        let not_json = confine_profile_path(&home.join("p.exe").to_string_lossy(), &home);
+        let traversal = confine_profile_path(&home.join("..").join("outside").join("p.json").to_string_lossy(), &home);
+        let relative = confine_profile_path("p.json", &home);
+        std::fs::remove_dir_all(&base).ok();
+        assert!(ok.is_ok(), "{ok:?}");
+        assert!(other_dir.is_err());
+        assert!(not_json.is_err());
+        assert!(traversal.is_err());
+        assert!(relative.is_err());
+    }
 }
