@@ -220,13 +220,30 @@ pub fn stop_capture(mut session: CaptureSession) -> Vec<CaptureFile> {
 /// n'importe qui sur GitHub). En dev local sans la variable définie,
 /// résout à une chaîne vide — `upload_capture` refuse alors explicitement
 /// plutôt que d'envoyer une requête avec un header d'auth vide.
+/// `path` vient de la WebView et le fichier part sur le réseau avec les droits
+/// administrateur : seul un `.pcap` produit par `start_capture` (sous
+/// `<config>/captures`) est accepté, liens résolus.
+fn confine_capture_path(path: &Path, captures_dir: &Path) -> Result<PathBuf> {
+    let root = captures_dir.canonicalize().context("dossier des captures introuvable")?;
+    let real = path.canonicalize().context("fichier de capture introuvable")?;
+    let is_pcap = real.extension().and_then(|e| e.to_str()).is_some_and(|e| e.eq_ignore_ascii_case("pcap"));
+    if !real.starts_with(&root) || !is_pcap || !real.is_file() {
+        bail!("fichier refusé : seules les captures USB de PureRGB peuvent être envoyées");
+    }
+    Ok(real)
+}
+
 pub fn upload_capture(path: &Path, vid: &str, pid: &str, device_name: &str) -> Result<()> {
+    let path = confine_capture_path(path, &usbpcap_setup_dir()?.join("captures"))?;
+    let path = path.as_path();
     let token = option_env!("CAPTURE_UPLOAD_TOKEN").unwrap_or("");
     if token.is_empty() {
         bail!("CAPTURE_UPLOAD_TOKEN non configuré au build — impossible d'envoyer la capture");
     }
     let url = format!("{}/capture-upload", crate::telemetry::TELEMETRY_BASE_URL);
     let auth = format!("Authorization: Bearer {token}");
+    // Le chemin canonique porte le préfixe `\\?\` et ne contient ni `;` ni `"`
+    // (nom produit par start_capture) : pas d'option curl injectable.
     let file_field = format!("file=@{}", path.display());
     crate::netdev::curl(&[
         "-X",
@@ -235,11 +252,12 @@ pub fn upload_capture(path: &Path, vid: &str, pid: &str, device_name: &str) -> R
         &auth,
         "--max-time",
         "60",
-        "-F",
+        // --form-string : valeur littérale, jamais lue comme `@fichier`/`<fichier`
+        "--form-string",
         &format!("vid={vid}"),
-        "-F",
+        "--form-string",
         &format!("pid={pid}"),
-        "-F",
+        "--form-string",
         &format!("device_name={device_name}"),
         "-F",
         &file_field,
@@ -251,6 +269,29 @@ pub fn upload_capture(path: &Path, vid: &str, pid: &str, device_name: &str) -> R
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn upload_refuses_anything_outside_the_capture_folder() {
+        let base = std::env::temp_dir().join(format!("purergb-cap-{}", std::process::id()));
+        let captures = base.join("captures").join("123");
+        std::fs::create_dir_all(&captures).unwrap();
+        let good = captures.join("usbcapture_hub1.pcap");
+        std::fs::write(&good, b"x").unwrap();
+        let secret = base.join("secret.pcap");
+        std::fs::write(&secret, b"x").unwrap();
+        let txt = captures.join("notes.txt");
+        std::fs::write(&txt, b"x").unwrap();
+        let root = base.join("captures");
+        let r_good = confine_capture_path(&good, &root);
+        let r_secret = confine_capture_path(&secret, &root);
+        let r_txt = confine_capture_path(&txt, &root);
+        let r_trav = confine_capture_path(&captures.join("..").join("..").join("secret.pcap"), &root);
+        std::fs::remove_dir_all(&base).ok();
+        assert!(r_good.is_ok(), "{r_good:?}");
+        assert!(r_secret.is_err());
+        assert!(r_txt.is_err());
+        assert!(r_trav.is_err());
+    }
 
     #[test]
     fn formate_le_chemin_du_hub_racine() {
