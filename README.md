@@ -42,6 +42,14 @@ Deux formats dans les [Releases](../../releases) :
 
 L'application demande les droits **administrateur** au lancement (UAC) : requis pour l'accès SMBus (RAM, carte mère) et la gestion des services en conflit.
 
+## Mises à jour automatiques
+
+L'installeur NSIS embarque un module de mise à jour : au lancement, PureRGB cherche une nouvelle version (manifeste `latest.json` de la dernière release GitHub), vérifie sa signature minisign, propose l'installation (version + nouveautés), télécharge avec progression, installe silencieusement puis redémarre. **Réglages > Mises à jour de PureRGB** : bouton « Rechercher une mise à jour » et case « Vérifier les mises à jour automatiquement » (active par défaut). Rien n'est vérifié en mode développement ni pour la version portable non installée.
+
+Ce réglage est distinct de « Démarrer OpenRGB automatiquement », qui gère la mise à jour du serveur OpenRGB embarqué.
+
+Publication : le secret CI `TAURI_SIGNING_PRIVATE_KEY` (clé minisign privée) signe l'installeur ; sans lui la CI construit quand même, mais sans artefacts de mise à jour. La clé publique est dans `src-tauri/tauri.conf.json`.
+
 ## Démarrage rapide
 
 1. Lancer PureRGB — OpenRGB embarqué démarre tout seul (ou cliquer « Démarrer OpenRGB » dans le bandeau)
