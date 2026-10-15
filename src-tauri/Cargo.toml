@@ -1,6 +1,6 @@
 [package]
 name = "purergb"
-version = "0.20.0"
+version = "0.21.0"
 description = "PureRGB — contrôle RGB, ARGB, ventilateurs, AIO et hubs pour Windows 10/11"
 authors = ["Heiphaistos"]
 edition = "2021"
@@ -28,6 +28,8 @@ env_logger = "0.11"
 sysinfo = "0.39"
 tauri-plugin-dialog = "2"
 tauri-plugin-notification = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]

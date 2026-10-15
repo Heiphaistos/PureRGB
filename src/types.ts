@@ -144,6 +144,7 @@ export interface Settings {
   network_devices: NetworkDevice[];
   auto_manage_conflicts: boolean;
   telemetry_opt_in: boolean;
+  auto_update_check: boolean;
 }
 
 export type NetworkDeviceKind =

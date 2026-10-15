@@ -4,6 +4,7 @@ import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { reactive, ref, watch } from "vue";
 import type { CaptureFileInfo, HardwareDiagnostics, Settings } from "../types";
 import { diagOk, diagText } from "../types";
+import { checkForUpdate, updateState } from "../autoUpdate";
 
 export type LayoutMode = "grid" | "list" | "canvas";
 
@@ -221,6 +222,7 @@ const form = reactive({
   start_minimized: false,
   auto_manage_conflicts: true,
   telemetry_opt_in: false,
+  auto_update_check: true,
 });
 const saving = ref(false);
 const error = ref("");
@@ -237,6 +239,7 @@ watch(
     form.start_minimized = s.start_minimized;
     form.auto_manage_conflicts = s.auto_manage_conflicts;
     form.telemetry_opt_in = s.telemetry_opt_in;
+    form.auto_update_check = s.auto_update_check ?? true;
   },
   { immediate: true },
 );
@@ -254,6 +257,7 @@ async function save() {
       startMinimized: form.start_minimized,
       autoManageConflicts: form.auto_manage_conflicts,
       telemetryOptIn: form.telemetry_opt_in,
+      autoUpdateCheck: form.auto_update_check,
     });
     emit("saved");
   } catch (e) {
@@ -284,6 +288,29 @@ async function save() {
           <span>{{ l.hint }}</span>
         </button>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>Mises à jour de PureRGB</h3>
+      <p class="hint">
+        Les mises à jour sont signées et vérifiées avant installation, puis
+        PureRGB redémarre. Le réglage est enregistré avec le bouton « Enregistrer ».
+      </p>
+      <div class="inline" style="margin-bottom: 12px">
+        <input id="autoupdate" type="checkbox" v-model="form.auto_update_check" />
+        <label for="autoupdate">Vérifier les mises à jour automatiquement</label>
+      </div>
+      <button :disabled="updateState.phase !== 'idle'" @click="checkForUpdate(false)">
+        {{
+          updateState.phase === "checking"
+            ? "Recherche en cours…"
+            : updateState.phase === "downloading"
+              ? `Téléchargement ${updateState.percent ?? ""}${updateState.percent === null ? "" : " %"}`
+              : updateState.phase === "installing"
+                ? "Installation…"
+                : "Rechercher une mise à jour"
+        }}
+      </button>
     </div>
 
     <div class="card">

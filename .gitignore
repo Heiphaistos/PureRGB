@@ -1,5 +1,9 @@
 # Node
 node_modules/
+
+# Clés de signature des mises à jour (privées, jamais commitées)
+*.key
+*.key.pub
 dist/
 
 # Rust / Tauri
