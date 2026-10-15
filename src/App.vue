@@ -9,6 +9,7 @@ import DeviceGrid from "./components/DeviceGrid.vue";
 import EffectDrawer from "./components/EffectDrawer.vue";
 import FanPanel from "./components/FanPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
+import { checkForUpdate } from "./autoUpdate";
 import SettingsPanel from "./components/SettingsPanel.vue";
 import type { LayoutMode } from "./components/SettingsPanel.vue";
 import SmartPanel from "./components/SmartPanel.vue";
@@ -239,6 +240,8 @@ async function startOpenRgb() {
 
 onMounted(async () => {
   await loadSettings();
+  // Vérification silencieuse (sans bloquer l'init) si le réglage est actif.
+  if (settings.value?.auto_update_check !== false) void checkForUpdate(true);
   await refresh();
   // L'init matériel en arrière-plan peut finir après le premier rendu :
   // re-scanner tant que le serveur n'est pas joignable (max ~30 s).

@@ -49,6 +49,9 @@ pub struct Settings {
     /// (`None` = jamais vérifié, traite toute version distante comme
     /// nouvelle). Mis à jour par `backends::openrgb::updater`.
     pub openrgb_version: Option<String>,
+    /// Vérifie au lancement si une nouvelle version de PureRGB existe
+    /// (distinct de `auto_start_openrgb`, qui concerne le sidecar OpenRGB).
+    pub auto_update_check: bool,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -80,6 +83,7 @@ impl Default for Settings {
             auto_manage_conflicts: true,
             telemetry_opt_in: false,
             openrgb_version: None,
+            auto_update_check: true,
         }
     }
 }

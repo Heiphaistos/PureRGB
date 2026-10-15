@@ -812,6 +812,7 @@ fn update_settings(
     start_minimized: bool,
     auto_manage_conflicts: bool,
     telemetry_opt_in: bool,
+    auto_update_check: bool,
 ) -> Result<(), String> {
     // Validation input : host non vide, fps borné.
     let host = openrgb_host.trim().to_string();
@@ -845,6 +846,7 @@ fn update_settings(
     s.start_minimized = start_minimized;
     s.auto_manage_conflicts = auto_manage_conflicts;
     s.telemetry_opt_in = telemetry_opt_in;
+    s.auto_update_check = auto_update_check;
     settings::save(&s).map_err(|e| e.to_string())
 }
 
@@ -1059,6 +1061,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(state)
         .setup(|app| {
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
