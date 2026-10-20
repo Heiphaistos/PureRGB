@@ -1,5 +1,7 @@
 # Capture USB intégrée — Implementation Plan
 
+> Note (2026-10) : le jeton `CAPTURE_UPLOAD_TOKEN` décrit ci-dessous a été retiré du client public (extractible du binaire). L'upload est désormais anonyme ; quotas, taille et validation sont à appliquer côté serveur. Les accès VPS sont des variables locales (`VPS_USER`, `VPS_HOST`).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Intégrer dans le panneau Diagnostic de PureRGB un bouton "Capturer le protocole USB" par appareil non reconnu — installe USBPcap à la demande, capture tous les hubs racine en parallèle, laisse l'utilisateur envoyer les fichiers vers un nouvel endpoint du service télémétrie pour analyse manuelle ultérieure.
@@ -1340,20 +1342,20 @@ git push origin main
 
 La valeur réelle du token (identique à celle posée en secret GitHub Actions du repo `PureRGB` à l'implémentation de Task 4) doit être écrite directement dans le `.env` du VPS via SSH — **jamais écrite dans ce plan ni dans aucun fichier suivi par git** (le plan lui-même vit dans le repo `PureRGB`, qui est public). Récupérer la valeur depuis là où elle a été générée (contexte de la session d'implémentation, ou en régénérer une nouvelle avec `openssl rand -hex 32` si perdue — dans ce cas, mettre aussi à jour le secret GitHub Actions `CAPTURE_UPLOAD_TOKEN` du repo `PureRGB` avec la même nouvelle valeur, sinon l'app buildée par CI et le serveur auront des tokens différents et l'upload échouera systématiquement en 401) :
 ```bash
-ssh root@VPS_HOST "grep -q CAPTURE_UPLOAD_TOKEN /opt/purergb-telemetry/.env || echo 'CAPTURE_UPLOAD_TOKEN=<valeur réelle, jamais commitée>' >> /opt/purergb-telemetry/.env"
+ssh "$VPS_USER@$VPS_HOST" "grep -q CAPTURE_UPLOAD_TOKEN /opt/purergb-telemetry/.env || echo 'CAPTURE_UPLOAD_TOKEN=<valeur réelle, jamais commitée>' >> /opt/purergb-telemetry/.env"
 ```
 Expected : la ligne est ajoutée seulement si absente (idempotent — ne duplique pas si la tâche est relancée).
 
 - [ ] **Step 3: Pull + rebuild + redémarrer**
 
 ```bash
-ssh root@VPS_HOST "cd /opt/purergb-telemetry && git pull origin main && docker compose up -d --build"
+ssh "$VPS_USER@$VPS_HOST" "cd /opt/purergb-telemetry && git pull origin main && docker compose up -d --build"
 ```
 
 - [ ] **Step 4: Vérifier le conteneur et l'endpoint**
 
 ```bash
-ssh root@VPS_HOST "docker compose -f /opt/purergb-telemetry/docker-compose.yml ps"
+ssh "$VPS_USER@$VPS_HOST" "docker compose -f /opt/purergb-telemetry/docker-compose.yml ps"
 ```
 Expected : `Up (healthy)`.
 

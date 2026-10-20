@@ -1150,17 +1150,17 @@ git push -u origin main
 - [ ] **Step 4: Vérifier la résolution DNS du sous-domaine**
 
 Run: `nslookup telemetry-purergb.heiphaistos.org`
-Expected: résout vers `VPS_HOST` (wildcard DNS déjà en place comme les autres sous-domaines). Si NXDOMAIN : ajouter un enregistrement A `telemetry-purergb` → `VPS_HOST` chez le registrar avant de continuer.
+Expected: résout vers `<VPS_HOST>` (wildcard DNS déjà en place comme les autres sous-domaines). Si NXDOMAIN : ajouter un enregistrement A `telemetry-purergb` → `<VPS_HOST>` chez le registrar avant de continuer.
 
 - [ ] **Step 5: Cloner et démarrer sur le VPS**
 
 ```bash
-ssh root@VPS_HOST "mkdir -p /opt/purergb-telemetry"
-ssh root@VPS_HOST "cd /opt/purergb-telemetry && git clone https://github.com/Heiphaistos/PureRGB-Telemetry.git ."
+ssh "$VPS_USER@$VPS_HOST" "mkdir -p /opt/purergb-telemetry"
+ssh "$VPS_USER@$VPS_HOST" "cd /opt/purergb-telemetry && git clone https://github.com/Heiphaistos/PureRGB-Telemetry.git ."
 ```
 Créer `.env` sur le VPS avec de vraies valeurs aléatoires (jamais commitées) :
 ```bash
-ssh root@VPS_HOST "cd /opt/purergb-telemetry && cat > .env" <<'EOF'
+ssh "$VPS_USER@$VPS_HOST" "cd /opt/purergb-telemetry && cat > .env" <<'EOF'
 PORT=3022
 JWT_SECRET=<générer une valeur aléatoire 64 caractères>
 IP_HASH_PEPPER=<générer une valeur aléatoire 32 caractères>
@@ -1168,14 +1168,14 @@ DB_PATH=/app/data/telemetry.db
 EOF
 ```
 ```bash
-ssh root@VPS_HOST "cd /opt/purergb-telemetry && docker compose up -d --build"
+ssh "$VPS_USER@$VPS_HOST" "cd /opt/purergb-telemetry && docker compose up -d --build"
 ```
 Expected : `docker compose ps` montre le conteneur `healthy`.
 
 - [ ] **Step 6: Config nginx (HTTP d'abord, certbot ajoute le bloc SSL)**
 
 ```bash
-ssh root@VPS_HOST "cat > /etc/nginx/sites-available/telemetry-purergb << 'EOF'
+ssh "$VPS_USER@$VPS_HOST" "cat > /etc/nginx/sites-available/telemetry-purergb << 'EOF'
 server {
     listen 80;
     listen [::]:80;
@@ -1199,13 +1199,13 @@ server {
     }
 }
 EOF"
-ssh root@VPS_HOST "ln -sf /etc/nginx/sites-available/telemetry-purergb /etc/nginx/sites-enabled/telemetry-purergb && nginx -t && systemctl reload nginx"
+ssh "$VPS_USER@$VPS_HOST" "ln -sf /etc/nginx/sites-available/telemetry-purergb /etc/nginx/sites-enabled/telemetry-purergb && nginx -t && systemctl reload nginx"
 ```
 
 - [ ] **Step 7: Certbot (ajoute automatiquement le bloc SSL + redirection 80→443)**
 
 ```bash
-ssh root@VPS_HOST "certbot --nginx -d telemetry-purergb.heiphaistos.org --non-interactive --agree-tos -m admin@heiphaistos.org"
+ssh "$VPS_USER@$VPS_HOST" "certbot --nginx -d telemetry-purergb.heiphaistos.org --non-interactive --agree-tos -m <CERTBOT_EMAIL>"
 ```
 Expected : succès, `nginx -t` toujours vert après.
 
