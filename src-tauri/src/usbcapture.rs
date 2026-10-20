@@ -211,15 +211,6 @@ pub fn stop_capture(mut session: CaptureSession) -> Vec<CaptureFile> {
     collect_capture_files(&session.dir)
 }
 
-/// Envoie un fichier de capture vers le service télémétrie pour analyse
-/// manuelle. Best-effort, jamais automatique — appelé uniquement suite à
-/// un clic explicite "Envoyer pour analyse" côté UI.
-/// Secret partagé app↔serveur, injecté à la compilation via la variable
-/// d'environnement CI `CAPTURE_UPLOAD_TOKEN` (jamais commité en clair —
-/// ce repo est public, un token en dur dans le source serait lisible par
-/// n'importe qui sur GitHub). En dev local sans la variable définie,
-/// résout à une chaîne vide — `upload_capture` refuse alors explicitement
-/// plutôt que d'envoyer une requête avec un header d'auth vide.
 /// `path` vient de la WebView et le fichier part sur le réseau avec les droits
 /// administrateur : seul un `.pcap` produit par `start_capture` (sous
 /// `<config>/captures`) est accepté, liens résolus.
@@ -233,23 +224,19 @@ fn confine_capture_path(path: &Path, captures_dir: &Path) -> Result<PathBuf> {
     Ok(real)
 }
 
+/// Envoie un fichier de capture vers le service télémétrie pour analyse
+/// manuelle (clic explicite "Envoyer pour analyse"). Upload anonyme : aucun
+/// secret dans le binaire public, quotas/taille/validation imposés côté serveur.
 pub fn upload_capture(path: &Path, vid: &str, pid: &str, device_name: &str) -> Result<()> {
     let path = confine_capture_path(path, &usbpcap_setup_dir()?.join("captures"))?;
     let path = path.as_path();
-    let token = option_env!("CAPTURE_UPLOAD_TOKEN").unwrap_or("");
-    if token.is_empty() {
-        bail!("CAPTURE_UPLOAD_TOKEN non configuré au build — impossible d'envoyer la capture");
-    }
     let url = format!("{}/capture-upload", crate::telemetry::TELEMETRY_BASE_URL);
-    let auth = format!("Authorization: Bearer {token}");
     // Le chemin canonique porte le préfixe `\\?\` et ne contient ni `;` ni `"`
     // (nom produit par start_capture) : pas d'option curl injectable.
     let file_field = format!("file=@{}", path.display());
     crate::netdev::curl(&[
         "-X",
         "POST",
-        "-H",
-        &auth,
         "--max-time",
         "60",
         // --form-string : valeur littérale, jamais lue comme `@fichier`/`<fichier`

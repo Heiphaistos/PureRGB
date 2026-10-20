@@ -103,54 +103,23 @@ impl LiquidctlBackend {
             candidates.push(res.join("resources").join("liquidctl").join("liquidctl.exe"));
             candidates.push(res.join("liquidctl").join("liquidctl.exe"));
         }
-        if let Some(app) = std::env::var_os("APPDATA") {
-            candidates.push(
-                PathBuf::from(app)
-                    .join("PureRGB")
-                    .join("liquidctl")
-                    .join("liquidctl.exe"),
-            );
+        if let Some(dir) = crate::trust::managed_dir("liquidctl") {
+            candidates.push(dir.join("liquidctl.exe"));
         }
+        // Lancé élevé : jamais depuis un dossier modifiable par l'utilisateur.
+        candidates.retain(|p| crate::trust::is_trusted(p));
         candidates.into_iter().find(|p| p.is_file())
     }
 
-    fn appdata_dir() -> Option<PathBuf> {
-        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("liquidctl"))
-    }
-
-    /// Télécharge liquidctl.exe (SHA-256 pinné) vers %APPDATA%\PureRGB\liquidctl\.
+    /// Télécharge liquidctl.exe (SHA-256 pinné) vers %ProgramFiles%\PureRGB\liquidctl\.
     /// Onefile PyInstaller statique : pas de DLL runtime à copier séparément.
     /// Atomique : télécharge vers .download, vérifie SHA, ne déplace que si OK.
     fn install() -> Result<PathBuf> {
-        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        let dir = crate::trust::managed_dir("liquidctl").context("ProgramFiles introuvable")?;
         std::fs::create_dir_all(&dir)?;
         let exe = dir.join("liquidctl.exe");
-        let tmp = dir.join("liquidctl.exe.download");
-        let script = format!(
-            "$ProgressPreference='SilentlyContinue'; \
-             Invoke-WebRequest -Uri '{url}' -OutFile '{tmp}' -UseBasicParsing; \
-             $h = (Get-FileHash '{tmp}' -Algorithm SHA256).Hash.ToLower(); \
-             if ($h -ne '{sha}') {{ Remove-Item '{tmp}' -Force; throw \"hash mismatch: $h\" }}; \
-             Move-Item '{tmp}' '{exe}' -Force",
-            url = LIQUIDCTL_URL,
-            tmp = tmp.display(),
-            exe = exe.display(),
-            sha = LIQUIDCTL_SHA256,
-        );
-        let mut cmd = Command::new("powershell.exe");
-        cmd.args(["-NoProfile", "-NonInteractive", "-Command", &script]);
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            cmd.creation_flags(CREATE_NO_WINDOW);
-        }
-        let output = cmd.output().context("téléchargement liquidctl")?;
-        if !output.status.success() {
-            bail!(
-                "téléchargement liquidctl échoué: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-        }
+        crate::trust::download_verified(LIQUIDCTL_URL, LIQUIDCTL_SHA256, &exe)
+            .context("téléchargement liquidctl")?;
         if !exe.is_file() {
             bail!("liquidctl.exe absent après téléchargement");
         }
@@ -249,7 +218,7 @@ impl LiquidctlBackend {
         let Some(exe) = self.exe.clone() else {
             return LiquidctlDiag {
                 exe_path: None,
-                version: Err("binaire liquidctl.exe introuvable (resources/, %APPDATA%)".into()),
+                version: Err("binaire liquidctl.exe introuvable (resources/, %ProgramFiles%)".into()),
                 list: Err("—".into()),
                 initialize: Err("—".into()),
                 status: Err("—".into()),

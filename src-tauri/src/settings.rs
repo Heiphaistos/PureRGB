@@ -45,10 +45,6 @@ pub struct Settings {
     /// liquidctl/sensord/OpenRGB) à un service opt-in pour aider à
     /// identifier le matériel non reconnu. Aucune donnée personnelle.
     pub telemetry_opt_in: bool,
-    /// Tag de la version d'OpenRGB embarquée actuellement installée
-    /// (`None` = jamais vérifié, traite toute version distante comme
-    /// nouvelle). Mis à jour par `backends::openrgb::updater`.
-    pub openrgb_version: Option<String>,
     /// Vérifie au lancement si une nouvelle version de PureRGB existe
     /// (distinct de `auto_start_openrgb`, qui concerne le sidecar OpenRGB).
     pub auto_update_check: bool,
@@ -82,7 +78,6 @@ impl Default for Settings {
             guarded_families: HashSet::new(),
             auto_manage_conflicts: true,
             telemetry_opt_in: false,
-            openrgb_version: None,
             auto_update_check: true,
         }
     }

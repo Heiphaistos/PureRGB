@@ -7,6 +7,7 @@ mod netdev;
 mod sensors;
 mod settings;
 mod telemetry;
+mod trust;
 mod usbcapture;
 
 use crate::backends::hid::HidBackend;
@@ -295,6 +296,11 @@ fn set_hardware_mode(
 #[tauri::command(async)]
 fn set_autostart(state: State<AppState>, enabled: bool) -> Result<(), String> {
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    // Tâche HIGHEST = admin sans UAC : refusée si l'exe est remplaçable par
+    // un processus non élevé (hors %ProgramFiles%).
+    if enabled && !crate::trust::is_trusted(&exe) {
+        return Err("Démarrage automatique indisponible : installez PureRGB avec             l'installeur (dossier Program Files). Cette copie est dans un dossier             modifiable sans droits administrateur.".into());
+    }
     let run = |args: &[&str]| -> Result<std::process::Output, String> {
         let mut cmd = std::process::Command::new("schtasks.exe");
         cmd.args(args);
@@ -936,28 +942,7 @@ pub fn run() {
         std::thread::Builder::new()
             .name("hw-init".into())
             .spawn(move || {
-                let mut saved = settings_shared.lock().clone();
-                // Auto-update OpenRGB AVANT tout le reste : doit précéder
-                // ensure_running/scan/restore_saved_state pour que le scan
-                // matériel se fasse contre la version définitive de la
-                // session, jamais contre une version sur le point d'être
-                // remplacée. Ne touche jamais un serveur déjà joignable
-                // (install OpenRGB indépendante de l'utilisateur).
-                if saved.auto_start_openrgb {
-                    if let Some(new_version) = crate::backends::openrgb::updater::update_if_needed(
-                        &mgr,
-                        &saved.openrgb_host,
-                        saved.openrgb_port,
-                        &saved.openrgb_version,
-                    ) {
-                        saved.openrgb_version = Some(new_version.clone());
-                        let mut shared = settings_shared.lock();
-                        shared.openrgb_version = Some(new_version);
-                        if let Err(e) = crate::settings::save(&shared) {
-                            log::warn!("sauvegarde version OpenRGB: {e:#}");
-                        }
-                    }
-                }
+                let saved = settings_shared.lock().clone();
                 // Arrêt auto des logiciels constructeur en conflit AVANT le scan
                 // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
                 // Réversible (disable=false), redémarrés au "Quitter" du tray.

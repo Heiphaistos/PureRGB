@@ -2916,7 +2916,7 @@ dependencies = [
 
 [[package]]
 name = "purergb"
-version = "0.21.0"
+version = "0.22.0"
 dependencies = [
  "anyhow",
  "env_logger",
@@ -2925,6 +2925,7 @@ dependencies = [
  "parking_lot",
  "serde",
  "serde_json",
+ "sha2",
  "sysinfo",
  "tauri",
  "tauri-build",

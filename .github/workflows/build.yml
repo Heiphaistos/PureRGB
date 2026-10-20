@@ -49,7 +49,6 @@ jobs:
       # de mise à jour plutôt que d'échouer.
       - name: Build Tauri app
         env:
-          CAPTURE_UPLOAD_TOKEN: ${{ secrets.CAPTURE_UPLOAD_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: |
           if ($env:TAURI_SIGNING_PRIVATE_KEY) {

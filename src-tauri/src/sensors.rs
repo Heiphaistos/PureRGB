@@ -81,57 +81,26 @@ impl SensorHub {
             candidates.push(res.join("resources").join("sensord").join("sensord.exe"));
             candidates.push(res.join("sensord").join("sensord.exe"));
         }
-        if let Some(app) = std::env::var_os("APPDATA") {
-            candidates.push(
-                PathBuf::from(app)
-                    .join("PureRGB")
-                    .join("sensord")
-                    .join("sensord.exe"),
-            );
+        if let Some(dir) = crate::trust::managed_dir("sensord") {
+            candidates.push(dir.join("sensord.exe"));
         }
+        // Lancé élevé : jamais depuis un dossier modifiable par l'utilisateur.
+        candidates.retain(|p| crate::trust::is_trusted(p));
         candidates.into_iter().find(|p| p.is_file())
     }
 
-    fn appdata_dir() -> Option<PathBuf> {
-        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("sensord"))
-    }
-
-    /// Télécharge sensord.exe (SHA-256 pinné) vers %APPDATA%\PureRGB\sensord\.
+    /// Télécharge sensord.exe (SHA-256 pinné) vers %ProgramFiles%\PureRGB\sensord\.
     /// Publish self-contained .NET 8 : runtime déjà inclus, pas de DLL à part.
     /// Téléchargement vers un fichier temporaire puis renommage seulement
     /// après vérification du hash (Move-Item = rename NTFS quasi-atomique) —
     /// un download interrompu ne doit jamais laisser un binaire corrompu au
     /// chemin que `locate()` fait confiance ensuite sans re-vérifier.
     fn install() -> Result<PathBuf> {
-        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        let dir = crate::trust::managed_dir("sensord").context("ProgramFiles introuvable")?;
         std::fs::create_dir_all(&dir)?;
         let exe = dir.join("sensord.exe");
-        let tmp = dir.join("sensord.exe.download");
-        let script = format!(
-            "$ProgressPreference='SilentlyContinue'; \
-             Invoke-WebRequest -Uri '{url}' -OutFile '{tmp}' -UseBasicParsing; \
-             $h = (Get-FileHash '{tmp}' -Algorithm SHA256).Hash.ToLower(); \
-             if ($h -ne '{sha}') {{ Remove-Item '{tmp}' -Force; throw \"hash mismatch: $h\" }}; \
-             Move-Item '{tmp}' '{exe}' -Force",
-            url = SENSORD_URL,
-            tmp = tmp.display(),
-            exe = exe.display(),
-            sha = SENSORD_SHA256,
-        );
-        let mut cmd = Command::new("powershell.exe");
-        cmd.args(["-NoProfile", "-NonInteractive", "-Command", &script]);
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            cmd.creation_flags(CREATE_NO_WINDOW);
-        }
-        let output = cmd.output().context("téléchargement sensord")?;
-        if !output.status.success() {
-            bail!(
-                "téléchargement sensord échoué: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-        }
+        crate::trust::download_verified(SENSORD_URL, SENSORD_SHA256, &exe)
+            .context("téléchargement sensord")?;
         if !exe.is_file() {
             bail!("sensord.exe absent après téléchargement");
         }

@@ -3,12 +3,15 @@
 //!
 //! Ordre de recherche de OpenRGB.exe :
 //! 1. Ressources de l'app (bundle NSIS : `resources/openrgb/`)
-//! 2. `%APPDATA%\PureRGB\openrgb\` (installé par l'exe portable)
-//! 3. Installations standard + PATH
+//! 2. `%ProgramFiles%\PureRGB\openrgb\` (installé par l'exe portable)
+//! 3. Installations standard dans `%ProgramFiles%`
 //!
-//! Si introuvable : téléchargement de la release officielle 0.9 depuis
-//! openrgb.org, vérifiée par SHA-256 avant extraction.
+//! Tout est lancé avec les droits admin : seuls des emplacements à ACL admin
+//! (`%ProgramFiles%`) sont acceptés, jamais %APPDATA%/%LOCALAPPDATA%.
+//! Si introuvable : téléchargement de la version épinglée (URL en liste
+//! blanche), vérifiée par SHA-256 avant extraction.
 
+use crate::trust;
 use anyhow::{bail, Context, Result};
 use parking_lot::Mutex;
 use serde::Serialize;
@@ -61,28 +64,17 @@ impl OpenRgbManager {
         *self.resource_dir.lock() = Some(dir);
     }
 
-    /// Dossier ressources du bundle, si résolu (utilisé par l'auto-update
-    /// pour retrouver l'emplacement setup NSIS en plus d'APPDATA).
-    pub(crate) fn resource_dir(&self) -> Option<PathBuf> {
-        self.resource_dir.lock().clone()
-    }
-
-    fn appdata_dir() -> Option<PathBuf> {
-        std::env::var_os("APPDATA").map(|a| PathBuf::from(a).join("PureRGB").join("openrgb"))
-    }
-
-    /// Cherche OpenRGB.exe sans rien installer.
-    /// Nos copies (ressources, APPDATA) doivent être en 1.0rc (PawnIOLib.dll
-    /// présente) — une 0.9 restée d'une version précédente est ignorée pour
-    /// déclencher la réinstallation. Les installations de l'utilisateur sont
-    /// acceptées telles quelles.
+    /// Cherche OpenRGB.exe sans rien installer, uniquement sous %ProgramFiles%
+    /// (lancé élevé). Nos copies doivent être en 1.0rc (PawnIOLib.dll présente)
+    /// — une 0.9 restée d'une version précédente est ignorée pour déclencher la
+    /// réinstallation.
     pub fn locate(&self) -> Option<PathBuf> {
         let ours_ok = |exe: &PathBuf| {
-            exe.is_file() && exe.with_file_name("PawnIOLib.dll").is_file()
+            trust::is_trusted(exe) && exe.is_file() && exe.with_file_name("PawnIOLib.dll").is_file()
         };
         if let Some(res) = self.resource_dir.lock().clone() {
             // Selon le bundling, resource_dir() est le dossier d'install (les
-            // fichiers sont sous resources/) ou directement resources/.
+            // fichiers sous resources/) ou directement resources/.
             for base in [res.join("resources"), res] {
                 let exe = base.join("openrgb").join("OpenRGB.exe");
                 if ours_ok(&exe) {
@@ -90,25 +82,17 @@ impl OpenRgbManager {
                 }
             }
         }
-        if let Some(app) = Self::appdata_dir() {
-            let exe = app.join("OpenRGB.exe");
+        if let Some(dir) = trust::managed_dir("openrgb") {
+            let exe = dir.join("OpenRGB.exe");
             if ours_ok(&exe) {
                 return Some(exe);
             }
         }
-        let mut candidates: Vec<PathBuf> = Vec::new();
-        for base in ["ProgramFiles", "ProgramFiles(x86)", "LocalAppData"] {
-            if let Some(p) = std::env::var_os(base) {
-                candidates.push(PathBuf::from(&p).join("OpenRGB").join("OpenRGB.exe"));
-                candidates.push(
-                    PathBuf::from(&p)
-                        .join("Programs")
-                        .join("OpenRGB")
-                        .join("OpenRGB.exe"),
-                );
-            }
-        }
-        candidates.into_iter().find(|p| p.is_file())
+        ["ProgramFiles", "ProgramFiles(x86)"]
+            .iter()
+            .filter_map(std::env::var_os)
+            .map(|p| PathBuf::from(p).join("OpenRGB").join("OpenRGB.exe"))
+            .find(|p| p.is_file())
     }
 
     pub fn server_reachable(host: &str, port: u16) -> bool {
@@ -155,29 +139,12 @@ impl OpenRgbManager {
         if Self::pawnio_ready() {
             return Ok(());
         }
-        let dir = Self::appdata_dir().context("APPDATA introuvable")?;
+        let dir = trust::managed_dir("pawnio").context("ProgramFiles introuvable")?;
         std::fs::create_dir_all(&dir)?;
         let setup = dir.join("PawnIO_setup.exe");
-        let script = format!(
-            "$ProgressPreference='SilentlyContinue'; \
-             Invoke-WebRequest -Uri '{url}' -OutFile '{exe}' -UseBasicParsing; \
-             $h = (Get-FileHash '{exe}' -Algorithm SHA256).Hash.ToLower(); \
-             if ($h -ne '{sha}') {{ Remove-Item '{exe}' -Force; throw \"hash mismatch: $h\" }}",
-            url = PAWNIO_URL,
-            exe = setup.display(),
-            sha = PAWNIO_SHA256,
-        );
-        let output = Command::new("powershell.exe")
-            .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-            .creation_flags_no_window()
-            .output()
+        // Hash vérifié dans un dossier à ACL admin, juste avant le lancement.
+        trust::download_verified(PAWNIO_URL, PAWNIO_SHA256, &setup)
             .context("téléchargement PawnIO")?;
-        if !output.status.success() {
-            bail!(
-                "téléchargement PawnIO échoué: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-        }
         // Jusqu'à 2 passes : la création du devnode (SwDeviceCreate) est
         // asynchrone et échoue parfois à la première install silencieuse ;
         // relancer le setup (uninstallPrevious + install) la répare.
@@ -211,39 +178,29 @@ impl OpenRgbManager {
         );
     }
 
-    /// Installe OpenRGB dans %APPDATA%\PureRGB\openrgb (téléchargement officiel
-    /// + vérification SHA-256 + extraction). Utilisé par l'exe portable.
+    /// Installe OpenRGB dans %ProgramFiles%\PureRGB\openrgb (téléchargement
+    /// de la version épinglée + vérification SHA-256 + extraction par tar.exe,
+    /// sans shell). Utilisé par l'exe portable et les installs hors Program Files.
     pub fn install(&self) -> Result<PathBuf> {
-        let target = Self::appdata_dir().context("APPDATA introuvable")?;
-        // Purger une ancienne version (0.9 sans PawnIOLib.dll) avant extraction.
-        if target.join("OpenRGB.exe").is_file() && !target.join("PawnIOLib.dll").is_file() {
-            let _ = std::fs::remove_dir_all(&target);
-        }
+        let target = trust::managed_dir("openrgb").context("ProgramFiles introuvable")?;
+        // Purger toute copie précédente (0.9 sans PawnIOLib.dll, ou altérée).
+        let _ = std::fs::remove_dir_all(&target);
         std::fs::create_dir_all(&target)?;
         let zip_path = target.join("openrgb_download.zip");
-
-        // Téléchargement + hash + extraction via PowerShell (pas de dépendance
-        // HTTP/zip côté Rust, Windows-only assumé).
-        let script = format!(
-            "$ProgressPreference='SilentlyContinue'; \
-             Invoke-WebRequest -Uri '{url}' -OutFile '{zip}' -UseBasicParsing; \
-             $h = (Get-FileHash '{zip}' -Algorithm SHA256).Hash.ToLower(); \
-             if ($h -ne '{sha}') {{ Remove-Item '{zip}' -Force; throw \"hash mismatch: $h\" }}; \
-             Expand-Archive '{zip}' '{dir}' -Force; \
-             Remove-Item '{zip}' -Force",
-            url = OPENRGB_URL,
-            zip = zip_path.display(),
-            sha = OPENRGB_SHA256,
-            dir = target.display(),
-        );
-        let output = Command::new("powershell.exe")
-            .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+        trust::download_verified(OPENRGB_URL, OPENRGB_SHA256, &zip_path)
+            .context("téléchargement OpenRGB")?;
+        let output = Command::new("tar.exe")
+            .arg("-xf")
+            .arg(&zip_path)
+            .arg("-C")
+            .arg(&target)
             .creation_flags_no_window()
             .output()
-            .context("lancement PowerShell pour téléchargement OpenRGB")?;
+            .context("extraction OpenRGB (tar.exe)")?;
+        let _ = std::fs::remove_file(&zip_path);
         if !output.status.success() {
             bail!(
-                "téléchargement OpenRGB échoué: {}",
+                "extraction OpenRGB échouée: {}",
                 String::from_utf8_lossy(&output.stderr)
             );
         }
@@ -278,7 +235,8 @@ impl OpenRgbManager {
         if let Some(win) = std::env::var_os("WINDIR") {
             dll_sources.push(PathBuf::from(win).join("System32"));
         }
-        if let Some(res) = self.resource_dir.lock().clone() {
+        // Le dossier bundle n'est une source que s'il est sous %ProgramFiles%.
+        if let Some(res) = self.resource_dir.lock().clone().filter(|r| trust::is_trusted(r)) {
             dll_sources.push(res.join("openrgb"));
         }
         for dll in ["vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll"] {
@@ -319,6 +277,8 @@ impl OpenRgbManager {
         let child = Command::new(&exe)
             .args([
                 "--server",
+                "--server-host",
+                "127.0.0.1",
                 "--server-port",
                 &port.to_string(),
                 "--startminimized",
