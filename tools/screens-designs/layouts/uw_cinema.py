@@ -1,11 +1,11 @@
-"""16:9 : grande jauge heros a gauche, heure et liste a droite ; 4:3 : heure + 4 lignes."""
+"""16:9 et large : heure, deux grandes jauges CPU/GPU a gauche, liste (RAM, SSD, extras) a droite ; 4:3 : heure + 5 lignes du socle."""
 from content import CONTENT
-from lib import Canvas
-from parts import ring, row
+from lib import Canvas, split
+from layouts.uw_common import line, ring2
 
 NAME, TITLE = "uw_cinema", "Cinéma 16:9 et 4:3"
-CONTENTS = ["uw-sys", "uw-therm", "uw-stock", "uw-air", "uw-puis"]
-FORMATS = ["w169", "r43"]
+CONTENTS = ["uw-sys", "uw-therm", "uw-stock", "uw-air", "uw-puis", "uw-gpu", "uw-cpu", "uw-reseau", "uw-disq", "uw-mix"]
+FORMATS = ["w169", "r43", "w1280", "u1920"]
 
 
 def build(p, fmt, content):
@@ -13,22 +13,24 @@ def build(p, fmt, content):
     ms = CONTENT[content][1]
     x, y, w, h = fmt.zone
     gap = fmt.short * 0.04
-    if fmt.w > 800:
-        d = min(h, w * 0.4)
-        ring(c, x + d / 2, y + h / 2, d / 2, ms[0], 0, sub=True)
-        lx = x + d + gap * 1.5
-        lw = w - d - gap * 1.5
-        c.value("time", "%H:%M", lx, y, lw * 0.4, h * 0.2, "88:88", p.text, bold=True, pre="time")
-        c.value("date", "%d/%m/%Y", lx + lw * 0.45, y + h * 0.04, lw * 0.55, h * 0.12, "88/88/8888", p.text2, align="right", pre="date")
-        ry = y + h * 0.26
-        rh = (h * 0.74 - gap) / 5
-        for i in range(5):
-            row(c, (lx, ry + i * (rh + gap * 0.35), lw, rh), ms[i + 1], i + 1)
-        return c.finish()
     hh = h * 0.2
-    c.value("time", "%H:%M", x, y, w * 0.4, hh, "88:88", p.text, bold=True, pre="time")
-    c.value("date", "%d/%m/%Y", x + w * 0.45, y + hh * 0.15, w * 0.55, hh * 0.65, "88/88/8888", p.text2, align="right", pre="date")
-    rh = (h - hh - gap) / 4
-    for i in range(4):
-        row(c, (x, y + hh + gap + i * rh, w, rh * 0.9), ms[i], i)
-    return c.finish()
+    c.value("time", "%H:%M", x, y, w * 0.3, hh, "88:88", p.text, bold=True, pre="time")
+    if fmt.ratio < 1.5:
+        c.value("date", "%d/%m/%Y", x + w * 0.4, y + hh * 0.15, w * 0.6, hh * 0.7, "88/88/8888", p.text2, align="right", pre="date")
+    else:
+        c.value("date", "%A %d %B %Y", x + w * 0.35, y + hh * 0.15, w * 0.65, hh * 0.7, "mercredi 30 septembre 2026", p.text2, align="right", pre="date")
+    by, bh = y + hh + gap, h - hh - gap
+    if fmt.w > 800:
+        d = min(bh, w * 0.24)
+        for i in range(2):
+            ring2(c, x + d / 2 + i * (d + gap), by + bh / 2, d / 2, ms[i], i, thick=d * 0.06)
+        lx = x + 2 * d + 3 * gap
+        n = 6
+        for i, box in enumerate(split((lx, by, min(x + w - lx, bh * 2.6), bh), n, gap * 0.4, horizontal=False)):
+            line(c, box, ms[i + 2], i + 2, g="cl")
+        return c.finish()
+    if fmt.ratio < 1.5:   # 4:3 : cinq lignes
+        for i, box in enumerate(split((x, by, w, bh), 5, gap * 0.3, horizontal=False)):
+            line(c, box, ms[i], i, g="cl")
+        return c.finish()
+    return None
