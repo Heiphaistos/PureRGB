@@ -3,6 +3,7 @@ import { designGet, preview } from "./api.ts";
 import type { Layout } from "./types.ts";
 import { blankLayout } from "./widgets.ts";
 
+const MAX_CACHED = 400;
 const cache = new Map<string, string>();
 let chain: Promise<unknown> = Promise.resolve();
 
@@ -14,7 +15,11 @@ function queued(key: string, build: () => Promise<string>): Promise<string> {
     if (again !== undefined) return again;
     const png = await build();
     const url = png ? `data:image/png;base64,${png}` : "";
-    if (url) cache.set(key, url);
+    if (url) {
+      cache.set(key, url);
+      // Cache borné : on oublie les plus anciennes miniatures.
+      if (cache.size > MAX_CACHED) cache.delete(cache.keys().next().value as string);
+    }
     return url;
   });
   chain = p.catch(() => undefined);
