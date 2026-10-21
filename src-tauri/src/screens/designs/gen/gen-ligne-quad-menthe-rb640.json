@@ -1,0 +1,12 @@
+{"version":1,"name":"Ligne unique · Vue d'ensemble · Menthe","width":640,"height":172,"background":{"kind":"gradient","from":"#effcf6","to":"#d9f5ea","angle":90},"widgets":[
+{"id":"dot1","x":17.8,"y":65.2,"w":11.9,"h":11.9,"type":"rect","fill":"#0e906b","stroke":null,"stroke_width":0,"radius":5.9},
+{"id":"l1","x":36.4,"y":52.6,"w":40.8,"h":42.7,"type":"text","text":"CPU","style":{"font":"Inter","size":18.6,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v1","x":88.3,"y":52.6,"w":107.2,"h":42.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"dot2","x":228.9,"y":65.2,"w":11.9,"h":11.9,"type":"rect","fill":"#0c8c9b","stroke":null,"stroke_width":0,"radius":5.9},
+{"id":"l2","x":247.5,"y":52.6,"w":41.1,"h":42.7,"type":"text","text":"GPU","style":{"font":"Inter","size":18.6,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v2","x":299.7,"y":52.6,"w":107.2,"h":42.7,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"dot3","x":440.4,"y":65.2,"w":11.9,"h":11.9,"type":"rect","fill":"#7c3aed","stroke":null,"stroke_width":0,"radius":5.9},
+{"id":"l3","x":458.9,"y":52.6,"w":45,"h":42.7,"type":"text","text":"RAM","style":{"font":"Inter","size":18.6,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v3","x":515.1,"y":52.6,"w":107.2,"h":42.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"b1","x":13.8,"y":143.8,"w":612.4,"h":14.4,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":7.2,"track":"#c7e8da","colors":[[0,"#0e906b"],[1,"#0c8c9b"]]}
+]}

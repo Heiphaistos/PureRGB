@@ -1,0 +1,13 @@
+{"version":1,"name":"Colonnes séparées · Disques · Noir et or","width":480,"height":480,"background":{"kind":"gradient","from":"#0a0805","to":"#1a150a","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":161.3,"h":54.7,"type":"text","text":"C:","style":{"font":"Inter","size":36.5,"color":"#e5b53c","align":"left","bold":true}},
+{"id":"v1","x":219.8,"y":38.4,"w":221.8,"h":85.1,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Inter","size":74,"color":"#f7ecd0","align":"right","bold":true}},
+{"id":"b1","x":38.4,"y":138.1,"w":403.2,"h":9.7,"type":"bar","source":"disk.C.used_pct","min":0,"max":100,"vertical":false,"radius":4.9,"track":"#2f2711","colors":[[0,"#e5b53c"],[1,"#f5d77a"]]},
+{"id":"sep1","x":38.4,"y":168.6,"w":403.2,"h":2,"type":"rect","fill":"#f7ecd024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":38.4,"y":179.2,"w":161.3,"h":54.7,"type":"text","text":"D:","style":{"font":"Inter","size":36.5,"color":"#f5d77a","align":"left","bold":true}},
+{"id":"v2","x":219.8,"y":179.2,"w":221.8,"h":85.1,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Inter","size":74,"color":"#f7ecd0","align":"right","bold":true}},
+{"id":"b2","x":38.4,"y":278.9,"w":403.2,"h":9.7,"type":"bar","source":"disk.D.used_pct","min":0,"max":100,"vertical":false,"radius":4.9,"track":"#2f2711","colors":[[0,"#f5d77a"],[1,"#b8862a"]]},
+{"id":"sep2","x":38.4,"y":309.4,"w":403.2,"h":2,"type":"rect","fill":"#f7ecd024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":38.4,"y":320,"w":161.3,"h":54.7,"type":"text","text":"SSD","style":{"font":"Inter","size":36.5,"color":"#b8862a","align":"left","bold":true}},
+{"id":"v3","x":219.8,"y":320,"w":221.8,"h":85.1,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":74,"color":"#f7ecd0","align":"right","bold":true}},
+{"id":"b3","x":38.4,"y":419.7,"w":403.2,"h":9.7,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":4.9,"track":"#2f2711","colors":[[0,"#b8862a"],[1,"#e5b53c"]]}
+]}

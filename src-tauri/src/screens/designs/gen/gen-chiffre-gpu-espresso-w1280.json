@@ -1,0 +1,10 @@
+{"version":1,"name":"Grand chiffre · GPU détaillé · Espresso","width":1280,"height":480,"background":{"kind":"gradient","from":"#140d09","to":"#2b1c14","angle":90},"widgets":[
+{"id":"gl1","x":655,"y":38.4,"w":403.2,"h":403.2,"opacity":0.07,"type":"rect","fill":"#d9a066","stroke":null,"stroke_width":0,"radius":201.6},
+{"id":"gl2","x":705.4,"y":88.8,"w":302.4,"h":302.4,"opacity":0.1,"type":"rect","fill":"#d9a066","stroke":null,"stroke_width":0,"radius":151.2},
+{"id":"gl3","x":755.8,"y":139.2,"w":201.6,"h":201.6,"opacity":0.13,"type":"rect","fill":"#d9a066","stroke":null,"stroke_width":0,"radius":100.8},
+{"id":"gl4","x":806.2,"y":189.6,"w":100.8,"h":100.8,"opacity":0.16,"type":"rect","fill":"#d9a066","stroke":null,"stroke_width":0,"radius":50.4},
+{"id":"l1","x":38.4,"y":111,"w":361,"h":80.6,"type":"text","text":"GPU","style":{"font":"Inter","size":70.1,"color":"#d9a066","align":"left","bold":true}},
+{"id":"s1","x":38.4,"y":207.7,"w":361,"h":64.5,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":56.1,"color":"#b79b86","align":"left","bold":false}},
+{"id":"b1","x":38.4,"y":320.6,"w":361,"h":28.2,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":14.1,"track":"#3f2b1f","colors":[[0,"#b9c98a"],[0.55,"#e8b04a"],[1,"#d9534f"]]},
+{"id":"v1","x":447.5,"y":38.4,"w":794.1,"h":403.2,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":257,"color":"#f6e9dc","align":"right","bold":true}}
+]}

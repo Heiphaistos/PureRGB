@@ -1,0 +1,6 @@
+{"version":1,"name":"Grand chiffre · CPU détaillé · Pastel","width":320,"height":320,"background":{"kind":"gradient","from":"#fdf2f8","to":"#eaf0ff","angle":90},"widgets":[
+{"id":"l1","x":25.6,"y":25.6,"w":268.8,"h":32.3,"type":"text","text":"CPU","style":{"font":"Inter","size":28,"color":"#e0559d","align":"center","bold":true}},
+{"id":"v1","x":25.6,"y":65.9,"w":268.8,"h":134.4,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":87,"color":"#3b2f4a","align":"center","bold":true}},
+{"id":"s1","x":25.6,"y":208.4,"w":268.8,"h":32.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":28,"color":"#6e5f85","align":"center","bold":false}},
+{"id":"b1","x":65.9,"y":262.1,"w":188.2,"h":13.4,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":6.7,"track":"#e3daf0","colors":[[0,"#2caa87"],[0.55,"#cf8c1e"],[1,"#f0506e"]]}
+]}

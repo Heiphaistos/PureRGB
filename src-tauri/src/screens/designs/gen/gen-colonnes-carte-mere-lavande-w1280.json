@@ -1,0 +1,18 @@
+{"version":1,"name":"Colonnes séparées · Carte mère · Lavande","width":1280,"height":480,"background":{"kind":"gradient","from":"#f5f0ff","to":"#e4dcff","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"CPU","style":{"font":"Inter","size":41.8,"color":"#7c3aed","align":"left","bold":true}},
+{"id":"v1","x":38.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":90.4,"color":"#2e2250","align":"left","bold":true}},
+{"id":"s1","x":38.4,"y":296.4,"w":279.2,"h":56.4,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":49.1,"color":"#66589a","align":"left","bold":false}},
+{"id":"b1","x":38.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":12.1,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"sep1","x":331,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#2e225024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":346.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"CARTE MÈRE","style":{"font":"Inter","size":41.8,"color":"#c840dc","align":"left","bold":true}},
+{"id":"v2","x":346.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":90.4,"color":"#2e2250","align":"left","bold":true}},
+{"id":"b2","x":346.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"mobo.temp","min":20,"max":90,"vertical":false,"radius":12.1,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"sep2","x":639,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#2e225024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":654.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"CHIPSET","style":{"font":"Inter","size":41.8,"color":"#2563eb","align":"left","bold":true}},
+{"id":"v3","x":654.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"chipset.temp","format":"{:.0}°C","style":{"font":"Inter","size":90.4,"color":"#2e2250","align":"left","bold":true}},
+{"id":"b3","x":654.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"chipset.temp","min":20,"max":90,"vertical":false,"radius":12.1,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"sep3","x":947,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#2e225024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l4","x":962.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"VRM","style":{"font":"Inter","size":41.8,"color":"#7c3aed","align":"left","bold":true}},
+{"id":"v4","x":962.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"vrm.temp","format":"{:.0}°C","style":{"font":"Inter","size":90.4,"color":"#2e2250","align":"left","bold":true}},
+{"id":"b4","x":962.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"vrm.temp","min":20,"max":110,"vertical":false,"radius":12.1,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]}
+]}

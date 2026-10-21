@@ -1,0 +1,15 @@
+{"version":1,"name":"Jauge héros et liste · Vue d'ensemble · Givre","width":854,"height":480,"background":{"kind":"gradient","from":"#f2f8fc","to":"#dde9f3","angle":90},"widgets":[
+{"id":"a1","x":38.4,"y":65.1,"w":349.7,"h":349.7,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":29.7,"track":"#c2d6e6","colors":[[0,"#2b7fb8"],[1,"#5482dc"]]},
+{"id":"v1","x":108,"y":175.2,"w":210.5,"h":104.5,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":73,"color":"#14283a","align":"center","bold":true}},
+{"id":"l1","x":125.8,"y":341.4,"w":174.9,"h":43.5,"type":"text","text":"CPU","style":{"font":"Inter","size":37.9,"color":"#587289","align":"center","bold":true}},
+{"id":"s1","x":111.7,"y":257.4,"w":203.2,"h":37.7,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":32.8,"color":"#587289","align":"center","bold":false}},
+{"id":"l2","x":426.5,"y":62.6,"w":175.1,"h":82.3,"type":"text","text":"GPU","style":{"font":"Inter","size":65.8,"color":"#587289","align":"left","bold":true}},
+{"id":"v2","x":601.6,"y":62.6,"w":214,"h":82.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#14283a","align":"right","bold":true}},
+{"id":"b1","x":426.5,"y":153.3,"w":389.1,"h":10.5,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#c2d6e6","colors":[[0,"#5482dc"],[1,"#148f82"]]},
+{"id":"l3","x":426.5,"y":187.3,"w":175.1,"h":82.3,"type":"text","text":"RAM","style":{"font":"Inter","size":65.8,"color":"#587289","align":"left","bold":true}},
+{"id":"v3","x":601.6,"y":187.3,"w":214,"h":82.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#14283a","align":"right","bold":true}},
+{"id":"b2","x":426.5,"y":278,"w":389.1,"h":10.5,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#c2d6e6","colors":[[0,"#148f82"],[1,"#2b7fb8"]]},
+{"id":"l4","x":426.5,"y":311.9,"w":175.1,"h":82.3,"type":"text","text":"SSD","style":{"font":"Inter","size":65.8,"color":"#587289","align":"left","bold":true}},
+{"id":"v4","x":601.6,"y":311.9,"w":214,"h":82.3,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#14283a","align":"right","bold":true}},
+{"id":"b3","x":426.5,"y":402.6,"w":389.1,"h":10.5,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#c2d6e6","colors":[[0,"#2b7fb8"],[1,"#5482dc"]]}
+]}

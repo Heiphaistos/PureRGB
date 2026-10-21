@@ -1,0 +1,20 @@
+{"version":1,"name":"Barres horizontales · Disques · Orchidée","width":640,"height":172,"background":{"kind":"gradient","from":"#fbf1fb","to":"#f0d9f3","angle":90},"widgets":[
+{"id":"l1","x":13.8,"y":37,"w":79.4,"h":29.2,"type":"text","text":"C:","style":{"font":"Inter","size":15.5,"color":"#b5179e","align":"left","bold":true}},
+{"id":"b1","x":97.2,"y":46.4,"w":118.5,"h":10.3,"type":"bar","source":"disk.C.used_pct","min":0,"max":100,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#b5179e"],[1,"#7209b7"]]},
+{"id":"v1","x":219.7,"y":37,"w":88.2,"h":29.2,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}},
+{"id":"l2","x":13.8,"y":71.4,"w":79.4,"h":29.2,"type":"text","text":"D:","style":{"font":"Inter","size":15.5,"color":"#7209b7","align":"left","bold":true}},
+{"id":"b2","x":97.2,"y":80.8,"w":118.5,"h":10.3,"type":"bar","source":"disk.D.used_pct","min":0,"max":100,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#7209b7"],[1,"#e5383b"]]},
+{"id":"v2","x":219.7,"y":71.4,"w":88.2,"h":29.2,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}},
+{"id":"l3","x":13.8,"y":105.8,"w":79.4,"h":29.2,"type":"text","text":"SSD","style":{"font":"Inter","size":15.5,"color":"#e5383b","align":"left","bold":true}},
+{"id":"b3","x":97.2,"y":115.2,"w":118.5,"h":10.3,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#e5383b"],[1,"#b5179e"]]},
+{"id":"v3","x":219.7,"y":105.8,"w":88.2,"h":29.2,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}},
+{"id":"l4","x":332,"y":37,"w":79.4,"h":29.2,"type":"text","text":"RAM","style":{"font":"Inter","size":15.5,"color":"#b5179e","align":"left","bold":true}},
+{"id":"b4","x":415.5,"y":46.4,"w":118.5,"h":10.3,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#b5179e"],[1,"#7209b7"]]},
+{"id":"v4","x":538,"y":37,"w":88.2,"h":29.2,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}},
+{"id":"l5","x":332,"y":71.4,"w":79.4,"h":29.2,"type":"text","text":"LECTURE","style":{"font":"Inter","size":15.5,"color":"#7209b7","align":"left","bold":true}},
+{"id":"b5","x":415.5,"y":80.8,"w":118.5,"h":10.3,"type":"bar","source":"disk.read","min":0,"max":3000,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#7209b7"],[1,"#e5383b"]]},
+{"id":"v5","x":538,"y":71.4,"w":88.2,"h":29.2,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}},
+{"id":"l6","x":332,"y":105.8,"w":79.4,"h":29.2,"type":"text","text":"ÉCRITURE","style":{"font":"Inter","size":15.5,"color":"#e5383b","align":"left","bold":true}},
+{"id":"b6","x":415.5,"y":115.2,"w":118.5,"h":10.3,"type":"bar","source":"disk.write","min":0,"max":3000,"vertical":false,"radius":3.6,"track":"#dcbbe4","colors":[[0,"#e5383b"],[1,"#b5179e"]]},
+{"id":"v6","x":538,"y":105.8,"w":88.2,"h":29.2,"type":"value","source":"disk.write","format":"{:.0} Mo/s","style":{"font":"Inter","size":15.9,"color":"#41204a","align":"right","bold":true}}
+]}

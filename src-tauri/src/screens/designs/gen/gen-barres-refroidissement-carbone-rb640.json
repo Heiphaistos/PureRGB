@@ -1,0 +1,20 @@
+{"version":1,"name":"Barres horizontales · Refroidissement · Carbone","width":640,"height":172,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"l1","x":13.8,"y":37,"w":79.4,"h":29.2,"type":"text","text":"LIQUIDE","style":{"font":"Rajdhani","size":18.1,"color":"#ff2d55","align":"left","bold":true}},
+{"id":"b1","x":97.2,"y":46.4,"w":118.5,"h":10.3,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#7dd3a8"],[0.55,"#f59e0b"],[1,"#ff2d55"]]},
+{"id":"v1","x":219.7,"y":37,"w":88.2,"h":29.2,"type":"value","source":"liquid.temp","format":"{:.1}˚","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l2","x":13.8,"y":71.4,"w":79.4,"h":29.2,"type":"text","text":"POMPE","style":{"font":"Rajdhani","size":18.1,"color":"#f59e0b","align":"left","bold":true}},
+{"id":"b2","x":97.2,"y":80.8,"w":118.5,"h":10.3,"type":"bar","source":"pump.rpm","min":0,"max":4000,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#f59e0b"],[1,"#94a3b8"]]},
+{"id":"v2","x":219.7,"y":71.4,"w":88.2,"h":29.2,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l3","x":13.8,"y":105.8,"w":79.4,"h":29.2,"type":"text","text":"VENT. 1","style":{"font":"Rajdhani","size":18.1,"color":"#94a3b8","align":"left","bold":true}},
+{"id":"b3","x":97.2,"y":115.2,"w":118.5,"h":10.3,"type":"bar","source":"fan.1.rpm","min":0,"max":2500,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#94a3b8"],[1,"#ff2d55"]]},
+{"id":"v3","x":219.7,"y":105.8,"w":88.2,"h":29.2,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l4","x":332,"y":37,"w":79.4,"h":29.2,"type":"text","text":"VENTIRAD","style":{"font":"Rajdhani","size":18.1,"color":"#ff2d55","align":"left","bold":true}},
+{"id":"b4","x":415.5,"y":46.4,"w":118.5,"h":10.3,"type":"bar","source":"cpu.fan","min":0,"max":2500,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#ff2d55"],[1,"#f59e0b"]]},
+{"id":"v4","x":538,"y":37,"w":88.2,"h":29.2,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l5","x":332,"y":71.4,"w":79.4,"h":29.2,"type":"text","text":"VENT. GPU","style":{"font":"Rajdhani","size":18.1,"color":"#f59e0b","align":"left","bold":true}},
+{"id":"b5","x":415.5,"y":80.8,"w":118.5,"h":10.3,"type":"bar","source":"gpu.fan","min":0,"max":3000,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#f59e0b"],[1,"#94a3b8"]]},
+{"id":"v5","x":538,"y":71.4,"w":88.2,"h":29.2,"type":"value","source":"gpu.fan","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l6","x":332,"y":105.8,"w":79.4,"h":29.2,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":18.1,"color":"#94a3b8","align":"left","bold":true}},
+{"id":"b6","x":415.5,"y":115.2,"w":118.5,"h":10.3,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":3.6,"track":"#2c2f35","colors":[[0,"#7dd3a8"],[0.55,"#f59e0b"],[1,"#ff2d55"]]},
+{"id":"v6","x":538,"y":105.8,"w":88.2,"h":29.2,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":17.1,"color":"#e8eaed","align":"right","bold":true}}
+]}

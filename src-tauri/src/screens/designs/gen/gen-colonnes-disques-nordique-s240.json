@@ -1,0 +1,13 @@
+{"version":1,"name":"Colonnes séparées · Disques · Nordique","width":240,"height":240,"background":{"kind":"gradient","from":"#1a202b","to":"#2b3547","angle":90},"widgets":[
+{"id":"l1","x":19.2,"y":19.2,"w":80.6,"h":27.4,"type":"text","text":"C:","style":{"font":"Inter","size":18.2,"color":"#88c0d0","align":"left","bold":true}},
+{"id":"v1","x":109.9,"y":19.2,"w":110.9,"h":42.6,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eceff4","align":"right","bold":true}},
+{"id":"b1","x":19.2,"y":69.1,"w":201.6,"h":4.9,"type":"bar","source":"disk.C.used_pct","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#3b4558","colors":[[0,"#88c0d0"],[1,"#81a1c1"]]},
+{"id":"sep1","x":19.2,"y":83.8,"w":201.6,"h":2,"type":"rect","fill":"#eceff424","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":19.2,"y":89.6,"w":80.6,"h":27.4,"type":"text","text":"D:","style":{"font":"Inter","size":18.2,"color":"#81a1c1","align":"left","bold":true}},
+{"id":"v2","x":109.9,"y":89.6,"w":110.9,"h":42.6,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eceff4","align":"right","bold":true}},
+{"id":"b2","x":19.2,"y":139.5,"w":201.6,"h":4.9,"type":"bar","source":"disk.D.used_pct","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#3b4558","colors":[[0,"#81a1c1"],[1,"#a3be8c"]]},
+{"id":"sep2","x":19.2,"y":154.2,"w":201.6,"h":2,"type":"rect","fill":"#eceff424","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":19.2,"y":160,"w":80.6,"h":27.4,"type":"text","text":"SSD","style":{"font":"Inter","size":18.2,"color":"#a3be8c","align":"left","bold":true}},
+{"id":"v3","x":109.9,"y":160,"w":110.9,"h":42.6,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eceff4","align":"right","bold":true}},
+{"id":"b3","x":19.2,"y":209.9,"w":201.6,"h":4.9,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#3b4558","colors":[[0,"#a3be8c"],[1,"#88c0d0"]]}
+]}
