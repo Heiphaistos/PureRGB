@@ -63,4 +63,10 @@ pub const LIST: &[Builtin] = &[
         tags: &["compact", "petit écran", "cpu", "gpu", "heure"],
         json: include_str!("monitor/compact-320.json"),
     },
+    Builtin {
+        id: "monitor-reference-1920",
+        category: "Moniteur",
+        tags: &["référence", "trofeo vision", "large", "cpu", "gpu", "ram", "ssd", "heure", "date", "fond libre"],
+        json: include_str!("monitor/monitor_reference_1920.json"),
+    },
 ];

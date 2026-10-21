@@ -1,0 +1,334 @@
+{
+ "version": 1,
+ "name": "Référence large 1920",
+ "width": 1920,
+ "height": 462,
+ "background": {
+  "kind": "gradient",
+  "from": "#070b16",
+  "to": "#14102a",
+  "angle": 0
+ },
+ "widgets": [
+  {
+   "id": "g-carte",
+   "x": 40,
+   "y": 38,
+   "w": 720,
+   "h": 386,
+   "type": "rect",
+   "fill": "#0a0e1ad9",
+   "stroke": "#ffffff22",
+   "stroke_width": 2,
+   "radius": 28
+  },
+  {
+   "id": "d-carte",
+   "x": 1160,
+   "y": 38,
+   "w": 720,
+   "h": 386,
+   "type": "rect",
+   "fill": "#0a0e1ad9",
+   "stroke": "#ffffff22",
+   "stroke_width": 2,
+   "radius": 28
+  },
+  {
+   "id": "heure",
+   "x": 70,
+   "y": 52,
+   "w": 330,
+   "h": 100,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 96,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "cpu-label",
+   "x": 70,
+   "y": 168,
+   "w": 160,
+   "h": 34,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#8fa0d8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "cpu-temp",
+   "x": 70,
+   "y": 196,
+   "w": 300,
+   "h": 120,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 116,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "cpu-load",
+   "x": 390,
+   "y": 206,
+   "w": 300,
+   "h": 64,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 58,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "cpu-bar",
+   "x": 390,
+   "y": 282,
+   "w": 300,
+   "h": 16,
+   "type": "bar",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 8.0,
+   "track": "#ffffff26",
+   "colors": [
+    [
+     0.0,
+     "#38bdf8"
+    ],
+    [
+     1.0,
+     "#a78bfa"
+    ]
+   ]
+  },
+  {
+   "id": "ram-label",
+   "x": 70,
+   "y": 352,
+   "w": 100,
+   "h": 36,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#8fa0d8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "ram-bar",
+   "x": 180,
+   "y": 362,
+   "w": 380,
+   "h": 16,
+   "type": "bar",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 8.0,
+   "track": "#ffffff26",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     1.0,
+     "#38bdf8"
+    ]
+   ]
+  },
+  {
+   "id": "ram-val",
+   "x": 580,
+   "y": 350,
+   "w": 130,
+   "h": 40,
+   "type": "value",
+   "source": "ram.used_gb",
+   "format": "{:.1} Go",
+   "style": {
+    "font": "Inter",
+    "size": 30,
+    "color": "#e5e7eb",
+    "align": "right",
+    "bold": false
+   }
+  },
+  {
+   "id": "date",
+   "x": 1190,
+   "y": 60,
+   "w": 660,
+   "h": 64,
+   "type": "value",
+   "source": "date",
+   "format": "%A %d %B",
+   "style": {
+    "font": "Inter",
+    "size": 44,
+    "color": "#cbd5e1",
+    "align": "right",
+    "bold": false
+   }
+  },
+  {
+   "id": "gpu-label",
+   "x": 1190,
+   "y": 168,
+   "w": 160,
+   "h": 34,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#8fa0d8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "gpu-temp",
+   "x": 1190,
+   "y": 196,
+   "w": 300,
+   "h": 120,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 116,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "gpu-load",
+   "x": 1520,
+   "y": 206,
+   "w": 300,
+   "h": 64,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 58,
+    "color": "#fbcfe8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "gpu-bar",
+   "x": 1520,
+   "y": 282,
+   "w": 300,
+   "h": 16,
+   "type": "bar",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 8.0,
+   "track": "#ffffff26",
+   "colors": [
+    [
+     0.0,
+     "#f472b6"
+    ],
+    [
+     1.0,
+     "#fb923c"
+    ]
+   ]
+  },
+  {
+   "id": "ssd-label",
+   "x": 1190,
+   "y": 352,
+   "w": 100,
+   "h": 36,
+   "type": "text",
+   "text": "SSD",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#8fa0d8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "ssd-bar",
+   "x": 1300,
+   "y": 362,
+   "w": 380,
+   "h": 16,
+   "type": "bar",
+   "source": "ssd.1.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 8.0,
+   "track": "#ffffff26",
+   "colors": [
+    [
+     0.0,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ]
+  },
+  {
+   "id": "ssd-val",
+   "x": 1700,
+   "y": 350,
+   "w": 130,
+   "h": 40,
+   "type": "value",
+   "source": "ssd.1.temp",
+   "format": "{:.0}°C",
+   "style": {
+    "font": "Inter",
+    "size": 30,
+    "color": "#e5e7eb",
+    "align": "right",
+    "bold": false
+   }
+  }
+ ]
+}
