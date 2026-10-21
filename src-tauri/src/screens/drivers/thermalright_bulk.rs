@@ -12,8 +12,9 @@
 use super::catalog::{self, DeviceEntry, Kind, Profile};
 use super::transport::{self, NusbTransport, Transport};
 use super::wire;
-use crate::screens::driver::{Frame, Protocol, ScreenDriver, ScreenInfo, ScreenProvider};
+use crate::screens::driver::{Frame, FramePreparer, Protocol, ScreenDriver, ScreenInfo, ScreenProvider};
 use anyhow::{anyhow, bail, Result};
+use std::sync::Arc;
 use std::time::Duration;
 
 pub const MAGIC: [u8; 4] = [0x12, 0x34, 0x56, 0x78];
@@ -94,9 +95,17 @@ impl<T: Transport> ScreenDriver for BulkScreen<T> {
         &self.info
     }
 
+    fn preparer(&self) -> Option<Arc<dyn FramePreparer>> {
+        wire::jpeg_preparer(&self.profile, self.info.rotation, JPEG_QUALITY)
+    }
+
     fn push_frame(&mut self, frame: &Frame) -> Result<()> {
         let img = wire::encode_frame(&self.profile, frame, self.info.rotation, JPEG_QUALITY)?;
-        send_chunks(&mut self.transport, &build_frame(&img, self.profile.width, self.profile.height)?)
+        self.send_prepared(&img)
+    }
+
+    fn send_prepared(&mut self, img: &wire::WireImage) -> Result<()> {
+        send_chunks(&mut self.transport, &build_frame(img, self.profile.width, self.profile.height)?)
     }
 }
 
