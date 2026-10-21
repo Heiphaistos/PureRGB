@@ -142,8 +142,8 @@ onBeforeUnmount(() => unlisten?.());
           <span class="dim"><span class="sc-badge">{{ KIND[m.kind] ?? m.kind }}</span> {{ info(m) }}</span>
         </div>
         <div class="acts">
-          <button class="sm" title="Utiliser comme fond du design en cours d'édition" @click="emit('use', m.id, 'background')">Fond</button>
-          <button class="sm" title="Ajouter un widget Image au design" @click="emit('use', m.id, 'image')">Widget</button>
+          <button class="sm primary" title="Utiliser ce média comme fond du design en cours d'édition" @click="emit('use', m.id, 'background')">Utiliser comme fond</button>
+          <button class="sm" title="Ajouter un widget Image au design" @click="emit('use', m.id, 'image')">Widget image</button>
           <button class="sm danger" @click="remove(m)">Supprimer</button>
         </div>
       </article>

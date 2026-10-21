@@ -27,6 +27,22 @@ export function mockValues(tMs: number): LiveValues {
     "pump.rpm": s(8000, 2600, 2900),
     "net.up": s(2500, 0, 3),
     "net.down": s(1700, 0, 12),
+    "gpu.vram_used_gb": s(9000, 2, 10),
+    "ram.free_gb": s(11000, 10, 21),
+    "mobo.temp": s(6000, 32, 48),
+    "chipset.temp": s(6500, 40, 58),
+    "ssd.1.temp": s(8000, 34, 52),
+    "ssd.1.used_pct": 55,
+    "ssd.2.temp": s(8500, 30, 45),
+    "ssd.2.used_pct": 32,
+    "disk.C.used_pct": 71,
+    "disk.C.free_gb": 270,
+    "disk.D.used_pct": 38,
+    "disk.D.free_gb": 1210,
+    "disk.read": s(1900, 0, 180),
+    "disk.write": s(2300, 0, 90),
+    "fan.1.rpm": s(5000, 800, 1500),
+    "fan.2.rpm": s(5200, 700, 1400),
   };
 }
 
