@@ -38,6 +38,10 @@ jpeg-encoder = "0.6"
 serialport = { version = "4", default-features = false }
 nusb = "0.1"
 
+[target.'cfg(windows)'.dependencies]
+# Heure locale via GetLocalTime : plus léger et sûr que `time` + local-offset (non sûr en multi-thread).
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_SystemInformation"] }
+
 [features]
 custom-protocol = ["tauri/custom-protocol"]
 
