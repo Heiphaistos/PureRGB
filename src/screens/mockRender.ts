@@ -49,6 +49,8 @@ export function mockValues(tMs: number): LiveValues {
     "fan.1.rpm": s(5000, 900, 1800),
     "net.up": s(2500, 0, 3),
     "net.down": s(1700, 0, 12),
+    "fan.1.rpm": s(5000, 800, 1500),
+    "fan.2.rpm": s(5200, 700, 1400),
   };
 }
 

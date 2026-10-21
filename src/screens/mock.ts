@@ -58,6 +58,21 @@ function stateOf(id: string): ScreenState {
   return s;
 }
 
+/** `?mock=many` : 300 designs factices pour éprouver la galerie (filtres, repli, pagination). */
+function manyDesigns(): DesignSummary[] {
+  const sizes: [number, number][] = [[480, 480], [320, 240], [1280, 480], [240, 320]];
+  return Array.from({ length: 300 }, (_, i) => {
+    const [width, height] = sizes[i % sizes.length];
+    return { id: `many-${i}`, name: `Design ${i + 1}`, category: ["gaming", "bureau", "minimal", "horloge", "monitoring"][i % 5], width, height, tags: [`série ${i % 7}`] };
+  });
+}
+
+function manyLayout(id: string): Layout {
+  const d = manyDesigns().find((m) => m.id === id);
+  const base = cloneLayout(MOCK_DESIGNS.values().next().value?.layout as Layout);
+  return { ...base, name: d?.name ?? id, width: d?.width ?? base.width, height: d?.height ?? base.height };
+}
+
 const tick = (): Promise<void> => new Promise((r) => setTimeout(r, 30));
 
 export const mock = {
@@ -98,13 +113,14 @@ export const mock = {
     for (const [id, d] of MOCK_DESIGNS) {
       out.push({ id, name: d.layout.name, category: d.category, width: d.layout.width, height: d.layout.height, tags: d.tags });
     }
+    if (params.get("mock") === "many") out.push(...manyDesigns());
     for (const [id, l] of userDesigns) {
       out.push({ id, name: l.name, category: "user", width: l.width, height: l.height, tags: ["user"] });
     }
     return out;
   },
   async designGet(id: string): Promise<Layout> {
-    const l = MOCK_DESIGNS.get(id)?.layout ?? userDesigns.get(id);
+    const l = MOCK_DESIGNS.get(id)?.layout ?? userDesigns.get(id) ?? (id.startsWith("many-") ? manyLayout(id) : undefined);
     if (!l) throw new Error("design introuvable");
     return cloneLayout(l);
   },
@@ -124,6 +140,15 @@ export const mock = {
     const a = document.createElement("a");
     a.href = url;
     a.download = `${l.name}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  },
+  /** Démo : pas d'archive zip, on télécharge le design seul (les médias de démo ne sont pas sur disque). */
+  async themeExport(layout: Layout): Promise<void> {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(layout, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${layout.name}.purergb-theme.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   },

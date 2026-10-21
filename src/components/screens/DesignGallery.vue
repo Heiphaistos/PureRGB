@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { designImport, DESIGN_FILTERS, demo, designUserDelete, errMsg, pickFiles } from "../../screens/api.ts";
+import { buildSections, matchesQuery, ratioLabel, ratioOptions, sameRatio } from "../../screens/galleryFilter.ts";
 import { designs, isUserDesign, loadDesigns } from "../../screens/store.ts";
+import { exportTheme, importTheme } from "../../screens/themeIO.ts";
 import { forgetThumb } from "../../screens/thumbs.ts";
 import type { DesignSummary, ScreenInfo } from "../../screens/types.ts";
 import DesignThumb from "./DesignThumb.vue";
@@ -10,30 +12,32 @@ import "./screens.css";
 const props = defineProps<{ screen: ScreenInfo }>();
 const emit = defineEmits<{ apply: [id: string]; edit: [id: string]; toast: [msg: string] }>();
 
-const category = ref<string>("all");
+/** Designs rendus par section avant « Afficher plus » : la galerie reste fluide avec 500 designs. */
+const PAGE = 12;
+
 const query = ref("");
-const mineOnly = ref(false);
-const sameFormat = ref(false);
+const ratio = ref("all");
+const closed = reactive(new Set<string>());
+const shown = reactive<Record<string, number>>({});
 
-const ratio = computed(() => props.screen.width / props.screen.height);
-const matches = (d: DesignSummary): boolean => Math.abs(d.width / d.height - ratio.value) < 0.03;
+const myRatio = computed(() => ratioLabel(props.screen.width, props.screen.height));
+const formats = computed(() => ratioOptions(designs.value, props.screen));
+const results = computed(() => designs.value.filter((d) => matchesQuery(d, { text: query.value, ratio: ratio.value })));
+const sections = computed(() => buildSections(results.value, props.screen));
+const fits = (d: DesignSummary): boolean => sameRatio(d, props.screen.width, props.screen.height);
+const limit = (key: string): number => shown[key] ?? PAGE;
+const allClosed = computed(() => sections.value.length > 0 && sections.value.every((s) => closed.has(s.key)));
 
-const categories = computed(() => {
-  const m = new Map<string, number>();
-  for (const d of designs.value) if (!isUserDesign(d)) m.set(d.category, (m.get(d.category) ?? 0) + 1);
-  return [...m.entries()].map(([name, n]) => ({ name, n }));
-});
+watch([query, ratio], () => Object.keys(shown).forEach((k) => delete shown[k]));
 
-const filtered = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  return designs.value
-    .filter((d) => (mineOnly.value ? isUserDesign(d) : category.value === "all" || d.category === category.value))
-    .filter((d) => !sameFormat.value || matches(d))
-    .filter((d) => !q || d.name.toLowerCase().includes(q) || d.tags.some((t) => t.toLowerCase().includes(q)))
-    .sort((a, b) => Number(matches(b)) - Number(matches(a)) || a.name.localeCompare(b.name, "fr"));
-});
+function toggle(key: string): void {
+  if (!closed.delete(key)) closed.add(key);
+}
 
-const mineCount = computed(() => designs.value.filter(isUserDesign).length);
+function toggleAll(): void {
+  if (allClosed.value) closed.clear();
+  else sections.value.forEach((s) => closed.add(s.key));
+}
 
 async function remove(d: DesignSummary): Promise<void> {
   if (!window.confirm(`Supprimer définitivement « ${d.name} » ?`)) return;
@@ -57,11 +61,14 @@ async function importDesign(): Promise<void> {
     if (!path) return;
     await designImport(path);
     await loadDesigns();
-    mineOnly.value = true;
     emit("toast", "Design importé dans « Mes designs »");
   } catch (e) {
     emit("toast", `Import : ${errMsg(e)}`);
   }
+}
+
+async function importThemeFile(): Promise<void> {
+  if (await importTheme((m) => emit("toast", m))) closed.delete("user");
 }
 
 onMounted(async () => {
@@ -76,45 +83,56 @@ onMounted(async () => {
 <template>
   <div class="gal">
     <div class="bar">
-      <input v-model="query" type="text" placeholder="Rechercher un design…" class="q" aria-label="Rechercher un design" />
-      <button class="sm" :class="{ on: sameFormat }" title="Seulement les designs au même format que l'écran" @click="sameFormat = !sameFormat">
-        Mon format
-      </button>
+      <input v-model="query" type="text" placeholder="Rechercher (nom, tag, catégorie, format)…" class="q" aria-label="Rechercher un design" />
+      <select v-model="ratio" class="fmt" aria-label="Format d'écran">
+        <option value="all">Tous les formats</option>
+        <option v-for="f in formats" :key="f.label" :value="f.label">{{ f.label }}{{ f.label === myRatio ? " (mon écran)" : "" }} · {{ f.n }}</option>
+      </select>
+      <button class="sm" @click="toggleAll">{{ allClosed ? "Tout déplier" : "Tout replier" }}</button>
+      <span class="sc-grow"></span>
       <button class="sm" @click="importDesign">Importer .json</button>
+      <button class="sm" title="Importer une archive .purergb-theme (design + médias)" @click="importThemeFile">Importer un thème</button>
     </div>
-    <div class="chips">
-      <button class="sc-chip" :class="{ active: !mineOnly && category === 'all' }" @click="(mineOnly = false), (category = 'all')">
-        Tous<span class="n">{{ designs.length - mineCount }}</span>
-      </button>
-      <button
-        v-for="c in categories"
-        :key="c.name"
-        class="sc-chip"
-        :class="{ active: !mineOnly && category === c.name }"
-        @click="(mineOnly = false), (category = c.name)"
-      >
-        {{ c.name }}<span class="n">{{ c.n }}</span>
-      </button>
-      <button class="sc-chip" :class="{ active: mineOnly }" @click="mineOnly = true">Mes designs<span class="n">{{ mineCount }}</span></button>
-    </div>
-
-    <div class="grid">
-      <article v-for="d in filtered" :key="d.id" class="sc-card item" tabindex="0" @dblclick="emit('apply', d.id)" @keydown.enter="emit('apply', d.id)">
-        <DesignThumb :design="d" />
-        <div class="meta">
-          <strong class="nm" :title="d.name">{{ d.name }}</strong>
-          <span class="dim">{{ d.width }}×{{ d.height }}<template v-if="!matches(d)"> · format différent</template></span>
-        </div>
-        <div class="acts">
-          <button class="primary sm" @click="emit('apply', d.id)">Appliquer</button>
-          <button class="sm" @click="emit('edit', d.id)">Modifier</button>
-          <button v-if="isUserDesign(d)" class="sm danger" title="Supprimer ce design" @click="remove(d)">Supprimer</button>
-        </div>
-      </article>
-    </div>
-    <p v-if="!filtered.length" class="sc-sub none">
-      {{ mineOnly ? "Aucun design personnel. Créez-en un dans l'éditeur puis « Enregistrer sous »." : "Aucun design ne correspond." }}
+    <p class="count" role="status">
+      {{ results.length }} design{{ results.length > 1 ? "s" : "" }} sur {{ designs.length }} · les designs au format de l'écran ({{ myRatio }}) passent en premier
     </p>
+
+    <section v-for="sec in sections" :key="sec.key" class="sec">
+      <button class="sh" :aria-expanded="!closed.has(sec.key)" @click="toggle(sec.key)">
+        <span class="chev" aria-hidden="true">{{ closed.has(sec.key) ? "▸" : "▾" }}</span>
+        <strong>{{ sec.title }}</strong>
+        <span class="sc-badge">{{ sec.items.length }}</span>
+        <span v-if="sec.fits && sec.fits !== sec.items.length" class="dim">{{ sec.fits }} au format de l'écran</span>
+      </button>
+      <template v-if="!closed.has(sec.key)">
+        <div class="grid">
+          <article
+            v-for="d in sec.items.slice(0, limit(sec.key))"
+            :key="d.id"
+            class="sc-card item"
+            tabindex="0"
+            @dblclick="emit('apply', d.id)"
+            @keydown.enter="emit('apply', d.id)"
+          >
+            <DesignThumb :design="d" />
+            <div class="meta">
+              <strong class="nm" :title="d.name">{{ d.name }}</strong>
+              <span class="dim">{{ d.width }}×{{ d.height }}<template v-if="!fits(d)"> · format différent</template></span>
+            </div>
+            <div class="acts">
+              <button class="primary sm" @click="emit('apply', d.id)">Appliquer</button>
+              <button class="sm" @click="emit('edit', d.id)">Modifier</button>
+              <button class="sm" title="Exporter le thème (avec médias) en .purergb-theme" @click="exportTheme({ id: d.id }, d.name, (m) => emit('toast', m))">Exporter le thème</button>
+              <button v-if="isUserDesign(d)" class="sm danger" title="Supprimer ce design" @click="remove(d)">Supprimer</button>
+            </div>
+          </article>
+        </div>
+        <button v-if="sec.items.length > limit(sec.key)" class="sm more" @click="shown[sec.key] = limit(sec.key) + PAGE * 2">
+          Afficher plus ({{ sec.items.length - limit(sec.key) }} restants)
+        </button>
+      </template>
+    </section>
+    <p v-if="!sections.length" class="sc-sub none">Aucun design ne correspond. Créez-en un dans l'éditeur puis « Enregistrer sous ».</p>
   </div>
 </template>
 
@@ -126,26 +144,53 @@ onMounted(async () => {
 
 .bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
 }
 
 .q {
-  max-width: 360px;
+  width: 340px;
+  max-width: 100%;
 }
 
-.chips {
+.fmt {
+  width: 210px;
+}
+
+.count {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.sec {
+  margin-top: 14px;
+}
+
+.sh {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-top: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.chev {
+  width: 12px;
+}
+
+.more {
+  margin-top: 10px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 14px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .item {

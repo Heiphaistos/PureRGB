@@ -1313,7 +1313,9 @@ pub fn run() {
             screens::commands::design_import,
             screens::commands::media_list,
             screens::commands::media_import,
-            screens::commands::media_delete
+            screens::commands::media_delete,
+            screens::commands::theme_export,
+            screens::commands::theme_import
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");

@@ -21,7 +21,7 @@ pub const MAX_DIMENSION: u32 = 8192;
 /// Mémoire maximale d'un média décodé (GIF : toutes les images) et du cache.
 const MAX_DECODED_BYTES: usize = 512 * 1024 * 1024;
 const CACHE_BYTES: usize = 256 * 1024 * 1024;
-const EXTS: [&str; 5] = ["png", "jpg", "bmp", "webp", "gif"];
+pub const EXTS: [&str; 5] = ["png", "jpg", "bmp", "webp", "gif"];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -160,6 +160,14 @@ impl MediaStore {
         let json = serde_json::to_vec(&item).context("fiche média")?;
         std::fs::write(self.root.join(format!("{id}.json")), json).context("écriture de la fiche")?;
         Ok(item)
+    }
+
+    /// Fichier média `<id>.<ext>` de la médiathèque (export de thème).
+    pub fn file_of(&self, id: &str) -> Option<PathBuf> {
+        if !valid_id(id) {
+            return None;
+        }
+        EXTS.iter().chain(VIDEO_EXTS.iter()).map(|e| self.root.join(format!("{id}.{e}"))).find(|p| p.is_file())
     }
 
     /// Vidéo : sondée par Windows avant la copie (un fichier illisible n'entre pas dans la médiathèque).

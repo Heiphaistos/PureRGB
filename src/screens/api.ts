@@ -78,6 +78,15 @@ export const designExport = (id: string, path: string): Promise<void> =>
 export const designImport = (path: string): Promise<string> =>
   invoke<string>("design_import", { path });
 
+/** Thème = design + médias utilisés, dans une archive `.purergb-theme`. `id` (bibliothèque) ou `layout` (éditeur). */
+export async function themeExport(target: { id: string } | { layout: Layout }, path: string): Promise<void> {
+  if (demo.value) return mock.themeExport("layout" in target ? target.layout : await mock.designGet(target.id));
+  return invoke<void>("theme_export", { id: "id" in target ? target.id : null, layout: "layout" in target ? target.layout : null, path });
+}
+
+/** Retourne l'id du design importé (médias ajoutés à la médiathèque). */
+export const themeImport = (path: string): Promise<string> => invoke<string>("theme_import", { path });
+
 export const mediaList = (): Promise<MediaItem[]> =>
   demo.value ? mock.mediaList() : invoke<MediaItem[]>("media_list");
 
@@ -111,6 +120,12 @@ export async function pickFiles(
 export async function pickSavePath(title: string, defaultPath: string): Promise<string | null> {
   return save({ title, defaultPath, filters: [{ name: "Design PureRGB", extensions: ["json"] }] });
 }
+
+export async function pickThemeSavePath(title: string, defaultPath: string): Promise<string | null> {
+  return save({ title, defaultPath, filters: THEME_FILTERS });
+}
+
+export const THEME_FILTERS = [{ name: "Thème PureRGB (design + médias)", extensions: ["purergb-theme"] }];
 
 export const MEDIA_FILTERS = [
   { name: "Images, GIF et vidéos", extensions: ["png", "jpg", "jpeg", "bmp", "webp", "gif", "mp4", "m4v", "webm", "mkv", "avi", "mov", "wmv"] },

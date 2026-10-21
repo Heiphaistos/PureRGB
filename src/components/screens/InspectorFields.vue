@@ -4,6 +4,7 @@ import type { LiveValues, MediaItem, Widget } from "../../screens/types.ts";
 import { FORMAT_HELP } from "../../screens/widgets.ts";
 import ColorField from "./ColorField.vue";
 import ColorRampEditor from "./ColorRampEditor.vue";
+import MediaPicker from "./MediaPicker.vue";
 import NumField from "./NumField.vue";
 import SourceField from "./SourceField.vue";
 import TextField from "./TextField.vue";
@@ -17,11 +18,6 @@ const commit = (): void => emit("commit");
 const fontNames = computed(() => props.media.filter((m) => m.kind === "font").map((m) => m.name));
 const images = computed(() => props.media.filter((m) => m.kind !== "font"));
 
-const FITS = [
-  { v: "cover", l: "Remplir (rogner)" },
-  { v: "contain", l: "Contenir" },
-  { v: "stretch", l: "Étirer" },
-] as const;
 </script>
 
 <template>
@@ -81,20 +77,7 @@ const FITS = [
   </template>
 
   <template v-else-if="widget.type === 'image'">
-    <label class="sc-field">
-      <span>Média</span>
-      <select v-model="widget.media_id" @change="commit">
-        <option value="">(aucun)</option>
-        <option v-for="m in images" :key="m.id" :value="m.id">{{ m.name }}</option>
-      </select>
-    </label>
-    <label class="sc-field">
-      <span>Ajustement</span>
-      <select v-model="widget.fit" @change="commit">
-        <option v-for="f in FITS" :key="f.v" :value="f.v">{{ f.l }}</option>
-      </select>
-    </label>
-    <p v-if="!images.length" class="help">Importez d'abord une image dans l'onglet Médias.</p>
+    <MediaPicker v-model="widget.media_id" v-model:fit="widget.fit" :media="images" @commit="commit" />
   </template>
 
   <template v-else-if="widget.type === 'analog_clock'">

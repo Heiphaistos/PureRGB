@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { designGet, errMsg, screenState, setLayout } from "../../screens/api.ts";
+import { designGet, errMsg, screenState, setLayout, setOptions } from "../../screens/api.ts";
 import { usePreview } from "../../screens/usePreview.ts";
 import type { Layout, ScreenInfo, ScreenState } from "../../screens/types.ts";
 import { validateLayout } from "../../screens/validate.ts";
@@ -8,6 +8,8 @@ import { cloneLayout } from "../../screens/widgets.ts";
 import DesignEditor from "./DesignEditor.vue";
 import DesignGallery from "./DesignGallery.vue";
 import MediaLibrary from "./MediaLibrary.vue";
+import RotatedPreview from "./RotatedPreview.vue";
+import RotateButtons from "./RotateButtons.vue";
 import ScreenOptions from "./ScreenOptions.vue";
 import "./screens.css";
 
@@ -34,6 +36,20 @@ async function reload(): Promise<void> {
     state.value = await screenState(props.screen.id);
   } catch (e) {
     emit("toast", `État de l'écran : ${errMsg(e)}`);
+  }
+}
+
+const rotation = computed(() => state.value?.rotation ?? props.screen.rotation);
+
+/** Rotation rapide : appliquée tout de suite à l'écran (luminosité et cadence inchangées). */
+async function rotate(deg: number): Promise<void> {
+  const st = state.value;
+  if (!st) return;
+  try {
+    await setOptions(props.screen.id, { brightness: st.brightness, rotation: deg, fps: st.fps });
+    await reload();
+  } catch (e) {
+    emit("toast", `Rotation : ${errMsg(e)}`);
   }
 }
 
@@ -85,6 +101,7 @@ onMounted(reload);
         <strong>{{ screen.vendor }} {{ screen.model }}</strong>
         <span class="dim"> · {{ screen.width }} × {{ screen.height }}</span>
       </div>
+      <RotateButtons v-if="state" :rotation="rotation" @set="rotate" />
       <span v-if="!screen.verified" class="sc-badge warn">Expérimental</span>
       <span v-if="state?.error" class="sc-badge err" :title="state.error">Erreur</span>
       <span v-else-if="state" class="sc-badge" :class="{ ok: state.running }">{{ state.running ? "Actif" : "Éteint" }}</span>
@@ -92,8 +109,8 @@ onMounted(reload);
 
     <div class="body">
       <aside class="live">
-        <div class="frame" :style="{ aspectRatio: `${screen.width} / ${screen.height}` }">
-          <img v-if="src" :src="src" alt="Aperçu de l'écran" class="sc-thumb" />
+        <div class="frame">
+          <RotatedPreview v-if="src" :src="src" :rotation="rotation" :width="screen.width" :height="screen.height" />
           <div v-else class="off">{{ live ? "Rendu…" : "Écran éteint" }}</div>
         </div>
         <div class="cap">{{ live?.name ?? "Aucun design affiché" }}</div>
@@ -114,6 +131,8 @@ onMounted(reload);
             :screen="screen"
             :initial="state.layout ? cloneLayout(state.layout) : null"
             :active="tab === 'editor'"
+            :rotation="rotation"
+            @rotate="rotate"
             @apply="applyLayout"
             @toast="emit('toast', $event)"
           />
@@ -168,13 +187,8 @@ onMounted(reload);
   box-shadow: var(--shadow-md);
 }
 
-.frame img {
-  height: 100%;
-  object-fit: contain;
-  border-radius: 0;
-}
-
 .off {
+  padding: 40px 0;
   color: var(--text-dim);
   font-size: 13px;
 }

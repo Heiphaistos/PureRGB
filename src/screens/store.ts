@@ -57,4 +57,4 @@ export function watchValues(): () => void {
   };
 }
 
-export const isUserDesign = (d: DesignSummary): boolean => d.category === "user" || d.tags.includes("user");
+export { isUserDesign } from "./galleryFilter.ts";

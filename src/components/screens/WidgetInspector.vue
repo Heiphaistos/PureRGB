@@ -4,6 +4,7 @@ import { WIDGET_LABELS } from "../../screens/widgets.ts";
 import type { Background, Layout, LiveValues, MediaItem, Widget } from "../../screens/types.ts";
 import { MAX_CANVAS } from "../../screens/types.ts";
 import ColorField from "./ColorField.vue";
+import MediaPicker from "./MediaPicker.vue";
 import InspectorFields from "./InspectorFields.vue";
 import NumField from "./NumField.vue";
 import TextField from "./TextField.vue";
@@ -83,21 +84,7 @@ function setBgKind(kind: Background["kind"]): void {
           <NumField v-model="layout.background.angle" label="Angle" unit="°" @commit="commit" />
         </template>
         <template v-else>
-          <label class="sc-field">
-            <span>Média</span>
-            <select v-model="layout.background.media_id" @change="commit">
-              <option value="">(aucun)</option>
-              <option v-for="m in images" :key="m.id" :value="m.id">{{ m.name }}</option>
-            </select>
-          </label>
-          <label class="sc-field">
-            <span>Ajustement</span>
-            <select v-model="layout.background.fit" @change="commit">
-              <option value="cover">Remplir (rogner)</option>
-              <option value="contain">Contenir</option>
-              <option value="stretch">Étirer</option>
-            </select>
-          </label>
+          <MediaPicker v-model="layout.background.media_id" v-model:fit="layout.background.fit" :media="images" @commit="commit" />
         </template>
       </div>
       <p class="hint">Cliquez sur un widget du canevas ou ajoutez-en un depuis la palette.</p>
