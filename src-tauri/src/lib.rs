@@ -1304,6 +1304,7 @@ pub fn run() {
             screens::commands::screen_send_still,
             screens::commands::screen_preview,
             screens::commands::screen_values,
+            screens::commands::screen_sensors,
             screens::commands::designs_list,
             screens::commands::design_get,
             screens::commands::design_user_save,

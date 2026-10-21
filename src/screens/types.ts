@@ -149,3 +149,30 @@ export interface MediaItem {
 }
 
 export type LiveValues = Record<string, number>;
+
+/** Capteur brut tel que lu par sensord (LibreHardwareMonitor). */
+export interface RawSensor {
+  id: string;
+  hardware: string;
+  name: string;
+  /** Temperature, Load, Fan, Power, Clock, Voltage, Data, SmallData, Control… */
+  type: string;
+  value: number;
+  controllable: boolean;
+}
+
+export interface UsedSensor {
+  /** Vide = valeur calculée (moyenne, ratio…). */
+  id: string;
+  hardware: string;
+  name: string;
+}
+
+export interface SensorsReport {
+  sensord_running: boolean;
+  sensor_count: number;
+  exe_path: string | null;
+  sensors: RawSensor[];
+  /** clé -> capteur utilisé. */
+  used: Record<string, UsedSensor>;
+}

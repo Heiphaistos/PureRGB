@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { clearScreen, errMsg, sendStill, setOptions } from "../../screens/api.ts";
 import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
+import SensorsPanel from "./SensorsPanel.vue";
 import "./screens.css";
 
 const props = defineProps<{ screen: ScreenInfo; state: ScreenState }>();
@@ -109,6 +110,8 @@ async function clear(): Promise<void> {
         <button class="danger" @click="clear">Effacer l'écran</button>
       </div>
     </div>
+
+    <SensorsPanel />
 
     <div class="sc-card box warn">
       <strong>Un seul logiciel à la fois</strong>

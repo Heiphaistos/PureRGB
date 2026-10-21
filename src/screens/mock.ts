@@ -1,7 +1,8 @@
 // Backend factice (mode démo) : mêmes signatures que les commandes Tauri, état en mémoire.
 import { MOCK_DESIGNS } from "./mockDesigns.ts";
 import { mockImages, mockValues, renderMock } from "./mockRender.ts";
-import type { DesignSummary, Layout, LiveValues, MediaItem, ScreenInfo, ScreenOptions, ScreenState } from "./types.ts";
+import { mockSensors } from "./mockSensors.ts";
+import type { DesignSummary, Layout, LiveValues, MediaItem, ScreenInfo, ScreenOptions, ScreenState, SensorsReport } from "./types.ts";
 import { cloneLayout } from "./widgets.ts";
 import { validateLayout } from "./validate.ts";
 
@@ -177,5 +178,8 @@ export const mock = {
   },
   async screenValues(): Promise<LiveValues> {
     return mockValues(Date.now());
+  },
+  async screenSensors(): Promise<SensorsReport> {
+    return mockSensors(Date.now());
   },
 };

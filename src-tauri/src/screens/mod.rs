@@ -4,6 +4,7 @@
 pub mod driver;
 pub mod layout;
 pub mod bindings;
+pub mod sensor_map;
 pub mod media;
 pub mod render;
 pub mod drivers;
