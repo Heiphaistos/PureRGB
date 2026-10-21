@@ -1,15 +1,13 @@
 """Liste dense à barres : une ligne par capteur, plusieurs colonnes selon le format."""
-from content import CONTENT
 from lib import Canvas, min_text
-from parts import row
-from layouts.cap_common import densest, table_dims
+from layouts.cap_common import ALL, crow, densest, fracs, metrics, table_dims
 
 NAME, TITLE = "cap-liste", "Liste à barres"
-CONTENTS = ["cap-complet", "cap-stockage", "cap-refroid"]
+CONTENTS = ALL
 
 
 def build(p, fmt, content):
-    ms = CONTENT[content][1]
+    ms = metrics(content)
     mt = min_text(fmt)
 
     def mk(n):
@@ -18,12 +16,14 @@ def build(p, fmt, content):
             return None
         cols, rows = d
         c = Canvas(p, fmt)
+        fr = fracs(p, ms[:n])
         z, gx = fmt.zone, fmt.short * 0.05
         cw = (z[2] - gx * (cols - 1)) / cols
         rh = min(z[3] / rows, fmt.short * 0.13)
         top = z[1] + (z[3] - rh * rows) / 2
         for i in range(n):
             col, r = divmod(i, rows)
-            row(c, (z[0] + col * (cw + gx), top + r * rh, cw, rh * 0.92), ms[i], i)
+            with c.m(ms[i]):
+                crow(c, (z[0] + col * (cw + gx), top + r * rh, cw, rh * 0.92), ms[i], i, fr)
         return c.finish()
-    return densest(mk, fmt, range(len(ms), 3, -1))
+    return densest(mk, fmt, range(len(ms), 6, -1))
