@@ -4,7 +4,9 @@
 //! formules PM/SUB par PID) et `doc/PROTOCOL_USBLCDNEW.md` « Protocol 4: LY LCD » / « Protocol 5: LY1 LCD »
 //! (tailles d'écriture/lecture, ACK, points d'accès EP09 OUT / EP02 OUT, EP01 IN).
 //!
-//! Écarts entre les deux documents, tranchés ainsi (à vérifier sur matériel) :
+//! VÉRIFIÉ contre USBLCDNEW.dll 2.3.0 du setup TRCC 2.1.8 (`docs/screens-protocols/REA-trcc.md`) : les deux
+//! variantes ci-dessous sont confirmées octet pour octet (poignée de main, PM/SUB, chunks, tailles, ACK, points d'accès).
+//! Écarts entre les deux documents publics, tranchés ainsi :
 //! - LY1 : on suit l'outil constructeur (poignée de main 512 octets, réponse 511, trame en une écriture,
 //!   ACK 511) ; TRCC-Linux envoie la même poignée de main de 2048 octets que LY.
 //! - LY : poignée de main 2048 / réponse 512, écritures de 4096 (2048 pour la dernière), ACK 512.
@@ -23,7 +25,8 @@ const CHUNK_HEADER: usize = 16;
 const CHUNK_DATA: usize = CHUNK - CHUNK_HEADER; // 496
 const HANDSHAKE_HEADER: [u8; 16] = [0x02, 0xFF, 0, 0, 0, 0, 0, 0, 0x01, 0, 0, 0, 0, 0, 0, 0];
 const WRITE_SIZE: usize = 4096;
-const JPEG_QUALITY: u8 = 80;
+/// Qualité de départ de TRCC.exe 2.1.8 (`FormCZTVInit(..., ysl = 95)`), baissée de 5 en 5 sous le plafond.
+const JPEG_QUALITY: u8 = 95;
 
 /// Variante LY / LY1.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -87,12 +90,12 @@ fn pm_sub(v: Variant, resp: &[u8]) -> Result<(u8, u8)> {
     if resp.len() < 37 || resp[0] != 0x03 || resp[1] != 0xFF || resp[8] != 0x01 {
         bail!("Poignée de main LY invalide (réponse de {} octets).", resp.len());
     }
-    let (b20, b22) = (u16::from(resp[20]), u16::from(resp[22]));
-    let (pm, sub) = match v {
-        Variant::Ly => (64 + if b20 <= 3 { 1 } else { b20 }, b22 + 1),
-        Variant::Ly1 => (49 + b20, b22),
-    };
-    Ok((u8::try_from(pm).map_err(|_| anyhow!("PM hors bornes ({pm})."))?, u8::try_from(sub).map_err(|_| anyhow!("SUB hors bornes ({sub})."))?))
+    // USBLCDNEW.dll calcule PM et SUB dans des octets (`(byte)(64 + b20)`) : le débordement s'enroule.
+    let (b20, b22) = (resp[20], resp[22]);
+    Ok(match v {
+        Variant::Ly => (64u8.wrapping_add(if b20 <= 3 { 1 } else { b20 }), b22.wrapping_add(1)),
+        Variant::Ly1 => (49u8.wrapping_add(b20), b22),
+    })
 }
 
 /// Découpe `payload` en chunks de 512 octets (en-tête de 16 + 496 de données). Nombre de chunks =
@@ -258,8 +261,9 @@ mod tests {
         assert_eq!(pm_sub(Variant::Ly, &reply(5, 0)).unwrap(), (69, 1));
         // LY1 : PM = 49 + b20, SUB = b22.
         assert_eq!(pm_sub(Variant::Ly1, &reply(16, 4)).unwrap(), (65, 4));
-        // Débordement refusé, réponses invalides refusées.
-        assert!(pm_sub(Variant::Ly1, &reply(255, 0)).is_err());
+        // Débordement d'octet enroulé comme `(byte)(49 + 255)` = 48 dans USBLCDNEW.dll ; réponses invalides refusées.
+        assert_eq!(pm_sub(Variant::Ly1, &reply(255, 0)).unwrap(), (48, 0));
+        assert_eq!(pm_sub(Variant::Ly, &reply(1, 255)).unwrap(), (65, 0));
         let mut bad = reply(1, 1);
         bad[1] = 0;
         assert!(pm_sub(Variant::Ly, &bad).is_err());
