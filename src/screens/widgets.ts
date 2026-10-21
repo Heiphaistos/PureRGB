@@ -37,7 +37,7 @@ export const WIDGET_ICONS: Record<WidgetType, string[]> = {
 };
 
 /** Polices suggérées (le moteur accepte aussi une police de la médiathèque). */
-export const FONTS = ["Inter", "Roboto Mono", "Orbitron", "Rajdhani", "Share Tech Mono", "Bebas Neue"];
+export const FONTS = ["Inter", "Roboto Mono", "Rajdhani"];
 
 export interface SourceDef {
   key: string;

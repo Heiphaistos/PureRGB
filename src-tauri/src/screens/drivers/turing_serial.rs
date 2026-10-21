@@ -79,14 +79,7 @@ pub(crate) fn check_frame(frame: &Frame, size: (u32, u32)) -> Result<()> {
 }
 
 /// RGBA -> RGB565 (R sur les 5 bits de poids fort), alpha ignoré.
-pub(crate) fn rgb565(rgba: &[u8], big_endian: bool) -> Vec<u8> {
-    let mut out = Vec::with_capacity(rgba.len() / 2);
-    for p in rgba.chunks_exact(4) {
-        let v = ((u16::from(p[0]) >> 3) << 11) | ((u16::from(p[1]) >> 2) << 5) | (u16::from(p[2]) >> 3);
-        out.extend_from_slice(&if big_endian { v.to_be_bytes() } else { v.to_le_bytes() });
-    }
-    out
-}
+pub(crate) use super::encode::rgba_to_rgb565 as rgb565;
 
 /// Rotation antihoraire (sens de `rotate` de PIL, utilisé par la doc) de 0/90/180/270 degrés.
 pub(crate) fn rotate_rgba(rgba: &[u8], w: u32, h: u32, ccw: u16) -> (Vec<u8>, u32, u32) {
