@@ -1,29 +1,42 @@
-"""Barres horizontales : libelle, grosse barre arrondie, valeur ; deux colonnes sur les ecrans larges."""
+"""Barres horizontales : libelle, grosse barre arrondie, valeur et valeur secondaire ; colonnes selon le format."""
 from content import CONTENT
-from lib import Canvas
+from lib import Canvas, measure
+from layouts.r1_common import CONTENTS_ALL, fit, pick, sizes
 
 NAME, TITLE = "barres", "Barres horizontales"
-CONTENTS = ["quad", "disques", "refroidissement", "reseau"]
+CONTENTS = CONTENTS_ALL
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1][:6]
+    ms = CONTENT[content][1]
     z = fmt.zone
-    cols = 1 if fmt.ratio < 2.6 else 2
-    n = min(len(ms), 5 if cols == 1 else 6)
-    rows = -(-n // cols)
-    gap = fmt.short * 0.03
-    gx = fmt.short * (0.03 if cols == 1 else 0.14)
-    cw = (z[2] - gx * (cols - 1)) / cols
-    rh = min((z[3] - gap * (rows - 1)) / rows, fmt.short * 0.17)
-    top = z[1] + (z[3] - rows * rh - gap * (rows - 1)) / 2
-    for i, m in enumerate(ms[:n]):
-        col, r = divmod(i, rows)
-        x, y, w, h = z[0] + col * (cw + gx), top + r * (rh + gap), cw, rh
-        lw, vw = w * 0.27, w * 0.3
-        c.text(x, y, lw, h, m.label, p.acc[i % 3], bold=True, pre="l", group="bl", font=p.font, maxsize=h * 0.62)
-        bh = min(h * 0.42, fmt.short * 0.06)
-        c.bar(x + lw + 4, y + (h - bh) / 2, w - lw - vw - 8, bh, m.src, m.lo, m.hi, m.colors(p, i), radius=bh * 0.35, pre="b")
-        c.value(m.src, m.fmt, x + w - vw, y, vw, h, m.sample, p.text, bold=True, align="right", pre="v", group="bv", font=p.font, maxsize=h * 0.7)
-    return c.finish()
+
+    def mk(n, cols):
+        items = pick(ms, n)
+        rows = -(-n // cols)
+        gap = fmt.short * 0.025
+        gx = fmt.short * 0.05
+        cw = (z[2] - gx * (cols - 1)) / cols
+        rh = min((z[3] - gap * (rows - 1)) / rows, fmt.short * 0.17)
+        s = rh * 0.6
+        f = p.font
+        lw = max(measure(m.label, f, True, s) for m in items) + 4
+        vw = max(measure(m.sample, f, True, s) for m in items) + 4
+        sw = max((measure(m.sub[2], f, False, s * 0.8) for m in items if m.sub), default=0) + 4
+        bw = cw - lw - vw - sw - 12
+        if bw < cw * 0.2:
+            return None
+        c = Canvas(p, fmt)
+        top = z[1] + (z[3] - rows * rh - gap * (rows - 1)) / 2
+        for k, m in enumerate(items):
+            col, r = divmod(k, rows)
+            x, y = z[0] + col * (cw + gx), top + r * (rh + gap)
+            bh = min(rh * 0.42, fmt.short * 0.06)
+            with c.m(m):
+                c.text(x, y, lw, rh, m.label, p.acc[k % 3], bold=True, pre="l", group="bl", font=f, maxsize=s)
+                c.bar(x + lw + 4, y + (rh - bh) / 2, bw, bh, m.src, m.lo, m.hi, m.colors(p, k), radius=bh * 0.35, pre="b")
+                c.value(m.src, m.fmt, x + cw - vw - sw, y, vw, rh, m.sample, p.text, bold=True, align="right", pre="v", group="bv", font=f, maxsize=s)
+                if m.sub:
+                    c.value(m.sub[0], m.sub[1], x + cw - sw, y, sw, rh, m.sub[2], p.text2, align="right", pre="s", group="bs", maxsize=s * 0.8)
+        return c.finish()
+    return fit(mk, fmt, sizes(ms), (1, 2, 3))

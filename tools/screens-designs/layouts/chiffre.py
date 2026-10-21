@@ -1,29 +1,30 @@
-"""Grand chiffre unique : une seule mesure, tres lisible de loin."""
+"""Grand chiffre : une mesure en tres grand (selon le contenu), les autres en lignes compactes."""
 from content import CONTENT
 from lib import Canvas
 from parts import glow
+from layouts.r1_common import CONTENTS_ALL, block, fit, hero_split, pick, colopts, side_by_side, sizes
 
 NAME, TITLE = "chiffre", "Grand chiffre"
-CONTENTS = ["cpu", "gpu", "liquide", "ram"]
+CONTENTS = [k for k in CONTENTS_ALL if k != "quad"]
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    m = CONTENT[content][1][0]
+    hero, rest = hero_split(content, CONTENT[content][1])
     x, y, w, h = fmt.zone
-    if p.dark:
-        glow(c, x + w * (0.68 if fmt.wide else 0.5), y + h / 2, min(w, h) * 0.5, p.acc[0])
-    if fmt.wide:
-        lw = w * 0.3
-        c.text(x, y + h * 0.18, lw, h * 0.2, m.label, p.acc[0], bold=True, pre="l")
-        if m.sub:
-            c.value(m.sub[0], m.sub[1], x, y + h * 0.42, lw, h * 0.16, m.sub[2], p.text2, pre="s")
-        c.bar(x, y + h * 0.7, lw, max(6, h * 0.07), m.src, m.lo, m.hi, m.colors(p), pre="b")
-        c.value(m.src, m.fmt, x + w * 0.34, y, w * 0.66, h, m.sample, p.text, bold=True, align="right", pre="v")
+    gap = fmt.short * 0.04
+
+    def mk(n, frac, cols):
+        c = Canvas(p, fmt)
+        wide = side_by_side(fmt)
+        hx, hy, hw, hh = (x, y, w * frac, h) if wide else (x, y, w, h * frac)
+        if p.dark:
+            glow(c, hx + hw / 2, hy + hh / 2, min(hw, hh) * 0.55, p.acc[0])
+        c.text(hx, hy + hh * 0.04, hw, hh * 0.14, hero.label, p.acc[0], bold=True, align="center", pre="l")
+        c.value(hero.src, hero.fmt, hx, hy + hh * 0.2, hw, hh * 0.5, hero.sample + ("0" if p.font == "Roboto Mono" else ""), p.text, bold=True, align="center", pre="v")  # le test Rust estime la chasse mono plus large
+        if hero.sub:
+            c.value(hero.sub[0], hero.sub[1], hx, hy + hh * 0.72, hw, hh * 0.12, hero.sub[2], p.text2, align="center", pre="s")
+        c.bar(hx + hw * 0.1, hy + hh * 0.9, hw * 0.8, max(6, hh * 0.05), hero.src, hero.lo, hero.hi, hero.colors(p), pre="b")
+        box = (x + hw + gap, y, w - hw - gap, h) if wide else (x, y + hh + gap, w, h - hh - gap)
+        block(c, box, pick(rest, n), cols, gap, maxrow=fmt.short * 0.14)
         return c.finish()
-    c.text(x, y, w, h * 0.12, m.label, p.acc[0], bold=True, align="center", pre="l")
-    c.value(m.src, m.fmt, x, y + h * 0.15, w, h * 0.5, m.sample, p.text, bold=True, align="center", pre="v")
-    if m.sub:
-        c.value(m.sub[0], m.sub[1], x, y + h * 0.68, w, h * 0.12, m.sub[2], p.text2, align="center", pre="s")
-    c.bar(x + w * 0.15, y + h * 0.88, w * 0.7, max(6, h * 0.05), m.src, m.lo, m.hi, m.colors(p), pre="b")
-    return c.finish()
+    return fit(mk, fmt, sizes(rest), (0.46, 0.4, 0.55), colopts(fmt))
