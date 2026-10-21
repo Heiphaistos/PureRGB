@@ -2,7 +2,7 @@
 from lib import inset
 
 
-def stat_card(c, box, m, i=0, sub=True, stripe=True):
+def stat_card(c, box, m, i=0, sub=True, stripe=True, g=""):
     """Carte translucide : libelle, grande valeur, valeur secondaire, barre. S'adapte a la forme de la boite."""
     x, y, w, h = box
     p = c.p
@@ -14,40 +14,40 @@ def stat_card(c, box, m, i=0, sub=True, stripe=True):
     has_sub = sub and m.sub is not None
     if w > 1.9 * h:   # carte large et basse : libelle a gauche, valeur a droite
         lw = iw * 0.38
-        c.text(ix, iy, lw, ih * 0.5, m.label, p.text2, bold=True, pre="l", group="sl", font=p.font)
+        c.text(ix, iy, lw, ih * 0.5, m.label, p.text2, bold=True, pre="l", group="sl"+g, font=p.font)
         if has_sub:
-            c.value(m.sub[0], m.sub[1], ix, iy + ih * 0.5, lw, ih * 0.4, m.sub[2], p.text2, pre="s", group="ss")
-        c.value(m.src, m.fmt, ix + lw + pad * 0.5, iy, iw - lw - pad * 0.5, ih * 0.72, m.sample, p.text, bold=True, align="right", pre="v", group="sv", font=p.font)
+            c.value(m.sub[0], m.sub[1], ix, iy + ih * 0.5, lw, ih * 0.4, m.sub[2], p.text2, pre="s", group="ss"+g)
+        c.value(m.src, m.fmt, ix + lw + pad * 0.5, iy, iw - lw - pad * 0.5, ih * 0.72, m.sample, p.text, bold=True, align="right", pre="v", group="sv"+g, font=p.font)
         c.bar(ix + lw + pad * 0.5, iy + ih * 0.84, iw - lw - pad * 0.5, ih * 0.16, m.src, m.lo, m.hi, m.colors(p, i), pre="b")
         return
     hl, hb = ih * 0.17, max(4.0, ih * 0.08)
-    c.text(ix, iy, iw, hl, m.label, p.text2, bold=True, pre="l", group="sl", font=p.font, maxsize=hl / LINE)
+    c.text(ix, iy, iw, hl, m.label, p.text2, bold=True, pre="l", group="sl"+g, font=p.font, maxsize=hl / LINE)
     top, bot = iy + hl, iy + ih - hb
     hs = ih * 0.17 if has_sub else 0
     hv = (bot - top - hs) * 0.92
-    c.value(m.src, m.fmt, ix, top + (bot - top - hs - hv) / 2, iw, hv, m.sample, p.text, bold=True, pre="v", group="sv", font=p.font)
+    c.value(m.src, m.fmt, ix, top + (bot - top - hs - hv) / 2, iw, hv, m.sample, p.text, bold=True, pre="v", group="sv"+g, font=p.font)
     if has_sub:
-        c.value(m.sub[0], m.sub[1], ix, bot - hs, iw, hs * 0.9, m.sub[2], p.text2, pre="s", group="ss", maxsize=hs * 0.8)
+        c.value(m.sub[0], m.sub[1], ix, bot - hs, iw, hs * 0.9, m.sub[2], p.text2, pre="s", group="ss"+g, maxsize=hs * 0.8)
     c.bar(ix, iy + ih - hb, iw, hb, m.src, m.lo, m.hi, m.colors(p, i), pre="b")
 
 
 LINE = 1.15
 
 
-def ring(c, cx, cy, r, m, i=0, thick=None, label=True, sub=False, vscale=1.0):
+def ring(c, cx, cy, r, m, i=0, thick=None, label=True, sub=False, vscale=1.0, g=""):
     """Jauge 270 deg ouverte vers le bas : valeur au centre, libelle dans l'ouverture."""
     p = c.p
     t = thick or max(5.0, r * 0.17)
     c.arc(cx, cy, r, m.src, m.lo, m.hi, t, m.colors(p, i))
     inner = r - t
     vw, vh = inner * 1.45, inner * 0.72 * vscale
-    c.value(m.src, m.fmt, cx - vw / 2, cy - vh * 0.62, vw, vh, m.sample, p.text, bold=True, align="center", pre="v", group="rv", font=p.font)
+    c.value(m.src, m.fmt, cx - vw / 2, cy - vh * 0.62, vw, vh, m.sample, p.text, bold=True, align="center", pre="v", group="rv"+g, font=p.font)
     if label:
         lh = inner * 0.3
-        c.text(cx - r * 0.5, cy + r * 0.58, r, lh, m.label, p.text2, bold=True, align="center", pre="l", group="rl", font=p.font, maxsize=lh)
+        c.text(cx - r * 0.5, cy + r * 0.58, r, lh, m.label, p.text2, bold=True, align="center", pre="l", group="rl"+g, font=p.font, maxsize=lh)
     if sub and m.sub:
         sh = inner * 0.26
-        c.value(m.sub[0], m.sub[1], cx - inner * 0.7, cy + inner * 0.12, inner * 1.4, sh, m.sub[2], p.text2, align="center", pre="s", group="rs")
+        c.value(m.sub[0], m.sub[1], cx - inner * 0.7, cy + inner * 0.12, inner * 1.4, sh, m.sub[2], p.text2, align="center", pre="s", group="rs"+g)
 
 
 def hero_list(zone, d, gap):
