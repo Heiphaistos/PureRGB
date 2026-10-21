@@ -3,10 +3,12 @@ mod conflicts;
 mod core;
 mod engine;
 mod hotplug;
+mod job;
 mod netdev;
 mod screens;
 mod sensors;
 mod settings;
+mod shutdown;
 mod telemetry;
 mod trust;
 mod usbcapture;
@@ -902,8 +904,43 @@ fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEngine, saved:
     }
 }
 
+/// Nettoyage avant sortie (exécuté dans un thread borné, voir `shutdown.rs`) : jamais sur le thread d'interface.
+fn cleanup_before_exit(app: &tauri::AppHandle) {
+    let state = app.state::<AppState>();
+    // D'abord ce qui est rapide et qui libère les processus et le matériel...
+    state.engine.shutdown();
+    state.curve_engine.shutdown();
+    // Rendre les headers PWM au BIOS avant de couper sensord.
+    {
+        let mut reg = state.registry.lock();
+        for b in reg.backends_mut() {
+            if let Some(m) = b.as_any_mut().downcast_mut::<MoboFanBackend>() {
+                m.release_all();
+            }
+        }
+    }
+    state.sensors.stop();
+    state.openrgb_mgr.stop();
+    // Arrêter une éventuelle capture USB en cours (pas de USBPcapCMD.exe orphelin).
+    if let Some(session) = state.active_capture.lock().take() {
+        log::info!("capture USB en cours arrêtée à la fermeture de l'app");
+        usbcapture::stop_capture(session);
+    }
+    app.state::<std::sync::Arc<screens::manager::ScreenManager>>().shutdown();
+    // ...puis, en dernier (peut être lent), redémarrer les logiciels constructeur arrêtés
+    // automatiquement au lancement. Best-effort : l'échéance de `shutdown.rs` borne le tout.
+    let families = state.auto_stopped.lock().clone();
+    for key in families {
+        if let Err(e) = conflicts::restore_family(&key, &std::collections::HashMap::new()) {
+            log::warn!("redémarrage auto {key}: {e:#}");
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Tous les processus enfants meurent avec PureRGB (même en cas de plantage).
+    job::kill_children_on_exit();
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     let saved = settings::load();
@@ -1064,6 +1101,7 @@ pub fn run() {
         .manage(state)
         .manage(screen_mgr)
         .setup(|app| {
+            shutdown::schedule_autoquit(app.handle(), cleanup_before_exit);
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
             if let Ok(res) = app.path().resource_dir() {
                 let state = app.state::<AppState>();
@@ -1206,43 +1244,7 @@ pub fn run() {
                             let _ = w.set_focus();
                         }
                     }
-                    "quit" => {
-                        let state = app.state::<AppState>();
-                        // Redémarrer les logiciels constructeur auto-arrêtés au
-                        // lancement — best-effort, ne bloque jamais la fermeture.
-                        {
-                            let families = state.auto_stopped.lock().clone();
-                            for key in families {
-                                if let Err(e) = conflicts::restore_family(&key, &std::collections::HashMap::new()) {
-                                    log::warn!("redémarrage auto {key}: {e:#}");
-                                }
-                            }
-                        }
-                        state.engine.shutdown();
-                        state.curve_engine.shutdown();
-                        // Rendre les headers PWM au BIOS avant de couper sensord.
-                        {
-                            let mut reg = state.registry.lock();
-                            for b in reg.backends_mut() {
-                                if let Some(m) = b.as_any_mut().downcast_mut::<MoboFanBackend>() {
-                                    m.release_all();
-                                }
-                            }
-                        }
-                        state.sensors.stop();
-                        state.openrgb_mgr.stop();
-                        // Arrêter une éventuelle capture USB en cours pour ne pas
-                        // laisser un USBPcapCMD.exe orphelin écrire indéfiniment.
-                        {
-                            let session = state.active_capture.lock().take();
-                            if let Some(session) = session {
-                                log::info!("capture USB en cours arrêtée à la fermeture de l'app");
-                                usbcapture::stop_capture(session);
-                            }
-                        }
-                        app.state::<std::sync::Arc<screens::manager::ScreenManager>>().shutdown();
-                        app.exit(0);
-                    }
+                    "quit" => shutdown::quit_async(app.clone(), cleanup_before_exit),
                     _ => {}
                 })
                 .build(app)?;

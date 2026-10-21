@@ -84,7 +84,17 @@ impl Runner {
     pub fn stop(mut self) {
         self.shared.stop.store(true, Ordering::Release);
         if let Some(h) = self.handle.take() {
-            let _ = h.join();
+            // Un envoi USB bloqué ne doit jamais figer l'application : on attend au plus 3 s,
+            // puis le thread est abandonné (il meurt avec le processus).
+            let end = Instant::now() + Duration::from_secs(3);
+            while !h.is_finished() && Instant::now() < end {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            if h.is_finished() {
+                let _ = h.join();
+            } else {
+                log::warn!("écran {} : arrêt trop lent, thread abandonné", self.info.id);
+            }
         }
     }
 }

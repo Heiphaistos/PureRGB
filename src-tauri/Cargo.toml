@@ -51,6 +51,8 @@ windows-sys = { version = "0.61", features = [
     "Win32_System_IO",
     "Win32_System_Ioctl",
     "Win32_Devices_DeviceAndDriverInstallation",
+    "Win32_System_JobObjects",
+    "Win32_System_Threading",
 ] }
 
 # Lecture vidéo via Media Foundation (screens/video_mf.rs). 0.61 = version déjà tirée par tauri/wry
