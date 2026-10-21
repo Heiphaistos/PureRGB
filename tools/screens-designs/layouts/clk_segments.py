@@ -1,11 +1,7 @@
-"""Afficheur a segments : chiffres fantomes « 88:88 » sous l'heure, police a chasse fixe."""
-from content import CONTENT
-from lib import Canvas
-from parts import row
-from layouts.clk_common import date_line
+"""Afficheur a segments : chiffres fantomes « 88:88 » sous l'heure, police a chasse fixe, date et socle."""
+from layouts.clk_common import CONTENTS, attempt, date_line, panel
 
 NAME, TITLE = "clk-segments", "Heure à segments"
-CONTENTS = ["clk-systeme", "clk-temps", "clk-etat"]
 MONO = "Roboto Mono"
 
 
@@ -17,27 +13,23 @@ def _time(c, x, y, w, h):
     c.value("time", "%H:%M", x, y, w, h, "88:88", p.acc[0], font=MONO, bold=True, align="center", pre="time")
 
 
-def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1]
+def _draw(c, ms, mode):
+    p, fmt = c.p, c.f
     x, y, w, h = fmt.zone
     g = fmt.short * 0.04
     if fmt.wide:
-        tw = w * (0.5 if fmt.strip else 0.58)
+        tw = w * (0.46 if fmt.strip else 0.5)
         c.card(x, y, tw, h, radius=h * 0.08)
-        _time(c, x + tw * 0.05, y + h * 0.1, tw * 0.9, h * 0.6)
-        date_line(c, (x + tw * 0.05, y + h * 0.76, tw * 0.9, h * 0.14), p.text2, short=not fmt.strip)
+        _time(c, x + tw * 0.05, y + h * 0.1, tw * 0.9, h * 0.55)
+        date_line(c, (x + tw * 0.05, y + h * 0.74, tw * 0.9, h * 0.14), p.text2, short=tw < 600)
         rx = x + tw + g
-        n = 4 if fmt.strip else 3
-        bh = (h - g * (n - 1)) / n
-        for i in range(n):
-            row(c, (rx, y + i * (bh + g), x + w - rx, bh), ms[i], i)
-        return c.finish()
-    c.card(x, y, w, h * 0.5, radius=h * 0.05)
-    _time(c, x + w * 0.04, y + h * 0.04, w * 0.92, h * 0.32)
-    date_line(c, (x + w * 0.04, y + h * 0.37, w * 0.92, h * 0.09), p.text2, short=True)
-    n = 3
-    bh = (h * 0.46 - g * (n - 1)) / n
-    for i in range(n):
-        row(c, (x, y + h * 0.54 + i * (bh + g), w, bh), ms[i], i)
-    return c.finish()
+        panel(c, (rx, y, x + w - rx, h), ms, mode, gap=g)
+        return
+    c.card(x, y, w, h * 0.34, radius=h * 0.05)
+    _time(c, x + w * 0.04, y + h * 0.02, w * 0.92, h * 0.22)
+    date_line(c, (x + w * 0.04, y + h * 0.25, w * 0.92, h * 0.07), p.text2, short=True)
+    panel(c, (x, y + h * 0.38, w, h * 0.62), ms, mode, gap=g)
+
+
+def build(p, fmt, content):
+    return attempt(_draw, p, fmt, content)

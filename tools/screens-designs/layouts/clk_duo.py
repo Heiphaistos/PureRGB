@@ -1,10 +1,7 @@
-"""Heures et minutes separees dans deux cartes, date et infos autour."""
-from content import CONTENT
-from lib import Canvas
-from layouts.clk_common import cells, date_line
+"""Heures et minutes separees dans deux cartes, date complete et socle autour."""
+from layouts.clk_common import CONTENTS, attempt, date_block, panel
 
-NAME, TITLE = "clk-duo", "Heures et minutes"
-CONTENTS = ["clk-systeme", "clk-reseau", "clk-etat"]
+NAME, TITLE = "clk-duo", "Heure et calendrier"
 
 
 def _pair(c, x, y, w, h):
@@ -18,19 +15,21 @@ def _pair(c, x, y, w, h):
         c.rect(mx, y + h * fy - dot / 2, dot, dot, p.acc[1], dot / 2, pre="dot")
 
 
-def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1]
+def _draw(c, ms, mode):
+    fmt = c.f
     x, y, w, h = fmt.zone
     g = fmt.short * 0.03
     if fmt.wide:
-        tw = w * (0.5 if fmt.strip else 0.58)
-        _pair(c, x, y, tw, h)
+        tw = w * (0.46 if fmt.strip else 0.5)
+        _pair(c, x, y, tw, h * 0.62)
+        date_block(c, (x, y + h * 0.68, tw, h * 0.32))
         rx = x + tw + g * 2
-        date_line(c, (rx, y, x + w - rx, h * 0.2), c.p.text, short=not fmt.strip)
-        cells(c, (rx, y + h * 0.26, x + w - rx, h * 0.74), ms[:4 if fmt.strip else 3], horizontal=fmt.strip, gap=g)
-        return c.finish()
-    _pair(c, x, y, w, h * 0.5)
-    date_line(c, (x, y + h * 0.53, w, h * 0.1), p.text)
-    cells(c, (x, y + h * 0.68, w, h * 0.32), ms[:3], gap=g, card=True)
-    return c.finish()
+        panel(c, (rx, y, x + w - rx, h), ms, mode, gap=g)
+        return
+    _pair(c, x, y, w, h * 0.34)
+    date_block(c, (x, y + h * 0.37, w, h * 0.12))
+    panel(c, (x, y + h * 0.52, w, h * 0.48), ms, mode, gap=g)
+
+
+def build(p, fmt, content):
+    return attempt(_draw, p, fmt, content)
