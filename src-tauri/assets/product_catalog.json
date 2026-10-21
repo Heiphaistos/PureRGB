@@ -1,0 +1,1647 @@
+{
+ "version": 1,
+ "products": [
+  {
+   "id": "thermalright-trofeo-vision-9-16",
+   "kind": "screen",
+   "vendor": "Thermalright",
+   "name": "Trofeo Vision 9.16 LCD",
+   "match": {
+    "names": [
+     "trofeo vision 9.16",
+     "trofeo vision 9 16"
+    ],
+    "usb": [
+     "0416:5408"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2025/11/1-41.jpg",
+    "source_page": "https://www.thermalright.com/product/trofeo-vision-9-16-lcd-black/"
+   }
+  },
+  {
+   "id": "thermalright-trofeo-vision-lcd",
+   "kind": "screen",
+   "vendor": "Thermalright",
+   "name": "Trofeo Vision LCD",
+   "match": {
+    "names": [
+     "trofeo vision lcd"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/trofeo-vision-lcd-black.png",
+    "source_page": "https://www.thermalright.com/product/trofeo-vision-lcd-black/"
+   }
+  },
+  {
+   "id": "thermalright-trofeo-vision-11-3",
+   "kind": "screen",
+   "vendor": "Thermalright",
+   "name": "Trofeo Vision 11.3 LCD",
+   "match": {
+    "names": [
+     "trofeo vision 11.3",
+     "trofeo vision 11 3"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/trofeo-vision-11-3-lcd-black.png",
+    "source_page": "https://www.thermalright.com/product/trofeo-vision-11-3-lcd-black/"
+   }
+  },
+  {
+   "id": "thermalright-trofeo-vision-360-argb",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Trofeo Vision 360 ARGB",
+   "match": {
+    "names": [
+     "trofeo vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/trofeo-vision-360-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/trofeo-vision-360-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-240",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe 240",
+   "match": {
+    "names": [
+     "frozen warframe 240"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-240-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-240-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-280",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe 280",
+   "match": {
+    "names": [
+     "frozen warframe 280"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-280-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-280-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe 360",
+   "match": {
+    "names": [
+     "frozen warframe 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-360-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-420",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe 420",
+   "match": {
+    "names": [
+     "frozen warframe 420"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-420-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-420-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-pro-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe Pro 360",
+   "match": {
+    "names": [
+     "frozen warframe pro 360",
+     "frozen warframe pro"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-pro-360-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-pro-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-se-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe SE 360",
+   "match": {
+    "names": [
+     "frozen warframe se 360",
+     "frozen warframe se"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-360-se-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-360-se-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-warframe-ultra-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Warframe 360 Ultra",
+   "match": {
+    "names": [
+     "frozen warframe 360 ultra",
+     "frozen warframe ultra"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-warframe-360-ultra-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/frozen-warframe-360-ultra-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-horizon-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Horizon 360",
+   "match": {
+    "names": [
+     "frozen horizon 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-horizon-360-argb-black-v2.png",
+    "source_page": "https://www.thermalright.com/product/frozen-horizon-360-argb-black-v2/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-horizon-360-digital",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Horizon 360 Digital",
+   "match": {
+    "names": [
+     "frozen horizon 360 digital"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-horizon-360-digital-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/frozen-horizon-360-digital-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-magic-360-digital",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Magic 360 Digital",
+   "match": {
+    "names": [
+     "frozen magic 360 digital"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-magic-360-digital-argb-black-v2.png",
+    "source_page": "https://www.thermalright.com/product/frozen-magic-360-digital-argb-black-v2/"
+   }
+  },
+  {
+   "id": "thermalright-frozen-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Frozen Vision 360",
+   "match": {
+    "names": [
+     "frozen vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/frozen-vision-360-argb-black-v2.png",
+    "source_page": "https://www.thermalright.com/product/frozen-vision-360-argb-black-v2/"
+   }
+  },
+  {
+   "id": "thermalright-elite-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Elite Vision 360",
+   "match": {
+    "names": [
+     "elite vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/elite-vision-360-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/elite-vision-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-grand-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Grand Vision 360",
+   "match": {
+    "names": [
+     "grand vision 360",
+     "grandvision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/grand-vision-360-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/grand-vision-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-grand-vision-240",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Grand Vision 240",
+   "match": {
+    "names": [
+     "grand vision 240",
+     "grandvision 240"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/grand-vision-240-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/grand-vision-240-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-mjolnir-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Mjolnir Vision 360",
+   "match": {
+    "names": [
+     "mjolnir vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/mjolnir-vision-360-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/mjolnir-vision-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-hyper-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Hyper Vision 360",
+   "match": {
+    "names": [
+     "hyper vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/hyper-vision-360-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/hyper-vision-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-peerless-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Peerless Vision 360",
+   "match": {
+    "names": [
+     "peerless vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/Peerless-Vision-ARGB-BLACK-V2.png",
+    "source_page": "https://www.thermalright.com/product/peerless-vision-360-argb-black-v2/"
+   }
+  },
+  {
+   "id": "thermalright-peerless-vision-240",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Peerless Vision 240",
+   "match": {
+    "names": [
+     "peerless vision 240"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2025/10/png-3.png",
+    "source_page": "https://www.thermalright.com/product/peerless-vision-240-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-levita-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Levita Vision 360",
+   "match": {
+    "names": [
+     "levita vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/levita-vision-360-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/levita-vision-360-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-core-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Core Vision 360",
+   "match": {
+    "names": [
+     "core vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/core-vision-360-black-argb.png",
+    "source_page": "https://www.thermalright.com/product/core-vision-360-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-stream-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Stream Vision 360",
+   "match": {
+    "names": [
+     "stream vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/stream-vision-360-black.png",
+    "source_page": "https://www.thermalright.com/product/stream-vision-360-black/"
+   }
+  },
+  {
+   "id": "thermalright-dynamic-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Dynamic Vision 360",
+   "match": {
+    "names": [
+     "dynamic vision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/09/DYNAMIC-VISION-360-ARGB-BLACK.png",
+    "source_page": "https://www.thermalright.com/product/dynamic-vision-360-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-assassin-spirit-120-vision",
+   "kind": "cooler",
+   "vendor": "Thermalright",
+   "name": "Assassin Spirit 120 Vision",
+   "match": {
+    "names": [
+     "assassin spirit 120 vision"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/assassin-spirit-120-vision-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/assassin-spirit-120-vision-black-argb/"
+   }
+  },
+  {
+   "id": "thermalright-phantom-spirit-120-vision-evo",
+   "kind": "cooler",
+   "vendor": "Thermalright",
+   "name": "Phantom Spirit 120 Vision EVO",
+   "match": {
+    "names": [
+     "phantom spirit 120 vision"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2025/09/PS120-V-B-1500.png",
+    "source_page": "https://www.thermalright.com/product/phantom-spirit-120-vision-evo/"
+   }
+  },
+  {
+   "id": "thermalright-peerless-assassin-120-vision",
+   "kind": "cooler",
+   "vendor": "Thermalright",
+   "name": "Peerless Assassin 120 Vision",
+   "match": {
+    "names": [
+     "peerless assassin 120 vision"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/08/peerless-assassin-120-vision-argb-black.png",
+    "source_page": "https://www.thermalright.com/product/peerless-assassin-120-vision-argb-black/"
+   }
+  },
+  {
+   "id": "thermalright-royal-pretor-130-vision",
+   "kind": "cooler",
+   "vendor": "Thermalright",
+   "name": "Royal Pretor 130 Vision",
+   "match": {
+    "names": [
+     "royal pretor 130 vision"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2026/07/ROYAL-PRETOR-130-VISION-BLACK.png",
+    "source_page": "https://www.thermalright.com/product/royal-pretor-130-vision-black/"
+   }
+  },
+  {
+   "id": "thermalright-burst-assassin-120-vision",
+   "kind": "cooler",
+   "vendor": "Thermalright",
+   "name": "Burst Assassin 120 Vision",
+   "match": {
+    "names": [
+     "burst assassin 120 vision"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2024/11/111.png",
+    "source_page": "https://www.thermalright.com/product/burst-assassin-120-vision-black/"
+   }
+  },
+  {
+   "id": "thermalright-wonder-vision-360",
+   "kind": "aio",
+   "vendor": "Thermalright",
+   "name": "Wonder Vision 360",
+   "match": {
+    "names": [
+     "wonder vision 360",
+     "wondervision 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.thermalright.com/wp-content/uploads/2025/06/1500.png",
+    "source_page": "https://www.thermalright.com/product/wonder-vision-360-ub-argb-black/"
+   }
+  },
+  {
+   "id": "turing-smart-screen-2-1",
+   "kind": "screen",
+   "vendor": "Turing (TURZX)",
+   "name": "Turing Smart Screen 2.1\" rond",
+   "match": {
+    "names": [
+     "turing smart screen 2.1",
+     "turing smart screen 2 1"
+    ]
+   },
+   "image": {
+    "url": "https://www.turzx.com/wp-content/uploads/2026/09/1754926073-1024x1024.png",
+    "source_page": "https://www.turzx.com/2026/09/14/turzx-2-1-inch-detail/"
+   }
+  },
+  {
+   "id": "turing-smart-screen-3-5",
+   "kind": "screen",
+   "vendor": "Turing (TURZX)",
+   "name": "Turing Smart Screen 3.5\"",
+   "match": {
+    "names": [
+     "turing smart screen 3.5",
+     "turing smart screen 3 5"
+    ]
+   },
+   "image": {
+    "url": "https://www.turzx.com/wp-content/uploads/2026/09/cropped-3.5.png",
+    "source_page": "https://www.turzx.com/2026/09/14/turzx-3-5-inch-detail/"
+   }
+  },
+  {
+   "id": "turing-smart-screen-8-8",
+   "kind": "screen",
+   "vendor": "Turing (TURZX)",
+   "name": "Turing Smart Screen 8.8\"",
+   "match": {
+    "names": [
+     "turing smart screen 8.8",
+     "turing smart screen 8 8"
+    ]
+   },
+   "image": {
+    "url": "https://www.turzx.com/wp-content/uploads/2026/09/1754924376-1024x683.png",
+    "source_page": "https://www.turzx.com/2026/09/14/turzx-8-8-inch-detail/"
+   }
+  },
+  {
+   "id": "lianli-galahad-ii-lcd",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "Galahad II LCD",
+   "match": {
+    "names": [
+     "galahad ii lcd",
+     "galahad 2 lcd"
+    ],
+    "usb": [
+     "0416:7391"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2023/11/gl2tlw_016.jpg",
+    "source_page": "https://lian-li.com/product/galahad-ii-lcd/"
+   }
+  },
+  {
+   "id": "lianli-galahad-ii-trinity",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "Galahad II Trinity",
+   "match": {
+    "names": [
+     "galahad ii trinity",
+     "galahad 2 trinity"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2023/07/360inf_b.jpg",
+    "source_page": "https://lian-li.com/product/galahad-ii-trinity/"
+   }
+  },
+  {
+   "id": "lianli-galahad-ii-trinity-performance",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "Galahad II Trinity Performance",
+   "match": {
+    "names": [
+     "galahad ii trinity performance"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2023/06/360gal_t_p_w.jpg",
+    "source_page": "https://lian-li.com/product/galahad-ii-trinity-performance/"
+   }
+  },
+  {
+   "id": "lianli-galahad-ii-lite",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "Galahad II Lite",
+   "match": {
+    "names": [
+     "galahad ii lite"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2024/11/ga2_lite_000_.jpg",
+    "source_page": "https://lian-li.com/product/ga-ii-lite/"
+   }
+  },
+  {
+   "id": "lianli-hydroshift-lcd",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "HydroShift LCD",
+   "match": {
+    "names": [
+     "hydroshift lcd aio",
+     "hydroshift lcd 360"
+    ],
+    "usb": [
+     "0416:7398"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2024/06/shift_000.jpg",
+    "source_page": "https://lian-li.com/product/hydroshift-aio/"
+   }
+  },
+  {
+   "id": "lianli-hydroshift-ii-lcd-c",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "HydroShift II LCD-C",
+   "match": {
+    "names": [
+     "hydroshift ii lcd-c",
+     "hydroshift ii lcd c"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2025/05/01-HydroShift-II-LCD-C-360TL_Black.jpg",
+    "source_page": "https://lian-li.com/product/hydroshift-ii/"
+   }
+  },
+  {
+   "id": "lianli-hydroshift-ii-lcd-s",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "HydroShift II LCD-S",
+   "match": {
+    "names": [
+     "hydroshift ii lcd-s",
+     "hydroshift ii lcd s"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2025/10/hs2_s_tl_b_01-1.jpg",
+    "source_page": "https://lian-li.com/product/hydroshift-ii-lcd-s/"
+   }
+  },
+  {
+   "id": "lianli-hydroshift-ii-oled-curved",
+   "kind": "aio",
+   "vendor": "Lian Li",
+   "name": "HydroShift II OLED Curved",
+   "match": {
+    "names": [
+     "hydroshift ii oled"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2026/05/FF02.jpg",
+    "source_page": "https://lian-li.com/product/hs2-oled-curved/"
+   }
+  },
+  {
+   "id": "lianli-universal-screen-8-8",
+   "kind": "screen",
+   "vendor": "Lian Li",
+   "name": "8.8\" Universal Screen",
+   "match": {
+    "names": [
+     "universal screen 8.8",
+     "8.8inch universal screen",
+     "8.8 inch universal screen"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2025/09/8in_03-1.jpg",
+    "source_page": "https://lian-li.com/product/8-8inch-universal-screen/"
+   }
+  },
+  {
+   "id": "lianli-9-2-lcd-kit",
+   "kind": "screen",
+   "vendor": "Lian Li",
+   "name": "9.2\" LCD Kit",
+   "match": {
+    "names": [
+     "9.2 inch lcd kit",
+     "9.2inch lcd kit"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2026/05/9.2_600_black_1.jpg",
+    "source_page": "https://lian-li.com/product/9-2-inch-lcd-kit/"
+   }
+  },
+  {
+   "id": "lianli-uni-fan-sl-infinity",
+   "kind": "fan",
+   "vendor": "Lian Li",
+   "name": "UNI FAN SL-INFINITY",
+   "match": {
+    "names": [
+     "uni fan sl-infinity",
+     "uni fan sl infinity",
+     "unifan sl infinity"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2022/06/uni_fan_inf-photo-04.jpg",
+    "source_page": "https://lian-li.com/product/uni-fan-sl-infinity/"
+   }
+  },
+  {
+   "id": "lianli-uni-fan-sl-v2",
+   "kind": "fan",
+   "vendor": "Lian Li",
+   "name": "UNI FAN SL V2",
+   "match": {
+    "names": [
+     "uni fan sl v2",
+     "uni fan sl-v2"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2022/11/DSC4843.jpg",
+    "source_page": "https://lian-li.com/product/uni-fan-sl-v2/"
+   }
+  },
+  {
+   "id": "lianli-uni-fan-al-v2",
+   "kind": "fan",
+   "vendor": "Lian Li",
+   "name": "UNI FAN AL V2",
+   "match": {
+    "names": [
+     "uni fan al v2",
+     "uni fan al-v2"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2023/03/al_v2-00.jpg",
+    "source_page": "https://lian-li.com/product/uni-fan-al-v2/"
+   }
+  },
+  {
+   "id": "lianli-uni-fan-p28",
+   "kind": "fan",
+   "vendor": "Lian Li",
+   "name": "UNI FAN P28",
+   "match": {
+    "names": [
+     "uni fan p28"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2023/05/p28-00.jpg",
+    "source_page": "https://lian-li.com/product/uni-fan-p28/"
+   }
+  },
+  {
+   "id": "lianli-uni-fan-cl-wireless",
+   "kind": "fan",
+   "vendor": "Lian Li",
+   "name": "UNI FAN CL Wireless",
+   "match": {
+    "names": [
+     "uni fan cl wireless",
+     "uni fan cl-wireless"
+    ]
+   },
+   "image": {
+    "url": "https://lian-li.com/wp-content/uploads/2025/06/p_cl_001.jpg",
+    "source_page": "https://lian-li.com/product/uni-fan-cl-wireless/"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-360",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 360",
+   "match": {
+    "names": [
+     "kraken elite 360"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/OFMPon_b28785ee-2518-4435-b1eb-4f48155e193d.png?v=1762528051&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-360-elite-aio"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-360-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 360 RGB",
+   "match": {
+    "names": [
+     "kraken elite 360 rgb"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/ke360rgb-v2_white_01_hero.png?v=1789335594&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-360-elite-rgb-1"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-280-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 280 RGB",
+   "match": {
+    "names": [
+     "kraken elite 280"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/ke280rgb-v2_white_01_hero.png?v=1789335592&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-280-elite-rgb"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-240",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 240",
+   "match": {
+    "names": [
+     "kraken elite 240"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/AP73Az_fe74e692-b68d-4383-b760-dcfffa321fd8.png?v=1762528095&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-240-elite"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-240-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 240 RGB",
+   "match": {
+    "names": [
+     "kraken elite 240 rgb"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/ke240rgb-v2_white_01_hero.png?v=1789335590&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-240-elite-rgb"
+   }
+  },
+  {
+   "id": "nzxt-kraken-elite-420-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Elite 420 RGB",
+   "match": {
+    "names": [
+     "kraken elite 420"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/ke420rgb_white_01_hero.png?v=1789307785&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-elite-420-rgb"
+   }
+  },
+  {
+   "id": "nzxt-kraken-plus-240",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Plus 240",
+   "match": {
+    "names": [
+     "kraken plus 240"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/01_Kraken_Plus__non_RGB_240_black_4b4e65dd-e385-4ed0-ba55-668e45561098.png?v=1762528248&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-plus-240"
+   }
+  },
+  {
+   "id": "nzxt-kraken-plus-280",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Plus 280",
+   "match": {
+    "names": [
+     "kraken plus 280"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/01_KrakenPlus_nonRGB_280_black.png?v=1762528248&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-plus-280"
+   }
+  },
+  {
+   "id": "nzxt-kraken-plus-360",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Plus 360",
+   "match": {
+    "names": [
+     "kraken plus 360"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/01_Kraken_Plus__non_RGB_360_black_f4e099ff-56e8-4629-a2ed-98b8edc5082a.png?v=1762528251&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-plus-360"
+   }
+  },
+  {
+   "id": "nzxt-kraken-plus-360-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Plus 360 RGB",
+   "match": {
+    "names": [
+     "kraken plus 360 rgb"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/kraken-plus-360-rgb_white_01_hero.png?v=1789181700&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-plus-360-rgb"
+   }
+  },
+  {
+   "id": "nzxt-kraken-core-240-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Core 240 RGB",
+   "match": {
+    "names": [
+     "kraken core 240"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/kcore240_01_hero.png?v=1789344970&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-core-240-rgb"
+   }
+  },
+  {
+   "id": "nzxt-kraken-core-360-rgb",
+   "kind": "aio",
+   "vendor": "NZXT",
+   "name": "Kraken Core 360 RGB",
+   "match": {
+    "names": [
+     "kraken core 360"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/kcore360_01_hero.png?v=1789344973&width=1024",
+    "source_page": "https://nzxt.com/products/kraken-core-360-rgb"
+   }
+  },
+  {
+   "id": "nzxt-f120-rgb-duo",
+   "kind": "fan",
+   "vendor": "NZXT",
+   "name": "F120 RGB Duo",
+   "match": {
+    "names": [
+     "f120 rgb duo"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/f120-rgb-duo-fan-angled-upward-left-side-view-white.png?v=1762528161&width=1024",
+    "source_page": "https://nzxt.com/products/f120-rgb-duo"
+   }
+  },
+  {
+   "id": "nzxt-f120-rgb-core",
+   "kind": "fan",
+   "vendor": "NZXT",
+   "name": "F120 RGB Core",
+   "match": {
+    "names": [
+     "f120 rgb core"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/f120-rgb-core-fan-angled-upward-left-side-view-white.png?v=1762528161&width=1024",
+    "source_page": "https://nzxt.com/products/f120-core-rgb-1"
+   }
+  },
+  {
+   "id": "nzxt-f140-rgb-core",
+   "kind": "fan",
+   "vendor": "NZXT",
+   "name": "F140 RGB Core",
+   "match": {
+    "names": [
+     "f140 rgb core"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/f140-rgb-core-fan-angled-upward-left-side-view-white.png?v=1762528144&width=1024",
+    "source_page": "https://nzxt.com/products/f140-core-rgb"
+   }
+  },
+  {
+   "id": "nzxt-f120-rgb",
+   "kind": "fan",
+   "vendor": "NZXT",
+   "name": "F120 RGB",
+   "match": {
+    "names": [
+     "nzxt f120 rgb"
+    ]
+   },
+   "image": {
+    "url": "https://nzxt.com/cdn/shop/files/f120-rgb_white_01_hero.png?v=1789305698&width=1024",
+    "source_page": "https://nzxt.com/products/f120-rgb"
+   }
+  },
+  {
+   "id": "thermaltake-th420-v2-ultra-ex",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH420 V2 Ultra EX ARGB Sync",
+   "match": {
+    "names": [
+     "th420 v2 ultra ex"
+    ],
+    "usb": [
+     "264a:233c"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w417-pl14sw-a_01_657d0046-288f-4f00-a1fd-5ce6b1399310.jpg?v=1786613022&width=1024",
+    "source_page": "https://thermaltake.com/products/th420-v2-ultra-ex-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th420-v2-ultra",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH420 V2 Ultra ARGB Sync",
+   "match": {
+    "names": [
+     "th420 v2 ultra"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/w384-pl12sw-a_01_1_52d8d2fd-1e35-4e88-bbc3-2ffaf2f044c0.jpg?v=1786612981&width=1024",
+    "source_page": "https://thermaltake.com/products/th420-ultra-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th420-v2",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH420 V2 ARGB Sync",
+   "match": {
+    "names": [
+     "th420 v2"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/w376-pl14sw-a_01_ae1af6b2-abd6-441b-99c4-cae9721402f8.jpg?v=1786612973&width=1024",
+    "source_page": "https://thermaltake.com/products/th420-v2-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th420",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH420 ARGB Sync",
+   "match": {
+    "names": [
+     "th420 argb"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w367-pl14sw-a_01_1_3bc5ba72-3bfd-4d6e-8112-546b4a6e9c73.jpg?v=1786612954&width=1024",
+    "source_page": "https://thermaltake.com/products/th420-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th360-v2-ultra-ex",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH360 V2 Ultra EX ARGB Sync",
+   "match": {
+    "names": [
+     "th360 v2 ultra ex"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w415-pl12sw-a_01_a7ea36aa-7d91-431a-abab-8c478141f6c6.jpg?v=1786613016&width=1024",
+    "source_page": "https://thermaltake.com/products/th360-v2-ultra-ex-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th280-v2-ultra-ex",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH280 V2 Ultra EX ARGB Sync",
+   "match": {
+    "names": [
+     "th280 v2 ultra ex"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w416-pl14sw-a_01_e225fc56-b428-46c1-a70a-338ecb40d6cf.jpg?v=1786613020&width=1024",
+    "source_page": "https://thermaltake.com/products/th280-v2-ultra-ex-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th240-v2-ultra-ex",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH240 V2 Ultra EX ARGB Sync",
+   "match": {
+    "names": [
+     "th240 v2 ultra ex"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w414-pl12sw-a_01_52ed91a1-38fc-44d3-90d6-2705a802f0a1.jpg?v=1786613015&width=1024",
+    "source_page": "https://thermaltake.com/products/th240-v2-ultra-ex-argb-sync-all-in-one-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-th360-v3-ultra",
+   "kind": "aio",
+   "vendor": "Thermaltake",
+   "name": "TH360 V3 Ultra ARGB Sync",
+   "match": {
+    "names": [
+     "th360 v3 ultra"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/cl-w474-pl12sw-a_01_4f61fcd3-d4a8-488e-b772-da08443a22d3.jpg?v=1786670017&width=1024",
+    "source_page": "https://thermaltake.com/products/th360-v3-ultra-argb-sync-aio-liquid-cooler"
+   }
+  },
+  {
+   "id": "thermaltake-lcd-screen-kit-3-9",
+   "kind": "screen",
+   "vendor": "Thermaltake",
+   "name": "3.9\" LCD Screen Kit",
+   "match": {
+    "names": [
+     "3.9 lcd screen kit"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/ac-073-oo1nan-a1_01_fe996e16-fc1b-4ce8-8435-5987963d5a4d.jpg?v=1785725498&width=1024",
+    "source_page": "https://thermaltake.com/products/3-9-lcd-screen-kit"
+   }
+  },
+  {
+   "id": "thermaltake-lcd-screen-kit-2-1",
+   "kind": "screen",
+   "vendor": "Thermaltake",
+   "name": "2.1\" Circle LCD Screen Kit",
+   "match": {
+    "names": [
+     "2.1 circle lcd screen kit"
+    ]
+   },
+   "image": {
+    "url": "https://thermaltake.com/cdn/shop/files/ac-075-ooonan-a1_01_bb41c945-4bd8-4e69-b0ea-c2ee224d99b4.jpg?v=1785807777&width=1024",
+    "source_page": "https://thermaltake.com/products/2-1-circle-lcd-screen-kit"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-360-rx-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 360 RX LCD",
+   "match": {
+    "names": [
+     "titan 360 rx lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-lcd/Gallery/CW-9061023-WW/CW-9061023-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061023-ww/icue-link-titan-360-rx-lcd-liquid-cpu-cooler-cw-9061023-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-240-rx-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 240 RX LCD",
+   "match": {
+    "names": [
+     "titan 240 rx lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-lcd/Gallery/CW-9061022-WW/CW-9061022-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061022-ww/icue-link-titan-240-rx-lcd-liquid-cpu-cooler-cw-9061022-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-ii-360-rx-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN II 360 RX LCD",
+   "match": {
+    "names": [
+     "titan ii 360 rx lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/base-icue-link-titan-ii-360-rx-lcd-aio-liquid-cpu-cooler/Gallery%20Images/Black/iCUE_LINK_TITAN_II_360_RX_LCD_Black_Artboard01_AA.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061045-ww/icue-link-titan-ii-360-rx-lcd-aio-liquid-cpu-cooler-cw-9061045-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-ii-360-rx-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN II 360 RX RGB",
+   "match": {
+    "names": [
+     "titan ii 360 rx rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/base-titan-II-rx-rgb-config/gallery/titan-II-360-rx-rgb-blk_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061037-ww/icue-link-titan-ii-360-rx-rgb-aio-liquid-cpu-cooler-cw-9061037-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-240-rx-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 240 RX RGB",
+   "match": {
+    "names": [
+     "titan 240 rx rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-rgb/Gallery/CW-9061016-WW/CW-9061016-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061016-ww/icue-link-titan-240-rx-rgb-aio-liquid-cpu-cooler-cw-9061016-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-280-rx-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 280 RX RGB",
+   "match": {
+    "names": [
+     "titan 280 rx rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-rgb/Gallery/CW-9061017-WW/CW-9061017-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061017-ww/icue-link-titan-280-rx-rgb-aio-liquid-cpu-cooler-cw-9061017-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-360-rx-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 360 RX RGB",
+   "match": {
+    "names": [
+     "titan 360 rx rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-rgb/Gallery/CW-9061018-WW/CW-9061018-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061018-ww/icue-link-titan-360-rx-rgb-aio-liquid-cpu-cooler-cw-9061018-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-titan-420-rx-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK TITAN 420 RX RGB",
+   "match": {
+    "names": [
+     "titan 420 rx rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/titan-rx-rgb/Gallery/CW-9061019-WW/iCUE_LINK_TITAN_420_RX_RGB_BLK_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061019-ww/icue-link-titan-420-rx-rgb-aio-liquid-cpu-cooler-cw-9061019-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-h100i-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK H100i RGB",
+   "match": {
+    "names": [
+     "icue link h100i"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/CW-9061001-WW/iCUE_LINK_H100i_RGB_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061001-ww/icue-link-h100i-rgb-aio-liquid-cpu-cooler-cw-9061001-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-h115i-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK H115i RGB",
+   "match": {
+    "names": [
+     "icue link h115i"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/CW-9061002-WW/iCUE_LINK_H115i_RGB_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061002-ww/icue-link-h115i-rgb-aio-liquid-cpu-cooler-cw-9061002-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-h150i-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK H150i RGB",
+   "match": {
+    "names": [
+     "icue link h150i"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/CW-9061003-WW/iCUE_LINK_H150i_RGB_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061003-ww/icue-link-h150i-rgb-aio-liquid-cpu-cooler-cw-9061003-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-h170i-rgb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE LINK H170i RGB",
+   "match": {
+    "names": [
+     "icue link h170i"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/CW-9061004-WW/iCUE_LINK_H170i_RGB_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061004-ww/icue-link-h170i-rgb-aio-liquid-cpu-cooler-cw-9061004-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-lcd-screen-module",
+   "kind": "screen",
+   "vendor": "Corsair",
+   "name": "iCUE LINK LCD Screen Module",
+   "match": {
+    "names": [
+     "icue link lcd screen module",
+     "icue link aio lcd screen module"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/icue-link-lcd-aio-screen-module/CW-9061011/iCUE_LINK_AIO_LCD_SCREEN_MODULE_BLK_01.webp",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061011-ww/icue-link-lcd-screen-module-black-cw-9061011-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-240-rs-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS 240 RS LCD",
+   "match": {
+    "names": [
+     "nautilus 240 rs lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/base-nautilus-rs-lcd-config/gallery/black/240/nautilus_240_rs_lcd_blk_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061031-ww/nautilus-240-rs-lcd-liquid-cpu-cooler-cw-9061031-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-360-rs-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS 360 RS LCD",
+   "match": {
+    "names": [
+     "nautilus 360 rs lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/base-nautilus-rs-lcd-config/gallery/black/360/nautilus_360_rs_lcd_blk_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061033-ww/nautilus-360-rs-lcd-liquid-cpu-cooler-cw-9061033-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-240-rs-argb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS 240 RS ARGB",
+   "match": {
+    "names": [
+     "nautilus 240 rs argb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/nautilus/Gallery/CW-9060092-WW/CW-9060092-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060092-ww/nautilus-240-rs-argb-liquid-cpu-cooler-cw-9060092-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-360-rs-argb",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS 360 RS ARGB",
+   "match": {
+    "names": [
+     "nautilus 360 rs argb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/nautilus/Gallery/CW-9060093-WW/CW-9060093-WW_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060093-ww/nautilus-360-rs-argb-liquid-cpu-cooler-cw-9060093-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-ii-240-rs-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS II 240 RS LCD",
+   "match": {
+    "names": [
+     "nautilus ii 240 rs lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/v1789592586/products/Liquid-Cooling/base-nautilus-II-rs-lcd-config/gallery/black/240/NAUTILUS_II_240_RS_LCD_BLK_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061051-ww/nautilus-ii-240-rs-lcd-liquid-cpu-cooler-cw-9061051-ww"
+   }
+  },
+  {
+   "id": "corsair-nautilus-ii-360-rs-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "NAUTILUS II 360 RS LCD",
+   "match": {
+    "names": [
+     "nautilus ii 360 rs lcd"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/v1789592610/products/Liquid-Cooling/base-nautilus-II-rs-lcd-config/gallery/black/360/NAUTILUS_II_360_RS_LCD_BLK_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061053-ww/nautilus-ii-360-rs-lcd-liquid-cpu-cooler-cw-9061053-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-h100i-elite-lcd",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE H100i ELITE LCD",
+   "match": {
+    "names": [
+     "h100i elite lcd"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Liquid-Cooling/CW-9060061-WW/Gallery/H100i_ELITE_LCD_RENDER_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060061-ww/icue-h100i-elite-lcd-display-liquid-cpu-cooler-cw-9060061-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-h150i-elite-capellix-xt",
+   "kind": "aio",
+   "vendor": "Corsair",
+   "name": "iCUE H150i ELITE CAPELLIX XT",
+   "match": {
+    "names": [
+     "h150i elite capellix xt"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Custom-Cooling/CW-9060070-WW/-base-elite-capellix-xt-cooler-config-Gallery-H150i-ELITE-CAPELLIX-XT-01.webp",
+    "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060070-ww/icue-h150i-elite-capellix-xt-liquid-cpu-cooler"
+   }
+  },
+  {
+   "id": "corsair-icue-link-lx120-rgb",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE LINK LX120 RGB",
+   "match": {
+    "names": [
+     "icue link lx120"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/lx-rgb/gallery/120/xpac/black/LX120_RGB_BLK_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051026-ww/icue-link-lx120-rgb-120mm-pwm-fans-starter-kit-co-9051026-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-lx140-rgb",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE LINK LX140 RGB",
+   "match": {
+    "names": [
+     "icue link lx140"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/lx-rgb/gallery/140/single/black/LX140_RGB_BLK_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051027-ww/icue-link-lx140-rgb-140mm-pwm-single-fan-expansion-co-9051027-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-rx120-rgb",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE LINK RX120 RGB",
+   "match": {
+    "names": [
+     "icue link rx120 rgb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/rx-series/CO-9051018-WW/Gallery/RX120_RGB_BLACK_RENDER_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051018-ww/icue-link-rx120-rgb-120mm-pwm-fan-triple-starter-kit-co-9051018-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-qx120-rgb",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE LINK QX120 RGB",
+   "match": {
+    "names": [
+     "icue link qx120"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/CO-9051002-WW/iCUE_LINK_QX120_RGB_BLACK_TRIPLE_Artboard01_AA.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051002-ww/icue-link-qx120-rgb-120mm-pwm-pc-fans-starter-kit-with-icue-link-system-hub-co-9051002-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-link-rx120-ii",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE LINK RX120 II RGB",
+   "match": {
+    "names": [
+     "icue link rx120 ii"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/base-icue-link-rx-ii/120mm/black/iCUE_LINK_RX120_II_RGB_Black_Artboard01_AA.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051057-ww/icue-link-rx120-ii-rgb-pwm-pc-fan-expansion-co-9051057-ww"
+   }
+  },
+  {
+   "id": "corsair-icue-sp140-rgb-elite",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "iCUE SP140 RGB ELITE",
+   "match": {
+    "names": [
+     "sp140 rgb elite"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/base-sp-elite-config/Gallery/MIC_SP140_RGB_ELITE_DUAL_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050111-ww/icue-sp140-rgb-elite-performance-140mm-pwm-fan-dual-fan-kit-with-lighting-node-core-co-9050111-ww"
+   }
+  },
+  {
+   "id": "corsair-rs120-argb",
+   "kind": "fan",
+   "vendor": "Corsair",
+   "name": "RS120 ARGB",
+   "match": {
+    "names": [
+     "corsair rs120 argb"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Fans/base-rs-argb-series-config/gallery/120/single/black/RS120_ARGB_BLK_SNGL_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050180-ww/rs120-argb-120mm-pwm-fan-co-9050180-ww"
+   }
+  },
+  {
+   "id": "corsair-dominator-titanium-rgb",
+   "kind": "ram",
+   "vendor": "Corsair",
+   "name": "DOMINATOR TITANIUM RGB DDR5",
+   "match": {
+    "names": [
+     "dominator titanium"
+    ]
+   },
+   "image": {
+    "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_800/products/Memory/Dominator%20Titanium/enhanced%20images/black/2UP/DOMINATOR_TITANIUM_RGB_DDR5_BLACK_2UP_Artboard01_AA.png",
+    "source_page": "https://www.corsair.com/us/en/p/memory/cmp48gx5m2x7200c36/dominator-titanium-rgb-2x24gb-ddr5-dram-7200mt-s-cl36-intel-xmp-memory-kit-cmp48gx5m2x7200c36"
+   }
+  },
+  {
+   "id": "corsair-dominator-platinum-rgb-ddr5",
+   "kind": "ram",
+   "vendor": "Corsair",
+   "name": "DOMINATOR PLATINUM RGB DDR5",
+   "match": {
+    "names": [
+     "dominator platinum rgb"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Memory/CMT32GX5M2X6400C38/Gallery/DOMINATOR_RGB_PLATINUM_BLACK_DDR5_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/memory/cmt32gx5m2x6600c32/dominator-platinum-rgb-32gb-2x16gb-ddr5-dram-6600mhz-c32-memory-kit-black-cmt32gx5m2x6600c32"
+   }
+  },
+  {
+   "id": "corsair-vengeance-rgb-ddr5",
+   "kind": "ram",
+   "vendor": "Corsair",
+   "name": "VENGEANCE RGB DDR5",
+   "match": {
+    "names": [
+     "vengeance rgb ddr5"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Memory/vengeance-rgb-ddr5-blk-config/Gallery/2up/VENGEANCE_RGB_DDR5_BLK_01.webp",
+    "source_page": "https://www.corsair.com/us/en/p/memory/cmh32gx5m2b6000c30/vengeance-rgb-32gb-2x16gb-ddr5-dram-6000mt-s-c30-memory-kit-black-cmh32gx5m2b6000c30"
+   }
+  }
+ ]
+}
