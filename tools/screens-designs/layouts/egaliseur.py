@@ -8,7 +8,7 @@ CONTENTS = ["quad", "disques", "refroidissement", "carte-mere"]
 
 def build(p, fmt, content):
     c = Canvas(p, fmt)
-    ms = CONTENT[content][1][:6]
+    ms = CONTENT[content][1][:4 if fmt.ratio < 1.7 else 6]
     x, y, w, h = fmt.zone
     n = len(ms)
     th = h * 0.15

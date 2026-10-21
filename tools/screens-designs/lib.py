@@ -28,6 +28,11 @@ def _font(name, bold):
     return _cache[k]
 
 
+def min_text(fmt):
+    """Taille de texte minimale lisible : 15 unites, ou 4 % du petit cote sur les grands canevas."""
+    return max(MIN_TEXT, round(0.04 * fmt.short, 1))
+
+
 def measure(text, font, bold, size):
     """Largeur du texte a la taille `size` (unites du canevas), avec 3 % de marge."""
     return _font(font, bold).getlength(text) * size / 100.0 * 1.03
@@ -139,7 +144,7 @@ class Canvas:
                 d["style"]["size"] = s
                 ink[:] = self._ink_rect(d, txt, font, bold, align, s, ink[0])
         for ink in self.out.inks:
-            if ink[5] < MIN_TEXT:
+            if ink[5] < min_text(self.f):
                 self.out.flags.append(f"texte trop petit ({ink[5]}) : {ink[0]}")
         return self.out
 

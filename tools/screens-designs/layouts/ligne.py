@@ -1,6 +1,6 @@
 """Ligne unique : mesures en ligne separees par des puces, barre de charge pleine largeur (formats tres larges)."""
 from content import CONTENT
-from lib import Canvas, measure
+from lib import Canvas, measure, min_text
 
 NAME, TITLE = "ligne", "Ligne unique"
 CONTENTS = ["quad", "carte-mere", "refroidissement"]
@@ -23,7 +23,7 @@ def build(p, fmt, content):
                 break
             vs *= 0.96
             gap = vs * 0.9
-        if ls >= 15:
+        if ls >= min_text(fmt):
             break
     cx = x + (w - total) / 2
     cy = y + h * 0.5 - vs * 0.9
