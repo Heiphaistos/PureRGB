@@ -98,9 +98,12 @@ static void Collect(IHardware hw, List<object> sensors, Dictionary<string, ISens
     foreach (var s in hw.Sensors)
     {
         if (s.Value is null) continue;
-        // Seuls les types utiles aux courbes, à l'affichage et au pilotage.
+        // Seuls les types utiles aux courbes, à l'affichage et au pilotage
+        // (Clock/Voltage/Data/SmallData : fréquences, tensions, VRAM des écrans).
         if (s.SensorType is not (SensorType.Temperature or SensorType.Fan
-            or SensorType.Load or SensorType.Control or SensorType.Power)) continue;
+            or SensorType.Load or SensorType.Control or SensorType.Power
+            or SensorType.Clock or SensorType.Voltage or SensorType.Data
+            or SensorType.SmallData)) continue;
         var id = s.Identifier.ToString();
         index[id] = s;
         sensors.Add(new

@@ -2,17 +2,19 @@
 //! (`cpu.temp`, `gpu.load`, `ram.used_pct`, …) aux dernières valeurs lues sur
 //! `SensorHub` (sensord) et `sysinfo`, et garde un historique de ~10 min.
 //!
-//! Index : `ssd.<n>` et `fan.<n>` sont numérotés à partir de **1**, dans l'ordre
-//! du relevé sensord. `net.*` en Mo/s, `uptime` en secondes, `ram.*_gb` en Gio,
-//! `*.clock` en MHz. Les clés `time` / `date` ne passent pas par ici (formatées
-//! au rendu).
+//! Clés : voir `sensor_map.rs` (capteurs) et `read_system` (RAM, réseau, disques,
+//! repli CPU). Index `ssd.N`, `fan.N.rpm`, `mobo.fan.N` à partir de **1**, dans
+//! l'ordre du relevé sensord. `disk.<LETTRE>.*` vient de sysinfo (point de montage).
+//! `net.*` et `disk.read/write` en Mo/s, `uptime` en secondes, `ram.*_gb` en Gio,
+//! `*.clock` en MHz. `time` / `date` ne passent pas par ici (formatées au rendu).
 
-use crate::sensors::{Sensor, SensorHub};
+use super::sensor_map::{map_sensors, SensorsReport, UsedSensor};
+use crate::sensors::SensorHub;
 use parking_lot::Mutex;
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::time::Instant;
-use sysinfo::{Disks, Networks, System};
+use sysinfo::{DiskRefreshKind, Disks, Networks, System};
 
 const HISTORY_SECS: u64 = 600;
 const HISTORY_MAX: usize = 1200;
@@ -21,6 +23,7 @@ const GIB: f64 = 1024.0 * 1024.0 * 1024.0;
 #[derive(Default)]
 struct Inner {
     values: HashMap<String, f64>,
+    used: HashMap<String, UsedSensor>,
     history: HashMap<String, VecDeque<(Instant, f32)>>,
 }
 
@@ -59,17 +62,16 @@ impl ValueStore {
 
     /// Relit capteurs + système et alimente l'historique. À appeler ~1 fois/s.
     pub fn tick(&self) {
-        let mut vals = HashMap::new();
-        if let Some(hub) = &self.hub {
-            map_sensors(&hub.snapshot(), &mut vals);
-        }
-        self.read_system(&mut vals);
+        let mut mapped = self.hub.as_ref().map(|h| map_sensors(&h.snapshot())).unwrap_or_default();
+        self.read_system(&mut mapped.values);
+        let (vals, used) = (mapped.values, mapped.used);
         let now = Instant::now();
         let mut inner = self.inner.lock();
         for (k, v) in &vals {
             push_history(inner.history.entry(k.clone()).or_default(), now, *v as f32);
         }
         inner.values = vals;
+        inner.used = used;
     }
 
     fn read_system(&self, vals: &mut HashMap<String, f64>) {
@@ -80,9 +82,21 @@ impl ValueStore {
             let used = s.system.used_memory() as f64;
             vals.insert("ram.used_pct".into(), used / total * 100.0);
             vals.insert("ram.used_gb".into(), used / GIB);
+            vals.insert("ram.free_gb".into(), s.system.available_memory() as f64 / GIB);
             vals.insert("ram.total_gb".into(), total / GIB);
         }
         vals.insert("uptime".into(), System::uptime() as f64);
+
+        // Repli sans sensord (ou sans capteur CPU lisible) : usage et fréquence via sysinfo.
+        s.system.refresh_cpu_usage();
+        s.system.refresh_cpu_frequency();
+        if s.ticks > 0 && !vals.contains_key("cpu.load") {
+            vals.insert("cpu.load".into(), s.system.global_cpu_usage() as f64);
+        }
+        let freqs: Vec<f64> = s.system.cpus().iter().map(|c| c.frequency() as f64).filter(|f| *f > 0.0).collect();
+        if !freqs.is_empty() && !vals.contains_key("cpu.clock") {
+            vals.insert("cpu.clock".into(), freqs.iter().sum::<f64>() / freqs.len() as f64);
+        }
 
         let dt = s.last.elapsed().as_secs_f64().max(0.001);
         s.last = Instant::now();
@@ -95,17 +109,40 @@ impl ValueStore {
         vals.insert("net.up".into(), up as f64 / dt / 1e6);
         vals.insert("net.down".into(), down as f64 / dt / 1e6);
 
-        // Liste des disques : coûteuse, rafraîchie toutes les 30 lectures.
-        s.ticks = s.ticks.wrapping_add(1);
-        if s.ticks % 30 == 1 {
+        // Espace disque : rafraîchi (liste comprise) toutes les 30 lectures ; débit à chaque lecture.
+        if s.ticks % 30 == 0 {
             s.disks.refresh(true);
+        } else {
+            s.disks.refresh_specifics(false, DiskRefreshKind::nothing().with_io_usage());
         }
-        for (i, d) in s.disks.list().iter().enumerate() {
+        s.ticks = s.ticks.wrapping_add(1);
+        let (mut read, mut written) = (0u64, 0u64);
+        for d in s.disks.list() {
+            let usage = d.usage();
+            read += usage.read_bytes;
+            written += usage.written_bytes;
             let t = d.total_space() as f64;
+            let Some(letter) = drive_letter(&d.mount_point().to_string_lossy()) else { continue };
             if t > 0.0 {
-                let pct = (t - d.available_space() as f64) / t * 100.0;
-                vals.insert(format!("disk.{}.used_pct", i + 1), pct);
+                let free = d.available_space() as f64;
+                vals.insert(format!("disk.{letter}.used_pct"), (t - free) / t * 100.0);
+                vals.insert(format!("disk.{letter}.free_gb"), free / GIB);
+                vals.insert(format!("disk.{letter}.total_gb"), t / GIB);
             }
+        }
+        vals.insert("disk.read".into(), read as f64 / dt / 1e6);
+        vals.insert("disk.write".into(), written as f64 / dt / 1e6);
+    }
+
+    /// Diagnostic pour l'interface : tous les capteurs bruts + clé -> capteur utilisé.
+    pub fn sensors_report(&self) -> SensorsReport {
+        let used = self.inner.lock().used.clone();
+        match &self.hub {
+            Some(h) => {
+                let d = h.diag();
+                SensorsReport { sensord_running: d.running, sensor_count: d.sensor_count, exe_path: d.exe_path, sensors: h.snapshot(), used }
+            }
+            None => SensorsReport { sensord_running: false, sensor_count: 0, exe_path: None, sensors: Vec::new(), used },
         }
     }
 
@@ -142,6 +179,13 @@ impl ValueStore {
     }
 }
 
+/// `C:\` -> `C` (point de montage Windows ; les autres formes sont ignorées).
+fn drive_letter(mount: &str) -> Option<char> {
+    let mut c = mount.chars();
+    let l = c.next().filter(char::is_ascii_alphabetic)?;
+    (c.next() == Some(':')).then(|| l.to_ascii_uppercase())
+}
+
 fn push_history(h: &mut VecDeque<(Instant, f32)>, now: Instant, v: f32) {
     h.push_back((now, v));
     while h.len() > HISTORY_MAX || h.front().is_some_and(|(t, _)| now.duration_since(*t).as_secs() > HISTORY_SECS) {
@@ -149,197 +193,9 @@ fn push_history(h: &mut VecDeque<(Instant, f32)>, now: Instant, v: f32) {
     }
 }
 
-#[derive(PartialEq, Clone, Copy)]
-enum Class {
-    Cpu,
-    Gpu,
-    Storage,
-    Other,
-}
-
-/// Classe un capteur par l'id LHM (`/intelcpu/0/…`, `/gpu-nvidia/0/…`, `/nvme/0/…`)
-/// puis, à défaut, par le nom du matériel.
-fn classify(s: &Sensor) -> Class {
-    let id = s.id.to_lowercase();
-    let hw = s.hardware.to_lowercase();
-    let has = |words: &[&str]| words.iter().any(|w| id.contains(w) || hw.contains(w));
-    if has(&["/gpu", "nvidia", "geforce", "radeon", "intel arc"]) {
-        Class::Gpu
-    } else if has(&["/intelcpu", "/amdcpu", "ryzen", "intel core", "xeon", "threadripper", "cpu"]) {
-        Class::Cpu
-    } else if has(&["/nvme", "/hdd", "/ssd", "ssd", "nvme", "hdd"]) {
-        Class::Storage
-    } else {
-        Class::Other
-    }
-}
-
-fn first<'a>(list: &[&'a Sensor], kind: &str, names: &[&str]) -> Option<&'a Sensor> {
-    names.iter().find_map(|n| {
-        list.iter().copied().find(|s| s.kind.eq_ignore_ascii_case(kind) && s.name.eq_ignore_ascii_case(n))
-    })
-}
-
-fn put(out: &mut HashMap<String, f64>, key: &str, s: Option<&Sensor>) {
-    if let Some(s) = s.filter(|s| s.value.is_finite()) {
-        out.insert(key.to_string(), s.value);
-    }
-}
-
-fn of_kind<'a>(list: &[&'a Sensor], kind: &str) -> Vec<&'a Sensor> {
-    list.iter().copied().filter(|s| s.kind.eq_ignore_ascii_case(kind)).collect()
-}
-
-fn avg_clock(list: &[&Sensor]) -> Option<f64> {
-    let v: Vec<f64> = of_kind(list, "Clock").iter().filter(|s| s.name.contains('#')).map(|s| s.value).collect();
-    (!v.is_empty()).then(|| v.iter().sum::<f64>() / v.len() as f64)
-}
-
-/// Mapping capteurs sensord → clés stables.
-fn map_sensors(all: &[Sensor], out: &mut HashMap<String, f64>) {
-    for s in all.iter().filter(|s| s.value.is_finite()) {
-        out.insert(format!("sensor:{}", s.id), s.value);
-    }
-    let by = |c: Class| -> Vec<&Sensor> { all.iter().filter(|s| classify(s) == c).collect() };
-    let (cpu, gpu, sto) = (by(Class::Cpu), by(Class::Gpu), by(Class::Storage));
-
-    let cpu_temp = first(
-        &cpu,
-        "Temperature",
-        &["CPU Package", "Core Max", "CPU (Tctl/Tdie)", "Core (Tctl/Tdie)", "Tctl/Tdie", "Tdie", "Tctl"],
-    )
-    .map(|s| s.value)
-    .or_else(|| of_kind(&cpu, "Temperature").iter().filter(|s| s.name.starts_with("Core")).map(|s| s.value).reduce(f64::max));
-    if let Some(v) = cpu_temp {
-        out.insert("cpu.temp".into(), v);
-    }
-    put(out, "cpu.load", first(&cpu, "Load", &["CPU Total"]));
-    put(out, "cpu.power", first(&cpu, "Power", &["CPU Package", "Package"]));
-    if let Some(v) = first(&cpu, "Clock", &["Cores (Average)"]).map(|s| s.value).or_else(|| avg_clock(&cpu)) {
-        out.insert("cpu.clock".into(), v);
-    }
-
-    put(out, "gpu.temp", first(&gpu, "Temperature", &["GPU Core"]).or_else(|| of_kind(&gpu, "Temperature").first().copied()));
-    put(out, "gpu.load", first(&gpu, "Load", &["GPU Core", "D3D 3D"]));
-    put(out, "gpu.clock", first(&gpu, "Clock", &["GPU Core"]));
-    put(
-        out,
-        "gpu.power",
-        first(&gpu, "Power", &["GPU Package", "GPU Power", "GPU Total Board Power"]).or_else(|| of_kind(&gpu, "Power").first().copied()),
-    );
-    put(out, "gpu.fan", of_kind(&gpu, "Fan").first().copied());
-    let vram = first(&gpu, "Load", &["GPU Memory"]).map(|s| s.value).or_else(|| {
-        let find = |names: &[&str]| ["SmallData", "Data"].iter().find_map(|k| first(&gpu, k, names));
-        let used = find(&["GPU Memory Used", "D3D Dedicated Memory Used"])?;
-        let total = find(&["GPU Memory Total", "D3D Dedicated Memory Total"])?;
-        (total.value > 0.0).then(|| used.value / total.value * 100.0)
-    });
-    if let Some(v) = vram {
-        out.insert("gpu.vram_used_pct".into(), v);
-    }
-
-    // Disques : un indice par matériel distinct, dans l'ordre du relevé.
-    let mut order: Vec<&str> = Vec::new();
-    for s in &sto {
-        if !order.contains(&s.hardware.as_str()) {
-            order.push(&s.hardware);
-        }
-    }
-    for (i, hw) in order.iter().enumerate() {
-        let mine: Vec<&Sensor> = sto.iter().copied().filter(|s| s.hardware == *hw).collect();
-        let n = i + 1;
-        let temp = first(&mine, "Temperature", &["Temperature", "Composite Temperature"])
-            .or_else(|| of_kind(&mine, "Temperature").first().copied());
-        put(out, &format!("ssd.{n}.temp"), temp);
-        put(out, &format!("ssd.{n}.used_pct"), first(&mine, "Load", &["Used Space"]));
-    }
-
-    let low = |s: &Sensor| s.name.to_lowercase();
-    let liquid = all
-        .iter()
-        .find(|s| s.kind.eq_ignore_ascii_case("Temperature") && ["liquid", "coolant", "water"].iter().any(|w| low(s).contains(w)));
-    put(out, "liquid.temp", liquid);
-    let fans: Vec<&Sensor> = all.iter().filter(|s| s.kind.eq_ignore_ascii_case("Fan")).collect();
-    put(out, "pump.rpm", fans.iter().copied().find(|s| low(s).contains("pump")));
-    put(out, "cpu.fan", fans.iter().copied().find(|s| classify(s) == Class::Cpu || low(s).contains("cpu")));
-    for (i, f) in fans.iter().filter(|s| !low(s).contains("pump")).enumerate() {
-        put(out, &format!("fan.{}.rpm", i + 1), Some(f));
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn s(id: &str, hardware: &str, name: &str, kind: &str, value: f64) -> Sensor {
-        Sensor { id: id.into(), hardware: hardware.into(), name: name.into(), kind: kind.into(), value, controllable: false }
-    }
-
-    fn lhm() -> Vec<Sensor> {
-        let cpu = "Intel Core i7-12700K";
-        let gpu = "NVIDIA GeForce RTX 4070";
-        vec![
-            s("/intelcpu/0/temperature/0", cpu, "Core Max", "Temperature", 61.0),
-            s("/intelcpu/0/temperature/1", cpu, "CPU Package", "Temperature", 58.0),
-            s("/intelcpu/0/load/0", cpu, "CPU Total", "Load", 23.5),
-            s("/intelcpu/0/power/0", cpu, "CPU Package", "Power", 45.2),
-            s("/intelcpu/0/clock/1", cpu, "CPU Core #1", "Clock", 4800.0),
-            s("/intelcpu/0/clock/2", cpu, "CPU Core #2", "Clock", 5000.0),
-            s("/gpu-nvidia/0/temperature/0", gpu, "GPU Core", "Temperature", 55.0),
-            s("/gpu-nvidia/0/load/0", gpu, "GPU Core", "Load", 77.0),
-            s("/gpu-nvidia/0/load/3", gpu, "D3D 3D", "Load", 12.0),
-            s("/gpu-nvidia/0/load/4", gpu, "GPU Memory", "Load", 41.0),
-            s("/gpu-nvidia/0/clock/0", gpu, "GPU Core", "Clock", 2475.0),
-            s("/gpu-nvidia/0/power/0", gpu, "GPU Package", "Power", 120.0),
-            s("/gpu-nvidia/0/fan/1", gpu, "GPU Fan", "Fan", 1450.0),
-            s("/nvme/0/temperature/0", "Samsung SSD 980 PRO", "Composite Temperature", "Temperature", 39.0),
-            s("/nvme/0/load/0", "Samsung SSD 980 PRO", "Used Space", "Load", 63.0),
-            s("/nvme/1/temperature/0", "WD_BLACK SN850X", "Temperature", "Temperature", 44.0),
-            s("/lpc/it8688e/0/fan/0", "ASUS PRIME Z690", "CPU Fan", "Fan", 1200.0),
-            s("/lpc/it8688e/0/fan/1", "ASUS PRIME Z690", "Chassis Fan #1", "Fan", 800.0),
-            s("/lpc/it8688e/0/fan/2", "ASUS PRIME Z690", "AIO Pump", "Fan", 2700.0),
-            s("/aio/0/temperature/0", "AIO", "Liquid Temperature", "Temperature", 31.0),
-        ]
-    }
-
-    #[test]
-    fn maps_lhm_sensors() {
-        let mut m = HashMap::new();
-        map_sensors(&lhm(), &mut m);
-        let g = |k: &str| m.get(k).copied();
-        assert_eq!(g("cpu.temp"), Some(58.0)); // CPU Package prioritaire sur Core Max
-        assert_eq!(g("cpu.load"), Some(23.5));
-        assert_eq!(g("cpu.power"), Some(45.2));
-        assert_eq!(g("cpu.clock"), Some(4900.0));
-        assert_eq!(g("cpu.fan"), Some(1200.0));
-        assert_eq!(g("gpu.temp"), Some(55.0));
-        assert_eq!(g("gpu.load"), Some(77.0)); // GPU Core, pas D3D 3D
-        assert_eq!(g("gpu.clock"), Some(2475.0));
-        assert_eq!(g("gpu.power"), Some(120.0));
-        assert_eq!(g("gpu.vram_used_pct"), Some(41.0));
-        assert_eq!(g("gpu.fan"), Some(1450.0));
-        assert_eq!(g("ssd.1.temp"), Some(39.0));
-        assert_eq!(g("ssd.1.used_pct"), Some(63.0));
-        assert_eq!(g("ssd.2.temp"), Some(44.0));
-        assert_eq!(g("liquid.temp"), Some(31.0));
-        assert_eq!(g("pump.rpm"), Some(2700.0));
-        assert_eq!(g("fan.1.rpm"), Some(1450.0));
-        assert_eq!(g("sensor:/gpu-nvidia/0/fan/1"), Some(1450.0));
-        assert_eq!(g("fan.5.rpm"), None);
-    }
-
-    #[test]
-    fn cpu_temp_falls_back_to_hottest_core() {
-        let hw = "AMD Ryzen 7 5800X";
-        let v = vec![
-            s("/amdcpu/0/temperature/2", hw, "Core #1", "Temperature", 50.0),
-            s("/amdcpu/0/temperature/3", hw, "Core #2", "Temperature", 64.0),
-        ];
-        let mut m = HashMap::new();
-        map_sensors(&v, &mut m);
-        assert_eq!(m.get("cpu.temp"), Some(&64.0));
-        assert!(!m.contains_key("gpu.temp"));
-    }
 
     #[test]
     fn history_accumulates_and_is_bounded() {
@@ -357,10 +213,26 @@ mod tests {
     }
 
     #[test]
+    fn drive_letters() {
+        assert_eq!(drive_letter("C:\\"), Some('C'));
+        assert_eq!(drive_letter(r"d:\Mount"), Some('D'));
+        assert_eq!(drive_letter("/mnt/data"), None);
+        assert_eq!(drive_letter(""), None);
+    }
+
+    #[test]
     fn tick_fills_system_keys() {
         let st = ValueStore::empty();
         st.tick();
         assert!(st.get("ram.total_gb").is_some_and(|v| v > 0.0));
         assert!(st.get("uptime").is_some());
+        assert!(st.get("ram.free_gb").is_some());
+        assert!(st.get("disk.read").is_some());
+        // Au moins un disque par lettre (Windows) avec les trois clés.
+        let c = st.snapshot().keys().find_map(|k| k.strip_prefix("disk.")?.strip_suffix(".used_pct").map(String::from));
+        if let Some(l) = c {
+            assert!(st.get(&format!("disk.{l}.free_gb")).is_some() && st.get(&format!("disk.{l}.total_gb")).is_some());
+        }
+        assert!(st.sensors_report().sensors.is_empty());
     }
 }

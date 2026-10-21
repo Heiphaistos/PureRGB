@@ -5,6 +5,7 @@ use super::driver::ScreenInfo;
 use super::layout::Layout;
 use super::manager::{ScreenManager, ScreenOptions, ScreenState};
 use super::media::MediaItem;
+use super::sensor_map::SensorsReport;
 use super::render;
 use std::collections::HashMap;
 use std::path::Path;
@@ -72,6 +73,12 @@ pub fn screen_preview(m: Mgr, layout: Layout, width: u32, height: u32, t_ms: u64
 #[tauri::command]
 pub fn screen_values(m: Mgr) -> HashMap<String, f64> {
     m.store.snapshot()
+}
+
+/// Tous les capteurs bruts + état de sensord + clé -> capteur retenu (panneau « Capteurs détectés »).
+#[tauri::command]
+pub fn screen_sensors(m: Mgr) -> SensorsReport {
+    m.store.sensors_report()
 }
 
 #[tauri::command]
