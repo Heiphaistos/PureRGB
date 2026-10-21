@@ -1,0 +1,5 @@
+{"version":1,"name":"Grand chiffre · Liquide · Menthe","width":480,"height":480,"background":{"kind":"gradient","from":"#effcf6","to":"#d9f5ea","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":403.2,"h":48.4,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":42.1,"color":"#0e906b","align":"center","bold":true}},
+{"id":"v1","x":38.4,"y":98.9,"w":403.2,"h":201.6,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":97.6,"color":"#12382c","align":"center","bold":true}},
+{"id":"b1","x":98.9,"y":393.2,"w":282.2,"h":20.2,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":10.1,"track":"#c7e8da","colors":[[0,"#22b27a"],[0.55,"#e1910a"],[1,"#dc3b4a"]]}
+]}

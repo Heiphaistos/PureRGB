@@ -1,0 +1,18 @@
+{"version":1,"name":"Ligne unique · Refroidissement · Plasma","width":1920,"height":462,"background":{"kind":"gradient","from":"#0c0320","to":"#3a0f6a","angle":45},"widgets":[
+{"id":"dot1","x":38.4,"y":205.3,"w":14.7,"h":14.7,"type":"rect","fill":"#c084fc","stroke":null,"stroke_width":0,"radius":7.4},
+{"id":"l1","x":61.3,"y":189.6,"w":74.6,"h":52.9,"type":"text","text":"LIQUIDE","style":{"font":"Rajdhani","size":23,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v1","x":149.7,"y":189.6,"w":145.4,"h":52.9,"type":"value","source":"liquid.temp","format":"{:.1}˚","style":{"font":"Rajdhani","size":46,"color":"#f7f0ff","align":"left","bold":true}},
+{"id":"dot2","x":336.4,"y":205.3,"w":14.7,"h":14.7,"type":"rect","fill":"#f0abfc","stroke":null,"stroke_width":0,"radius":7.4},
+{"id":"l2","x":359.4,"y":189.6,"w":66.8,"h":52.9,"type":"text","text":"POMPE","style":{"font":"Rajdhani","size":23,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v2","x":440,"y":189.6,"w":237.7,"h":52.9,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":46,"color":"#f7f0ff","align":"left","bold":true}},
+{"id":"dot3","x":719.1,"y":205.3,"w":14.7,"h":14.7,"type":"rect","fill":"#67e8f9","stroke":null,"stroke_width":0,"radius":7.4},
+{"id":"l3","x":742,"y":189.6,"w":65.8,"h":52.9,"type":"text","text":"VENT. 1","style":{"font":"Rajdhani","size":23,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v3","x":821.7,"y":189.6,"w":237.7,"h":52.9,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":46,"color":"#f7f0ff","align":"left","bold":true}},
+{"id":"dot4","x":1100.7,"y":205.3,"w":14.7,"h":14.7,"type":"rect","fill":"#c084fc","stroke":null,"stroke_width":0,"radius":7.4},
+{"id":"l4","x":1123.7,"y":189.6,"w":93.8,"h":52.9,"type":"text","text":"VENTIRAD","style":{"font":"Rajdhani","size":23,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v4","x":1231.3,"y":189.6,"w":237.7,"h":52.9,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":46,"color":"#f7f0ff","align":"left","bold":true}},
+{"id":"dot5","x":1510.3,"y":205.3,"w":14.7,"h":14.7,"type":"rect","fill":"#f0abfc","stroke":null,"stroke_width":0,"radius":7.4},
+{"id":"l5","x":1533.3,"y":189.6,"w":96.8,"h":52.9,"type":"text","text":"VENT. GPU","style":{"font":"Rajdhani","size":23,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v5","x":1643.9,"y":189.6,"w":237.7,"h":52.9,"type":"value","source":"gpu.fan","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":46,"color":"#f7f0ff","align":"left","bold":true}},
+{"id":"b1","x":37,"y":386.2,"w":1846,"h":38.8,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":19.4,"track":"#4a1d80","colors":[[0,"#67e8f9"],[0.55,"#fde047"],[1,"#fb7185"]]}
+]}

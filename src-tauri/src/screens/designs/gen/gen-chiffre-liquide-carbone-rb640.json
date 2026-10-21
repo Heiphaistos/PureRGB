@@ -1,0 +1,9 @@
+{"version":1,"name":"Grand chiffre · Liquide · Carbone","width":640,"height":172,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"gl1","x":358,"y":13.8,"w":144.4,"h":144.4,"opacity":0.07,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":72.2},
+{"id":"gl2","x":376.1,"y":31.8,"w":108.3,"h":108.3,"opacity":0.1,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":54.2},
+{"id":"gl3","x":394.1,"y":49.9,"w":72.2,"h":72.2,"opacity":0.13,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":36.1},
+{"id":"gl4","x":412.2,"y":68,"w":36.1,"h":36.1,"opacity":0.16,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":18.1},
+{"id":"l1","x":13.8,"y":39.8,"w":183.7,"h":28.9,"type":"text","text":"LIQUIDE","style":{"font":"Rajdhani","size":25.1,"color":"#ff2d55","align":"left","bold":true}},
+{"id":"b1","x":13.8,"y":114.9,"w":183.7,"h":10.1,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":5.1,"track":"#2c2f35","colors":[[0,"#7dd3a8"],[0.55,"#f59e0b"],[1,"#ff2d55"]]},
+{"id":"v1","x":222,"y":13.8,"w":404.2,"h":144.4,"type":"value","source":"liquid.temp","format":"{:.1}˚","style":{"font":"Rajdhani","size":125.6,"color":"#e8eaed","align":"right","bold":true}}
+]}

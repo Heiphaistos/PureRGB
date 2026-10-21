@@ -1,0 +1,18 @@
+{"version":1,"name":"Cartes à courbes · Réseau et E/S · Sakura","width":854,"height":480,"background":{"kind":"gradient","from":"#fff5f7","to":"#ffe1ea","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":380.2,"h":193.2,"type":"rect","fill":"#ffffffc0","stroke":"#4a273324","stroke_width":1,"radius":27},
+{"id":"l1","x":55.8,"y":55.8,"w":345.4,"h":25.3,"type":"text","text":"DESCENTE","style":{"font":"Inter","size":22,"color":"#8a5566","align":"left","bold":true}},
+{"id":"v1","x":55.8,"y":82.7,"w":345.4,"h":42.8,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Inter","size":37.2,"color":"#4a2733","align":"left","bold":true}},
+{"id":"g1","x":55.8,"y":135,"w":345.4,"h":79.2,"type":"graph","source":"net.down","min":0,"max":50,"seconds":60,"line":"#d6336c","fill":"#d6336c40","thickness":4.752719999999999},
+{"id":"c2","x":435.4,"y":38.4,"w":380.2,"h":193.2,"type":"rect","fill":"#ffffffc0","stroke":"#4a273324","stroke_width":1,"radius":27},
+{"id":"l2","x":452.8,"y":55.8,"w":345.4,"h":25.3,"type":"text","text":"MONTÉE","style":{"font":"Inter","size":22,"color":"#8a5566","align":"left","bold":true}},
+{"id":"v2","x":452.8,"y":82.7,"w":345.4,"h":42.8,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Inter","size":37.2,"color":"#4a2733","align":"left","bold":true}},
+{"id":"g2","x":452.8,"y":135,"w":345.4,"h":79.2,"type":"graph","source":"net.up","min":0,"max":20,"seconds":60,"line":"#cb567e","fill":"#cb567e40","thickness":4.752719999999999},
+{"id":"c3","x":38.4,"y":248.4,"w":380.2,"h":193.2,"type":"rect","fill":"#ffffffc0","stroke":"#4a273324","stroke_width":1,"radius":27},
+{"id":"l3","x":55.8,"y":265.8,"w":345.4,"h":25.3,"type":"text","text":"LECTURE","style":{"font":"Inter","size":22,"color":"#8a5566","align":"left","bold":true}},
+{"id":"v3","x":55.8,"y":292.7,"w":345.4,"h":42.8,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Inter","size":37.2,"color":"#4a2733","align":"left","bold":true}},
+{"id":"g3","x":55.8,"y":345,"w":345.4,"h":79.2,"type":"graph","source":"disk.read","min":0,"max":3000,"seconds":60,"line":"#d5520b","fill":"#d5520b40","thickness":4.752719999999999},
+{"id":"c4","x":435.4,"y":248.4,"w":380.2,"h":193.2,"type":"rect","fill":"#ffffffc0","stroke":"#4a273324","stroke_width":1,"radius":27},
+{"id":"l4","x":452.8,"y":265.8,"w":345.4,"h":25.3,"type":"text","text":"ÉCRITURE","style":{"font":"Inter","size":22,"color":"#8a5566","align":"left","bold":true}},
+{"id":"v4","x":452.8,"y":292.7,"w":345.4,"h":42.8,"type":"value","source":"disk.write","format":"{:.0} Mo/s","style":{"font":"Inter","size":37.2,"color":"#4a2733","align":"left","bold":true}},
+{"id":"g4","x":452.8,"y":345,"w":345.4,"h":79.2,"type":"graph","source":"disk.write","min":0,"max":3000,"seconds":60,"line":"#d6336c","fill":"#d6336c40","thickness":4.752719999999999}
+]}

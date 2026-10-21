@@ -1,0 +1,17 @@
+{"version":1,"name":"Colonnes séparées · Refroidissement · Jungle","width":1280,"height":480,"background":{"kind":"gradient","from":"#06140a","to":"#14340f","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":52,"color":"#8bd450","align":"left","bold":true}},
+{"id":"v1","x":38.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":46.5,"color":"#efffe6","align":"left","bold":true}},
+{"id":"b1","x":38.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":12.1,"track":"#204a18","colors":[[0,"#8bd450"],[0.55,"#f2c94c"],[1,"#f2564a"]]},
+{"id":"sep1","x":331,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#efffe624","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":346.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"POMPE","style":{"font":"Inter","size":52,"color":"#f2c94c","align":"left","bold":true}},
+{"id":"v2","x":346.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":46.5,"color":"#efffe6","align":"left","bold":true}},
+{"id":"b2","x":346.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"pump.rpm","min":0,"max":4000,"vertical":false,"radius":12.1,"track":"#204a18","colors":[[0,"#f2c94c"],[1,"#4ad0a8"]]},
+{"id":"sep2","x":639,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#efffe624","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":654.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"VENT. 1","style":{"font":"Inter","size":52,"color":"#4ad0a8","align":"left","bold":true}},
+{"id":"v3","x":654.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":46.5,"color":"#efffe6","align":"left","bold":true}},
+{"id":"b3","x":654.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"fan.1.rpm","min":0,"max":2500,"vertical":false,"radius":12.1,"track":"#204a18","colors":[[0,"#4ad0a8"],[1,"#8bd450"]]},
+{"id":"sep3","x":947,"y":70.7,"w":2,"h":338.7,"type":"rect","fill":"#efffe624","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l4","x":962.4,"y":38.4,"w":279.2,"h":64.5,"type":"text","text":"VENTIRAD","style":{"font":"Inter","size":52,"color":"#8bd450","align":"left","bold":true}},
+{"id":"v4","x":962.4,"y":119,"w":279.2,"h":169.3,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Inter","size":46.5,"color":"#efffe6","align":"left","bold":true}},
+{"id":"b4","x":962.4,"y":393.2,"w":279.2,"h":24.2,"type":"bar","source":"cpu.fan","min":0,"max":2500,"vertical":false,"radius":12.1,"track":"#204a18","colors":[[0,"#8bd450"],[1,"#f2c94c"]]}
+]}

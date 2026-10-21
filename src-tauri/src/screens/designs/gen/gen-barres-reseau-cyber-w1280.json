@@ -1,0 +1,14 @@
+{"version":1,"name":"Barres horizontales · Réseau et E/S · Cyberpunk","width":1280,"height":480,"background":{"kind":"gradient","from":"#0a0014","to":"#1d0036","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":151.2,"w":153.4,"h":81.6,"type":"text","text":"DESCENTE","style":{"font":"Rajdhani","size":36.3,"color":"#fcee09","align":"left","bold":true}},
+{"id":"b1","x":195.8,"y":177.6,"w":236.2,"h":28.8,"type":"bar","source":"net.down","min":0,"max":50,"vertical":false,"radius":10.1,"track":"#2e0f4d","colors":[[0,"#fcee09"],[1,"#00f0ff"]]},
+{"id":"v1","x":436,"y":151.2,"w":170.4,"h":81.6,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":37.3,"color":"#fdf6ff","align":"right","bold":true}},
+{"id":"l2","x":38.4,"y":247.2,"w":153.4,"h":81.6,"type":"text","text":"MONTÉE","style":{"font":"Rajdhani","size":36.3,"color":"#00f0ff","align":"left","bold":true}},
+{"id":"b2","x":195.8,"y":273.6,"w":236.2,"h":28.8,"type":"bar","source":"net.up","min":0,"max":20,"vertical":false,"radius":10.1,"track":"#2e0f4d","colors":[[0,"#00f0ff"],[1,"#ff003c"]]},
+{"id":"v2","x":436,"y":247.2,"w":170.4,"h":81.6,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":37.3,"color":"#fdf6ff","align":"right","bold":true}},
+{"id":"l3","x":673.6,"y":151.2,"w":153.4,"h":81.6,"type":"text","text":"LECTURE","style":{"font":"Rajdhani","size":36.3,"color":"#ff003c","align":"left","bold":true}},
+{"id":"b3","x":831,"y":177.6,"w":236.2,"h":28.8,"type":"bar","source":"disk.read","min":0,"max":3000,"vertical":false,"radius":10.1,"track":"#2e0f4d","colors":[[0,"#ff003c"],[1,"#fcee09"]]},
+{"id":"v3","x":1071.2,"y":151.2,"w":170.4,"h":81.6,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Rajdhani","size":37.3,"color":"#fdf6ff","align":"right","bold":true}},
+{"id":"l4","x":673.6,"y":247.2,"w":153.4,"h":81.6,"type":"text","text":"ÉCRITURE","style":{"font":"Rajdhani","size":36.3,"color":"#fcee09","align":"left","bold":true}},
+{"id":"b4","x":831,"y":273.6,"w":236.2,"h":28.8,"type":"bar","source":"disk.write","min":0,"max":3000,"vertical":false,"radius":10.1,"track":"#2e0f4d","colors":[[0,"#fcee09"],[1,"#00f0ff"]]},
+{"id":"v4","x":1071.2,"y":247.2,"w":170.4,"h":81.6,"type":"value","source":"disk.write","format":"{:.0} Mo/s","style":{"font":"Rajdhani","size":37.3,"color":"#fdf6ff","align":"right","bold":true}}
+]}

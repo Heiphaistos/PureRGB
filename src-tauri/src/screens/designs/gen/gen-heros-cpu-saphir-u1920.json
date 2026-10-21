@@ -1,0 +1,15 @@
+{"version":1,"name":"Jauge héros et liste · CPU détaillé · Saphir","width":1920,"height":462,"background":{"kind":"gradient","from":"#030b24","to":"#0a2a78","angle":135},"widgets":[
+{"id":"a1","x":243.1,"y":37,"w":388,"h":388,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":33,"track":"#1d45a8","colors":[[0,"#5eead4"],[0.55,"#fbbf24"],[1,"#f87171"]]},
+{"id":"v1","x":320.4,"y":159.1,"w":233.5,"h":115.9,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":75.6,"color":"#eef3ff","align":"center","bold":true}},
+{"id":"l1","x":340.1,"y":343.5,"w":194,"h":48.3,"type":"text","text":"CPU","style":{"font":"Inter","size":42,"color":"#9fb3ee","align":"center","bold":true}},
+{"id":"s1","x":324.4,"y":250.3,"w":225.4,"h":41.9,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":36.4,"color":"#9fb3ee","align":"center","bold":false}},
+{"id":"l2","x":668.1,"y":60.3,"w":454,"h":79.2,"type":"text","text":"CPU","style":{"font":"Inter","size":63.3,"color":"#9fb3ee","align":"left","bold":true}},
+{"id":"v2","x":1122,"y":60.3,"w":554.8,"h":79.2,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":68.8,"color":"#eef3ff","align":"right","bold":true}},
+{"id":"b1","x":668.1,"y":147.6,"w":1008.8,"h":10.1,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":5.1,"track":"#1d45a8","colors":[[0,"#79b8ff"],[1,"#b8d4ff"]]},
+{"id":"l3","x":668.1,"y":180.3,"w":454,"h":79.2,"type":"text","text":"FRÉQ. CPU","style":{"font":"Inter","size":63.3,"color":"#9fb3ee","align":"left","bold":true}},
+{"id":"v3","x":1122,"y":180.3,"w":554.8,"h":79.2,"type":"value","source":"cpu.clock","format":"{:.0} MHz","style":{"font":"Inter","size":68.8,"color":"#eef3ff","align":"right","bold":true}},
+{"id":"b2","x":668.1,"y":267.5,"w":1008.8,"h":10.1,"type":"bar","source":"cpu.clock","min":0,"max":6000,"vertical":false,"radius":5.1,"track":"#1d45a8","colors":[[0,"#b8d4ff"],[1,"#4d8dff"]]},
+{"id":"l4","x":668.1,"y":300.2,"w":454,"h":79.2,"type":"text","text":"PUISS. CPU","style":{"font":"Inter","size":63.3,"color":"#9fb3ee","align":"left","bold":true}},
+{"id":"v4","x":1122,"y":300.2,"w":554.8,"h":79.2,"type":"value","source":"cpu.power","format":"{:.0} W","style":{"font":"Inter","size":68.8,"color":"#eef3ff","align":"right","bold":true}},
+{"id":"b3","x":668.1,"y":387.5,"w":1008.8,"h":10.1,"type":"bar","source":"cpu.power","min":0,"max":250,"vertical":false,"radius":5.1,"track":"#1d45a8","colors":[[0,"#4d8dff"],[1,"#79b8ff"]]}
+]}

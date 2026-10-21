@@ -1,0 +1,14 @@
+{"version":1,"name":"Tableau de bord à jauges · Refroidissement · Espresso","width":1280,"height":480,"background":{"kind":"gradient","from":"#140d09","to":"#2b1c14","angle":90},"widgets":[
+{"id":"a1","x":38.4,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"liquid.temp","min":20,"max":60,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#3f2b1f","colors":[[0,"#b9c98a"],[0.55,"#e8b04a"],[1,"#d9534f"]]},
+{"id":"v1","x":96.9,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":29.4,"color":"#f6e9dc","align":"center","bold":true}},
+{"id":"l1","x":111.8,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":27.4,"color":"#b79b86","align":"center","bold":true}},
+{"id":"a2","x":341.6,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"pump.rpm","min":0,"max":4000,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#3f2b1f","colors":[[0,"#e8c39e"],[1,"#a86b3c"]]},
+{"id":"v2","x":400.1,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":29.4,"color":"#f6e9dc","align":"center","bold":true}},
+{"id":"l2","x":415,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"POMPE","style":{"font":"Inter","size":27.4,"color":"#b79b86","align":"center","bold":true}},
+{"id":"a3","x":644.8,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"fan.1.rpm","min":0,"max":2500,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#3f2b1f","colors":[[0,"#a86b3c"],[1,"#d9a066"]]},
+{"id":"v3","x":703.3,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":29.4,"color":"#f6e9dc","align":"center","bold":true}},
+{"id":"l3","x":718.2,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"VENT. 1","style":{"font":"Inter","size":27.4,"color":"#b79b86","align":"center","bold":true}},
+{"id":"a4","x":948,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"cpu.fan","min":0,"max":2500,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#3f2b1f","colors":[[0,"#d9a066"],[1,"#e8c39e"]]},
+{"id":"v4","x":1006.5,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Inter","size":29.4,"color":"#f6e9dc","align":"center","bold":true}},
+{"id":"l4","x":1021.4,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"VENTIRAD","style":{"font":"Inter","size":27.4,"color":"#b79b86","align":"center","bold":true}}
+]}

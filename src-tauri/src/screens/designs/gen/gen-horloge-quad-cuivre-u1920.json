@@ -1,0 +1,15 @@
+{"version":1,"name":"Horloge et capteurs · Vue d'ensemble · Cuivre","width":1920,"height":462,"background":{"kind":"gradient","from":"#120904","to":"#2a1409","angle":90},"widgets":[
+{"id":"gl1","x":427.8,"y":68,"w":325.9,"h":325.9,"opacity":0.07,"type":"rect","fill":"#f2a65a","stroke":null,"stroke_width":0,"radius":163},
+{"id":"gl2","x":468.6,"y":108.8,"w":244.4,"h":244.4,"opacity":0.1,"type":"rect","fill":"#f2a65a","stroke":null,"stroke_width":0,"radius":122.2},
+{"id":"gl3","x":509.3,"y":149.5,"w":163,"h":163,"opacity":0.13,"type":"rect","fill":"#f2a65a","stroke":null,"stroke_width":0,"radius":81.5},
+{"id":"gl4","x":550.1,"y":190.3,"w":81.5,"h":81.5,"opacity":0.16,"type":"rect","fill":"#f2a65a","stroke":null,"stroke_width":0,"radius":40.7},
+{"id":"time1","x":37,"y":68,"w":959.9,"h":240.6,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":209.2,"color":"#ffeede","align":"center","bold":true}},
+{"id":"date1","x":37,"y":324.1,"w":959.9,"h":69.8,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Rajdhani","size":60.7,"color":"#c99a7c","align":"center","bold":false}},
+{"id":"sep1","x":1010.8,"y":75.8,"w":2,"h":310.4,"type":"rect","fill":"#ffeede24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":1038.5,"y":37,"w":380,"h":120.1,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":60,"color":"#e07a3c","align":"left","bold":true}},
+{"id":"v1","x":1418.5,"y":37,"w":464.5,"h":120.1,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":84.1,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l2","x":1038.5,"y":171,"w":380,"h":120.1,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":60,"color":"#f2a65a","align":"left","bold":true}},
+{"id":"v2","x":1418.5,"y":171,"w":464.5,"h":120.1,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":84.1,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l3","x":1038.5,"y":304.9,"w":380,"h":120.1,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":60,"color":"#c25b2a","align":"left","bold":true}},
+{"id":"v3","x":1418.5,"y":304.9,"w":464.5,"h":120.1,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":84.1,"color":"#ffeede","align":"right","bold":true}}
+]}

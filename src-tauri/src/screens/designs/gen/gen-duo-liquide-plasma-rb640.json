@@ -1,0 +1,12 @@
+{"version":1,"name":"Duo en cartes · Liquide · Plasma","width":640,"height":172,"background":{"kind":"gradient","from":"#0c0320","to":"#3a0f6a","angle":45},"widgets":[
+{"id":"c1","x":13.8,"y":13.8,"w":302.8,"h":144.4,"type":"rect","fill":"#ffffff14","stroke":"#f7f0ff24","stroke_width":1,"radius":20.2},
+{"id":"st1","x":13.8,"y":45.6,"w":3,"h":80.9,"type":"rect","fill":"#c084fc","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":28.2,"y":28.2,"w":104.1,"h":57.8,"type":"text","text":"LIQUIDE","style":{"font":"Rajdhani","size":32.1,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v1","x":139.5,"y":28.2,"w":162.6,"h":83.2,"type":"value","source":"liquid.temp","format":"{:.1}˚","style":{"font":"Rajdhani","size":31.4,"color":"#f7f0ff","align":"right","bold":true}},
+{"id":"b1","x":139.5,"y":125.3,"w":162.6,"h":18.5,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":9.2,"track":"#4a1d80","colors":[[0,"#67e8f9"],[0.55,"#fde047"],[1,"#fb7185"]]},
+{"id":"c2","x":323.4,"y":13.8,"w":302.8,"h":144.4,"type":"rect","fill":"#ffffff14","stroke":"#f7f0ff24","stroke_width":1,"radius":20.2},
+{"id":"st2","x":323.4,"y":45.6,"w":3,"h":80.9,"type":"rect","fill":"#f0abfc","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":337.9,"y":28.2,"w":104.1,"h":57.8,"type":"text","text":"POMPE","style":{"font":"Rajdhani","size":32.1,"color":"#c4a8ee","align":"left","bold":true}},
+{"id":"v2","x":449.2,"y":28.2,"w":162.6,"h":83.2,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Rajdhani","size":31.4,"color":"#f7f0ff","align":"right","bold":true}},
+{"id":"b2","x":449.2,"y":125.3,"w":162.6,"h":18.5,"type":"bar","source":"pump.rpm","min":0,"max":4000,"vertical":false,"radius":9.2,"track":"#4a1d80","colors":[[0,"#f0abfc"],[1,"#67e8f9"]]}
+]}

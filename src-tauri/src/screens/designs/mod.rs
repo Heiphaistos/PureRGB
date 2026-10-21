@@ -4,9 +4,12 @@
 mod builtin;
 mod clock;
 mod gaming;
+mod generated;
 mod minimal;
 mod monitor;
 mod showcase;
+#[cfg(test)]
+mod quality;
 
 use super::layout::Layout;
 use anyhow::{bail, Context, Result};
@@ -198,29 +201,53 @@ mod tests {
         std::fs::remove_dir_all(&s.user_dir).ok();
     }
 
+    /// Valeurs plausibles pour toutes les clés stables + historique (courbes visibles).
+    pub(super) fn preview_store() -> crate::screens::bindings::ValueStore {
+        let store = crate::screens::bindings::ValueStore::empty();
+        let fixed: [(&str, f64); 46] = [
+            ("cpu.temp", 58.0), ("cpu.load", 42.0), ("cpu.clock", 4850.0), ("cpu.power", 65.0), ("cpu.voltage", 1.25), ("cpu.fan", 1200.0),
+            ("gpu.temp", 71.0), ("gpu.hotspot", 82.0), ("gpu.load", 63.0), ("gpu.clock", 2475.0), ("gpu.mem_clock", 1750.0), ("gpu.power", 180.0),
+            ("gpu.vram_used_pct", 48.0), ("gpu.vram_used_gb", 7.7), ("gpu.fan", 1500.0), ("ram.used_pct", 61.0), ("ram.used_gb", 19.5),
+            ("ram.free_gb", 12.5), ("ram.total_gb", 32.0), ("mobo.temp", 37.0), ("chipset.temp", 48.0), ("vrm.temp", 55.0),
+            ("ssd.1.temp", 41.0), ("ssd.1.used_pct", 55.0), ("ssd.2.temp", 38.0), ("ssd.2.used_pct", 23.0),
+            ("disk.C.used_pct", 72.0), ("disk.C.free_gb", 138.0), ("disk.C.total_gb", 500.0), ("disk.D.used_pct", 41.0),
+            ("disk.D.free_gb", 1180.0), ("disk.D.total_gb", 2000.0), ("disk.read", 420.0), ("disk.write", 180.0),
+            ("net.up", 1.2), ("net.down", 8.4), ("liquid.temp", 33.0), ("pump.rpm", 2800.0), ("fan.1.rpm", 900.0), ("fan.2.rpm", 950.0),
+            ("fan.3.rpm", 880.0), ("uptime", 93600.0), ("cpu.core1", 40.0), ("cpu.core2", 44.0), ("gpu.core", 63.0), ("net.ping", 14.0),
+        ];
+        for (k, v) in fixed {
+            for i in 0..48 {
+                let wave = ((i as f64) * 0.45 + v * 0.07).sin() * 0.12 + ((i as f64) * 0.13).cos() * 0.05;
+                store.set_for_test(k, if i == 47 { v } else { v * (1.0 + wave) });
+            }
+        }
+        store
+    }
+
     /// Rend chaque design embarqué avec des valeurs plausibles : PNG dans
-    /// `target/screens-preview/designs/` pour revue à l'œil, et refuse un rendu vide.
+    /// `src-tauri/target/screens-preview/designs/` (indépendant de CARGO_TARGET_DIR ; surcharge
+    /// `PURERGB_PREVIEW_DIR`) pour revue à l'œil, et refuse un rendu vide. Les rendus sont
+    /// limités à 960 px de côté pour rester rapides.
     #[test]
     fn every_builtin_design_renders_a_non_blank_preview() {
-        use crate::screens::{bindings::ValueStore, media::MediaStore, render};
-        let store = ValueStore::empty();
-        for (k, v) in [
-            ("cpu.temp", 58.0), ("cpu.load", 42.0), ("cpu.clock", 4850.0), ("cpu.power", 65.0), ("cpu.fan", 1200.0),
-            ("gpu.temp", 71.0), ("gpu.load", 63.0), ("gpu.clock", 2475.0), ("gpu.power", 180.0),
-            ("gpu.vram_used_pct", 48.0), ("gpu.fan", 1500.0), ("ram.used_pct", 61.0), ("ram.used_gb", 19.5),
-            ("ram.total_gb", 32.0), ("ssd.1.temp", 41.0), ("ssd.1.used_pct", 55.0), ("liquid.temp", 33.0),
-            ("pump.rpm", 2800.0), ("fan.1.rpm", 900.0), ("net.up", 1.2), ("net.down", 8.4), ("uptime", 93600.0),
-        ] {
-            store.set_for_test(k, v);
-            store.set_for_test(k, v * 0.9);
-            store.set_for_test(k, v);
-        }
+        use crate::screens::{media::MediaStore, render};
+        let store = preview_store();
         let media = MediaStore::new(std::env::temp_dir().join("purergb-design-preview"));
-        let out = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("target/screens-preview/designs");
+        let out = std::env::var_os("PURERGB_PREVIEW_DIR")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("target/screens-preview/designs"));
         std::fs::create_dir_all(&out).unwrap();
+        // Les ids générés changent à chaque régénération : on retire les anciens aperçus.
+        for e in std::fs::read_dir(&out).unwrap().flatten() {
+            if e.file_name().to_string_lossy().starts_with("gen-") {
+                std::fs::remove_file(e.path()).ok();
+            }
+        }
         for b in builtin::all() {
             let l = parse(b.json).unwrap();
-            let f = render::render(&l, &store, &media, l.width, l.height, 0);
+            let k = (960.0 / l.width.max(l.height) as f32).min(1.0);
+            let (rw, rh) = (((l.width as f32 * k).round() as u32).max(1), ((l.height as f32 * k).round() as u32).max(1));
+            let f = render::render(&l, &store, &media, rw, rh, 0);
             let distinct = f.rgba.chunks(4).step_by(97).map(|p| [p[0], p[1], p[2]]).collect::<std::collections::HashSet<_>>().len();
             assert!(distinct > 8, "design {} rendu quasi uni ({distinct} couleurs)", b.id);
             let img = image::RgbaImage::from_raw(f.width, f.height, f.rgba).unwrap();

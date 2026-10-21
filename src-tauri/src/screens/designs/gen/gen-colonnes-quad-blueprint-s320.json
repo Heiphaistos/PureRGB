@@ -1,0 +1,13 @@
+{"version":1,"name":"Colonnes séparées · Vue d'ensemble · Plan bleu","width":320,"height":320,"background":{"kind":"gradient","from":"#0a2a5c","to":"#103d82","angle":90},"widgets":[
+{"id":"l1","x":25.6,"y":25.6,"w":107.5,"h":36.5,"type":"text","text":"CPU","style":{"font":"Roboto Mono","size":24.3,"color":"#ffffff","align":"left","bold":true}},
+{"id":"v1","x":146.6,"y":25.6,"w":147.8,"h":56.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":49.3,"color":"#eaf3ff","align":"right","bold":true}},
+{"id":"b1","x":25.6,"y":92.1,"w":268.8,"h":6.5,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":3.2,"track":"#1a4a8f","colors":[[0,"#ffffff"],[1,"#7fd0ff"]]},
+{"id":"sep1","x":25.6,"y":112.1,"w":268.8,"h":2,"type":"rect","fill":"#eaf3ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":25.6,"y":119.5,"w":107.5,"h":36.5,"type":"text","text":"GPU","style":{"font":"Roboto Mono","size":24.3,"color":"#7fd0ff","align":"left","bold":true}},
+{"id":"v2","x":146.6,"y":119.5,"w":147.8,"h":56.7,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":49.3,"color":"#eaf3ff","align":"right","bold":true}},
+{"id":"b2","x":25.6,"y":185.9,"w":268.8,"h":6.5,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":3.2,"track":"#1a4a8f","colors":[[0,"#7fd0ff"],[1,"#ffe27a"]]},
+{"id":"sep2","x":25.6,"y":205.9,"w":268.8,"h":2,"type":"rect","fill":"#eaf3ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":25.6,"y":213.3,"w":107.5,"h":36.5,"type":"text","text":"RAM","style":{"font":"Roboto Mono","size":24.3,"color":"#ffe27a","align":"left","bold":true}},
+{"id":"v3","x":146.6,"y":213.3,"w":147.8,"h":56.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Roboto Mono","size":49.3,"color":"#eaf3ff","align":"right","bold":true}},
+{"id":"b3","x":25.6,"y":279.8,"w":268.8,"h":6.5,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":3.2,"track":"#1a4a8f","colors":[[0,"#ffe27a"],[1,"#ffffff"]]}
+]}

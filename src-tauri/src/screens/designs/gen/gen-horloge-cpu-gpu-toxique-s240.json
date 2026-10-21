@@ -1,0 +1,17 @@
+{"version":1,"name":"Horloge et capteurs · CPU et GPU · Toxique","width":240,"height":240,"background":{"kind":"gradient","from":"#040a02","to":"#0d1a05","angle":90},"widgets":[
+{"id":"gl1","x":35.3,"y":0,"w":169.3,"h":169.3,"opacity":0.07,"type":"rect","fill":"#e6ff4d","stroke":null,"stroke_width":0,"radius":84.7},
+{"id":"gl2","x":56.5,"y":21.2,"w":127,"h":127,"opacity":0.1,"type":"rect","fill":"#e6ff4d","stroke":null,"stroke_width":0,"radius":63.5},
+{"id":"gl3","x":77.7,"y":42.3,"w":84.7,"h":84.7,"opacity":0.13,"type":"rect","fill":"#e6ff4d","stroke":null,"stroke_width":0,"radius":42.3},
+{"id":"gl4","x":98.8,"y":63.5,"w":42.3,"h":42.3,"opacity":0.16,"type":"rect","fill":"#e6ff4d","stroke":null,"stroke_width":0,"radius":21.2},
+{"id":"time1","x":19.2,"y":19.2,"w":201.6,"h":92.7,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":80.6,"color":"#efffe0","align":"center","bold":true}},
+{"id":"date1","x":19.2,"y":116,"w":201.6,"h":20.2,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Rajdhani","size":17.5,"color":"#9cc070","align":"center","bold":false}},
+{"id":"c1","x":19.2,"y":156.3,"w":62.4,"h":64.5,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":8.7},
+{"id":"l1","x":21.2,"y":161.4,"w":58.4,"h":19.4,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":16.8,"color":"#b6ff00","align":"center","bold":true}},
+{"id":"v1","x":21.2,"y":183.4,"w":58.4,"h":32.3,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":26.4,"color":"#efffe0","align":"center","bold":true}},
+{"id":"c2","x":88.8,"y":156.3,"w":62.4,"h":64.5,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":8.7},
+{"id":"l2","x":90.8,"y":161.4,"w":58.4,"h":19.4,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":16.8,"color":"#e6ff4d","align":"center","bold":true}},
+{"id":"v2","x":90.8,"y":183.4,"w":58.4,"h":32.3,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":26.4,"color":"#efffe0","align":"center","bold":true}},
+{"id":"c3","x":158.4,"y":156.3,"w":62.4,"h":64.5,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":8.7},
+{"id":"l3","x":160.4,"y":161.4,"w":58.4,"h":19.4,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":16.8,"color":"#7dff3c","align":"center","bold":true}},
+{"id":"v3","x":160.4,"y":183.4,"w":58.4,"h":32.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":26.4,"color":"#efffe0","align":"center","bold":true}}
+]}

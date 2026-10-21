@@ -1,6 +1,6 @@
 //! Registre des designs embarqués. Un module par catégorie (`LIST`), un JSON par design.
 
-use super::{clock, gaming, minimal, monitor, showcase};
+use super::{clock, gaming, generated, minimal, monitor, showcase};
 
 pub struct Builtin {
     pub id: &'static str,
@@ -10,5 +10,5 @@ pub struct Builtin {
 }
 
 pub fn all() -> impl Iterator<Item = &'static Builtin> {
-    [monitor::LIST, gaming::LIST, minimal::LIST, clock::LIST, showcase::LIST].into_iter().flatten()
+    [monitor::LIST, gaming::LIST, minimal::LIST, clock::LIST, showcase::LIST, generated::LIST].into_iter().flatten()
 }

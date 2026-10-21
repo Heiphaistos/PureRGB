@@ -1,0 +1,15 @@
+{"version":1,"name":"Jauge héros et liste · GPU détaillé · Lavande","width":1920,"height":462,"background":{"kind":"gradient","from":"#f5f0ff","to":"#e4dcff","angle":90},"widgets":[
+{"id":"a1","x":243.1,"y":37,"w":388,"h":388,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":33,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"v1","x":320.4,"y":159.1,"w":233.5,"h":115.9,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":75.6,"color":"#2e2250","align":"center","bold":true}},
+{"id":"l1","x":340.1,"y":343.5,"w":194,"h":48.3,"type":"text","text":"GPU","style":{"font":"Inter","size":42,"color":"#66589a","align":"center","bold":true}},
+{"id":"s1","x":324.4,"y":250.3,"w":225.4,"h":41.9,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":36.4,"color":"#66589a","align":"center","bold":false}},
+{"id":"l2","x":668.1,"y":60.3,"w":454,"h":79.2,"type":"text","text":"POINT CHAUD","style":{"font":"Inter","size":62.3,"color":"#66589a","align":"left","bold":true}},
+{"id":"v2","x":1122,"y":60.3,"w":554.8,"h":79.2,"type":"value","source":"gpu.hotspot","format":"{:.0}°C","style":{"font":"Inter","size":68.8,"color":"#2e2250","align":"right","bold":true}},
+{"id":"b1","x":668.1,"y":147.6,"w":1008.8,"h":10.1,"type":"bar","source":"gpu.hotspot","min":20,"max":110,"vertical":false,"radius":5.1,"track":"#d9cff5","colors":[[0,"#28a781"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"l3","x":668.1,"y":180.3,"w":454,"h":79.2,"type":"text","text":"GPU","style":{"font":"Inter","size":62.3,"color":"#66589a","align":"left","bold":true}},
+{"id":"v3","x":1122,"y":180.3,"w":554.8,"h":79.2,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":68.8,"color":"#2e2250","align":"right","bold":true}},
+{"id":"b2","x":668.1,"y":267.5,"w":1008.8,"h":10.1,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":5.1,"track":"#d9cff5","colors":[[0,"#2563eb"],[1,"#7c3aed"]]},
+{"id":"l4","x":668.1,"y":300.2,"w":454,"h":79.2,"type":"text","text":"VRAM","style":{"font":"Inter","size":62.3,"color":"#66589a","align":"left","bold":true}},
+{"id":"v4","x":1122,"y":300.2,"w":554.8,"h":79.2,"type":"value","source":"gpu.vram_used_pct","format":"{:.0}%","style":{"font":"Inter","size":68.8,"color":"#2e2250","align":"right","bold":true}},
+{"id":"b3","x":668.1,"y":387.5,"w":1008.8,"h":10.1,"type":"bar","source":"gpu.vram_used_pct","min":0,"max":100,"vertical":false,"radius":5.1,"track":"#d9cff5","colors":[[0,"#7c3aed"],[1,"#c840dc"]]}
+]}

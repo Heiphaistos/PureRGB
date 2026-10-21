@@ -1,0 +1,9 @@
+{"version":1,"name":"Horloge analogique · CPU et GPU · Néon","width":480,"height":480,"background":{"kind":"gradient","from":"#07030f","to":"#14072e","angle":90},"widgets":[
+{"id":"k1","x":115,"y":38.4,"w":250,"h":250,"type":"analog_clock","face":"#ffffff12","hands":"#f5f0ff","accent":"#ff2bd6"},
+{"id":"l1","x":38.4,"y":317.2,"w":121.6,"h":42.3,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":36.8,"color":"#ff2bd6","align":"center","bold":true}},
+{"id":"v1","x":38.4,"y":367,"w":121.6,"h":74.6,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":54.9,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l2","x":179.2,"y":317.2,"w":121.6,"h":42.3,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":36.8,"color":"#00e5ff","align":"center","bold":true}},
+{"id":"v2","x":179.2,"y":367,"w":121.6,"h":74.6,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":54.9,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l3","x":320,"y":317.2,"w":121.6,"h":42.3,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":36.8,"color":"#b6ff3c","align":"center","bold":true}},
+{"id":"v3","x":320,"y":367,"w":121.6,"h":74.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":54.9,"color":"#f5f0ff","align":"center","bold":true}}
+]}
