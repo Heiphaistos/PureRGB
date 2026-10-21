@@ -6,6 +6,7 @@ import type { CaptureFileInfo, HardwareDiagnostics, Settings } from "../types";
 import { diagOk, diagText } from "../types";
 import { checkForUpdate, updateState } from "../autoUpdate";
 import { errMsg } from "../screens/api";
+import { photosEnabled, setPhotosEnabled } from "../productPhotos";
 import { ffmpeg, ffmpegBusy, ffmpegPct, installFfmpeg, refreshFfmpeg } from "../screens/useFfmpeg";
 
 export type LayoutMode = "grid" | "list" | "canvas";
@@ -253,9 +254,19 @@ watch(
     form.auto_manage_conflicts = s.auto_manage_conflicts;
     form.telemetry_opt_in = s.telemetry_opt_in;
     form.auto_update_check = s.auto_update_check ?? true;
+    photosEnabled.value = s.product_photos !== false;
   },
   { immediate: true },
 );
+
+async function onPhotosToggle(e: Event) {
+  const on = (e.target as HTMLInputElement).checked;
+  try {
+    await setPhotosEnabled(on);
+  } catch (err) {
+    error.value = errMsg(err);
+  }
+}
 
 async function save() {
   saving.value = true;
@@ -324,6 +335,19 @@ async function save() {
                 : "Rechercher une mise à jour"
         }}
       </button>
+    </div>
+
+    <div class="card">
+      <h3>Photos des produits</h3>
+      <p class="hint">
+        Quand un appareil est reconnu avec certitude (identifiant USB ou modèle exact), PureRGB affiche sa photo,
+        téléchargée une seule fois depuis le site du fabricant (images vérifiées, réduites, mises en cache 30 jours).
+        Désactivé : aucune connexion n'est faite.
+      </p>
+      <div class="inline">
+        <input id="productphotos" type="checkbox" :checked="photosEnabled" @change="onPhotosToggle" />
+        <label for="productphotos">Afficher les photos des produits (téléchargées depuis le site du fabricant)</label>
+      </div>
     </div>
 
     <div class="card">

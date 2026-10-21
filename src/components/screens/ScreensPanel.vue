@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from "vue";
 import { demo, errMsg, screenState } from "../../screens/api.ts";
 import { loadScreens, loaded, scan, scanning, screens } from "../../screens/store.ts";
 import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
+import ProductPhoto from "../ProductPhoto.vue";
+import type { ProductView } from "../../productPhotos";
 import ScreenDetail from "./ScreenDetail.vue";
 import "./screens.css";
 
@@ -10,6 +12,7 @@ const emit = defineEmits<{ toast: [msg: string] }>();
 
 const selectedId = ref<string | null>(null);
 const states = ref<Record<string, ScreenState>>({});
+const products = ref<Record<string, ProductView | null>>({});
 
 const selected = computed<ScreenInfo | null>(() => screens.value.find((s) => s.id === selectedId.value) ?? null);
 
@@ -84,10 +87,12 @@ watch(screens, () => void loadStates(), { immediate: true });
 
       <div v-if="screens.length" class="cards">
         <button v-for="s in screens" :key="s.id" class="sc-card scr" @click="selectedId = s.id">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 4h18v12H3z" /><path d="M8 20h8" /><path d="M12 16v4" />
-          </svg>
-          <span class="name">{{ s.vendor }} {{ s.model }}</span>
+          <ProductPhoto :vendor="s.vendor" :name="s.model" :usb="s.id" :size="96" caption @found="products[s.id] = $event">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 4h18v12H3z" /><path d="M8 20h8" /><path d="M12 16v4" />
+            </svg>
+          </ProductPhoto>
+          <span class="name">{{ products[s.id]?.name ?? `${s.vendor} ${s.model}` }}</span>
           <span class="res">
             {{ s.width }} × {{ s.height }}<template v-if="!s.resolution_confirmed"> (non confirmée)</template>
           </span>

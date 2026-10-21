@@ -3,7 +3,10 @@ import { computed } from "vue";
 import type { DeviceInfo, EffectConfig } from "../types";
 import { DEVICE_TYPE_LABELS, deviceHasRgb } from "../types";
 import { brandChip } from "../assets/brands";
+import { ref } from "vue";
+import type { ProductView } from "../productPhotos";
 import DeviceIcon from "./DeviceIcon.vue";
+import ProductPhoto from "./ProductPhoto.vue";
 
 const props = defineProps<{
   device: DeviceInfo;
@@ -17,6 +20,8 @@ const typeLabel = computed(
   () => DEVICE_TYPE_LABELS[props.device.device_type] ?? props.device.device_type,
 );
 const chip = computed(() => brandChip(props.device.vendor, props.device.name));
+const product = ref<ProductView | null>(null);
+const shownName = computed(() => product.value?.name ?? props.device.name);
 const hasRgb = computed(() => deviceHasRgb(props.device));
 const isOff = computed(() => !props.effect || props.effect.kind === "off");
 const swatch = computed(() => {
@@ -32,11 +37,13 @@ const swatch = computed(() => {
     :class="{ selected, compact, dense, dim: !device.controllable }"
   >
     <span class="dc-icon-box">
-      <DeviceIcon :type="device.device_type" />
+      <ProductPhoto :vendor="device.vendor" :name="device.name" :usb="device.id" :size="compact || dense ? 30 : 44" @found="product = $event">
+        <DeviceIcon :type="device.device_type" />
+      </ProductPhoto>
       <span class="dc-chip" :style="{ background: chip.color }">{{ chip.text }}</span>
     </span>
     <span class="dc-body">
-      <span class="dc-name">{{ device.name }}</span>
+      <span class="dc-name" :title="shownName">{{ shownName }}</span>
       <span class="dc-type">
         {{ typeLabel }}
         <span v-if="!hasRgb" class="dc-no-rgb" title="Pilotage PWM/vitesse uniquement — RGB non disponible sur cet appareil">Pas de RGB</span>

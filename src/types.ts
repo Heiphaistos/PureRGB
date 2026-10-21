@@ -145,6 +145,7 @@ export interface Settings {
   auto_manage_conflicts: boolean;
   telemetry_opt_in: boolean;
   auto_update_check: boolean;
+  product_photos?: boolean;
 }
 
 export type NetworkDeviceKind =

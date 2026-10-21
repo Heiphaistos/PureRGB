@@ -8,6 +8,8 @@ import { cloneLayout } from "../../screens/widgets.ts";
 import DesignEditor from "./DesignEditor.vue";
 import DesignGallery from "./DesignGallery.vue";
 import MediaLibrary from "./MediaLibrary.vue";
+import ProductPhoto from "../ProductPhoto.vue";
+import type { ProductView } from "../../productPhotos";
 import RotatedPreview from "./RotatedPreview.vue";
 import RotateButtons from "./RotateButtons.vue";
 import ScreenOptions from "./ScreenOptions.vue";
@@ -26,6 +28,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const tab = ref<Tab>("designs");
+const product = ref<ProductView | null>(null);
 const state = ref<ScreenState | null>(null);
 const editor = ref<InstanceType<typeof DesignEditor> | null>(null);
 const live = computed<Layout | null>(() => state.value?.layout ?? null);
@@ -97,8 +100,9 @@ onMounted(reload);
   <div class="sc-page">
     <header class="top">
       <button class="sm" @click="emit('back')">← Écrans</button>
+      <ProductPhoto :vendor="screen.vendor" :name="screen.model" :usb="screen.id" :size="64" caption @found="product = $event" />
       <div class="sc-grow">
-        <strong>{{ screen.vendor }} {{ screen.model }}</strong>
+        <strong>{{ product?.name ?? `${screen.vendor} ${screen.model}` }}</strong>
         <span class="dim"> · {{ screen.width }} × {{ screen.height }}</span>
       </div>
       <RotateButtons v-if="state" :rotation="rotation" @set="rotate" />
