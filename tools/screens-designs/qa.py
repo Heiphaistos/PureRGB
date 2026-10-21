@@ -1,6 +1,8 @@
 """Controle qualite automatique : geometrie, chevauchement de textes, contraste des palettes."""
 import math
 
+from content import BASE_SOURCES
+
 MAX_WIDGETS = 200
 TOL = 2.0
 
@@ -60,10 +62,21 @@ def _in_circle(px, py, fmt, slack):
     return math.hypot(px - fmt.w / 2, py - fmt.h / 2) <= r + slack
 
 
+def baseline_problems(widgets):
+    """Regle produit : CPU, GPU, RAM, SSD 1 et SSD 2 (masque si absent) presents dans TOUT design."""
+    used = {w["source"] for w in widgets if "source" in w}
+    out = [f"donnee obligatoire absente : {k}" for k in BASE_SOURCES if k not in used]
+    ssd2 = [w for w in widgets if w.get("source") == "ssd.2.used_pct"]
+    if ssd2 and not all(w.get("visible_if") == "ssd.2.used_pct" for w in ssd2):
+        out.append("SSD 2 sans visible_if")
+    return out
+
+
 def problems(widgets, fmt):
     out = list(widgets.flags)
     if not widgets:
         return ["design vide"]
+    out += baseline_problems(widgets)
     if len(widgets) > MAX_WIDGETS:
         out.append(f"{len(widgets)} widgets")
     ids = [w["id"] for w in widgets]

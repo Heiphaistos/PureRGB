@@ -1,4 +1,5 @@
 """Helpers de construction : Canvas (widgets), mesure de texte, grilles, ecriture JSON stable."""
+import contextlib
 import json
 import math
 import os
@@ -60,6 +61,7 @@ class Widgets(list):
 class Canvas:
     def __init__(self, p, fmt):
         self.p, self.f = p, fmt
+        self._cond = None   # cle de donnee : les widgets ajoutes ne s'affichent que si elle existe (visible_if)
         self.out = Widgets()
         self.out.inks, self.out.flags = [], []
         self._n = {}
@@ -79,8 +81,24 @@ class Canvas:
         if op != 1:
             d["opacity"] = op
         d.update(kw)
+        if self._cond:
+            d["visible_if"] = self._cond
         self.out.append(d)
         return d
+
+    @contextlib.contextmanager
+    def when(self, key):
+        """Les widgets crees dans ce bloc ne sont dessines que si la donnee `key` existe sur le PC
+        (ex. `with c.when("ssd.2.used_pct"):` pour un second SSD absent de certaines machines)."""
+        prev, self._cond = self._cond, key
+        try:
+            yield
+        finally:
+            self._cond = prev
+
+    def m(self, metric):
+        """`with c.m(metric):` : applique la condition de la metrique (SSD 2...) a ses widgets."""
+        return self.when(metric.cond) if getattr(metric, "cond", None) else contextlib.nullcontext()
 
     # -- texte -----------------------------------------------------------
     def _style(self, font, size, color, align, bold):

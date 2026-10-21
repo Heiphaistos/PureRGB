@@ -13,6 +13,7 @@ class Metric:
     ramp: str = "load"    # "temp" -> rampe vert/orange/rouge de la palette
     sub: tuple = None     # (src, fmt, sample) valeur secondaire
     graph_hi: float = None
+    cond: str = None      # donnee requise pour afficher cette metrique (SSD 2 absent sur certains PC)
 
     def colors(self, p, i=0):
         return p.temp_ramp if self.ramp == "temp" else p.load_ramp(i)
@@ -33,6 +34,7 @@ SSD = Metric("SSD", "ssd.1.used_pct", PCT, "100%", 0, 100, "load", _tmp("ssd.1.t
 SSDT = Metric("SSD", "ssd.1.temp", TMP, "100°C", 20, 90, "temp", _pct("ssd.1.used_pct"))
 DC = Metric("C:", "disk.C.used_pct", PCT, "100%", 0, 100, "load", ("disk.C.free_gb", "{:.0} Go libres", "999 Go libres"))
 DD = Metric("D:", "disk.D.used_pct", PCT, "100%", 0, 100, "load", ("disk.D.free_gb", "{:.0} Go libres", "999 Go libres"))
+SSD2 = Metric("SSD 2", "ssd.2.used_pct", PCT, "100%", 0, 100, "load", _tmp("ssd.2.temp"), None, "ssd.2.used_pct")
 MOBO = Metric("CARTE MÈRE", "mobo.temp", TMP, "100°C", 20, 90, "temp")
 CHIP = Metric("CHIPSET", "chipset.temp", TMP, "100°C", 20, 90, "temp")
 VRM = Metric("VRM", "vrm.temp", TMP, "100°C", 20, 110, "temp")
@@ -51,16 +53,35 @@ CPW = Metric("PUISS. CPU", "cpu.power", "{:.0} W", "999 W", 0, 250, "load")
 GPW = Metric("PUISS. GPU", "gpu.power", "{:.0} W", "999 W", 0, 450, "load")
 
 # nom -> (tags de contenu, metriques). Les archetypes prennent les N premieres.
+# REGLE : tout design affiche au minimum CPU (temp + charge), GPU (temp + charge), RAM, SSD 1 et SSD 2
+# (SSD 2 masque s'il n'existe pas). BASE vient donc en tete de TOUS les jeux de contenu ; les categories
+# ajoutent leurs extras derriere. `with_base` l'impose aussi aux jeux definis dans `content_ext_*.py`.
+BASE = [CPUT, GPUT, RAM, SSD, SSD2]
+BASE_SOURCES = ("cpu.temp", "cpu.load", "gpu.temp", "gpu.load", "ram.used_pct", "ssd.1.used_pct", "ssd.2.used_pct")
+
+
+def with_base(ms):
+    """BASE en tete, puis les metriques `ms` sans doublon (meme donnee principale)."""
+    seen = {m.src for m in BASE}
+    return BASE + [m for m in ms if m.src not in seen and not seen.add(m.src)]
+
+
+def _c(tags, extras):
+    return (tags, with_base(extras))
+
+
+# nom -> (tags de contenu, metriques). Les archetypes prennent les N premieres (BASE d'abord).
 CONTENT = {
-    "cpu-gpu": (("cpu", "gpu"), [CPUT, GPUT, RAM, SSD]),
-    "quad": (("cpu", "gpu", "ram", "ssd"), [CPU, GPU, RAM, SSD, LIQ, NETD]),
-    "disques": (("disques", "ssd", "ram"), [DC, DD, SSD, RAM, DRD, DWR]),
-    "carte-mere": (("carte mère", "chipset", "vrm", "températures"), [CPUT, MOBO, CHIP, VRM, SSDT, GPUT]),
-    "reseau": (("réseau", "disque", "débit"), [NETD, NETU, DRD, DWR]),
-    "refroidissement": (("liquide", "pompe", "ventilateurs", "aio"), [LIQ, PUMP, FAN1, CFAN, GFAN, CPUT]),
-    "gpu": (("gpu", "vram"), [GPUT, GPUH, GPU, VRAM, GCLK, GPW]),
-    "cpu": (("cpu", "fréquence", "puissance"), [CPUT, CPU, CLK, CPW, CFAN, RAM]),
-    "puissance": (("puissance", "fréquences"), [CPW, GPW, CLK, GCLK, CPUT, GPUT]),
-    "liquide": (("liquide", "aio"), [LIQ, PUMP, CPUT, CFAN]),
-    "ram": (("ram", "mémoire", "disques"), [RAM, SSD, DC, DD]),
+    "base": _c(("cpu", "gpu", "ram", "ssd"), []),
+    "cpu-gpu": _c(("cpu", "gpu", "ram", "ssd"), []),
+    "quad": _c(("cpu", "gpu", "ram", "ssd", "liquide", "réseau"), [LIQ, NETD, NETU]),
+    "disques": _c(("disques", "ssd", "ram"), [DC, DD, DRD, DWR]),
+    "carte-mere": _c(("carte mère", "chipset", "vrm", "températures"), [MOBO, CHIP, VRM]),
+    "reseau": _c(("réseau", "disque", "débit"), [NETD, NETU, DRD, DWR]),
+    "refroidissement": _c(("liquide", "pompe", "ventilateurs", "aio"), [LIQ, PUMP, FAN1, CFAN, GFAN]),
+    "gpu": _c(("gpu", "vram"), [GPUH, VRAM, GCLK, GPW, GFAN]),
+    "cpu": _c(("cpu", "fréquence", "puissance"), [CLK, CPW, CFAN]),
+    "puissance": _c(("puissance", "fréquences"), [CPW, GPW, CLK, GCLK]),
+    "liquide": _c(("liquide", "aio"), [LIQ, PUMP, CFAN]),
+    "ram": _c(("ram", "mémoire", "disques"), [DC, DD]),
 }

@@ -50,6 +50,10 @@ pub struct Widget {
     pub rotation: f32,
     #[serde(default = "one")]
     pub opacity: f32,
+    /// Clé de donnée (ex. `ssd.2.used_pct`) : le widget n'est dessiné que si cette donnée existe
+    /// sur ce PC (second SSD, GPU dédié, capteur de carte mère…).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub visible_if: Option<String>,
     #[serde(flatten)]
     pub kind: WidgetKind,
 }

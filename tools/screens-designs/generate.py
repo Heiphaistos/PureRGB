@@ -14,7 +14,7 @@ sys.path.insert(0, HERE)
 
 import layouts  # noqa: E402
 import qa  # noqa: E402
-from content import CONTENT  # noqa: E402
+from content import CONTENT, with_base  # noqa: E402
 from formats import FORMATS  # noqa: E402
 from lib import layout_json  # noqa: E402
 from palettes import PALETTES  # noqa: E402
@@ -34,7 +34,9 @@ def load_content_extensions():
     for info in sorted(pkgutil.iter_modules([HERE]), key=lambda i: i.name):
         if info.name.startswith("content_ext_"):
             m = importlib.import_module(info.name)
-            CONTENT.update(getattr(m, "CONTENT_EXT", {}))
+            # Regle produit : BASE (CPU, GPU, RAM, SSD 1-2) en tete de TOUT jeu de contenu.
+            for key, (tags, ms) in getattr(m, "CONTENT_EXT", {}).items():
+                CONTENT[key] = (tags, with_base(list(ms)))
             CONTENT_FR.update(getattr(m, "CONTENT_FR_EXT", {}))
 
 

@@ -106,6 +106,9 @@ pub fn render(layout: &Layout, store: &ValueStore, media: &MediaStore, out_w: u3
     }
 
     for wd in &layout.widgets {
+        if wd.visible_if.as_deref().is_some_and(|k| store.get(k).is_none()) {
+            continue;
+        }
         let opacity = if wd.opacity.is_finite() { wd.opacity.clamp(0.0, 1.0) } else { 1.0 };
         if !finite(&[wd.x, wd.y, wd.w, wd.h, wd.rotation]) || wd.w <= 0.0 || wd.h <= 0.0 || opacity <= 0.0 {
             if opacity > 0.0 {
