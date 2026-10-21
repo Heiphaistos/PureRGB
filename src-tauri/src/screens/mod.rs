@@ -3,3 +3,6 @@
 
 pub mod driver;
 pub mod layout;
+pub mod bindings;
+pub mod media;
+pub mod render;
