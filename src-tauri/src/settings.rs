@@ -48,6 +48,8 @@ pub struct Settings {
     /// Vérifie au lancement si une nouvelle version de PureRGB existe
     /// (distinct de `auto_start_openrgb`, qui concerne le sidecar OpenRGB).
     pub auto_update_check: bool,
+    /// Affiche les photos des produits (téléchargées depuis le site du fabricant).
+    pub product_photos: bool,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -79,6 +81,7 @@ impl Default for Settings {
             auto_manage_conflicts: true,
             telemetry_opt_in: false,
             auto_update_check: true,
+            product_photos: true,
         }
     }
 }

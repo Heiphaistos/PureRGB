@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "products": [
+    {
+      "id": "exemple-ecran-lcd",
+      "kind": "screen",
+      "vendor": "Exemple",
+      "name": "Exemple Ecran LCD 9.16",
+      "match": { "usb": ["0416:5408"], "names": ["exemple ecran lcd"] },
+      "image": { "url": "https://example.com/images/ecran.png", "source_page": "https://example.com/produits/ecran" }
+    },
+    {
+      "id": "exemple-ventilateur-120",
+      "kind": "fan",
+      "vendor": "Exemple",
+      "name": "Exemple Ventilateur 120 ARGB",
+      "match": { "usb": [], "names": ["exemple ventilateur 120"] },
+      "image": { "url": "https://example.com/images/fan.png", "source_page": "https://example.com/produits/fan" }
+    },
+    {
+      "id": "exemple-bandeau-led",
+      "kind": "light",
+      "vendor": "Exemple",
+      "name": "Exemple Bandeau LED",
+      "match": { "usb": ["1234:abcd"], "names": ["exemple bandeau led"] }
+    }
+  ]
+}

@@ -5,6 +5,8 @@ mod engine;
 mod hotplug;
 mod job;
 mod netdev;
+mod product_commands;
+mod product_images;
 mod screens;
 mod sensors;
 mod settings;
@@ -1282,6 +1284,10 @@ pub fn run() {
             pawnio_install,
             get_settings,
             update_settings,
+            product_commands::product_lookup,
+            product_commands::product_image,
+            product_commands::product_open_source,
+            product_commands::set_product_photos,
             resize_zone,
             netdev_list,
             netdev_add,
