@@ -168,3 +168,23 @@ impl ScreenManager {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Détection réelle sur la machine de test (aucun écran attendu) : ne doit ni
+    /// bloquer ni paniquer, et l'écran simulé doit toujours être trouvé.
+    #[test]
+    fn scan_with_all_providers_finds_the_simulator() {
+        let m = ScreenManager::new(SensorHub::new());
+        let started = std::time::Instant::now();
+        let infos = m.scan(true);
+        assert!(started.elapsed() < Duration::from_secs(20), "détection trop lente");
+        assert!(infos.iter().any(|i| i.protocol == super::super::driver::Protocol::Simulated));
+        let st = m.state("sim:0000:0000:1").unwrap();
+        assert!(st.layout.is_none() && st.brightness == 100);
+        m.shutdown();
+        assert!(m.list().is_empty());
+    }
+}
