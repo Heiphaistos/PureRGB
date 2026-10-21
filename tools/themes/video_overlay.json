@@ -1,0 +1,276 @@
+{
+ "version": 1,
+ "name": "Vidéo plein écran",
+ "width": 1920,
+ "height": 462,
+ "background": {
+  "kind": "media",
+  "media_id": "MEDIA_ID",
+  "fit": "cover"
+ },
+ "widgets": [
+  {
+   "id": "carte",
+   "x": 1130,
+   "y": 34,
+   "w": 760,
+   "h": 394,
+   "type": "rect",
+   "fill": "#05080fb0",
+   "stroke": "#ffffff30",
+   "stroke_width": 2,
+   "radius": 28
+  },
+  {
+   "id": "heure",
+   "x": 1170,
+   "y": 52,
+   "w": 330,
+   "h": 96,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 92,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "date",
+   "x": 1500,
+   "y": 66,
+   "w": 360,
+   "h": 60,
+   "type": "value",
+   "source": "date",
+   "format": "%A %d %B",
+   "style": {
+    "font": "Inter",
+    "size": 34,
+    "color": "#e5e7eb",
+    "align": "right",
+    "bold": false
+   }
+  },
+  {
+   "id": "sep",
+   "x": 1170,
+   "y": 160,
+   "w": 680,
+   "h": 2,
+   "type": "rect",
+   "fill": "#ffffff30",
+   "stroke": null,
+   "stroke_width": 0,
+   "radius": 1
+  },
+  {
+   "id": "CPU-lab",
+   "x": 1170,
+   "y": 178,
+   "w": 120,
+   "h": 34,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#9fb0e8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "CPU-temp",
+   "x": 1170,
+   "y": 206,
+   "w": 170,
+   "h": 92,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 84,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "CPU-load",
+   "x": 1340,
+   "y": 222,
+   "w": 150,
+   "h": 52,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 46,
+    "color": "#dbe4ff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "CPU-bar",
+   "x": 1170,
+   "y": 306,
+   "w": 320,
+   "h": 14,
+   "type": "bar",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 7.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#38bdf8"
+    ],
+    [
+     1.0,
+     "#a78bfa"
+    ]
+   ]
+  },
+  {
+   "id": "GPU-lab",
+   "x": 1520,
+   "y": 178,
+   "w": 120,
+   "h": 34,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#9fb0e8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "GPU-temp",
+   "x": 1520,
+   "y": 206,
+   "w": 170,
+   "h": 92,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 84,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "GPU-load",
+   "x": 1690,
+   "y": 222,
+   "w": 150,
+   "h": 52,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 46,
+    "color": "#dbe4ff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "GPU-bar",
+   "x": 1520,
+   "y": 306,
+   "w": 320,
+   "h": 14,
+   "type": "bar",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 7.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#f472b6"
+    ],
+    [
+     1.0,
+     "#fb923c"
+    ]
+   ]
+  },
+  {
+   "id": "ram-lab",
+   "x": 1170,
+   "y": 346,
+   "w": 90,
+   "h": 34,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 28,
+    "color": "#9fb0e8",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "ram-bar",
+   "x": 1270,
+   "y": 356,
+   "w": 300,
+   "h": 14,
+   "type": "bar",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 7.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     1.0,
+     "#38bdf8"
+    ]
+   ]
+  },
+  {
+   "id": "ram-val",
+   "x": 1580,
+   "y": 342,
+   "w": 270,
+   "h": 42,
+   "type": "value",
+   "source": "ram.used_gb",
+   "format": "{:.1} Go",
+   "style": {
+    "font": "Inter",
+    "size": 30,
+    "color": "#e5e7eb",
+    "align": "right",
+    "bold": false
+   }
+  }
+ ]
+}

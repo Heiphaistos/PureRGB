@@ -186,3 +186,32 @@ fn id_must_match_content_hash() {
     let (ds, ms) = stores(&d.join("dest"));
     assert!(import(&p, &ds, &ms, LIMITS).is_err());
 }
+
+/// Fabrique un thème `.purergb-theme` à partir d'une vidéo/GIF/image et d'un modèle de design
+/// (outil manuel, ignoré par défaut) :
+/// `PURERGB_THEME_MEDIA=<fichier> PURERGB_THEME_TEMPLATE=<design.json avec MEDIA_ID> PURERGB_THEME_OUT=<x.purergb-theme>
+///  cargo test make_theme_from_env -- --ignored --nocapture`
+#[test]
+#[ignore]
+fn make_theme_from_env() {
+    let var = |k: &str| std::env::var(k).unwrap_or_else(|_| panic!("variable {k} manquante"));
+    let (media_path, template, out) = (var("PURERGB_THEME_MEDIA"), var("PURERGB_THEME_TEMPLATE"), var("PURERGB_THEME_OUT"));
+    let dir = tmp("make");
+    let (_designs, media) = stores(&dir);
+    let item = media.import(Path::new(&media_path)).expect("import du média");
+    eprintln!("média importé : {item:?}");
+    let json = std::fs::read_to_string(&template).expect("modèle").replace("MEDIA_ID", &item.id);
+    let layout: Layout = serde_json::from_str(&json).expect("design valide");
+    export(&layout, &media, Path::new(&out)).expect("export du thème");
+    // Aperçu PNG (valeurs plausibles) à côté du thème, pour contrôle visuel.
+    let store = crate::screens::bindings::ValueStore::empty();
+    for (k, v) in [("cpu.temp", 58.0), ("cpu.load", 42.0), ("gpu.temp", 71.0), ("gpu.load", 63.0), ("ram.used_pct", 61.0), ("ram.used_gb", 19.5)] {
+        store.set_for_test(k, v);
+    }
+    let frame = crate::screens::render::render(&layout, &store, &media, layout.width, layout.height, 0);
+    if let Some(img) = image::RgbaImage::from_raw(frame.width, frame.height, frame.rgba) {
+        let _ = img.save(format!("{out}.png"));
+    }
+    eprintln!("thème écrit : {out} ({} octets)", std::fs::metadata(&out).map(|m| m.len()).unwrap_or(0));
+    let _ = std::fs::remove_dir_all(&dir);
+}
