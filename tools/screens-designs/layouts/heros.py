@@ -1,27 +1,25 @@
-"""Heros + liste : grande jauge de la mesure principale, trois lignes secondaires."""
+"""Heros + liste : grande jauge de la mesure principale (selon le contenu), liste complete des autres."""
 from content import CONTENT
-from lib import Canvas, split
-from parts import hero_list, ring, row
+from lib import Canvas
+from parts import ring
+from layouts.r1_common import CONTENTS_ALL, block, fit, hero_split, pick, colopts, side_by_side, sizes
 
 NAME, TITLE = "heros", "Jauge héros et liste"
-CONTENTS = ["quad", "cpu", "gpu", "disques"]
+CONTENTS = CONTENTS_ALL
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1]
+    hero, rest = hero_split(content, CONTENT[content][1])
     x, y, w, h = fmt.zone
     gap = fmt.short * 0.04
-    if fmt.ratio >= 1.5:
-        d = min(h, w * 0.45)
-        rx, lx, lw = hero_list(fmt.zone, d, gap)
-        ring(c, rx + d / 2, y + h / 2, d / 2, ms[0], 0, sub=True)
-        for i, box in enumerate(split((lx, y + h * 0.06, lw, h * 0.88), 3, gap, horizontal=False)):
-            row(c, box, ms[1 + i], i + 1)
+
+    def mk(n, frac, cols):
+        c = Canvas(p, fmt)
+        wide = side_by_side(fmt)
+        d = min(h, w * frac) if wide else min(w, h * frac)
+        rx, ry = (x, y + (h - d) / 2) if wide else (x + (w - d) / 2, y)
+        ring(c, rx + d / 2, ry + d / 2, d / 2, hero, 0, sub=True)
+        box = (rx + d + gap, y, w - d - gap, h) if wide else (x, ry + d + gap, w, y + h - ry - d - gap)
+        block(c, box, pick(rest, n), cols, gap, maxrow=fmt.short * 0.14)
         return c.finish()
-    r = min(w / 2, h * 0.3)
-    ring(c, x + w / 2, y + r, r, ms[0], 0, sub=True)
-    top = y + r * 2 + gap * 0.5
-    for i, box in enumerate(split((x, top, w, y + h - top), 3, gap * 0.6, horizontal=False)):
-        row(c, box, ms[1 + i], i + 1)
-    return c.finish()
+    return fit(mk, fmt, sizes(rest), (0.42, 0.36, 0.5), colopts(fmt))

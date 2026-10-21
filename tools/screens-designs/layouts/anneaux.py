@@ -1,29 +1,31 @@
-"""Anneaux concentriques : 3 mesures imbriquees, heure et legende au centre (formats ~carres)."""
+"""Anneaux concentriques (CPU, GPU, RAM) avec l'heure au centre, et la liste complete des mesures a cote ou dessous."""
 from content import CONTENT
 from lib import Canvas
+from layouts.r1_common import CONTENTS_ALL, block, fit, pick, colopts, side_by_side, sizes
 
 NAME, TITLE = "anneaux", "Anneaux concentriques"
-CONTENTS = ["quad", "disques", "refroidissement"]
-FORMATS = ["s480", "s320", "r43", "rond", "s240"]
+CONTENTS = CONTENTS_ALL
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1][:3]
-    cx, cy = fmt.w / 2, fmt.h / 2
-    R = fmt.short / 2 - fmt.margin * (0.6 if fmt.round else 1)
-    th = R * 0.105
-    step = th * 1.55
-    for i, m in enumerate(ms):
-        r = R - i * step
-        c.arc(cx, cy, r, m.src, m.lo, m.hi, th, m.colors(p, i), start=120, sweep=300)
-    inner = R - 3 * step + th * 0.6
-    side = inner * 1.35
-    c.value("time", "%H:%M", cx - side / 2, cy - inner * 0.72, side, inner * 0.5, "88:88", p.text, bold=True, align="center", pre="time")
-    rh = inner * 0.2
-    for i, m in enumerate(ms):
-        y = cy - inner * 0.12 + i * rh * 1.15
-        lw = side * 0.45
-        c.text(cx - side / 2, y, lw, rh, m.label, p.acc[i % 3], bold=True, pre="l", group="al", maxsize=rh)
-        c.value(m.src, m.fmt, cx - side / 2 + lw, y, side - lw, rh, m.sample, p.text, bold=True, align="right", pre="v", group="av", maxsize=rh)
-    return c.finish()
+    ms = CONTENT[content][1]
+    x, y, w, h = fmt.zone
+    gap = fmt.short * 0.04
+
+    def mk(n, frac, cols):
+        c = Canvas(p, fmt)
+        wide = side_by_side(fmt)
+        d = min(h, w * frac) if wide else min(w, h * frac)
+        rx, ry = (x, y + (h - d) / 2) if wide else (x + (w - d) / 2, y)
+        cx, cy, R = rx + d / 2, ry + d / 2, d / 2
+        th = R * 0.11
+        step = th * 1.5
+        for i, m in enumerate(ms[:3]):
+            c.arc(cx, cy, R - i * step, m.src, m.lo, m.hi, th, m.colors(p, i), start=120, sweep=300)
+        inner = R - 3 * step + th * 0.6
+        side = inner * 1.5
+        c.value("time", "%H:%M", cx - side / 2, cy - inner * 0.3, side, inner * 0.6, "88:88", p.text, bold=True, align="center", pre="time")
+        box = (rx + d + gap, y, w - d - gap, h) if wide else (x, ry + d + gap, w, y + h - ry - d - gap)
+        block(c, box, pick(ms, n), cols, gap, colored=3, maxrow=fmt.short * 0.14)
+        return c.finish()
+    return fit(mk, fmt, sizes(ms), (0.42, 0.36, 0.5), colopts(fmt))
