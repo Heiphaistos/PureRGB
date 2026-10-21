@@ -1,0 +1,21 @@
+{"version":1,"name":"Ligne de temps · Refroidissement · Corail","width":1280,"height":480,"background":{"kind":"gradient","from":"#fff4f0","to":"#ffe0d6","angle":90},"widgets":[
+{"id":"time1","x":38.4,"y":38.4,"w":240.6,"h":121,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":78.7,"color":"#4a2118","align":"left","bold":true}},
+{"id":"date1","x":303.1,"y":62.6,"w":481.3,"h":72.6,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Inter","size":42.1,"color":"#8e5a4c","align":"left","bold":false}},
+{"id":"sep1","x":38.4,"y":165.1,"w":1203.2,"h":2,"type":"rect","fill":"#4a211824","stroke":null,"stroke_width":0,"radius":1},
+{"id":"c1","x":38.4,"y":173.8,"w":290,"h":267.8,"type":"rect","fill":"#ffffffc4","stroke":"#4a211824","stroke_width":1,"radius":28},
+{"id":"l1","x":59.8,"y":195.2,"w":111.2,"h":58.5,"type":"text","text":"LIQ.","style":{"font":"Inter","size":28.5,"color":"#d54e35","align":"left","bold":true}},
+{"id":"v1","x":171,"y":195.2,"w":135.9,"h":58.5,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":22.6,"color":"#4a2118","align":"right","bold":true}},
+{"id":"g1","x":59.8,"y":265.4,"w":247.1,"h":154.8,"type":"graph","source":"liquid.temp","min":20,"max":60,"seconds":60,"line":"#d54e35","fill":"#d54e3540","thickness":8.999424000000001},
+{"id":"c2","x":342.8,"y":173.8,"w":290,"h":267.8,"type":"rect","fill":"#ffffffc4","stroke":"#4a211824","stroke_width":1,"radius":28},
+{"id":"l2","x":364.2,"y":195.2,"w":111.2,"h":58.5,"type":"text","text":"POMPE","style":{"font":"Inter","size":28.5,"color":"#bb6c3a","align":"left","bold":true}},
+{"id":"v2","x":475.4,"y":195.2,"w":135.9,"h":58.5,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":22.6,"color":"#4a2118","align":"right","bold":true}},
+{"id":"g2","x":364.2,"y":265.4,"w":247.1,"h":154.8,"type":"graph","source":"pump.rpm","min":0,"max":4000,"seconds":60,"line":"#bb6c3a","fill":"#bb6c3a40","thickness":8.999424000000001},
+{"id":"c3","x":647.2,"y":173.8,"w":290,"h":267.8,"type":"rect","fill":"#ffffffc4","stroke":"#4a211824","stroke_width":1,"radius":28},
+{"id":"l3","x":668.6,"y":195.2,"w":111.2,"h":58.5,"type":"text","text":"VENT. 1","style":{"font":"Inter","size":28.5,"color":"#279084","align":"left","bold":true}},
+{"id":"v3","x":779.8,"y":195.2,"w":135.9,"h":58.5,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":22.6,"color":"#4a2118","align":"right","bold":true}},
+{"id":"g3","x":668.6,"y":265.4,"w":247.1,"h":154.8,"type":"graph","source":"fan.1.rpm","min":0,"max":2500,"seconds":60,"line":"#279084","fill":"#27908440","thickness":8.999424000000001},
+{"id":"c4","x":951.6,"y":173.8,"w":290,"h":267.8,"type":"rect","fill":"#ffffffc4","stroke":"#4a211824","stroke_width":1,"radius":28},
+{"id":"l4","x":973,"y":195.2,"w":111.2,"h":58.5,"type":"text","text":"V. CPU","style":{"font":"Inter","size":28.5,"color":"#d54e35","align":"left","bold":true}},
+{"id":"v4","x":1084.2,"y":195.2,"w":135.9,"h":58.5,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Inter","size":22.6,"color":"#4a2118","align":"right","bold":true}},
+{"id":"g4","x":973,"y":265.4,"w":247.1,"h":154.8,"type":"graph","source":"cpu.fan","min":0,"max":2500,"seconds":60,"line":"#d54e35","fill":"#d54e3540","thickness":8.999424000000001}
+]}

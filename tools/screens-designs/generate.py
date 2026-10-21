@@ -114,6 +114,15 @@ def rust_list(items):
     return "\n".join(lines) + "\n"
 
 
+# Combinaisons ecartees apres revue visuelle (valeur en police proportionnelle trop large pour les
+# chiffres « fantomes » du style LCD/CRT : desalignement). A retirer si l'archetype est corrige.
+REJECT_IDS = {
+    "gen-chiffre-ram-crt-rond",
+    "gen-sty-crt-sty-pc-carbone-w1280",
+    "gen-sty-lcd-sty-pc-brume-u1920",
+}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--per", type=int, default=1, help="palettes par (archetype, contenu, format)")
@@ -143,6 +152,8 @@ def main():
                     os.remove(os.path.join(GEN_DIR, f))
     for mod, content, fmt, p, w in res:
         did = design_id(mod, content, p, fmt)
+        if did in REJECT_IDS:
+            continue
         assert did not in seen and len(did) <= 64, did
         seen.add(did)
         title = f"{mod.TITLE} · {CONTENT_FR.get(content, content)}"

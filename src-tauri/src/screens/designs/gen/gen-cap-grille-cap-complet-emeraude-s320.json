@@ -1,0 +1,22 @@
+{"version":1,"name":"Grille de capteurs · Tableau de bord complet · Émeraude","width":320,"height":320,"background":{"kind":"gradient","from":"#021a14","to":"#05382b","angle":90},"widgets":[
+{"id":"c1","x":25.6,"y":25.6,"w":130.4,"h":130.4,"type":"rect","fill":"#ffffff12","stroke":"#e8fff624","stroke_width":1,"radius":18.3},
+{"id":"st1","x":25.6,"y":54.3,"w":3,"h":73,"type":"rect","fill":"#10e0a0","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":38.6,"y":38.6,"w":104.3,"h":17.7,"type":"text","text":"TEMP. CPU","style":{"font":"Inter","size":15.3,"color":"#8fc7b0","align":"left","bold":true}},
+{"id":"v1","x":38.6,"y":59.5,"w":104.3,"h":72,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":19.7,"color":"#e8fff6","align":"left","bold":true}},
+{"id":"b1","x":38.6,"y":134.6,"w":104.3,"h":8.3,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":4.2,"track":"#0c4a39","colors":[[0,"#34d399"],[0.55,"#fcd34d"],[1,"#fb7185"]]},
+{"id":"c2","x":164,"y":25.6,"w":130.4,"h":130.4,"type":"rect","fill":"#ffffff12","stroke":"#e8fff624","stroke_width":1,"radius":18.3},
+{"id":"st2","x":164,"y":54.3,"w":3,"h":73,"type":"rect","fill":"#5eead4","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":177,"y":38.6,"w":104.3,"h":17.7,"type":"text","text":"CHARGE CPU","style":{"font":"Inter","size":15.3,"color":"#8fc7b0","align":"left","bold":true}},
+{"id":"v2","x":177,"y":59.5,"w":104.3,"h":72,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":19.7,"color":"#e8fff6","align":"left","bold":true}},
+{"id":"b2","x":177,"y":134.6,"w":104.3,"h":8.3,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":4.2,"track":"#0c4a39","colors":[[0,"#5eead4"],[1,"#d9f99d"]]},
+{"id":"c3","x":25.6,"y":164,"w":130.4,"h":130.4,"type":"rect","fill":"#ffffff12","stroke":"#e8fff624","stroke_width":1,"radius":18.3},
+{"id":"st3","x":25.6,"y":192.7,"w":3,"h":73,"type":"rect","fill":"#d9f99d","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l3","x":38.6,"y":177,"w":104.3,"h":17.7,"type":"text","text":"FRÉQ. CPU","style":{"font":"Inter","size":15.3,"color":"#8fc7b0","align":"left","bold":true}},
+{"id":"v3","x":38.6,"y":197.9,"w":104.3,"h":72,"type":"value","source":"cpu.clock","format":"{:.0} MHz","style":{"font":"Inter","size":19.7,"color":"#e8fff6","align":"left","bold":true}},
+{"id":"b3","x":38.6,"y":273,"w":104.3,"h":8.3,"type":"bar","source":"cpu.clock","min":0,"max":6000,"vertical":false,"radius":4.2,"track":"#0c4a39","colors":[[0,"#d9f99d"],[1,"#10e0a0"]]},
+{"id":"c4","x":164,"y":164,"w":130.4,"h":130.4,"type":"rect","fill":"#ffffff12","stroke":"#e8fff624","stroke_width":1,"radius":18.3},
+{"id":"st4","x":164,"y":192.7,"w":3,"h":73,"type":"rect","fill":"#10e0a0","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l4","x":177,"y":177,"w":104.3,"h":17.7,"type":"text","text":"PUISS. CPU","style":{"font":"Inter","size":15.3,"color":"#8fc7b0","align":"left","bold":true}},
+{"id":"v4","x":177,"y":197.9,"w":104.3,"h":72,"type":"value","source":"cpu.power","format":"{:.0} W","style":{"font":"Inter","size":19.7,"color":"#e8fff6","align":"left","bold":true}},
+{"id":"b4","x":177,"y":273,"w":104.3,"h":8.3,"type":"bar","source":"cpu.power","min":0,"max":250,"vertical":false,"radius":4.2,"track":"#0c4a39","colors":[[0,"#10e0a0"],[1,"#5eead4"]]}
+]}

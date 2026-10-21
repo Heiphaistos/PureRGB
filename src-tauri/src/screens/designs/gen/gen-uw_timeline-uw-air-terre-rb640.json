@@ -1,0 +1,13 @@
+{"version":1,"name":"Ligne de temps · Refroidissement · Terre","width":640,"height":172,"background":{"kind":"gradient","from":"#1b1612","to":"#2e241b","angle":90},"widgets":[
+{"id":"time1","x":13.8,"y":13.8,"w":122.5,"h":43.3,"type":"value","source":"time","format":"%H:%M","style":{"font":"Roboto Mono","size":37.7,"color":"#f0e4cf","align":"left","bold":true}},
+{"id":"date1","x":148.5,"y":22.5,"w":245,"h":26,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Roboto Mono","size":18.8,"color":"#a59478","align":"left","bold":false}},
+{"id":"sep1","x":13.8,"y":59.2,"w":612.4,"h":2,"type":"rect","fill":"#f0e4cf24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"c1","x":13.8,"y":62.3,"w":303.6,"h":95.9,"type":"rect","fill":"#ffffff10","stroke":"#f0e4cf24","stroke_width":1,"radius":13.4},
+{"id":"l1","x":21.5,"y":70,"w":129.7,"h":20.9,"type":"text","text":"LIQ.","style":{"font":"Roboto Mono","size":18.2,"color":"#d79921","align":"left","bold":true}},
+{"id":"v1","x":151.2,"y":70,"w":158.6,"h":20.9,"type":"value","source":"liquid.temp","format":"{:.1}°","style":{"font":"Roboto Mono","size":18.2,"color":"#f0e4cf","align":"right","bold":true}},
+{"id":"g1","x":21.5,"y":95.1,"w":288.3,"h":55.4,"type":"graph","source":"liquid.temp","min":20,"max":60,"seconds":60,"line":"#d79921","fill":"#d7992140","thickness":3.222912000000001},
+{"id":"c2","x":322.6,"y":62.3,"w":303.6,"h":95.9,"type":"rect","fill":"#ffffff10","stroke":"#f0e4cf24","stroke_width":1,"radius":13.4},
+{"id":"l2","x":330.3,"y":70,"w":129.7,"h":20.9,"type":"text","text":"POMPE","style":{"font":"Roboto Mono","size":18.2,"color":"#b8bb26","align":"left","bold":true}},
+{"id":"v2","x":460,"y":70,"w":158.6,"h":20.9,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Roboto Mono","size":18.2,"color":"#f0e4cf","align":"right","bold":true}},
+{"id":"g2","x":330.3,"y":95.1,"w":288.3,"h":55.4,"type":"graph","source":"pump.rpm","min":0,"max":4000,"seconds":60,"line":"#b8bb26","fill":"#b8bb2640","thickness":3.222912000000001}
+]}

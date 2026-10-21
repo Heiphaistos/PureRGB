@@ -1,0 +1,15 @@
+{"version":1,"name":"Jauge héros et liste · Disques · Sable","width":854,"height":480,"background":{"kind":"gradient","from":"#f7f0e4","to":"#ecdcc0","angle":90},"widgets":[
+{"id":"a1","x":38.4,"y":65.1,"w":349.7,"h":349.7,"type":"gauge_arc","source":"disk.C.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":29.7,"track":"#d6c29a","colors":[[0,"#c2410c"],[1,"#a16207"]]},
+{"id":"v1","x":108,"y":175.2,"w":210.5,"h":104.5,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Inter","size":73,"color":"#3a2a14","align":"center","bold":true}},
+{"id":"l1","x":125.8,"y":341.4,"w":174.9,"h":43.5,"type":"text","text":"C:","style":{"font":"Inter","size":37.9,"color":"#80693f","align":"center","bold":true}},
+{"id":"s1","x":111.7,"y":257.4,"w":203.2,"h":37.7,"type":"value","source":"disk.C.free_gb","format":"{:.0} Go libres","style":{"font":"Inter","size":31.1,"color":"#80693f","align":"center","bold":false}},
+{"id":"l2","x":426.5,"y":62.6,"w":175.1,"h":82.3,"type":"text","text":"D:","style":{"font":"Inter","size":65.8,"color":"#80693f","align":"left","bold":true}},
+{"id":"v2","x":601.6,"y":62.6,"w":214,"h":82.3,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"b1","x":426.5,"y":153.3,"w":389.1,"h":10.5,"type":"bar","source":"disk.D.used_pct","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#d6c29a","colors":[[0,"#a16207"],[1,"#0f766e"]]},
+{"id":"l3","x":426.5,"y":187.3,"w":175.1,"h":82.3,"type":"text","text":"SSD","style":{"font":"Inter","size":65.8,"color":"#80693f","align":"left","bold":true}},
+{"id":"v3","x":601.6,"y":187.3,"w":214,"h":82.3,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"b2","x":426.5,"y":278,"w":389.1,"h":10.5,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#d6c29a","colors":[[0,"#0f766e"],[1,"#c2410c"]]},
+{"id":"l4","x":426.5,"y":311.9,"w":175.1,"h":82.3,"type":"text","text":"RAM","style":{"font":"Inter","size":65.8,"color":"#80693f","align":"left","bold":true}},
+{"id":"v4","x":601.6,"y":311.9,"w":214,"h":82.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":71.5,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"b3","x":426.5,"y":402.6,"w":389.1,"h":10.5,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":5.3,"track":"#d6c29a","colors":[[0,"#c2410c"],[1,"#a16207"]]}
+]}

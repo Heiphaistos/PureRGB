@@ -1,0 +1,10 @@
+{"version":1,"name":"Grand chiffre · Mémoire · Carbone","width":320,"height":320,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"gl1","x":25.6,"y":25.6,"w":268.8,"h":268.8,"opacity":0.07,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":134.4},
+{"id":"gl2","x":59.2,"y":59.2,"w":201.6,"h":201.6,"opacity":0.1,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":100.8},
+{"id":"gl3","x":92.8,"y":92.8,"w":134.4,"h":134.4,"opacity":0.13,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":67.2},
+{"id":"gl4","x":126.4,"y":126.4,"w":67.2,"h":67.2,"opacity":0.16,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":33.6},
+{"id":"l1","x":25.6,"y":25.6,"w":268.8,"h":32.3,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":28,"color":"#ff2d55","align":"center","bold":true}},
+{"id":"v1","x":25.6,"y":65.9,"w":268.8,"h":134.4,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":116.9,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"s1","x":25.6,"y":208.4,"w":268.8,"h":32.3,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Rajdhani","size":28,"color":"#8d929b","align":"center","bold":false}},
+{"id":"b1","x":65.9,"y":262.1,"w":188.2,"h":13.4,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":6.7,"track":"#2c2f35","colors":[[0,"#ff2d55"],[1,"#f59e0b"]]}
+]}

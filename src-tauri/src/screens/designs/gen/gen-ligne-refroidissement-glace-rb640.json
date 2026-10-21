@@ -1,0 +1,9 @@
+{"version":1,"name":"Ligne unique · Refroidissement · Glace","width":640,"height":172,"background":{"kind":"gradient","from":"#06121f","to":"#103049","angle":90},"widgets":[
+{"id":"dot1","x":24.7,"y":66,"w":11.4,"h":11.4,"type":"rect","fill":"#7dd3fc","stroke":null,"stroke_width":0,"radius":5.7},
+{"id":"l1","x":42.6,"y":53.9,"w":73.3,"h":41,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":17.8,"color":"#9cc3dc","align":"left","bold":true}},
+{"id":"v1","x":126.6,"y":53.9,"w":147.3,"h":41,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":35.7,"color":"#f0f9ff","align":"left","bold":true}},
+{"id":"dot2","x":306,"y":66,"w":11.4,"h":11.4,"type":"rect","fill":"#bae6fd","stroke":null,"stroke_width":0,"radius":5.7},
+{"id":"l2","x":323.9,"y":53.9,"w":66.5,"h":41,"type":"text","text":"POMPE","style":{"font":"Inter","size":17.8,"color":"#9cc3dc","align":"left","bold":true}},
+{"id":"v2","x":401.1,"y":53.9,"w":214.2,"h":41,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":35.7,"color":"#f0f9ff","align":"left","bold":true}},
+{"id":"b1","x":13.8,"y":143.8,"w":612.4,"h":14.4,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":7.2,"track":"#183a55","colors":[[0,"#7dd3fc"],[0.55,"#fde68a"],[1,"#fb7185"]]}
+]}

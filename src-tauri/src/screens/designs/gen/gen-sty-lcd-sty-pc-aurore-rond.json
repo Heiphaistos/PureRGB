@@ -1,0 +1,14 @@
+{"version":1,"name":"LCD sept segments · Vue d'ensemble · Aurore","width":480,"height":480,"background":{"kind":"gradient","from":"#050a1c","to":"#0e3340","angle":45},"widgets":[
+{"id":"win1","x":81.6,"y":81.6,"w":316.8,"h":96,"type":"rect","fill":"#050a1c","stroke":"#9bbcd0","stroke_width":2,"radius":10},
+{"id":"l1","x":97.4,"y":85.4,"w":285.1,"h":22.8,"type":"text","text":"CPU","style":{"font":"Inter","size":19.8,"color":"#9bbcd0","align":"left","bold":true}},
+{"id":"gh1","x":97.4,"y":110.2,"w":285.1,"h":61.7,"opacity":0.13,"type":"text","text":"888%","style":{"font":"Roboto Mono","size":53.6,"color":"#5eead4","align":"right","bold":true}},
+{"id":"v1","x":97.4,"y":110.2,"w":285.1,"h":61.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":53.6,"color":"#5eead4","align":"right","bold":true}},
+{"id":"win2","x":81.6,"y":192,"w":316.8,"h":96,"type":"rect","fill":"#050a1c","stroke":"#9bbcd0","stroke_width":2,"radius":10},
+{"id":"l2","x":97.4,"y":195.8,"w":285.1,"h":22.8,"type":"text","text":"GPU","style":{"font":"Inter","size":19.8,"color":"#9bbcd0","align":"left","bold":true}},
+{"id":"gh2","x":97.4,"y":220.6,"w":285.1,"h":61.7,"opacity":0.13,"type":"text","text":"888%","style":{"font":"Roboto Mono","size":53.6,"color":"#a78bfa","align":"right","bold":true}},
+{"id":"v2","x":97.4,"y":220.6,"w":285.1,"h":61.7,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":53.6,"color":"#a78bfa","align":"right","bold":true}},
+{"id":"win3","x":81.6,"y":302.4,"w":316.8,"h":96,"type":"rect","fill":"#050a1c","stroke":"#9bbcd0","stroke_width":2,"radius":10},
+{"id":"l3","x":97.4,"y":306.2,"w":285.1,"h":22.8,"type":"text","text":"RAM","style":{"font":"Inter","size":19.8,"color":"#9bbcd0","align":"left","bold":true}},
+{"id":"gh3","x":97.4,"y":331,"w":285.1,"h":61.7,"opacity":0.13,"type":"text","text":"888%","style":{"font":"Roboto Mono","size":53.6,"color":"#f472b6","align":"right","bold":true}},
+{"id":"v3","x":97.4,"y":331,"w":285.1,"h":61.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Roboto Mono","size":53.6,"color":"#f472b6","align":"right","bold":true}}
+]}

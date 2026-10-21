@@ -1,9 +1,0 @@
-{"version":1,"name":"Grand chiffre · Liquide · Violet nuit","width":240,"height":240,"background":{"kind":"gradient","from":"#191a2e","to":"#2a2347","angle":90},"widgets":[
-{"id":"gl1","x":19.2,"y":19.2,"w":201.6,"h":201.6,"opacity":0.07,"type":"rect","fill":"#bd93f9","stroke":null,"stroke_width":0,"radius":100.8},
-{"id":"gl2","x":44.4,"y":44.4,"w":151.2,"h":151.2,"opacity":0.1,"type":"rect","fill":"#bd93f9","stroke":null,"stroke_width":0,"radius":75.6},
-{"id":"gl3","x":69.6,"y":69.6,"w":100.8,"h":100.8,"opacity":0.13,"type":"rect","fill":"#bd93f9","stroke":null,"stroke_width":0,"radius":50.4},
-{"id":"gl4","x":94.8,"y":94.8,"w":50.4,"h":50.4,"opacity":0.16,"type":"rect","fill":"#bd93f9","stroke":null,"stroke_width":0,"radius":25.2},
-{"id":"l1","x":19.2,"y":19.2,"w":201.6,"h":24.2,"type":"text","text":"LIQUIDE","style":{"font":"Roboto Mono","size":21,"color":"#bd93f9","align":"center","bold":true}},
-{"id":"v1","x":19.2,"y":49.4,"w":201.6,"h":100.8,"type":"value","source":"liquid.temp","format":"{:.1}°","style":{"font":"Roboto Mono","size":54.4,"color":"#f4f1ff","align":"center","bold":true}},
-{"id":"b1","x":49.4,"y":196.6,"w":141.1,"h":10.1,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":5,"track":"#3a3465","colors":[[0,"#50fa7b"],[0.55,"#f1fa8c"],[1,"#ff5555"]]}
-]}

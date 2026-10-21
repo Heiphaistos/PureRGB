@@ -1,9 +1,0 @@
-{"version":1,"name":"Horloge analogique · Vue d'ensemble · Brume claire","width":480,"height":480,"background":{"kind":"gradient","from":"#f4f5f7","to":"#e2e5ea","angle":90},"widgets":[
-{"id":"k1","x":141.8,"y":81.6,"w":196.4,"h":196.4,"type":"analog_clock","face":"#ffffff","hands":"#1c2128","accent":"#3b6fd4"},
-{"id":"l1","x":81.6,"y":306.8,"w":92.8,"h":31.1,"type":"text","text":"CPU","style":{"font":"Inter","size":27.1,"color":"#3b6fd4","align":"center","bold":true}},
-{"id":"v1","x":81.6,"y":343.4,"w":92.8,"h":55,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":32.2,"color":"#1c2128","align":"center","bold":true}},
-{"id":"l2","x":193.6,"y":306.8,"w":92.8,"h":31.1,"type":"text","text":"GPU","style":{"font":"Inter","size":27.1,"color":"#0d927f","align":"center","bold":true}},
-{"id":"v2","x":193.6,"y":343.4,"w":92.8,"h":55,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":32.2,"color":"#1c2128","align":"center","bold":true}},
-{"id":"l3","x":305.6,"y":306.8,"w":92.8,"h":31.1,"type":"text","text":"RAM","style":{"font":"Inter","size":27.1,"color":"#d9480f","align":"center","bold":true}},
-{"id":"v3","x":305.6,"y":343.4,"w":92.8,"h":55,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":32.2,"color":"#1c2128","align":"center","bold":true}}
-]}

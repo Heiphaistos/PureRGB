@@ -227,7 +227,7 @@ mod tests {
     /// Rend chaque design embarqué avec des valeurs plausibles : PNG dans
     /// `src-tauri/target/screens-preview/designs/` (indépendant de CARGO_TARGET_DIR ; surcharge
     /// `PURERGB_PREVIEW_DIR`) pour revue à l'œil, et refuse un rendu vide. Les rendus sont
-    /// limités à 960 px de côté pour rester rapides.
+    /// limités à 640 px de côté pour rester rapides.
     #[test]
     fn every_builtin_design_renders_a_non_blank_preview() {
         use crate::screens::{media::MediaStore, render};
@@ -245,7 +245,7 @@ mod tests {
         }
         for b in builtin::all() {
             let l = parse(b.json).unwrap();
-            let k = (960.0 / l.width.max(l.height) as f32).min(1.0);
+            let k = (640.0 / l.width.max(l.height) as f32).min(1.0);
             let (rw, rh) = (((l.width as f32 * k).round() as u32).max(1), ((l.height as f32 * k).round() as u32).max(1));
             let f = render::render(&l, &store, &media, rw, rh, 0);
             let distinct = f.rgba.chunks(4).step_by(97).map(|p| [p[0], p[1], p[2]]).collect::<std::collections::HashSet<_>>().len();

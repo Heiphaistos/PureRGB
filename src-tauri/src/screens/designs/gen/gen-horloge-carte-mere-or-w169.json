@@ -1,0 +1,15 @@
+{"version":1,"name":"Horloge et capteurs · Carte mère · Noir et or","width":854,"height":480,"background":{"kind":"gradient","from":"#0a0805","to":"#1a150a","angle":90},"widgets":[
+{"id":"gl1","x":102.2,"y":70.7,"w":338.7,"h":338.7,"opacity":0.07,"type":"rect","fill":"#f5d77a","stroke":null,"stroke_width":0,"radius":169.3},
+{"id":"gl2","x":144.6,"y":113,"w":254,"h":254,"opacity":0.1,"type":"rect","fill":"#f5d77a","stroke":null,"stroke_width":0,"radius":127},
+{"id":"gl3","x":186.9,"y":155.3,"w":169.3,"h":169.3,"opacity":0.13,"type":"rect","fill":"#f5d77a","stroke":null,"stroke_width":0,"radius":84.7},
+{"id":"gl4","x":229.2,"y":197.7,"w":84.7,"h":84.7,"opacity":0.16,"type":"rect","fill":"#f5d77a","stroke":null,"stroke_width":0,"radius":42.3},
+{"id":"time1","x":38.4,"y":70.7,"w":404.1,"h":250,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":132.1,"color":"#f7ecd0","align":"center","bold":true}},
+{"id":"date1","x":38.4,"y":336.8,"w":404.1,"h":72.6,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Inter","size":35.3,"color":"#a8966a","align":"center","bold":false}},
+{"id":"sep1","x":456.9,"y":78.7,"w":2,"h":322.6,"type":"rect","fill":"#f7ecd024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":485.7,"y":38.4,"w":148.4,"h":124.8,"type":"text","text":"CPU","style":{"font":"Inter","size":22.2,"color":"#e5b53c","align":"left","bold":true}},
+{"id":"v1","x":634.2,"y":38.4,"w":181.4,"h":124.8,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":58.7,"color":"#f7ecd0","align":"right","bold":true}},
+{"id":"l2","x":485.7,"y":177.6,"w":148.4,"h":124.8,"type":"text","text":"CARTE MÈRE","style":{"font":"Inter","size":22.2,"color":"#f5d77a","align":"left","bold":true}},
+{"id":"v2","x":634.2,"y":177.6,"w":181.4,"h":124.8,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":58.7,"color":"#f7ecd0","align":"right","bold":true}},
+{"id":"l3","x":485.7,"y":316.8,"w":148.4,"h":124.8,"type":"text","text":"CHIPSET","style":{"font":"Inter","size":22.2,"color":"#b8862a","align":"left","bold":true}},
+{"id":"v3","x":634.2,"y":316.8,"w":181.4,"h":124.8,"type":"value","source":"chipset.temp","format":"{:.0}°C","style":{"font":"Inter","size":58.7,"color":"#f7ecd0","align":"right","bold":true}}
+]}

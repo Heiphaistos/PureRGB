@@ -1,0 +1,14 @@
+{"version":1,"name":"Panneaux détaillés · Ventilation détaillée · Menthe","width":854,"height":480,"background":{"kind":"gradient","from":"#effcf6","to":"#d9f5ea","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":249.5,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"h1","x":55.9,"y":55.9,"w":214.5,"h":36.8,"type":"text","text":"VENTILATEURS","style":{"font":"Inter","size":25.3,"color":"#0e906b","align":"left","bold":true}},
+{"id":"v1","x":55.9,"y":96.4,"w":214.5,"h":184.1,"type":"value","source":"fan.1.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":35.7,"color":"#12382c","align":"left","bold":true}},
+{"id":"b1","x":55.9,"y":289.7,"w":214.5,"h":11,"type":"bar","source":"fan.1.rpm","min":0,"max":2500,"vertical":false,"radius":5.5,"track":"#c7e8da","colors":[[0,"#0e906b"],[1,"#0c8c9b"]]},
+{"id":"c2","x":302.3,"y":38.4,"w":249.5,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"h2","x":319.7,"y":55.9,"w":214.5,"h":36.8,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":25.3,"color":"#0c8c9b","align":"left","bold":true}},
+{"id":"v2","x":319.7,"y":96.4,"w":214.5,"h":184.1,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":35.7,"color":"#12382c","align":"left","bold":true}},
+{"id":"b2","x":319.7,"y":289.7,"w":214.5,"h":11,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":5.5,"track":"#c7e8da","colors":[[0,"#22b27a"],[0.55,"#e1910a"],[1,"#dc3b4a"]]},
+{"id":"c3","x":566.1,"y":38.4,"w":249.5,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"h3","x":583.6,"y":55.9,"w":214.5,"h":36.8,"type":"text","text":"TEMPÉRATURES","style":{"font":"Inter","size":25.3,"color":"#7c3aed","align":"left","bold":true}},
+{"id":"v3","x":583.6,"y":96.4,"w":214.5,"h":184.1,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":35.7,"color":"#12382c","align":"left","bold":true}},
+{"id":"b3","x":583.6,"y":289.7,"w":214.5,"h":11,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":5.5,"track":"#c7e8da","colors":[[0,"#22b27a"],[0.55,"#e1910a"],[1,"#dc3b4a"]]}
+]}

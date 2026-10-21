@@ -1,0 +1,14 @@
+{"version":1,"name":"Ruban à jauges · Système · Carbone","width":1920,"height":462,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"c1","x":37,"y":37,"w":553.8,"h":388,"type":"rect","fill":"#ffffff0e","stroke":"#e8eaed24","stroke_width":1,"radius":28},
+{"id":"time1","x":68,"y":94.1,"w":491.7,"h":182.5,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":158.7,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"date1","x":68,"y":296.2,"w":491.7,"h":65.2,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Rajdhani","size":56.7,"color":"#8d929b","align":"center","bold":false}},
+{"id":"a1","x":643.7,"y":37,"w":388,"h":388,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":21.3,"track":"#2c2f35","colors":[[0,"#ff2d55"],[1,"#f59e0b"]]},
+{"id":"v1","x":712.5,"y":153.9,"w":250.4,"h":124.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":108.1,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"l1","x":740.7,"y":343.5,"w":194,"h":51.8,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":45,"color":"#8d929b","align":"center","bold":true}},
+{"id":"a2","x":1054.1,"y":37,"w":388,"h":388,"type":"gauge_arc","source":"gpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":21.3,"track":"#2c2f35","colors":[[0,"#f59e0b"],[1,"#94a3b8"]]},
+{"id":"v2","x":1123,"y":153.9,"w":250.4,"h":124.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":108.1,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"l2","x":1151.1,"y":343.5,"w":194,"h":51.8,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":45,"color":"#8d929b","align":"center","bold":true}},
+{"id":"a3","x":1464.6,"y":37,"w":388,"h":388,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":21.3,"track":"#2c2f35","colors":[[0,"#94a3b8"],[1,"#ff2d55"]]},
+{"id":"v3","x":1533.4,"y":153.9,"w":250.4,"h":124.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":108.1,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"l3","x":1561.6,"y":343.5,"w":194,"h":51.8,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":45,"color":"#8d929b","align":"center","bold":true}}
+]}

@@ -1,0 +1,12 @@
+{"version":1,"name":"Anneaux concentriques · Vue d'ensemble · Sobre mono","width":480,"height":480,"background":{"kind":"gradient","from":"#0b0b0c","to":"#171719","angle":90},"widgets":[
+{"id":"a1","x":23,"y":23,"w":433.9,"h":433.9,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":120,"sweep_deg":300,"thickness":22.8,"track":"#2a2a2e","colors":[[0,"#ffffff"],[1,"#c2c2c9"]]},
+{"id":"a2","x":58.4,"y":58.4,"w":363.3,"h":363.3,"type":"gauge_arc","source":"gpu.load","min":0,"max":100,"start_deg":120,"sweep_deg":300,"thickness":22.8,"track":"#2a2a2e","colors":[[0,"#c2c2c9"],[1,"#85858d"]]},
+{"id":"a3","x":93.7,"y":93.7,"w":292.7,"h":292.7,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":120,"sweep_deg":300,"thickness":22.8,"track":"#2a2a2e","colors":[[0,"#85858d"],[1,"#ffffff"]]},
+{"id":"time1","x":155.8,"y":150.2,"w":168.3,"h":62.3,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":54.2,"color":"#f2f2f2","align":"center","bold":true}},
+{"id":"l1","x":155.8,"y":225,"w":75.8,"h":24.9,"type":"text","text":"CPU","style":{"font":"Inter","size":21.7,"color":"#ffffff","align":"left","bold":true}},
+{"id":"v1","x":231.6,"y":225,"w":92.6,"h":24.9,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":21.7,"color":"#f2f2f2","align":"right","bold":true}},
+{"id":"l2","x":155.8,"y":253.7,"w":75.8,"h":24.9,"type":"text","text":"GPU","style":{"font":"Inter","size":21.7,"color":"#c2c2c9","align":"left","bold":true}},
+{"id":"v2","x":231.6,"y":253.7,"w":92.6,"h":24.9,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":21.7,"color":"#f2f2f2","align":"right","bold":true}},
+{"id":"l3","x":155.8,"y":282.4,"w":75.8,"h":24.9,"type":"text","text":"RAM","style":{"font":"Inter","size":21.7,"color":"#85858d","align":"left","bold":true}},
+{"id":"v3","x":231.6,"y":282.4,"w":92.6,"h":24.9,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":21.7,"color":"#f2f2f2","align":"right","bold":true}}
+]}

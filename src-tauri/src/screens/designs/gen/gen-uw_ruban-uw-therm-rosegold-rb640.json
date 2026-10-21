@@ -1,0 +1,14 @@
+{"version":1,"name":"Ruban à jauges · Températures · Or rose","width":640,"height":172,"background":{"kind":"gradient","from":"#160b0f","to":"#33181f","angle":90},"widgets":[
+{"id":"c1","x":13.8,"y":13.8,"w":183.7,"h":144.4,"type":"rect","fill":"#ffffff10","stroke":"#fdeef024","stroke_width":1,"radius":20.2},
+{"id":"time1","x":25.4,"y":35.1,"w":160.6,"h":67.9,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":52.5,"color":"#fdeef0","align":"center","bold":true}},
+{"id":"date1","x":25.4,"y":110.3,"w":160.6,"h":24.3,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Inter","size":21.1,"color":"#c7969f","align":"center","bold":false}},
+{"id":"a1","x":208.4,"y":20,"w":132,"h":132,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":7.3,"track":"#47232c","colors":[[0,"#b9d99a"],[0.55,"#f0b86a"],[1,"#e0626f"]]},
+{"id":"v1","x":231.8,"y":59.8,"w":85.2,"h":42.3,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":27.6,"color":"#fdeef0","align":"center","bold":true}},
+{"id":"l1","x":241.4,"y":124.3,"w":66,"h":17.6,"type":"text","text":"CPU","style":{"font":"Inter","size":15.3,"color":"#c7969f","align":"center","bold":true}},
+{"id":"a2","x":351.3,"y":20,"w":132,"h":132,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":7.3,"track":"#47232c","colors":[[0,"#b9d99a"],[0.55,"#f0b86a"],[1,"#e0626f"]]},
+{"id":"v2","x":374.7,"y":59.8,"w":85.2,"h":42.3,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":27.6,"color":"#fdeef0","align":"center","bold":true}},
+{"id":"l2","x":384.3,"y":124.3,"w":66,"h":17.6,"type":"text","text":"GPU","style":{"font":"Inter","size":15.3,"color":"#c7969f","align":"center","bold":true}},
+{"id":"a3","x":494.2,"y":20,"w":132,"h":132,"type":"gauge_arc","source":"mobo.temp","min":20,"max":90,"start_deg":135,"sweep_deg":270,"thickness":7.3,"track":"#47232c","colors":[[0,"#b9d99a"],[0.55,"#f0b86a"],[1,"#e0626f"]]},
+{"id":"v3","x":517.6,"y":59.8,"w":85.2,"h":42.3,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":27.6,"color":"#fdeef0","align":"center","bold":true}},
+{"id":"l3","x":527.2,"y":124.3,"w":66,"h":17.6,"type":"text","text":"CARTE","style":{"font":"Inter","size":15.3,"color":"#c7969f","align":"center","bold":true}}
+]}

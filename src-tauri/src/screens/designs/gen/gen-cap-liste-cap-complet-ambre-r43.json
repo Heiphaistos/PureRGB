@@ -1,0 +1,23 @@
+{"version":1,"name":"Liste à barres · Tableau de bord complet · Rétro ambre","width":320,"height":240,"background":{"kind":"gradient","from":"#0d0700","to":"#1c1000","angle":90},"widgets":[
+{"id":"l1","x":19.2,"y":19.2,"w":126.7,"h":20.7,"type":"text","text":"TEMP. CPU","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v1","x":145.9,"y":19.2,"w":154.9,"h":20.7,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b1","x":19.2,"y":42,"w":281.6,"h":3,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffd166"],[0.55,"#ff9500"],[1,"#ff3b00"]]},
+{"id":"l2","x":19.2,"y":48,"w":126.7,"h":20.7,"type":"text","text":"CHARGE CPU","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v2","x":145.9,"y":48,"w":154.9,"h":20.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b2","x":19.2,"y":70.8,"w":281.6,"h":3,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffd166"],[1,"#ff7a00"]]},
+{"id":"l3","x":19.2,"y":76.8,"w":126.7,"h":20.7,"type":"text","text":"FRÉQ. CPU","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v3","x":145.9,"y":76.8,"w":154.9,"h":20.7,"type":"value","source":"cpu.clock","format":"{:.0} MHz","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b3","x":19.2,"y":99.6,"w":281.6,"h":3,"type":"bar","source":"cpu.clock","min":0,"max":6000,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ff7a00"],[1,"#ffb000"]]},
+{"id":"l4","x":19.2,"y":105.6,"w":126.7,"h":20.7,"type":"text","text":"PUISS. CPU","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v4","x":145.9,"y":105.6,"w":154.9,"h":20.7,"type":"value","source":"cpu.power","format":"{:.0} W","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b4","x":19.2,"y":128.4,"w":281.6,"h":3,"type":"bar","source":"cpu.power","min":0,"max":250,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffb000"],[1,"#ffd166"]]},
+{"id":"l5","x":19.2,"y":134.4,"w":126.7,"h":20.7,"type":"text","text":"VENTIRAD","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v5","x":145.9,"y":134.4,"w":154.9,"h":20.7,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b5","x":19.2,"y":157.2,"w":281.6,"h":3,"type":"bar","source":"cpu.fan","min":0,"max":2500,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffd166"],[1,"#ff7a00"]]},
+{"id":"l6","x":19.2,"y":163.2,"w":126.7,"h":20.7,"type":"text","text":"TEMP. GPU","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v6","x":145.9,"y":163.2,"w":154.9,"h":20.7,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b6","x":19.2,"y":186,"w":281.6,"h":3,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffd166"],[0.55,"#ff9500"],[1,"#ff3b00"]]},
+{"id":"l7","x":19.2,"y":192,"w":126.7,"h":20.7,"type":"text","text":"P. CHAUD","style":{"font":"Roboto Mono","size":16.5,"color":"#b87a00","align":"left","bold":true}},
+{"id":"v7","x":145.9,"y":192,"w":154.9,"h":20.7,"type":"value","source":"gpu.hotspot","format":"{:.0}°","style":{"font":"Roboto Mono","size":18,"color":"#ffb000","align":"right","bold":true}},
+{"id":"b7","x":19.2,"y":214.8,"w":281.6,"h":3,"type":"bar","source":"gpu.hotspot","min":20,"max":110,"vertical":false,"radius":1.5,"track":"#3a2400","colors":[[0,"#ffd166"],[0.55,"#ff9500"],[1,"#ff3b00"]]}
+]}

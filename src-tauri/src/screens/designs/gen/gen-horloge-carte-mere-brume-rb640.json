@@ -1,0 +1,11 @@
+{"version":1,"name":"Horloge et capteurs · Carte mère · Brume claire","width":640,"height":172,"background":{"kind":"gradient","from":"#f4f5f7","to":"#e2e5ea","angle":90},"widgets":[
+{"id":"time1","x":13.8,"y":25.4,"w":318.4,"h":89.5,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":77.9,"color":"#1c2128","align":"center","bold":true}},
+{"id":"date1","x":13.8,"y":120.7,"w":318.4,"h":26,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Inter","size":22.6,"color":"#5f6875","align":"center","bold":false}},
+{"id":"sep1","x":337.4,"y":28.2,"w":2,"h":115.5,"type":"rect","fill":"#1c212824","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":347.7,"y":13.8,"w":125.3,"h":44.7,"type":"text","text":"CPU","style":{"font":"Inter","size":18.7,"color":"#3b6fd4","align":"left","bold":true}},
+{"id":"v1","x":473,"y":13.8,"w":153.2,"h":44.7,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":31.3,"color":"#1c2128","align":"right","bold":true}},
+{"id":"l2","x":347.7,"y":63.7,"w":125.3,"h":44.7,"type":"text","text":"CARTE MÈRE","style":{"font":"Inter","size":18.7,"color":"#0d927f","align":"left","bold":true}},
+{"id":"v2","x":473,"y":63.7,"w":153.2,"h":44.7,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":31.3,"color":"#1c2128","align":"right","bold":true}},
+{"id":"l3","x":347.7,"y":113.5,"w":125.3,"h":44.7,"type":"text","text":"CHIPSET","style":{"font":"Inter","size":18.7,"color":"#d9480f","align":"left","bold":true}},
+{"id":"v3","x":473,"y":113.5,"w":153.2,"h":44.7,"type":"value","source":"chipset.temp","format":"{:.0}°C","style":{"font":"Inter","size":31.3,"color":"#1c2128","align":"right","bold":true}}
+]}

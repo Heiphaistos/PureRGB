@@ -1,0 +1,13 @@
+{"version":1,"name":"Heure minimale · Heure et températures · Cuivre","width":1920,"height":462,"background":{"kind":"gradient","from":"#120904","to":"#2a1409","angle":90},"widgets":[
+{"id":"time1","x":37,"y":37,"w":1033.8,"h":271.6,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":236.2,"color":"#ffeede","align":"left","bold":false}},
+{"id":"date1","x":37,"y":331.9,"w":1033.8,"h":77.6,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Rajdhani","size":67.5,"color":"#e07a3c","align":"left","bold":false}},
+{"id":"sep1","x":1089.2,"y":75.8,"w":2,"h":310.4,"type":"rect","fill":"#e07a3c","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":1126.2,"y":37,"w":340.6,"h":87.3,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":65.7,"color":"#c99a7c","align":"left","bold":true}},
+{"id":"v1","x":1466.8,"y":37,"w":416.2,"h":87.3,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":75.9,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l2","x":1126.2,"y":134,"w":340.6,"h":87.3,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":65.7,"color":"#c99a7c","align":"left","bold":true}},
+{"id":"v2","x":1466.8,"y":134,"w":416.2,"h":87.3,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":75.9,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l3","x":1126.2,"y":231,"w":340.6,"h":87.3,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":65.7,"color":"#c99a7c","align":"left","bold":true}},
+{"id":"v3","x":1466.8,"y":231,"w":416.2,"h":87.3,"type":"value","source":"ssd.1.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":75.9,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l4","x":1126.2,"y":328,"w":340.6,"h":87.3,"type":"text","text":"CARTE MÈRE","style":{"font":"Rajdhani","size":65.7,"color":"#c99a7c","align":"left","bold":true}},
+{"id":"v4","x":1466.8,"y":328,"w":416.2,"h":87.3,"type":"value","source":"mobo.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":75.9,"color":"#ffeede","align":"right","bold":true}}
+]}

@@ -1,0 +1,13 @@
+{"version":1,"name":"Colonnes séparées · Vue d'ensemble · Forêt","width":320,"height":240,"background":{"kind":"gradient","from":"#04120a","to":"#0c2c19","angle":90},"widgets":[
+{"id":"l1","x":19.2,"y":19.2,"w":112.6,"h":27.4,"type":"text","text":"CPU","style":{"font":"Inter","size":18.2,"color":"#34d399","align":"left","bold":true}},
+{"id":"v1","x":145.9,"y":19.2,"w":154.9,"h":42.6,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eaf7ee","align":"right","bold":true}},
+{"id":"b1","x":19.2,"y":69.1,"w":281.6,"h":4.9,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#143d27","colors":[[0,"#34d399"],[1,"#a3e635"]]},
+{"id":"sep1","x":19.2,"y":83.8,"w":281.6,"h":2,"type":"rect","fill":"#eaf7ee24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":19.2,"y":89.6,"w":112.6,"h":27.4,"type":"text","text":"GPU","style":{"font":"Inter","size":18.2,"color":"#a3e635","align":"left","bold":true}},
+{"id":"v2","x":145.9,"y":89.6,"w":154.9,"h":42.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eaf7ee","align":"right","bold":true}},
+{"id":"b2","x":19.2,"y":139.5,"w":281.6,"h":4.9,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#143d27","colors":[[0,"#a3e635"],[1,"#facc15"]]},
+{"id":"sep2","x":19.2,"y":154.2,"w":281.6,"h":2,"type":"rect","fill":"#eaf7ee24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":19.2,"y":160,"w":112.6,"h":27.4,"type":"text","text":"RAM","style":{"font":"Inter","size":18.2,"color":"#facc15","align":"left","bold":true}},
+{"id":"v3","x":145.9,"y":160,"w":154.9,"h":42.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37,"color":"#eaf7ee","align":"right","bold":true}},
+{"id":"b3","x":19.2,"y":209.9,"w":281.6,"h":4.9,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":2.4,"track":"#143d27","colors":[[0,"#facc15"],[1,"#34d399"]]}
+]}

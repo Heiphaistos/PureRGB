@@ -1,0 +1,14 @@
+{"version":1,"name":"Cartes à courbes · Carte mère · Menthe","width":1280,"height":480,"background":{"kind":"gradient","from":"#effcf6","to":"#d9f5ea","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":389.9,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"l1","x":73.5,"y":73.5,"w":319.7,"h":53.3,"type":"text","text":"CPU","style":{"font":"Inter","size":46.3,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v1","x":73.5,"y":130.1,"w":319.7,"h":89.9,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":78.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"g1","x":73.5,"y":240,"w":319.7,"h":166.5,"type":"graph","source":"cpu.temp","min":20,"max":100,"seconds":60,"line":"#0e906b","fill":"#0e906b40","thickness":9.99072},
+{"id":"c2","x":445.1,"y":38.4,"w":389.9,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"l2","x":480.2,"y":73.5,"w":319.7,"h":53.3,"type":"text","text":"CARTE MÈRE","style":{"font":"Inter","size":46.3,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v2","x":480.2,"y":130.1,"w":319.7,"h":89.9,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":78.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"g2","x":480.2,"y":240,"w":319.7,"h":166.5,"type":"graph","source":"mobo.temp","min":20,"max":90,"seconds":60,"line":"#0c8c9b","fill":"#0c8c9b40","thickness":9.99072},
+{"id":"c3","x":851.7,"y":38.4,"w":389.9,"h":403.2,"type":"rect","fill":"#ffffffc0","stroke":"#12382c24","stroke_width":1,"radius":28},
+{"id":"l3","x":886.8,"y":73.5,"w":319.7,"h":53.3,"type":"text","text":"CHIPSET","style":{"font":"Inter","size":46.3,"color":"#4e7d6d","align":"left","bold":true}},
+{"id":"v3","x":886.8,"y":130.1,"w":319.7,"h":89.9,"type":"value","source":"chipset.temp","format":"{:.0}°C","style":{"font":"Inter","size":78.2,"color":"#12382c","align":"left","bold":true}},
+{"id":"g3","x":886.8,"y":240,"w":319.7,"h":166.5,"type":"graph","source":"chipset.temp","min":20,"max":90,"seconds":60,"line":"#7c3aed","fill":"#7c3aed40","thickness":9.99072}
+]}

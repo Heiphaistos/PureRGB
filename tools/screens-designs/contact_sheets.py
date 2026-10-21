@@ -11,12 +11,14 @@ from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SRC = os.path.join(HERE, "..", "..", "src-tauri", "target", "screens-preview", "designs")
-NAMES = sorted((f[:-3] for f in os.listdir(os.path.join(HERE, "layouts")) if f.endswith(".py") and f != "__init__.py"), key=len, reverse=True)
+_STEMS = [f[:-3] for f in os.listdir(os.path.join(HERE, "layouts")) if f.endswith(".py") and f != "__init__.py"]
+# Les NAME d'archetype peuvent s'ecrire avec « _ » (uw_*) ou « - » (cap-*, sty-*, clk-*) : on accepte les deux.
+NAMES = sorted({n for f in _STEMS for n in (f, f.replace("_", "-"))}, key=len, reverse=True)
 
 
 def arch_of(stem):
     rest = stem[4:]
-    return next((n for n in NAMES if rest.startswith(n + "-")), "?")
+    return next((n for n in NAMES if rest.startswith(n + "-")), "autres")
 
 
 def sheet(files, out, tile, width=1700):

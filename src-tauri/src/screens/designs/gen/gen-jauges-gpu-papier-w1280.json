@@ -1,0 +1,14 @@
+{"version":1,"name":"Tableau de bord à jauges · GPU détaillé · Papier","width":1280,"height":480,"background":{"kind":"gradient","from":"#faf6ec","to":"#efe7d3","angle":90},"widgets":[
+{"id":"a1","x":38.4,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#e0d6bb","colors":[[0,"#4d9a5c"],[0.55,"#d98a1c"],[1,"#c43d2f"]]},
+{"id":"v1","x":96.9,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":57.2,"color":"#2b2418","align":"center","bold":true}},
+{"id":"l1","x":111.8,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"GPU","style":{"font":"Inter","size":20.1,"color":"#75684c","align":"center","bold":true}},
+{"id":"a2","x":341.6,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"gpu.hotspot","min":20,"max":110,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#e0d6bb","colors":[[0,"#4d9a5c"],[0.55,"#d98a1c"],[1,"#c43d2f"]]},
+{"id":"v2","x":400.1,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"gpu.hotspot","format":"{:.0}°C","style":{"font":"Inter","size":57.2,"color":"#2b2418","align":"center","bold":true}},
+{"id":"l2","x":415,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"POINT CHAUD","style":{"font":"Inter","size":20.1,"color":"#75684c","align":"center","bold":true}},
+{"id":"a3","x":644.8,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"gpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#e0d6bb","colors":[[0,"#9f1239"],[1,"#b45309"]]},
+{"id":"v3","x":703.3,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":57.2,"color":"#2b2418","align":"center","bold":true}},
+{"id":"l3","x":718.2,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"GPU","style":{"font":"Inter","size":20.1,"color":"#75684c","align":"center","bold":true}},
+{"id":"a4","x":948,"y":93.2,"w":293.6,"h":293.6,"type":"gauge_arc","source":"gpu.vram_used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":25,"track":"#e0d6bb","colors":[[0,"#b45309"],[1,"#0f766e"]]},
+{"id":"v4","x":1006.5,"y":185.6,"w":176.7,"h":87.7,"type":"value","source":"gpu.vram_used_pct","format":"{:.0}%","style":{"font":"Inter","size":57.2,"color":"#2b2418","align":"center","bold":true}},
+{"id":"l4","x":1021.4,"y":325.1,"w":146.8,"h":36.6,"type":"text","text":"VRAM","style":{"font":"Inter","size":20.1,"color":"#75684c","align":"center","bold":true}}
+]}

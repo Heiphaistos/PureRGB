@@ -1,0 +1,10 @@
+{"version":1,"name":"Grand chiffre · CPU détaillé · Tropical","width":480,"height":480,"background":{"kind":"gradient","from":"#031c1c","to":"#0b4a42","angle":45},"widgets":[
+{"id":"gl1","x":38.4,"y":38.4,"w":403.2,"h":403.2,"opacity":0.07,"type":"rect","fill":"#ff7a59","stroke":null,"stroke_width":0,"radius":201.6},
+{"id":"gl2","x":88.8,"y":88.8,"w":302.4,"h":302.4,"opacity":0.1,"type":"rect","fill":"#ff7a59","stroke":null,"stroke_width":0,"radius":151.2},
+{"id":"gl3","x":139.2,"y":139.2,"w":201.6,"h":201.6,"opacity":0.13,"type":"rect","fill":"#ff7a59","stroke":null,"stroke_width":0,"radius":100.8},
+{"id":"gl4","x":189.6,"y":189.6,"w":100.8,"h":100.8,"opacity":0.16,"type":"rect","fill":"#ff7a59","stroke":null,"stroke_width":0,"radius":50.4},
+{"id":"l1","x":38.4,"y":38.4,"w":403.2,"h":48.4,"type":"text","text":"CPU","style":{"font":"Inter","size":42.1,"color":"#ff7a59","align":"center","bold":true}},
+{"id":"v1","x":38.4,"y":98.9,"w":403.2,"h":201.6,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":130.5,"color":"#f2fff8","align":"center","bold":true}},
+{"id":"s1","x":38.4,"y":312.6,"w":403.2,"h":48.4,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":42.1,"color":"#9ccfbf","align":"center","bold":false}},
+{"id":"b1","x":98.9,"y":393.2,"w":282.2,"h":20.2,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":10.1,"track":"#145a50","colors":[[0,"#2de2c4"],[0.55,"#ffd23f"],[1,"#ff5a4d"]]}
+]}

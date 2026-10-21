@@ -1,0 +1,17 @@
+{"version":1,"name":"Ligne de temps · Système · Toxique","width":854,"height":480,"background":{"kind":"gradient","from":"#040a02","to":"#0d1a05","angle":90},"widgets":[
+{"id":"time1","x":38.4,"y":38.4,"w":155.4,"h":88.7,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":63.9,"color":"#efffe0","align":"left","bold":true}},
+{"id":"date1","x":209.4,"y":56.1,"w":310.9,"h":53.2,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Rajdhani","size":32,"color":"#9cc070","align":"left","bold":false}},
+{"id":"sep1","x":38.4,"y":132.9,"w":777.2,"h":2,"type":"rect","fill":"#efffe024","stroke":null,"stroke_width":0,"radius":1},
+{"id":"c1","x":38.4,"y":141.5,"w":249.5,"h":300.1,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":28},
+{"id":"l1","x":58.4,"y":161.5,"w":94.3,"h":67.6,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":49.8,"color":"#b6ff00","align":"left","bold":true}},
+{"id":"v1","x":152.7,"y":161.5,"w":115.3,"h":67.6,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":52,"color":"#efffe0","align":"right","bold":true}},
+{"id":"g1","x":58.4,"y":242.6,"w":209.6,"h":179,"type":"graph","source":"cpu.load","min":0,"max":100,"seconds":60,"line":"#b6ff00","fill":"#b6ff0040","thickness":10.407253333333333},
+{"id":"c2","x":302.3,"y":141.5,"w":249.5,"h":300.1,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":28},
+{"id":"l2","x":322.2,"y":161.5,"w":94.3,"h":67.6,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":49.8,"color":"#e6ff4d","align":"left","bold":true}},
+{"id":"v2","x":416.5,"y":161.5,"w":115.3,"h":67.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":52,"color":"#efffe0","align":"right","bold":true}},
+{"id":"g2","x":322.2,"y":242.6,"w":209.6,"h":179,"type":"graph","source":"gpu.load","min":0,"max":100,"seconds":60,"line":"#e6ff4d","fill":"#e6ff4d40","thickness":10.407253333333333},
+{"id":"c3","x":566.1,"y":141.5,"w":249.5,"h":300.1,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":1,"radius":28},
+{"id":"l3","x":586.1,"y":161.5,"w":94.3,"h":67.6,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":49.8,"color":"#7dff3c","align":"left","bold":true}},
+{"id":"v3","x":680.4,"y":161.5,"w":115.3,"h":67.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":52,"color":"#efffe0","align":"right","bold":true}},
+{"id":"g3","x":586.1,"y":242.6,"w":209.6,"h":179,"type":"graph","source":"ram.used_pct","min":0,"max":100,"seconds":60,"line":"#7dff3c","fill":"#7dff3c40","thickness":10.407253333333333}
+]}

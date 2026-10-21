@@ -1,0 +1,13 @@
+{"version":1,"name":"Colonnes séparées · Carte mère · Néon","width":320,"height":320,"background":{"kind":"gradient","from":"#07030f","to":"#14072e","angle":90},"widgets":[
+{"id":"l1","x":25.6,"y":25.6,"w":107.5,"h":36.5,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":20.8,"color":"#ff2bd6","align":"left","bold":true}},
+{"id":"v1","x":146.6,"y":25.6,"w":147.8,"h":56.7,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":49.3,"color":"#f5f0ff","align":"right","bold":true}},
+{"id":"b1","x":25.6,"y":92.1,"w":268.8,"h":6.5,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":3.2,"track":"#271a4d","colors":[[0,"#39ff88"],[0.55,"#ffb020"],[1,"#ff2d55"]]},
+{"id":"sep1","x":25.6,"y":112.1,"w":268.8,"h":2,"type":"rect","fill":"#f5f0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":25.6,"y":119.5,"w":107.5,"h":36.5,"type":"text","text":"CARTE MÈRE","style":{"font":"Rajdhani","size":20.8,"color":"#00e5ff","align":"left","bold":true}},
+{"id":"v2","x":146.6,"y":119.5,"w":147.8,"h":56.7,"type":"value","source":"mobo.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":49.3,"color":"#f5f0ff","align":"right","bold":true}},
+{"id":"b2","x":25.6,"y":185.9,"w":268.8,"h":6.5,"type":"bar","source":"mobo.temp","min":20,"max":90,"vertical":false,"radius":3.2,"track":"#271a4d","colors":[[0,"#39ff88"],[0.55,"#ffb020"],[1,"#ff2d55"]]},
+{"id":"sep2","x":25.6,"y":205.9,"w":268.8,"h":2,"type":"rect","fill":"#f5f0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":25.6,"y":213.3,"w":107.5,"h":36.5,"type":"text","text":"CHIPSET","style":{"font":"Rajdhani","size":20.8,"color":"#b6ff3c","align":"left","bold":true}},
+{"id":"v3","x":146.6,"y":213.3,"w":147.8,"h":56.7,"type":"value","source":"chipset.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":49.3,"color":"#f5f0ff","align":"right","bold":true}},
+{"id":"b3","x":25.6,"y":279.8,"w":268.8,"h":6.5,"type":"bar","source":"chipset.temp","min":20,"max":90,"vertical":false,"radius":3.2,"track":"#271a4d","colors":[[0,"#39ff88"],[0.55,"#ffb020"],[1,"#ff2d55"]]}
+]}

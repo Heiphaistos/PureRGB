@@ -1,0 +1,11 @@
+{"version":1,"name":"Heure minimale · Heure et températures · Terre","width":480,"height":480,"background":{"kind":"gradient","from":"#1b1612","to":"#2e241b","angle":90},"widgets":[
+{"id":"time1","x":81.6,"y":81.6,"w":316.8,"h":158.4,"type":"value","source":"time","format":"%H:%M","style":{"font":"Roboto Mono","size":102.5,"color":"#f0e4cf","align":"left","bold":false}},
+{"id":"date1","x":81.6,"y":246.3,"w":316.8,"h":31.7,"type":"value","source":"date","format":"%a %d %b","style":{"font":"Roboto Mono","size":27.5,"color":"#d79921","align":"left","bold":false}},
+{"id":"rule1","x":81.6,"y":290.7,"w":316.8,"h":2,"type":"rect","fill":"#f0e4cf24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":81.6,"y":309.7,"w":92.8,"h":26.6,"type":"text","text":"CPU","style":{"font":"Roboto Mono","size":23.1,"color":"#d79921","align":"center","bold":true}},
+{"id":"v1","x":81.6,"y":338.1,"w":92.8,"h":58.5,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":37.7,"color":"#f0e4cf","align":"center","bold":true}},
+{"id":"l2","x":193.6,"y":309.7,"w":92.8,"h":26.6,"type":"text","text":"GPU","style":{"font":"Roboto Mono","size":23.1,"color":"#b8bb26","align":"center","bold":true}},
+{"id":"v2","x":193.6,"y":338.1,"w":92.8,"h":58.5,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":37.7,"color":"#f0e4cf","align":"center","bold":true}},
+{"id":"l3","x":305.6,"y":309.7,"w":92.8,"h":26.6,"type":"text","text":"SSD","style":{"font":"Roboto Mono","size":23.1,"color":"#fb4934","align":"center","bold":true}},
+{"id":"v3","x":305.6,"y":338.1,"w":92.8,"h":58.5,"type":"value","source":"ssd.1.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":37.7,"color":"#f0e4cf","align":"center","bold":true}}
+]}

@@ -1,0 +1,11 @@
+{"version":1,"name":"Minimal typographique · Carte mère · Orchidée","width":480,"height":480,"background":{"kind":"gradient","from":"#fbf1fb","to":"#f0d9f3","angle":90},"widgets":[
+{"id":"l1","x":81.6,"y":81.6,"w":316.8,"h":28.5,"type":"text","text":"CPU","style":{"font":"Inter","size":24.8,"color":"#b5179e","align":"left","bold":true}},
+{"id":"v1","x":81.6,"y":113.3,"w":316.8,"h":133.1,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":102.5,"color":"#41204a","align":"left","bold":true}},
+{"id":"rule1","x":81.6,"y":255.8,"w":79.2,"h":3,"type":"rect","fill":"#b5179e","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":81.6,"y":278,"w":158.4,"h":35.9,"type":"text","text":"CARTE MÈRE","style":{"font":"Inter","size":24.1,"color":"#855a8f","align":"left","bold":false}},
+{"id":"v2","x":240,"y":278,"w":158.4,"h":35.9,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":28.7,"color":"#41204a","align":"right","bold":true}},
+{"id":"l3","x":81.6,"y":320.3,"w":158.4,"h":35.9,"type":"text","text":"CHIPSET","style":{"font":"Inter","size":24.1,"color":"#855a8f","align":"left","bold":false}},
+{"id":"v3","x":240,"y":320.3,"w":158.4,"h":35.9,"type":"value","source":"chipset.temp","format":"{:.0}°C","style":{"font":"Inter","size":28.7,"color":"#41204a","align":"right","bold":true}},
+{"id":"l4","x":81.6,"y":362.5,"w":158.4,"h":35.9,"type":"text","text":"VRM","style":{"font":"Inter","size":24.1,"color":"#855a8f","align":"left","bold":false}},
+{"id":"v4","x":240,"y":362.5,"w":158.4,"h":35.9,"type":"value","source":"vrm.temp","format":"{:.0}°C","style":{"font":"Inter","size":28.7,"color":"#41204a","align":"right","bold":true}}
+]}

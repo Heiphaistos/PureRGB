@@ -1,0 +1,11 @@
+{"version":1,"name":"Minimal typographique · GPU détaillé · Noir et orange","width":480,"height":480,"background":{"kind":"gradient","from":"#0b0a09","to":"#1b1814","angle":90},"widgets":[
+{"id":"l1","x":81.6,"y":81.6,"w":316.8,"h":28.5,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":24.8,"color":"#ff7a00","align":"left","bold":true}},
+{"id":"v1","x":81.6,"y":113.3,"w":316.8,"h":133.1,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":115.7,"color":"#f6f1ea","align":"left","bold":true}},
+{"id":"rule1","x":81.6,"y":255.8,"w":79.2,"h":3,"type":"rect","fill":"#ff7a00","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":81.6,"y":278,"w":158.4,"h":35.9,"type":"text","text":"POINT CHAUD","style":{"font":"Rajdhani","size":25.1,"color":"#9a9186","align":"left","bold":false}},
+{"id":"v2","x":240,"y":278,"w":158.4,"h":35.9,"type":"value","source":"gpu.hotspot","format":"{:.0}˚","style":{"font":"Rajdhani","size":28.7,"color":"#f6f1ea","align":"right","bold":true}},
+{"id":"l3","x":81.6,"y":320.3,"w":158.4,"h":35.9,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":25.1,"color":"#9a9186","align":"left","bold":false}},
+{"id":"v3","x":240,"y":320.3,"w":158.4,"h":35.9,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":28.7,"color":"#f6f1ea","align":"right","bold":true}},
+{"id":"l4","x":81.6,"y":362.5,"w":158.4,"h":35.9,"type":"text","text":"VRAM","style":{"font":"Rajdhani","size":25.1,"color":"#9a9186","align":"left","bold":false}},
+{"id":"v4","x":240,"y":362.5,"w":158.4,"h":35.9,"type":"value","source":"gpu.vram_used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":28.7,"color":"#f6f1ea","align":"right","bold":true}}
+]}

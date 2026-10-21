@@ -1,0 +1,14 @@
+{"version":1,"name":"Néon · Températures · Cyberpunk","width":320,"height":240,"background":{"kind":"gradient","from":"#0a0014","to":"#1d0036","angle":90},"widgets":[
+{"id":"hl1","x":15.6,"y":15.6,"w":288.8,"h":106.8,"opacity":0.07,"type":"rect","fill":"#00000000","stroke":"#fcee09","stroke_width":11.600000000000001,"radius":28.9},
+{"id":"hl2","x":18.8,"y":18.8,"w":282.4,"h":100.4,"opacity":0.1,"type":"rect","fill":"#00000000","stroke":"#fcee09","stroke_width":8.4,"radius":25.7},
+{"id":"hl3","x":22,"y":22,"w":276,"h":94,"opacity":0.13,"type":"rect","fill":"#00000000","stroke":"#fcee09","stroke_width":5.2,"radius":22.5},
+{"id":"tb1","x":25.2,"y":25.2,"w":269.6,"h":87.6,"type":"rect","fill":"#00000000","stroke":"#fcee09","stroke_width":2.0,"radius":19.3},
+{"id":"l1","x":35.7,"y":35.7,"w":104.4,"h":66.6,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":36.6,"color":"#fcee09","align":"left","bold":true}},
+{"id":"v1","x":145.1,"y":35.7,"w":139.2,"h":66.6,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":53.3,"color":"#fdf6ff","align":"right","bold":true}},
+{"id":"hl4","x":15.6,"y":117.6,"w":288.8,"h":106.8,"opacity":0.07,"type":"rect","fill":"#00000000","stroke":"#00f0ff","stroke_width":11.600000000000001,"radius":28.9},
+{"id":"hl5","x":18.8,"y":120.8,"w":282.4,"h":100.4,"opacity":0.1,"type":"rect","fill":"#00000000","stroke":"#00f0ff","stroke_width":8.4,"radius":25.7},
+{"id":"hl6","x":22,"y":124,"w":276,"h":94,"opacity":0.13,"type":"rect","fill":"#00000000","stroke":"#00f0ff","stroke_width":5.2,"radius":22.5},
+{"id":"tb2","x":25.2,"y":127.2,"w":269.6,"h":87.6,"type":"rect","fill":"#00000000","stroke":"#00f0ff","stroke_width":2.0,"radius":19.3},
+{"id":"l2","x":35.7,"y":137.7,"w":104.4,"h":66.6,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":36.6,"color":"#00f0ff","align":"left","bold":true}},
+{"id":"v2","x":145.1,"y":137.7,"w":139.2,"h":66.6,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":53.3,"color":"#fdf6ff","align":"right","bold":true}}
+]}

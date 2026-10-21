@@ -1,0 +1,14 @@
+{"version":1,"name":"Cartes à courbes · GPU détaillé · Néon","width":640,"height":172,"background":{"kind":"gradient","from":"#07030f","to":"#14072e","angle":90},"widgets":[
+{"id":"c1","x":13.8,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffff12","stroke":"#f5f0ff24","stroke_width":1,"radius":20.2},
+{"id":"l1","x":26.8,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":16.5,"color":"#a99bd6","align":"left","bold":true}},
+{"id":"v1","x":26.8,"y":46.9,"w":174.1,"h":32,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":27.8,"color":"#f5f0ff","align":"left","bold":true}},
+{"id":"g1","x":26.8,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"gpu.temp","min":20,"max":100,"seconds":60,"line":"#ff2bd6","fill":"#ff2bd640","thickness":3.55224},
+{"id":"c2","x":219.9,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffff12","stroke":"#f5f0ff24","stroke_width":1,"radius":20.2},
+{"id":"l2","x":232.9,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"POINT CHAUD","style":{"font":"Rajdhani","size":16.5,"color":"#a99bd6","align":"left","bold":true}},
+{"id":"v2","x":232.9,"y":46.9,"w":174.1,"h":32,"type":"value","source":"gpu.hotspot","format":"{:.0}˚","style":{"font":"Rajdhani","size":27.8,"color":"#f5f0ff","align":"left","bold":true}},
+{"id":"g2","x":232.9,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"gpu.hotspot","min":20,"max":110,"seconds":60,"line":"#00e5ff","fill":"#00e5ff40","thickness":3.55224},
+{"id":"c3","x":426.1,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffff12","stroke":"#f5f0ff24","stroke_width":1,"radius":20.2},
+{"id":"l3","x":439.1,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":16.5,"color":"#a99bd6","align":"left","bold":true}},
+{"id":"v3","x":439.1,"y":46.9,"w":174.1,"h":32,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":27.8,"color":"#f5f0ff","align":"left","bold":true}},
+{"id":"g3","x":439.1,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"gpu.load","min":0,"max":100,"seconds":60,"line":"#b6ff3c","fill":"#b6ff3c40","thickness":3.55224}
+]}

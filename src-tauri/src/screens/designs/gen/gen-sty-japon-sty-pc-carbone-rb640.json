@@ -1,0 +1,13 @@
+{"version":1,"name":"Minimal japonais · Vue d'ensemble · Carbone","width":640,"height":172,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"a1","x":50.5,"y":16.7,"w":138.6,"h":138.6,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":-90,"sweep_deg":360,"thickness":3.1,"track":"#2c2f35","colors":[[0,"#ff2d55"],[1,"#ff2d55"]]},
+{"id":"hv1","x":67.9,"y":65.2,"w":104,"h":48.5,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":42.2,"color":"#e8eaed","align":"center","bold":false}},
+{"id":"hl1","x":78.3,"y":37.5,"w":83.2,"h":18.8,"type":"text","text":"cpu","style":{"font":"Rajdhani","size":16.3,"color":"#8d929b","align":"center","bold":false}},
+{"id":"dot1","x":116.4,"y":127.6,"w":6.9,"h":6.9,"type":"rect","fill":"#ff2d55","stroke":null,"stroke_width":0,"radius":3.5},
+{"id":"vl1","x":240.4,"y":28.2,"w":1.5,"h":115.5,"opacity":0.5,"type":"rect","fill":"#8d929b","stroke":null,"stroke_width":0,"radius":0},
+{"id":"l1","x":258.8,"y":37.7,"w":112.7,"h":31.8,"type":"text","text":"gpu","style":{"font":"Rajdhani","size":27.6,"color":"#8d929b","align":"left","bold":false}},
+{"id":"v1","x":258.8,"y":73.3,"w":112.7,"h":69.9,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":52.6,"color":"#e8eaed","align":"left","bold":false}},
+{"id":"l2","x":386.1,"y":37.7,"w":112.7,"h":31.8,"type":"text","text":"ram","style":{"font":"Rajdhani","size":27.6,"color":"#8d929b","align":"left","bold":false}},
+{"id":"v2","x":386.1,"y":73.3,"w":112.7,"h":69.9,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":52.6,"color":"#e8eaed","align":"left","bold":false}},
+{"id":"l3","x":513.5,"y":37.7,"w":112.7,"h":31.8,"type":"text","text":"ssd","style":{"font":"Rajdhani","size":27.6,"color":"#8d929b","align":"left","bold":false}},
+{"id":"v3","x":513.5,"y":73.3,"w":112.7,"h":69.9,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":52.6,"color":"#e8eaed","align":"left","bold":false}}
+]}

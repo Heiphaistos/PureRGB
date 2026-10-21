@@ -1,0 +1,14 @@
+{"version":1,"name":"Duo en cartes · GPU détaillé · Noir et orange","width":480,"height":480,"background":{"kind":"gradient","from":"#0b0a09","to":"#1b1814","angle":90},"widgets":[
+{"id":"c1","x":81.6,"y":81.6,"w":316.8,"h":148.8,"type":"rect","fill":"#ffffff0f","stroke":"#f6f1ea24","stroke_width":1,"radius":20.8},
+{"id":"st1","x":81.6,"y":114.3,"w":3,"h":83.3,"type":"rect","fill":"#ff7a00","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":96.5,"y":96.5,"w":109.1,"h":59.5,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":19.6,"color":"#9a9186","align":"left","bold":true}},
+{"id":"s1","x":96.5,"y":156,"w":109.1,"h":47.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":41.4,"color":"#9a9186","align":"left","bold":false}},
+{"id":"v1","x":213,"y":96.5,"w":170.5,"h":85.7,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":74.5,"color":"#f6f1ea","align":"right","bold":true}},
+{"id":"b1","x":213,"y":196.5,"w":170.5,"h":19,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":9.5,"track":"#322c24","colors":[[0,"#9ad66f"],[0.55,"#ff9f1a"],[1,"#ff3b30"]]},
+{"id":"c2","x":81.6,"y":249.6,"w":316.8,"h":148.8,"type":"rect","fill":"#ffffff0f","stroke":"#f6f1ea24","stroke_width":1,"radius":20.8},
+{"id":"st2","x":81.6,"y":282.3,"w":3,"h":83.3,"type":"rect","fill":"#ffa640","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":96.5,"y":264.5,"w":109.1,"h":59.5,"type":"text","text":"POINT CHAUD","style":{"font":"Rajdhani","size":19.6,"color":"#9a9186","align":"left","bold":true}},
+{"id":"s2","x":96.5,"y":324,"w":109.1,"h":47.6,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":41.4,"color":"#9a9186","align":"left","bold":false}},
+{"id":"v2","x":213,"y":264.5,"w":170.5,"h":85.7,"type":"value","source":"gpu.hotspot","format":"{:.0}˚","style":{"font":"Rajdhani","size":74.5,"color":"#f6f1ea","align":"right","bold":true}},
+{"id":"b2","x":213,"y":364.5,"w":170.5,"h":19,"type":"bar","source":"gpu.hotspot","min":20,"max":110,"vertical":false,"radius":9.5,"track":"#322c24","colors":[[0,"#9ad66f"],[0.55,"#ff9f1a"],[1,"#ff3b30"]]}
+]}

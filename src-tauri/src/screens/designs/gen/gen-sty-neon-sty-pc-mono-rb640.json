@@ -1,0 +1,14 @@
+{"version":1,"name":"Néon · Vue d'ensemble · Sobre mono","width":640,"height":172,"background":{"kind":"gradient","from":"#0b0b0c","to":"#171719","angle":90},"widgets":[
+{"id":"hl1","x":8.5,"y":8.5,"w":315.9,"h":155,"opacity":0.07,"type":"rect","fill":"#00000000","stroke":"#ffffff","stroke_width":11.600000000000001,"radius":39.5},
+{"id":"hl2","x":11.7,"y":11.7,"w":309.5,"h":148.6,"opacity":0.1,"type":"rect","fill":"#00000000","stroke":"#ffffff","stroke_width":8.4,"radius":36.3},
+{"id":"hl3","x":14.9,"y":14.9,"w":303.1,"h":142.2,"opacity":0.13,"type":"rect","fill":"#00000000","stroke":"#ffffff","stroke_width":5.2,"radius":33.1},
+{"id":"tb1","x":18.1,"y":18.1,"w":296.7,"h":135.8,"type":"rect","fill":"#00000000","stroke":"#ffffff","stroke_width":2.0,"radius":29.9},
+{"id":"l1","x":34.4,"y":34.4,"w":110.9,"h":103.2,"type":"text","text":"CPU","style":{"font":"Inter","size":50.1,"color":"#ffffff","align":"left","bold":true}},
+{"id":"v1","x":150.6,"y":34.4,"w":147.9,"h":103.2,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":51.3,"color":"#f2f2f2","align":"right","bold":true}},
+{"id":"hl4","x":315.6,"y":8.5,"w":315.9,"h":155,"opacity":0.07,"type":"rect","fill":"#00000000","stroke":"#c2c2c9","stroke_width":11.600000000000001,"radius":39.5},
+{"id":"hl5","x":318.8,"y":11.7,"w":309.5,"h":148.6,"opacity":0.1,"type":"rect","fill":"#00000000","stroke":"#c2c2c9","stroke_width":8.4,"radius":36.3},
+{"id":"hl6","x":322,"y":14.9,"w":303.1,"h":142.2,"opacity":0.13,"type":"rect","fill":"#00000000","stroke":"#c2c2c9","stroke_width":5.2,"radius":33.1},
+{"id":"tb2","x":325.2,"y":18.1,"w":296.7,"h":135.8,"type":"rect","fill":"#00000000","stroke":"#c2c2c9","stroke_width":2.0,"radius":29.9},
+{"id":"l2","x":341.5,"y":34.4,"w":110.9,"h":103.2,"type":"text","text":"GPU","style":{"font":"Inter","size":50.1,"color":"#c2c2c9","align":"left","bold":true}},
+{"id":"v2","x":457.7,"y":34.4,"w":147.9,"h":103.2,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":51.3,"color":"#f2f2f2","align":"right","bold":true}}
+]}

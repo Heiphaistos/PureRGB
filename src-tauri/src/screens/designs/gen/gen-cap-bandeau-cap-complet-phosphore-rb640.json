@@ -1,0 +1,21 @@
+{"version":1,"name":"Bandeau multi-colonnes · Tableau de bord complet · Phosphore bleu","width":640,"height":172,"background":{"kind":"gradient","from":"#00060d","to":"#001a2e","angle":90},"widgets":[
+{"id":"l1","x":13.8,"y":13.8,"w":115.6,"h":28.9,"type":"text","text":"TEMP. CPU","style":{"font":"Roboto Mono","size":18.7,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"v1","x":13.8,"y":45.6,"w":115.6,"h":87.2,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":17,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"b1","x":13.8,"y":146.6,"w":115.6,"h":11.6,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":5.8,"track":"#05304a","colors":[[0,"#7df0ff"],[0.55,"#ffd24d"],[1,"#ff5a6a"]]},
+{"id":"sep1","x":132.7,"y":21,"w":2,"h":130,"type":"rect","fill":"#7df0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l2","x":138,"y":13.8,"w":115.6,"h":28.9,"type":"text","text":"CHARGE CPU","style":{"font":"Roboto Mono","size":18.7,"color":"#4dc3ff","align":"left","bold":true}},
+{"id":"v2","x":138,"y":45.6,"w":115.6,"h":87.2,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Roboto Mono","size":17,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"b2","x":138,"y":146.6,"w":115.6,"h":11.6,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":5.8,"track":"#05304a","colors":[[0,"#4dc3ff"],[1,"#b8f4ff"]]},
+{"id":"sep2","x":256.9,"y":21,"w":2,"h":130,"type":"rect","fill":"#7df0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l3","x":262.2,"y":13.8,"w":115.6,"h":28.9,"type":"text","text":"FRÉQ. CPU","style":{"font":"Roboto Mono","size":18.7,"color":"#b8f4ff","align":"left","bold":true}},
+{"id":"v3","x":262.2,"y":45.6,"w":115.6,"h":87.2,"type":"value","source":"cpu.clock","format":"{:.0} MHz","style":{"font":"Roboto Mono","size":17,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"b3","x":262.2,"y":146.6,"w":115.6,"h":11.6,"type":"bar","source":"cpu.clock","min":0,"max":6000,"vertical":false,"radius":5.8,"track":"#05304a","colors":[[0,"#b8f4ff"],[1,"#7df0ff"]]},
+{"id":"sep3","x":381.1,"y":21,"w":2,"h":130,"type":"rect","fill":"#7df0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l4","x":386.4,"y":13.8,"w":115.6,"h":28.9,"type":"text","text":"PUISS. CPU","style":{"font":"Roboto Mono","size":18.7,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"v4","x":386.4,"y":45.6,"w":115.6,"h":87.2,"type":"value","source":"cpu.power","format":"{:.0} W","style":{"font":"Roboto Mono","size":17,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"b4","x":386.4,"y":146.6,"w":115.6,"h":11.6,"type":"bar","source":"cpu.power","min":0,"max":250,"vertical":false,"radius":5.8,"track":"#05304a","colors":[[0,"#7df0ff"],[1,"#4dc3ff"]]},
+{"id":"sep4","x":505.3,"y":21,"w":2,"h":130,"type":"rect","fill":"#7df0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l5","x":510.6,"y":13.8,"w":115.6,"h":28.9,"type":"text","text":"VENTIRAD","style":{"font":"Roboto Mono","size":18.7,"color":"#4dc3ff","align":"left","bold":true}},
+{"id":"v5","x":510.6,"y":45.6,"w":115.6,"h":87.2,"type":"value","source":"cpu.fan","format":"{:.0} tr/min","style":{"font":"Roboto Mono","size":17,"color":"#7df0ff","align":"left","bold":true}},
+{"id":"b5","x":510.6,"y":146.6,"w":115.6,"h":11.6,"type":"bar","source":"cpu.fan","min":0,"max":2500,"vertical":false,"radius":5.8,"track":"#05304a","colors":[[0,"#4dc3ff"],[1,"#b8f4ff"]]}
+]}

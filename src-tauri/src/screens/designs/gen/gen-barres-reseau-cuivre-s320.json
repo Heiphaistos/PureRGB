@@ -1,0 +1,14 @@
+{"version":1,"name":"Barres horizontales · Réseau et E/S · Cuivre","width":320,"height":320,"background":{"kind":"gradient","from":"#120904","to":"#2a1409","angle":90},"widgets":[
+{"id":"l1","x":25.6,"y":36.8,"w":72.6,"h":54.4,"type":"text","text":"DESCENTE","style":{"font":"Rajdhani","size":17.2,"color":"#e07a3c","align":"left","bold":true}},
+{"id":"b1","x":102.2,"y":54.4,"w":107.6,"h":19.2,"type":"bar","source":"net.down","min":0,"max":50,"vertical":false,"radius":6.7,"track":"#3d2113","colors":[[0,"#e07a3c"],[1,"#f2a65a"]]},
+{"id":"v1","x":213.8,"y":36.8,"w":80.6,"h":54.4,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":17.7,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l2","x":25.6,"y":100.8,"w":72.6,"h":54.4,"type":"text","text":"MONTÉE","style":{"font":"Rajdhani","size":17.2,"color":"#f2a65a","align":"left","bold":true}},
+{"id":"b2","x":102.2,"y":118.4,"w":107.6,"h":19.2,"type":"bar","source":"net.up","min":0,"max":20,"vertical":false,"radius":6.7,"track":"#3d2113","colors":[[0,"#f2a65a"],[1,"#c25b2a"]]},
+{"id":"v2","x":213.8,"y":100.8,"w":80.6,"h":54.4,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":17.7,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l3","x":25.6,"y":164.8,"w":72.6,"h":54.4,"type":"text","text":"LECTURE","style":{"font":"Rajdhani","size":17.2,"color":"#c25b2a","align":"left","bold":true}},
+{"id":"b3","x":102.2,"y":182.4,"w":107.6,"h":19.2,"type":"bar","source":"disk.read","min":0,"max":3000,"vertical":false,"radius":6.7,"track":"#3d2113","colors":[[0,"#c25b2a"],[1,"#e07a3c"]]},
+{"id":"v3","x":213.8,"y":164.8,"w":80.6,"h":54.4,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Rajdhani","size":17.7,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l4","x":25.6,"y":228.8,"w":72.6,"h":54.4,"type":"text","text":"ÉCRITURE","style":{"font":"Rajdhani","size":17.2,"color":"#e07a3c","align":"left","bold":true}},
+{"id":"b4","x":102.2,"y":246.4,"w":107.6,"h":19.2,"type":"bar","source":"disk.write","min":0,"max":3000,"vertical":false,"radius":6.7,"track":"#3d2113","colors":[[0,"#e07a3c"],[1,"#f2a65a"]]},
+{"id":"v4","x":213.8,"y":228.8,"w":80.6,"h":54.4,"type":"value","source":"disk.write","format":"{:.0} Mo/s","style":{"font":"Rajdhani","size":17.7,"color":"#ffeede","align":"right","bold":true}}
+]}

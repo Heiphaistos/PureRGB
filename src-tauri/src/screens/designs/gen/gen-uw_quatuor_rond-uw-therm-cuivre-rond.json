@@ -1,0 +1,14 @@
+{"version":1,"name":"Quatuor rond · Températures · Cuivre","width":480,"height":480,"background":{"kind":"gradient","from":"#120904","to":"#2a1409","angle":90},"widgets":[
+{"id":"a1","x":63,"y":63,"w":174.3,"h":174.3,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":10.5,"track":"#3d2113","colors":[[0,"#b5d48a"],[0.55,"#f2a65a"],[1,"#e0523d"]]},
+{"id":"v1","x":94.6,"y":116,"w":111.2,"h":55.2,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":48,"color":"#ffeede","align":"center","bold":true}},
+{"id":"l1","x":106.6,"y":200.8,"w":87.2,"h":23,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":20,"color":"#c99a7c","align":"center","bold":true}},
+{"id":"a2","x":242.6,"y":63,"w":174.3,"h":174.3,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":10.5,"track":"#3d2113","colors":[[0,"#b5d48a"],[0.55,"#f2a65a"],[1,"#e0523d"]]},
+{"id":"v2","x":274.2,"y":116,"w":111.2,"h":55.2,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":48,"color":"#ffeede","align":"center","bold":true}},
+{"id":"l2","x":286.2,"y":200.8,"w":87.2,"h":23,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":20,"color":"#c99a7c","align":"center","bold":true}},
+{"id":"a3","x":63,"y":242.6,"w":174.3,"h":174.3,"type":"gauge_arc","source":"mobo.temp","min":20,"max":90,"start_deg":135,"sweep_deg":270,"thickness":10.5,"track":"#3d2113","colors":[[0,"#b5d48a"],[0.55,"#f2a65a"],[1,"#e0523d"]]},
+{"id":"v3","x":94.6,"y":295.5,"w":111.2,"h":55.2,"type":"value","source":"mobo.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":48,"color":"#ffeede","align":"center","bold":true}},
+{"id":"l3","x":106.6,"y":380.3,"w":87.2,"h":23,"type":"text","text":"CARTE","style":{"font":"Rajdhani","size":20,"color":"#c99a7c","align":"center","bold":true}},
+{"id":"a4","x":242.6,"y":242.6,"w":174.3,"h":174.3,"type":"gauge_arc","source":"chipset.temp","min":20,"max":90,"start_deg":135,"sweep_deg":270,"thickness":10.5,"track":"#3d2113","colors":[[0,"#b5d48a"],[0.55,"#f2a65a"],[1,"#e0523d"]]},
+{"id":"v4","x":274.2,"y":295.5,"w":111.2,"h":55.2,"type":"value","source":"chipset.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":48,"color":"#ffeede","align":"center","bold":true}},
+{"id":"l4","x":286.2,"y":380.3,"w":87.2,"h":23,"type":"text","text":"PUCE","style":{"font":"Rajdhani","size":20,"color":"#c99a7c","align":"center","bold":true}}
+]}

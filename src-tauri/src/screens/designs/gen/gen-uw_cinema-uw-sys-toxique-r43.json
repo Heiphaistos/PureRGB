@@ -1,0 +1,16 @@
+{"version":1,"name":"Cinéma 16:9 et 4:3 · Système · Toxique","width":320,"height":240,"background":{"kind":"gradient","from":"#040a02","to":"#0d1a05","angle":90},"widgets":[
+{"id":"time1","x":19.2,"y":19.2,"w":112.6,"h":40.3,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":35.1,"color":"#efffe0","align":"left","bold":true}},
+{"id":"date1","x":145.9,"y":25.2,"w":154.9,"h":26.2,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Rajdhani","size":22.8,"color":"#9cc070","align":"right","bold":false}},
+{"id":"l1","x":19.2,"y":69.1,"w":126.7,"h":26.6,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":21.3,"color":"#9cc070","align":"left","bold":true}},
+{"id":"v1","x":145.9,"y":69.1,"w":154.9,"h":26.6,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":23.1,"color":"#efffe0","align":"right","bold":true}},
+{"id":"b1","x":19.2,"y":98.5,"w":281.6,"h":3.4,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#1f3a0a","colors":[[0,"#b6ff00"],[1,"#e6ff4d"]]},
+{"id":"l2","x":19.2,"y":107,"w":126.7,"h":26.6,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":21.3,"color":"#9cc070","align":"left","bold":true}},
+{"id":"v2","x":145.9,"y":107,"w":154.9,"h":26.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":23.1,"color":"#efffe0","align":"right","bold":true}},
+{"id":"b2","x":19.2,"y":136.4,"w":281.6,"h":3.4,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#1f3a0a","colors":[[0,"#e6ff4d"],[1,"#7dff3c"]]},
+{"id":"l3","x":19.2,"y":145,"w":126.7,"h":26.6,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":21.3,"color":"#9cc070","align":"left","bold":true}},
+{"id":"v3","x":145.9,"y":145,"w":154.9,"h":26.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":23.1,"color":"#efffe0","align":"right","bold":true}},
+{"id":"b3","x":19.2,"y":174.3,"w":281.6,"h":3.4,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#1f3a0a","colors":[[0,"#7dff3c"],[1,"#b6ff00"]]},
+{"id":"l4","x":19.2,"y":182.9,"w":126.7,"h":26.6,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":21.3,"color":"#9cc070","align":"left","bold":true}},
+{"id":"v4","x":145.9,"y":182.9,"w":154.9,"h":26.6,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":23.1,"color":"#efffe0","align":"right","bold":true}},
+{"id":"b4","x":19.2,"y":212.2,"w":281.6,"h":3.4,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#1f3a0a","colors":[[0,"#b6ff00"],[1,"#e6ff4d"]]}
+]}

@@ -1,0 +1,15 @@
+{"version":1,"name":"LCD sept segments · Températures · Toxique","width":240,"height":240,"background":{"kind":"gradient","from":"#040a02","to":"#0d1a05","angle":90},"widgets":[
+{"id":"plate1","x":14.9,"y":14.9,"w":210.2,"h":210.2,"type":"rect","fill":"#b6ff0012","stroke":"#efffe024","stroke_width":2,"radius":14.4},
+{"id":"win1","x":19.2,"y":19.2,"w":201.6,"h":62.4,"type":"rect","fill":"#040a02","stroke":"#9cc070","stroke_width":2,"radius":7.5},
+{"id":"l1","x":29.3,"y":21.7,"w":181.4,"h":17.8,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":15.5,"color":"#9cc070","align":"left","bold":true}},
+{"id":"gh1","x":29.3,"y":40.8,"w":181.4,"h":37.1,"opacity":0.13,"type":"text","text":"888°","style":{"font":"Roboto Mono","size":32.3,"color":"#b6ff00","align":"right","bold":true}},
+{"id":"v1","x":29.3,"y":40.8,"w":181.4,"h":37.1,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":32.3,"color":"#b6ff00","align":"right","bold":true}},
+{"id":"win2","x":19.2,"y":88.8,"w":201.6,"h":62.4,"type":"rect","fill":"#040a02","stroke":"#9cc070","stroke_width":2,"radius":7.5},
+{"id":"l2","x":29.3,"y":91.3,"w":181.4,"h":17.8,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":15.5,"color":"#9cc070","align":"left","bold":true}},
+{"id":"gh2","x":29.3,"y":110.4,"w":181.4,"h":37.1,"opacity":0.13,"type":"text","text":"888°","style":{"font":"Roboto Mono","size":32.3,"color":"#e6ff4d","align":"right","bold":true}},
+{"id":"v2","x":29.3,"y":110.4,"w":181.4,"h":37.1,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":32.3,"color":"#e6ff4d","align":"right","bold":true}},
+{"id":"win3","x":19.2,"y":158.4,"w":201.6,"h":62.4,"type":"rect","fill":"#040a02","stroke":"#9cc070","stroke_width":2,"radius":7.5},
+{"id":"l3","x":29.3,"y":160.9,"w":181.4,"h":17.8,"type":"text","text":"C. MÈRE","style":{"font":"Rajdhani","size":15.5,"color":"#9cc070","align":"left","bold":true}},
+{"id":"gh3","x":29.3,"y":180,"w":181.4,"h":37.1,"opacity":0.13,"type":"text","text":"888°","style":{"font":"Roboto Mono","size":32.3,"color":"#7dff3c","align":"right","bold":true}},
+{"id":"v3","x":29.3,"y":180,"w":181.4,"h":37.1,"type":"value","source":"mobo.temp","format":"{:.0}°","style":{"font":"Roboto Mono","size":32.3,"color":"#7dff3c","align":"right","bold":true}}
+]}

@@ -1,0 +1,12 @@
+{"version":1,"name":"Horloge analogique · Vue d'ensemble · Brume claire","width":640,"height":172,"background":{"kind":"gradient","from":"#f4f5f7","to":"#e2e5ea","angle":90},"widgets":[
+{"id":"k1","x":53.2,"y":13.8,"w":144.4,"h":144.4,"type":"analog_clock","face":"#ffffff","hands":"#1c2128","accent":"#3b6fd4"},
+{"id":"l1","x":211.4,"y":19.6,"w":168.9,"h":31,"type":"text","text":"CPU","style":{"font":"Inter","size":24.8,"color":"#5f6875","align":"left","bold":true}},
+{"id":"v1","x":380.3,"y":19.6,"w":206.5,"h":31,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":26.9,"color":"#1c2128","align":"right","bold":true}},
+{"id":"b1","x":211.4,"y":53.7,"w":375.4,"h":4,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":2,"track":"#d3d7de","colors":[[0,"#3b6fd4"],[1,"#0d927f"]]},
+{"id":"l2","x":211.4,"y":66.2,"w":168.9,"h":31,"type":"text","text":"GPU","style":{"font":"Inter","size":24.8,"color":"#5f6875","align":"left","bold":true}},
+{"id":"v2","x":380.3,"y":66.2,"w":206.5,"h":31,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":26.9,"color":"#1c2128","align":"right","bold":true}},
+{"id":"b2","x":211.4,"y":100.3,"w":375.4,"h":4,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":2,"track":"#d3d7de","colors":[[0,"#0d927f"],[1,"#d9480f"]]},
+{"id":"l3","x":211.4,"y":112.7,"w":168.9,"h":31,"type":"text","text":"RAM","style":{"font":"Inter","size":24.8,"color":"#5f6875","align":"left","bold":true}},
+{"id":"v3","x":380.3,"y":112.7,"w":206.5,"h":31,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":26.9,"color":"#1c2128","align":"right","bold":true}},
+{"id":"b3","x":211.4,"y":146.9,"w":375.4,"h":4,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":2,"track":"#d3d7de","colors":[[0,"#d9480f"],[1,"#3b6fd4"]]}
+]}

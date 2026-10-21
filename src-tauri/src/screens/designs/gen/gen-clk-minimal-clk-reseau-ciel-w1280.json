@@ -1,0 +1,13 @@
+{"version":1,"name":"Heure minimale · Heure et réseau · Ciel","width":1280,"height":480,"background":{"kind":"gradient","from":"#eaf6ff","to":"#cfe8ff","angle":90},"widgets":[
+{"id":"time1","x":38.4,"y":38.4,"w":673.8,"h":282.2,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":236.2,"color":"#0d2a45","align":"left","bold":false}},
+{"id":"date1","x":38.4,"y":344.8,"w":673.8,"h":80.6,"type":"value","source":"date","format":"%A %d %B","style":{"font":"Inter","size":58.9,"color":"#0b78d0","align":"left","bold":false}},
+{"id":"sep1","x":731.4,"y":78.7,"w":2,"h":322.6,"type":"rect","fill":"#0b78d0","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":769.8,"y":38.4,"w":212.3,"h":90.7,"type":"text","text":"DESCENTE","style":{"font":"Inter","size":38.3,"color":"#4d7194","align":"left","bold":true}},
+{"id":"v1","x":982.1,"y":38.4,"w":259.5,"h":90.7,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Inter","size":49.9,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l2","x":769.8,"y":139.2,"w":212.3,"h":90.7,"type":"text","text":"MONTÉE","style":{"font":"Inter","size":38.3,"color":"#4d7194","align":"left","bold":true}},
+{"id":"v2","x":982.1,"y":139.2,"w":259.5,"h":90.7,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Inter","size":49.9,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l3","x":769.8,"y":240,"w":212.3,"h":90.7,"type":"text","text":"CPU","style":{"font":"Inter","size":38.3,"color":"#4d7194","align":"left","bold":true}},
+{"id":"v3","x":982.1,"y":240,"w":259.5,"h":90.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":49.9,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l4","x":769.8,"y":340.8,"w":212.3,"h":90.7,"type":"text","text":"RAM","style":{"font":"Inter","size":38.3,"color":"#4d7194","align":"left","bold":true}},
+{"id":"v4","x":982.1,"y":340.8,"w":259.5,"h":90.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":49.9,"color":"#0d2a45","align":"right","bold":true}}
+]}

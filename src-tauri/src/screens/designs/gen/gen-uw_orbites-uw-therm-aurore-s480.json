@@ -1,0 +1,13 @@
+{"version":1,"name":"Orbites rondes · Températures · Aurore","width":480,"height":480,"background":{"kind":"gradient","from":"#050a1c","to":"#0e3340","angle":45},"widgets":[
+{"id":"a1","x":23,"y":23,"w":433.9,"h":433.9,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":16.3,"track":"#1d4f63","colors":[[0,"#5eead4"],[0.55,"#fde68a"],[1,"#fb7185"]]},
+{"id":"a2","x":46.6,"y":46.6,"w":386.7,"h":386.7,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":16.3,"track":"#1d4f63","colors":[[0,"#5eead4"],[0.55,"#fde68a"],[1,"#fb7185"]]},
+{"id":"a3","x":70.2,"y":70.2,"w":339.5,"h":339.5,"type":"gauge_arc","source":"mobo.temp","min":20,"max":90,"start_deg":135,"sweep_deg":270,"thickness":16.3,"track":"#1d4f63","colors":[[0,"#5eead4"],[0.55,"#fde68a"],[1,"#fb7185"]]},
+{"id":"time1","x":140.2,"y":144.8,"w":199.5,"h":95.2,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":65.2,"color":"#effcff","align":"center","bold":true}},
+{"id":"date1","x":170.2,"y":246.1,"w":139.7,"h":30.7,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Inter","size":23.9,"color":"#9bbcd0","align":"center","bold":false}},
+{"id":"l1","x":131.5,"y":348.5,"w":69.7,"h":28,"type":"text","text":"CPU","style":{"font":"Inter","size":19.7,"color":"#5eead4","align":"center","bold":true}},
+{"id":"v1","x":131.5,"y":381.5,"w":69.7,"h":49.5,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":22.5,"color":"#effcff","align":"center","bold":true}},
+{"id":"l2","x":205.2,"y":348.5,"w":69.7,"h":28,"type":"text","text":"GPU","style":{"font":"Inter","size":19.7,"color":"#a78bfa","align":"center","bold":true}},
+{"id":"v2","x":205.2,"y":381.5,"w":69.7,"h":49.5,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":22.5,"color":"#effcff","align":"center","bold":true}},
+{"id":"l3","x":278.8,"y":348.5,"w":69.7,"h":28,"type":"text","text":"CARTE","style":{"font":"Inter","size":19.7,"color":"#f472b6","align":"center","bold":true}},
+{"id":"v3","x":278.8,"y":381.5,"w":69.7,"h":49.5,"type":"value","source":"mobo.temp","format":"{:.0}°C","style":{"font":"Inter","size":22.5,"color":"#effcff","align":"center","bold":true}}
+]}

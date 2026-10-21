@@ -1,0 +1,11 @@
+{"version":1,"name":"Minimal typographique · CPU et GPU · Cuivre","width":640,"height":172,"background":{"kind":"gradient","from":"#120904","to":"#2a1409","angle":90},"widgets":[
+{"id":"l1","x":13.8,"y":13.8,"w":306.2,"h":20.2,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":17.6,"color":"#e07a3c","align":"left","bold":true}},
+{"id":"v1","x":13.8,"y":36.9,"w":306.2,"h":121.3,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":105.5,"color":"#ffeede","align":"left","bold":true}},
+{"id":"rule1","x":338.4,"y":28.2,"w":3,"h":115.5,"type":"rect","fill":"#e07a3c","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":362.9,"y":28.2,"w":131.7,"h":34.7,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":19.1,"color":"#c99a7c","align":"left","bold":false}},
+{"id":"v2","x":494.5,"y":28.2,"w":131.7,"h":34.7,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":24.3,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l3","x":362.9,"y":68.7,"w":131.7,"h":34.7,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":19.1,"color":"#c99a7c","align":"left","bold":false}},
+{"id":"v3","x":494.5,"y":68.7,"w":131.7,"h":34.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":24.3,"color":"#ffeede","align":"right","bold":true}},
+{"id":"l4","x":362.9,"y":109.1,"w":131.7,"h":34.7,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":19.1,"color":"#c99a7c","align":"left","bold":false}},
+{"id":"v4","x":494.5,"y":109.1,"w":131.7,"h":34.7,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":24.3,"color":"#ffeede","align":"right","bold":true}}
+]}

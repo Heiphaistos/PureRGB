@@ -1,0 +1,14 @@
+{"version":1,"name":"Barres horizontales · Réseau et E/S · Terre","width":320,"height":240,"background":{"kind":"gradient","from":"#1b1612","to":"#2e241b","angle":90},"widgets":[
+{"id":"l1","x":19.2,"y":27.6,"w":76,"h":40.8,"type":"text","text":"DESCENTE","style":{"font":"Roboto Mono","size":15.4,"color":"#d79921","align":"left","bold":true}},
+{"id":"b1","x":99.2,"y":40.8,"w":113.1,"h":14.4,"type":"bar","source":"net.down","min":0,"max":50,"vertical":false,"radius":5,"track":"#42352a","colors":[[0,"#d79921"],[1,"#b8bb26"]]},
+{"id":"v1","x":216.3,"y":27.6,"w":84.5,"h":40.8,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Roboto Mono","size":15.2,"color":"#f0e4cf","align":"right","bold":true}},
+{"id":"l2","x":19.2,"y":75.6,"w":76,"h":40.8,"type":"text","text":"MONTÉE","style":{"font":"Roboto Mono","size":15.4,"color":"#b8bb26","align":"left","bold":true}},
+{"id":"b2","x":99.2,"y":88.8,"w":113.1,"h":14.4,"type":"bar","source":"net.up","min":0,"max":20,"vertical":false,"radius":5,"track":"#42352a","colors":[[0,"#b8bb26"],[1,"#fb4934"]]},
+{"id":"v2","x":216.3,"y":75.6,"w":84.5,"h":40.8,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Roboto Mono","size":15.2,"color":"#f0e4cf","align":"right","bold":true}},
+{"id":"l3","x":19.2,"y":123.6,"w":76,"h":40.8,"type":"text","text":"LECTURE","style":{"font":"Roboto Mono","size":15.4,"color":"#fb4934","align":"left","bold":true}},
+{"id":"b3","x":99.2,"y":136.8,"w":113.1,"h":14.4,"type":"bar","source":"disk.read","min":0,"max":3000,"vertical":false,"radius":5,"track":"#42352a","colors":[[0,"#fb4934"],[1,"#d79921"]]},
+{"id":"v3","x":216.3,"y":123.6,"w":84.5,"h":40.8,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Roboto Mono","size":15.2,"color":"#f0e4cf","align":"right","bold":true}},
+{"id":"l4","x":19.2,"y":171.6,"w":76,"h":40.8,"type":"text","text":"ÉCRITURE","style":{"font":"Roboto Mono","size":15.4,"color":"#d79921","align":"left","bold":true}},
+{"id":"b4","x":99.2,"y":184.8,"w":113.1,"h":14.4,"type":"bar","source":"disk.write","min":0,"max":3000,"vertical":false,"radius":5,"track":"#42352a","colors":[[0,"#d79921"],[1,"#b8bb26"]]},
+{"id":"v4","x":216.3,"y":171.6,"w":84.5,"h":40.8,"type":"value","source":"disk.write","format":"{:.0} Mo/s","style":{"font":"Roboto Mono","size":15.2,"color":"#f0e4cf","align":"right","bold":true}}
+]}

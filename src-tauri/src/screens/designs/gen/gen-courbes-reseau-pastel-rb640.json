@@ -1,0 +1,14 @@
+{"version":1,"name":"Cartes à courbes · Réseau et E/S · Pastel","width":640,"height":172,"background":{"kind":"gradient","from":"#fdf2f8","to":"#eaf0ff","angle":90},"widgets":[
+{"id":"c1","x":13.8,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffffb8","stroke":"#3b2f4a24","stroke_width":1,"radius":20.2},
+{"id":"l1","x":26.8,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"DESCENTE","style":{"font":"Inter","size":16.5,"color":"#6e5f85","align":"left","bold":true}},
+{"id":"v1","x":26.8,"y":46.9,"w":174.1,"h":32,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Inter","size":27.8,"color":"#3b2f4a","align":"left","bold":true}},
+{"id":"g1","x":26.8,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"net.down","min":0,"max":50,"seconds":60,"line":"#e0559d","fill":"#e0559d40","thickness":3.55224},
+{"id":"c2","x":219.9,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffffb8","stroke":"#3b2f4a24","stroke_width":1,"radius":20.2},
+{"id":"l2","x":232.9,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"MONTÉE","style":{"font":"Inter","size":16.5,"color":"#6e5f85","align":"left","bold":true}},
+{"id":"v2","x":232.9,"y":46.9,"w":174.1,"h":32,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Inter","size":27.8,"color":"#3b2f4a","align":"left","bold":true}},
+{"id":"g2","x":232.9,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"net.up","min":0,"max":20,"seconds":60,"line":"#6366f1","fill":"#6366f140","thickness":3.55224},
+{"id":"c3","x":426.1,"y":13.8,"w":200.1,"h":144.4,"type":"rect","fill":"#ffffffb8","stroke":"#3b2f4a24","stroke_width":1,"radius":20.2},
+{"id":"l3","x":439.1,"y":26.8,"w":174.1,"h":18.9,"type":"text","text":"LECTURE","style":{"font":"Inter","size":16.5,"color":"#6e5f85","align":"left","bold":true}},
+{"id":"v3","x":439.1,"y":46.9,"w":174.1,"h":32,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Inter","size":27.8,"color":"#3b2f4a","align":"left","bold":true}},
+{"id":"g3","x":439.1,"y":86,"w":174.1,"h":59.2,"type":"graph","source":"disk.read","min":0,"max":3000,"seconds":60,"line":"#0f9675","fill":"#0f967540","thickness":3.55224}
+]}

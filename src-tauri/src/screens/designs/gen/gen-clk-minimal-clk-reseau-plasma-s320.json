@@ -1,0 +1,11 @@
+{"version":1,"name":"Heure minimale · Heure et réseau · Plasma","width":320,"height":320,"background":{"kind":"gradient","from":"#0c0320","to":"#3a0f6a","angle":45},"widgets":[
+{"id":"time1","x":25.6,"y":25.6,"w":268.8,"h":134.4,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":113,"color":"#f7f0ff","align":"left","bold":false}},
+{"id":"date1","x":25.6,"y":165.4,"w":268.8,"h":26.9,"type":"value","source":"date","format":"%a %d %b","style":{"font":"Rajdhani","size":23.4,"color":"#c084fc","align":"left","bold":false}},
+{"id":"rule1","x":25.6,"y":203,"w":268.8,"h":2,"type":"rect","fill":"#f7f0ff24","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":25.6,"y":219.1,"w":81.1,"h":22.6,"type":"text","text":"DESCENTE","style":{"font":"Rajdhani","size":19.2,"color":"#c084fc","align":"center","bold":true}},
+{"id":"v1","x":25.6,"y":243.2,"w":81.1,"h":49.7,"type":"value","source":"net.down","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":19.2,"color":"#f7f0ff","align":"center","bold":true}},
+{"id":"l2","x":119.5,"y":219.1,"w":81.1,"h":22.6,"type":"text","text":"MONTÉE","style":{"font":"Rajdhani","size":19.2,"color":"#f0abfc","align":"center","bold":true}},
+{"id":"v2","x":119.5,"y":243.2,"w":81.1,"h":49.7,"type":"value","source":"net.up","format":"{:.1} Mo/s","style":{"font":"Rajdhani","size":19.2,"color":"#f7f0ff","align":"center","bold":true}},
+{"id":"l3","x":213.3,"y":219.1,"w":81.1,"h":22.6,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":19.2,"color":"#67e8f9","align":"center","bold":true}},
+{"id":"v3","x":213.3,"y":243.2,"w":81.1,"h":49.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":19.2,"color":"#f7f0ff","align":"center","bold":true}}
+]}

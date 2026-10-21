@@ -1,0 +1,12 @@
+{"version":1,"name":"Duo en cartes · Liquide · Nordique","width":854,"height":480,"background":{"kind":"gradient","from":"#1a202b","to":"#2b3547","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":379,"h":403.2,"type":"rect","fill":"#ffffff12","stroke":"#eceff424","stroke_width":1,"radius":28},
+{"id":"st1","x":38.4,"y":127.1,"w":3,"h":225.8,"type":"rect","fill":"#88c0d0","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":76.3,"y":76.3,"w":303.2,"h":55.7,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":48.4,"color":"#97a3b8","align":"left","bold":true}},
+{"id":"v1","x":76.3,"y":141.8,"w":303.2,"h":225.9,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":50.5,"color":"#eceff4","align":"left","bold":true}},
+{"id":"b1","x":76.3,"y":377.5,"w":303.2,"h":26.2,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":13.1,"track":"#3b4558","colors":[[0,"#a3be8c"],[0.55,"#ebcb8b"],[1,"#bf616a"]]},
+{"id":"c2","x":436.6,"y":38.4,"w":379,"h":403.2,"type":"rect","fill":"#ffffff12","stroke":"#eceff424","stroke_width":1,"radius":28},
+{"id":"st2","x":436.6,"y":127.1,"w":3,"h":225.8,"type":"rect","fill":"#81a1c1","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":474.5,"y":76.3,"w":303.2,"h":55.7,"type":"text","text":"POMPE","style":{"font":"Inter","size":48.4,"color":"#97a3b8","align":"left","bold":true}},
+{"id":"v2","x":474.5,"y":141.8,"w":303.2,"h":225.9,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":50.5,"color":"#eceff4","align":"left","bold":true}},
+{"id":"b2","x":474.5,"y":377.5,"w":303.2,"h":26.2,"type":"bar","source":"pump.rpm","min":0,"max":4000,"vertical":false,"radius":13.1,"track":"#3b4558","colors":[[0,"#81a1c1"],[1,"#a3be8c"]]}
+]}

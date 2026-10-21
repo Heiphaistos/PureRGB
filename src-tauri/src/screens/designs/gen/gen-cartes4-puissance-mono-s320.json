@@ -1,0 +1,22 @@
+{"version":1,"name":"Quatre cartes · Puissance · Sobre mono","width":320,"height":320,"background":{"kind":"gradient","from":"#0b0b0c","to":"#171719","angle":90},"widgets":[
+{"id":"c1","x":25.6,"y":25.6,"w":128.8,"h":128.8,"type":"rect","fill":"#ffffff0f","stroke":"#f2f2f224","stroke_width":1,"radius":18},
+{"id":"st1","x":25.6,"y":53.9,"w":3,"h":72.1,"type":"rect","fill":"#ffffff","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":38.5,"y":38.5,"w":103,"h":17.5,"type":"text","text":"PUISS. CPU","style":{"font":"Inter","size":15.2,"color":"#8f8f96","align":"left","bold":true}},
+{"id":"v1","x":38.5,"y":59.1,"w":103,"h":71.1,"type":"value","source":"cpu.power","format":"{:.0} W","style":{"font":"Inter","size":19.4,"color":"#f2f2f2","align":"left","bold":true}},
+{"id":"b1","x":38.5,"y":133.3,"w":103,"h":8.2,"type":"bar","source":"cpu.power","min":0,"max":250,"vertical":false,"radius":4.1,"track":"#2a2a2e","colors":[[0,"#ffffff"],[1,"#c2c2c9"]]},
+{"id":"c2","x":165.6,"y":25.6,"w":128.8,"h":128.8,"type":"rect","fill":"#ffffff0f","stroke":"#f2f2f224","stroke_width":1,"radius":18},
+{"id":"st2","x":165.6,"y":53.9,"w":3,"h":72.1,"type":"rect","fill":"#c2c2c9","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":178.5,"y":38.5,"w":103,"h":17.5,"type":"text","text":"PUISS. GPU","style":{"font":"Inter","size":15.2,"color":"#8f8f96","align":"left","bold":true}},
+{"id":"v2","x":178.5,"y":59.1,"w":103,"h":71.1,"type":"value","source":"gpu.power","format":"{:.0} W","style":{"font":"Inter","size":19.4,"color":"#f2f2f2","align":"left","bold":true}},
+{"id":"b2","x":178.5,"y":133.3,"w":103,"h":8.2,"type":"bar","source":"gpu.power","min":0,"max":450,"vertical":false,"radius":4.1,"track":"#2a2a2e","colors":[[0,"#c2c2c9"],[1,"#85858d"]]},
+{"id":"c3","x":25.6,"y":165.6,"w":128.8,"h":128.8,"type":"rect","fill":"#ffffff0f","stroke":"#f2f2f224","stroke_width":1,"radius":18},
+{"id":"st3","x":25.6,"y":193.9,"w":3,"h":72.1,"type":"rect","fill":"#85858d","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l3","x":38.5,"y":178.5,"w":103,"h":17.5,"type":"text","text":"FRÉQ. CPU","style":{"font":"Inter","size":15.2,"color":"#8f8f96","align":"left","bold":true}},
+{"id":"v3","x":38.5,"y":199.1,"w":103,"h":71.1,"type":"value","source":"cpu.clock","format":"{:.0} MHz","style":{"font":"Inter","size":19.4,"color":"#f2f2f2","align":"left","bold":true}},
+{"id":"b3","x":38.5,"y":273.3,"w":103,"h":8.2,"type":"bar","source":"cpu.clock","min":0,"max":6000,"vertical":false,"radius":4.1,"track":"#2a2a2e","colors":[[0,"#85858d"],[1,"#ffffff"]]},
+{"id":"c4","x":165.6,"y":165.6,"w":128.8,"h":128.8,"type":"rect","fill":"#ffffff0f","stroke":"#f2f2f224","stroke_width":1,"radius":18},
+{"id":"st4","x":165.6,"y":193.9,"w":3,"h":72.1,"type":"rect","fill":"#ffffff","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l4","x":178.5,"y":178.5,"w":103,"h":17.5,"type":"text","text":"FRÉQ. GPU","style":{"font":"Inter","size":15.2,"color":"#8f8f96","align":"left","bold":true}},
+{"id":"v4","x":178.5,"y":199.1,"w":103,"h":71.1,"type":"value","source":"gpu.clock","format":"{:.0} MHz","style":{"font":"Inter","size":19.4,"color":"#f2f2f2","align":"left","bold":true}},
+{"id":"b4","x":178.5,"y":273.3,"w":103,"h":8.2,"type":"bar","source":"gpu.clock","min":0,"max":3000,"vertical":false,"radius":4.1,"track":"#2a2a2e","colors":[[0,"#ffffff"],[1,"#c2c2c9"]]}
+]}

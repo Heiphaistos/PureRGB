@@ -1,0 +1,17 @@
+{"version":1,"name":"Barres horizontales · Vue d'ensemble · Ciel","width":320,"height":240,"background":{"kind":"gradient","from":"#eaf6ff","to":"#cfe8ff","angle":90},"widgets":[
+{"id":"l1","x":19.2,"y":19.2,"w":76,"h":34.6,"type":"text","text":"CPU","style":{"font":"Inter","size":18.5,"color":"#0b78d0","align":"left","bold":true}},
+{"id":"b1","x":99.2,"y":29.3,"w":113.1,"h":14.4,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":5,"track":"#bddaf2","colors":[[0,"#0b78d0"],[1,"#068a9b"]]},
+{"id":"v1","x":216.3,"y":19.2,"w":84.5,"h":34.6,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":20.5,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l2","x":19.2,"y":61,"w":76,"h":34.6,"type":"text","text":"GPU","style":{"font":"Inter","size":18.5,"color":"#068a9b","align":"left","bold":true}},
+{"id":"b2","x":99.2,"y":71,"w":113.1,"h":14.4,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":5,"track":"#bddaf2","colors":[[0,"#068a9b"],[1,"#5b5fe0"]]},
+{"id":"v2","x":216.3,"y":61,"w":84.5,"h":34.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":20.5,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l3","x":19.2,"y":102.7,"w":76,"h":34.6,"type":"text","text":"RAM","style":{"font":"Inter","size":18.5,"color":"#5b5fe0","align":"left","bold":true}},
+{"id":"b3","x":99.2,"y":112.8,"w":113.1,"h":14.4,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":5,"track":"#bddaf2","colors":[[0,"#5b5fe0"],[1,"#0b78d0"]]},
+{"id":"v3","x":216.3,"y":102.7,"w":84.5,"h":34.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":20.5,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l4","x":19.2,"y":144.5,"w":76,"h":34.6,"type":"text","text":"SSD","style":{"font":"Inter","size":18.5,"color":"#0b78d0","align":"left","bold":true}},
+{"id":"b4","x":99.2,"y":154.6,"w":113.1,"h":14.4,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":5,"track":"#bddaf2","colors":[[0,"#0b78d0"],[1,"#068a9b"]]},
+{"id":"v4","x":216.3,"y":144.5,"w":84.5,"h":34.6,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":20.5,"color":"#0d2a45","align":"right","bold":true}},
+{"id":"l5","x":19.2,"y":186.2,"w":76,"h":34.6,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":18.5,"color":"#068a9b","align":"left","bold":true}},
+{"id":"b5","x":99.2,"y":196.3,"w":113.1,"h":14.4,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":5,"track":"#bddaf2","colors":[[0,"#1da770"],[0.55,"#cf8509"],[1,"#e0364f"]]},
+{"id":"v5","x":216.3,"y":186.2,"w":84.5,"h":34.6,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":20.5,"color":"#0d2a45","align":"right","bold":true}}
+]}

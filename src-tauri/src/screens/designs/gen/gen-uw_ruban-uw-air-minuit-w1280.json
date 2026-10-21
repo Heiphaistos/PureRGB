@@ -1,0 +1,11 @@
+{"version":1,"name":"Ruban à jauges · Refroidissement · Minuit","width":1280,"height":480,"background":{"kind":"gradient","from":"#050816","to":"#0f1a46","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":361,"h":403.2,"type":"rect","fill":"#ffffff12","stroke":"#e9edff24","stroke_width":1,"radius":28},
+{"id":"time1","x":70.7,"y":97.8,"w":296.4,"h":189.7,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":96.9,"color":"#e9edff","align":"center","bold":true}},
+{"id":"date1","x":70.7,"y":307.7,"w":296.4,"h":67.7,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Inter","size":50.7,"color":"#97a3d8","align":"center","bold":false}},
+{"id":"a1","x":422.6,"y":41,"w":397.9,"h":397.9,"type":"gauge_arc","source":"liquid.temp","min":20,"max":60,"start_deg":135,"sweep_deg":270,"thickness":21.9,"track":"#1b2658","colors":[[0,"#4ade80"],[0.55,"#fbbf24"],[1,"#f87171"]]},
+{"id":"v1","x":493.1,"y":161,"w":256.8,"h":127.5,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":42.8,"color":"#e9edff","align":"center","bold":true}},
+{"id":"l1","x":522,"y":355.4,"w":199,"h":53.1,"type":"text","text":"LIQ.","style":{"font":"Inter","size":46.2,"color":"#97a3d8","align":"center","bold":true}},
+{"id":"a2","x":843.7,"y":41,"w":397.9,"h":397.9,"type":"gauge_arc","source":"pump.rpm","min":0,"max":4000,"start_deg":135,"sweep_deg":270,"thickness":21.9,"track":"#1b2658","colors":[[0,"#a78bfa"],[1,"#38bdf8"]]},
+{"id":"v2","x":914.3,"y":161,"w":256.8,"h":127.5,"type":"value","source":"pump.rpm","format":"{:.0} tr/min","style":{"font":"Inter","size":42.8,"color":"#e9edff","align":"center","bold":true}},
+{"id":"l2","x":943.2,"y":355.4,"w":199,"h":53.1,"type":"text","text":"POMPE","style":{"font":"Inter","size":46.2,"color":"#97a3d8","align":"center","bold":true}}
+]}

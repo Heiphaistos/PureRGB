@@ -1,0 +1,14 @@
+{"version":1,"name":"Duo en cartes · CPU et GPU · Minuit","width":240,"height":240,"background":{"kind":"gradient","from":"#050816","to":"#0f1a46","angle":90},"widgets":[
+{"id":"c1","x":19.2,"y":19.2,"w":201.6,"h":96,"type":"rect","fill":"#ffffff12","stroke":"#e9edff24","stroke_width":1,"radius":13.4},
+{"id":"st1","x":19.2,"y":40.3,"w":3,"h":53.8,"type":"rect","fill":"#6c8cff","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l1","x":28.8,"y":28.8,"w":69.3,"h":38.4,"type":"text","text":"CPU","style":{"font":"Inter","size":31.3,"color":"#97a3d8","align":"left","bold":true}},
+{"id":"s1","x":28.8,"y":67.2,"w":69.3,"h":30.7,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":25.4,"color":"#97a3d8","align":"left","bold":false}},
+{"id":"v1","x":102.9,"y":28.8,"w":108.3,"h":55.3,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":35,"color":"#e9edff","align":"right","bold":true}},
+{"id":"b1","x":102.9,"y":93.3,"w":108.3,"h":12.3,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":6.1,"track":"#1b2658","colors":[[0,"#4ade80"],[0.55,"#fbbf24"],[1,"#f87171"]]},
+{"id":"c2","x":19.2,"y":124.8,"w":201.6,"h":96,"type":"rect","fill":"#ffffff12","stroke":"#e9edff24","stroke_width":1,"radius":13.4},
+{"id":"st2","x":19.2,"y":145.9,"w":3,"h":53.8,"type":"rect","fill":"#a78bfa","stroke":null,"stroke_width":0,"radius":1.5},
+{"id":"l2","x":28.8,"y":134.4,"w":69.3,"h":38.4,"type":"text","text":"GPU","style":{"font":"Inter","size":31.3,"color":"#97a3d8","align":"left","bold":true}},
+{"id":"s2","x":28.8,"y":172.8,"w":69.3,"h":30.7,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":25.4,"color":"#97a3d8","align":"left","bold":false}},
+{"id":"v2","x":102.9,"y":134.4,"w":108.3,"h":55.3,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":35,"color":"#e9edff","align":"right","bold":true}},
+{"id":"b2","x":102.9,"y":198.9,"w":108.3,"h":12.3,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":6.1,"track":"#1b2658","colors":[[0,"#4ade80"],[0.55,"#fbbf24"],[1,"#f87171"]]}
+]}

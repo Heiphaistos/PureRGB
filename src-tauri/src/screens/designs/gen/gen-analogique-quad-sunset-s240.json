@@ -1,0 +1,9 @@
+{"version":1,"name":"Horloge analogique · Vue d'ensemble · Coucher de soleil","width":240,"height":240,"background":{"kind":"gradient","from":"#1b0a33","to":"#702049","angle":90},"widgets":[
+{"id":"k1","x":57.5,"y":19.2,"w":125,"h":125,"type":"analog_clock","face":"#ffffff14","hands":"#fff4ea","accent":"#ffb347"},
+{"id":"l1","x":19.2,"y":158.6,"w":60.8,"h":21.2,"type":"text","text":"CPU","style":{"font":"Inter","size":18.4,"color":"#ffb347","align":"center","bold":true}},
+{"id":"v1","x":19.2,"y":183.5,"w":60.8,"h":37.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":21.1,"color":"#fff4ea","align":"center","bold":true}},
+{"id":"l2","x":89.6,"y":158.6,"w":60.8,"h":21.2,"type":"text","text":"GPU","style":{"font":"Inter","size":18.4,"color":"#ff5e7e","align":"center","bold":true}},
+{"id":"v2","x":89.6,"y":183.5,"w":60.8,"h":37.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":21.1,"color":"#fff4ea","align":"center","bold":true}},
+{"id":"l3","x":160,"y":158.6,"w":60.8,"h":21.2,"type":"text","text":"RAM","style":{"font":"Inter","size":18.4,"color":"#ffd166","align":"center","bold":true}},
+{"id":"v3","x":160,"y":183.5,"w":60.8,"h":37.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":21.1,"color":"#fff4ea","align":"center","bold":true}}
+]}

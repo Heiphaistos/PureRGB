@@ -1,0 +1,15 @@
+{"version":1,"name":"LCD sept segments · Disques et réseau · Papier","width":640,"height":172,"background":{"kind":"gradient","from":"#faf6ec","to":"#efe7d3","angle":90},"widgets":[
+{"id":"plate1","x":10.7,"y":10.7,"w":618.6,"h":150.6,"type":"rect","fill":"#ffffffb0","stroke":"#2b241824","stroke_width":2,"radius":10.3},
+{"id":"win1","x":13.8,"y":13.8,"w":200.7,"h":144.4,"type":"rect","fill":"#faf6ec","stroke":"#75684c","stroke_width":2,"radius":10},
+{"id":"l1","x":23.8,"y":19.6,"w":180.6,"h":28.9,"type":"text","text":"C:","style":{"font":"Inter","size":25.1,"color":"#75684c","align":"left","bold":true}},
+{"id":"gh1","x":23.8,"y":51.3,"w":180.6,"h":98.2,"opacity":0.13,"type":"text","text":"888%","style":{"font":"Roboto Mono","size":32.5,"color":"#b45309","align":"right","bold":true}},
+{"id":"v1","x":23.8,"y":51.3,"w":180.6,"h":98.2,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Roboto Mono","size":32.5,"color":"#b45309","align":"right","bold":true}},
+{"id":"win2","x":219.7,"y":13.8,"w":200.7,"h":144.4,"type":"rect","fill":"#faf6ec","stroke":"#75684c","stroke_width":2,"radius":10},
+{"id":"l2","x":229.7,"y":19.6,"w":180.6,"h":28.9,"type":"text","text":"D:","style":{"font":"Inter","size":25.1,"color":"#75684c","align":"left","bold":true}},
+{"id":"gh2","x":229.7,"y":51.3,"w":180.6,"h":98.2,"opacity":0.13,"type":"text","text":"888%","style":{"font":"Roboto Mono","size":32.5,"color":"#0f766e","align":"right","bold":true}},
+{"id":"v2","x":229.7,"y":51.3,"w":180.6,"h":98.2,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Roboto Mono","size":32.5,"color":"#0f766e","align":"right","bold":true}},
+{"id":"win3","x":425.5,"y":13.8,"w":200.7,"h":144.4,"type":"rect","fill":"#faf6ec","stroke":"#75684c","stroke_width":2,"radius":10},
+{"id":"l3","x":435.5,"y":19.6,"w":180.6,"h":28.9,"type":"text","text":"LECTURE","style":{"font":"Inter","size":25.1,"color":"#75684c","align":"left","bold":true}},
+{"id":"gh3","x":435.5,"y":51.3,"w":180.6,"h":98.2,"opacity":0.13,"type":"text","text":"8888 Mo/s","style":{"font":"Roboto Mono","size":32.5,"color":"#9f1239","align":"right","bold":true}},
+{"id":"v3","x":435.5,"y":51.3,"w":180.6,"h":98.2,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Roboto Mono","size":32.5,"color":"#9f1239","align":"right","bold":true}}
+]}

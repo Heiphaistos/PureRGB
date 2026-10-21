@@ -1,0 +1,13 @@
+{"version":1,"name":"Halo central · Système · Carbone","width":480,"height":480,"background":{"kind":"gradient","from":"#0e0f11","to":"#1d1f23","angle":90},"widgets":[
+{"id":"a1","x":23,"y":23,"w":433.9,"h":433.9,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":-90,"sweep_deg":360,"thickness":13,"track":"#2c2f35","colors":[[0,"#ff2d55"],[1,"#f59e0b"]]},
+{"id":"a2","x":42.6,"y":42.6,"w":394.9,"h":394.9,"type":"gauge_arc","source":"gpu.load","min":0,"max":100,"start_deg":-90,"sweep_deg":360,"thickness":13,"track":"#2c2f35","colors":[[0,"#f59e0b"],[1,"#94a3b8"]]},
+{"id":"a3","x":62.1,"y":62.1,"w":355.8,"h":355.8,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":-90,"sweep_deg":360,"thickness":13,"track":"#2c2f35","colors":[[0,"#94a3b8"],[1,"#ff2d55"]]},
+{"id":"time1","x":132.8,"y":121.3,"w":214.4,"h":82.4,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":71.7,"color":"#e8eaed","align":"center","bold":true}},
+{"id":"date1","x":132.8,"y":207,"w":214.4,"h":26.4,"type":"value","source":"date","format":"%d/%m/%Y","style":{"font":"Rajdhani","size":22.9,"color":"#8d929b","align":"center","bold":false}},
+{"id":"l1","x":132.8,"y":249.9,"w":96.5,"h":34.6,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":30.1,"color":"#ff2d55","align":"left","bold":true}},
+{"id":"v1","x":229.3,"y":249.9,"w":117.9,"h":34.6,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":30.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l2","x":132.8,"y":290.8,"w":96.5,"h":34.6,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":30.1,"color":"#f59e0b","align":"left","bold":true}},
+{"id":"v2","x":229.3,"y":290.8,"w":117.9,"h":34.6,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":30.1,"color":"#e8eaed","align":"right","bold":true}},
+{"id":"l3","x":132.8,"y":331.6,"w":96.5,"h":34.6,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":30.1,"color":"#94a3b8","align":"left","bold":true}},
+{"id":"v3","x":229.3,"y":331.6,"w":117.9,"h":34.6,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":30.1,"color":"#e8eaed","align":"right","bold":true}}
+]}

@@ -1,0 +1,18 @@
+{"version":1,"name":"Cartes à courbes · Vue d'ensemble · Papier","width":480,"height":480,"background":{"kind":"gradient","from":"#faf6ec","to":"#efe7d3","angle":90},"widgets":[
+{"id":"c1","x":38.4,"y":38.4,"w":193.2,"h":193.2,"type":"rect","fill":"#ffffffb0","stroke":"#2b241824","stroke_width":1,"radius":27},
+{"id":"l1","x":55.8,"y":55.8,"w":158.4,"h":25.3,"type":"text","text":"CPU","style":{"font":"Inter","size":22,"color":"#75684c","align":"left","bold":true}},
+{"id":"v1","x":55.8,"y":82.7,"w":158.4,"h":42.8,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#2b2418","align":"left","bold":true}},
+{"id":"g1","x":55.8,"y":135,"w":158.4,"h":79.2,"type":"graph","source":"cpu.load","min":0,"max":100,"seconds":60,"line":"#b45309","fill":"#b4530940","thickness":4.752719999999999},
+{"id":"c2","x":248.4,"y":38.4,"w":193.2,"h":193.2,"type":"rect","fill":"#ffffffb0","stroke":"#2b241824","stroke_width":1,"radius":27},
+{"id":"l2","x":265.8,"y":55.8,"w":158.4,"h":25.3,"type":"text","text":"GPU","style":{"font":"Inter","size":22,"color":"#75684c","align":"left","bold":true}},
+{"id":"v2","x":265.8,"y":82.7,"w":158.4,"h":42.8,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#2b2418","align":"left","bold":true}},
+{"id":"g2","x":265.8,"y":135,"w":158.4,"h":79.2,"type":"graph","source":"gpu.load","min":0,"max":100,"seconds":60,"line":"#0f766e","fill":"#0f766e40","thickness":4.752719999999999},
+{"id":"c3","x":38.4,"y":248.4,"w":193.2,"h":193.2,"type":"rect","fill":"#ffffffb0","stroke":"#2b241824","stroke_width":1,"radius":27},
+{"id":"l3","x":55.8,"y":265.8,"w":158.4,"h":25.3,"type":"text","text":"RAM","style":{"font":"Inter","size":22,"color":"#75684c","align":"left","bold":true}},
+{"id":"v3","x":55.8,"y":292.7,"w":158.4,"h":42.8,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#2b2418","align":"left","bold":true}},
+{"id":"g3","x":55.8,"y":345,"w":158.4,"h":79.2,"type":"graph","source":"ram.used_pct","min":0,"max":100,"seconds":60,"line":"#9f1239","fill":"#9f123940","thickness":4.752719999999999},
+{"id":"c4","x":248.4,"y":248.4,"w":193.2,"h":193.2,"type":"rect","fill":"#ffffffb0","stroke":"#2b241824","stroke_width":1,"radius":27},
+{"id":"l4","x":265.8,"y":265.8,"w":158.4,"h":25.3,"type":"text","text":"SSD","style":{"font":"Inter","size":22,"color":"#75684c","align":"left","bold":true}},
+{"id":"v4","x":265.8,"y":292.7,"w":158.4,"h":42.8,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":37.2,"color":"#2b2418","align":"left","bold":true}},
+{"id":"g4","x":265.8,"y":345,"w":158.4,"h":79.2,"type":"graph","source":"ssd.1.used_pct","min":0,"max":100,"seconds":60,"line":"#b45309","fill":"#b4530940","thickness":4.752719999999999}
+]}

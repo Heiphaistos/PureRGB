@@ -1,0 +1,17 @@
+{"version":1,"name":"Barres horizontales · Disques · Givre","width":854,"height":480,"background":{"kind":"gradient","from":"#f2f8fc","to":"#dde9f3","angle":90},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":209.8,"h":69.1,"type":"text","text":"C:","style":{"font":"Inter","size":42.9,"color":"#2b7fb8","align":"left","bold":true}},
+{"id":"b1","x":252.2,"y":58.6,"w":326.2,"h":28.8,"type":"bar","source":"disk.C.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#c2d6e6","colors":[[0,"#2b7fb8"],[1,"#5482dc"]]},
+{"id":"v1","x":582.4,"y":38.4,"w":233.2,"h":69.1,"type":"value","source":"disk.C.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.1,"color":"#14283a","align":"right","bold":true}},
+{"id":"l2","x":38.4,"y":121.9,"w":209.8,"h":69.1,"type":"text","text":"D:","style":{"font":"Inter","size":42.9,"color":"#5482dc","align":"left","bold":true}},
+{"id":"b2","x":252.2,"y":142.1,"w":326.2,"h":28.8,"type":"bar","source":"disk.D.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#c2d6e6","colors":[[0,"#5482dc"],[1,"#148f82"]]},
+{"id":"v2","x":582.4,"y":121.9,"w":233.2,"h":69.1,"type":"value","source":"disk.D.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.1,"color":"#14283a","align":"right","bold":true}},
+{"id":"l3","x":38.4,"y":205.4,"w":209.8,"h":69.1,"type":"text","text":"SSD","style":{"font":"Inter","size":42.9,"color":"#148f82","align":"left","bold":true}},
+{"id":"b3","x":252.2,"y":225.6,"w":326.2,"h":28.8,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#c2d6e6","colors":[[0,"#148f82"],[1,"#2b7fb8"]]},
+{"id":"v3","x":582.4,"y":205.4,"w":233.2,"h":69.1,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.1,"color":"#14283a","align":"right","bold":true}},
+{"id":"l4","x":38.4,"y":289,"w":209.8,"h":69.1,"type":"text","text":"RAM","style":{"font":"Inter","size":42.9,"color":"#2b7fb8","align":"left","bold":true}},
+{"id":"b4","x":252.2,"y":309.1,"w":326.2,"h":28.8,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#c2d6e6","colors":[[0,"#2b7fb8"],[1,"#5482dc"]]},
+{"id":"v4","x":582.4,"y":289,"w":233.2,"h":69.1,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.1,"color":"#14283a","align":"right","bold":true}},
+{"id":"l5","x":38.4,"y":372.5,"w":209.8,"h":69.1,"type":"text","text":"LECTURE","style":{"font":"Inter","size":42.9,"color":"#5482dc","align":"left","bold":true}},
+{"id":"b5","x":252.2,"y":392.6,"w":326.2,"h":28.8,"type":"bar","source":"disk.read","min":0,"max":3000,"vertical":false,"radius":10.1,"track":"#c2d6e6","colors":[[0,"#5482dc"],[1,"#148f82"]]},
+{"id":"v5","x":582.4,"y":372.5,"w":233.2,"h":69.1,"type":"value","source":"disk.read","format":"{:.0} Mo/s","style":{"font":"Inter","size":42.1,"color":"#14283a","align":"right","bold":true}}
+]}
