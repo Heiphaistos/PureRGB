@@ -23,3 +23,7 @@ Principes : le rendu est fait **côté Rust** (même moteur pour l'aperçu de l'
 
 - `cargo test --manifest-path src-tauri/Cargo.toml` ; `npm run build` (vue-tsc + vite) ; `npm test`.
 - Tester pour de vrai (résultat observé) : rendu PNG d'un design vérifié à l'œil, trame USB comparée octet par octet, jamais « ça compile donc ça marche ». Dire clairement ce qui n'est PAS testé faute de matériel.
+
+## Fermeture propre (à revérifier avant chaque release)
+
+Quitter ne bloque jamais l'interface et ne laisse aucun processus (`src-tauri/src/shutdown.rs` : nettoyage borné hors thread UI + sortie forcée ; `job.rs` : Job Windows KILL_ON_JOB_CLOSE pour tous les enfants). Test d'acceptation sur l'exe réel, sans UAC : `__COMPAT_LAYER=RunAsInvoker`, `PURERGB_AUTOQUIT_SECS=15` (fermeture par le chemin réel) et `PURERGB_SIM_SCREEN=1` (écran simulé + pipeline), puis lister `purergb|sensord|OpenRGB|liquidctl|msedgewebview2` : aucun ne doit rester, y compris après un `Stop-Process -Force`.

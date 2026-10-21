@@ -1067,7 +1067,8 @@ pub fn run() {
     {
         let m = screen_mgr.clone();
         if let Err(e) = std::thread::Builder::new().name("screens-init".into()).spawn(move || {
-            let n = m.scan(false).len();
+            // PURERGB_SIM_SCREEN : écran simulé au démarrage (tests d'acceptation de fermeture).
+            let n = m.scan(std::env::var_os("PURERGB_SIM_SCREEN").is_some()).len();
             log::info!("mini-écrans détectés au démarrage : {n}");
         }) {
             log::warn!("thread screens-init: {e}");
