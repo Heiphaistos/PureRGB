@@ -4,6 +4,7 @@ mod core;
 mod engine;
 mod hotplug;
 mod netdev;
+mod screens;
 mod sensors;
 mod settings;
 mod telemetry;
