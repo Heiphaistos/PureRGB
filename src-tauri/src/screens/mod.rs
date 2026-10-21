@@ -8,6 +8,7 @@ pub mod media;
 pub mod render;
 pub mod drivers;
 pub mod commands;
+pub mod theme_pack;
 pub mod designs;
 pub mod manager;
 pub mod runner;

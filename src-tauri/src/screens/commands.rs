@@ -6,6 +6,7 @@ use super::layout::Layout;
 use super::manager::{ScreenManager, ScreenOptions, ScreenState};
 use super::media::MediaItem;
 use super::render;
+use super::theme_pack;
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Arc;
@@ -117,4 +118,29 @@ pub fn media_import(m: Mgr, path: String) -> Res<MediaItem> {
 #[tauri::command]
 pub fn media_delete(m: Mgr, id: String) -> Res<()> {
     m.media.delete(&id).map_err(err)
+}
+
+/// Exporte un thème (design + médias) : `id` d'un design de la bibliothèque, ou `layout` (éditeur, non enregistré).
+#[tauri::command]
+pub async fn theme_export(m: Mgr<'_>, id: Option<String>, layout: Option<Layout>, path: String) -> Res<()> {
+    let layout = match (id, layout) {
+        (_, Some(l)) => l,
+        (Some(id), None) => m.designs.get(&id).map_err(err)?,
+        (None, None) => return Err("aucun design à exporter".into()),
+    };
+    let media = m.media.clone();
+    tauri::async_runtime::spawn_blocking(move || theme_pack::export(&layout, &media, Path::new(&path)))
+        .await
+        .map_err(|e| e.to_string())?
+        .map_err(err)
+}
+
+/// Importe un `.purergb-theme` : médias dans la médiathèque, design dans « Mes designs » ; retourne l'id du design.
+#[tauri::command]
+pub async fn theme_import(m: Mgr<'_>, path: String) -> Res<String> {
+    let mgr = m.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || theme_pack::import(Path::new(&path), &mgr.designs, &mgr.media, theme_pack::LIMITS))
+        .await
+        .map_err(|e| e.to_string())?
+        .map_err(err)
 }

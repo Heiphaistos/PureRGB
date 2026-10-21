@@ -39,6 +39,9 @@ serialport = { version = "4", default-features = false }
 nusb = "0.1"
 # DES-CBC de l'en-tête chiffré des écrans TURZX (1CBE) : RustCrypto, aucune autre dépendance nouvelle
 des = "=0.8.1"
+# Archives .purergb-theme (screens/theme_pack.rs) : zip 4.6.1 est déjà dans Cargo.lock (tiré par tauri-plugin-updater),
+# sans fonctionnalité de compression : médias déjà compressés, on stocke sans recompresser (aucune dépendance nouvelle)
+zip = { version = "4.6.1", default-features = false }
 
 [target.'cfg(windows)'.dependencies]
 # SCSI pass-through des écrans Thermalright (screens/drivers/scsi_win.rs)
