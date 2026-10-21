@@ -1,12 +1,13 @@
-"""Tachymetre : jauge a graduations (reglettes en rotation) et statistiques annexes."""
+"""Tachymetre : jauge CPU a graduations (temperature + charge) et statistiques annexes (BASE + extras)."""
 import math
 
 from content import CONTENT
-from lib import Canvas, split
-from parts import hero_list, mini_col, ring, row
+from lib import Canvas
+from parts import hero_list
+from layouts.r2_common import SETS_C, counts, first_ok, rows, bottom, BOTTOMS, gauge
 
 NAME, TITLE = "tachymetre", "Tachymètre"
-CONTENTS = ["cpu", "gpu", "liquide", "quad"]
+CONTENTS = SETS_C
 
 
 def _ticks(c, cx, cy, R, n=28):
@@ -22,23 +23,35 @@ def _ticks(c, cx, cy, R, n=28):
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
     ms = CONTENT[content][1]
     x, y, w, h = fmt.zone
     gap = fmt.short * 0.04
+
+    def wide_mk(n, cols, rfrac, sb, sn):
+        def f():
+            c = Canvas(p, fmt)
+            R = min(h / 2, w * rfrac)
+            rx, lx, lw = hero_list(fmt.zone, 2 * R, gap)
+            cx, cy = rx + R, y + h / 2
+            _ticks(c, cx, cy, R)
+            gauge(c, cx, cy, R * 0.83, ms[0], 0, sub=True, thick=R * 0.12)
+            rows(c, (lx, y + h * 0.04, lw, h * 0.92), [(ms[i], i) for i in range(1, n)], cols, gap * 0.6, subw=sb, subn=sn)
+            return c.finish()
+        return f
+
+    def tall_mk(n, rfrac, kind):
+        def f():
+            c = Canvas(p, fmt)
+            R = min(w / 2, h * rfrac)
+            cx, cy = x + w / 2, y + R
+            _ticks(c, cx, cy, R)
+            gauge(c, cx, cy, R * 0.83, ms[0], 0, sub=True, thick=R * 0.12)
+            top = y + 2 * R + gap
+            bottom(c, (x, top, w, y + h - top), [(ms[i], i) for i in range(1, n)], gap * 0.6, kind)
+            return c.finish()
+        return f
+
+    ns = counts(ms, (9, 8, 6, 5))
     if fmt.ratio >= 1.5:
-        R = min(h / 2, w * 0.3)
-        rx, lx, lw = hero_list(fmt.zone, 2 * R, gap)
-        cx, cy = rx + R, y + h / 2
-        _ticks(c, cx, cy, R)
-        ring(c, cx, cy, R * 0.83, ms[0], 0, thick=R * 0.12, sub=True)
-        for i, box in enumerate(split((lx, y + h * 0.08, lw, h * 0.84), 3, gap, horizontal=False)):
-            row(c, box, ms[1 + i], i + 1)
-        return c.finish()
-    R = min(w / 2, h * 0.36)
-    cx, cy = x + w / 2, y + R
-    _ticks(c, cx, cy, R)
-    ring(c, cx, cy, R * 0.83, ms[0], 0, thick=R * 0.12, sub=True)
-    for i, box in enumerate(split((x, y + 2 * R + gap, w, y + h - (y + 2 * R + gap)), 3, gap)):
-        mini_col(c, box, ms[1 + i], i + 1)
-    return c.finish()
+        return first_ok(fmt, [wide_mk(n, cols, rf, sb, sn) for n in ns for rf in (0.3, 0.24) for cols in (1, 2) for sb in (0.25, 0.34) for sn in (99, 2)])
+    return first_ok(fmt, [tall_mk(n, rf, k) for n in ns for rf in (0.38, 0.34, 0.28, 0.22) for k in BOTTOMS])
