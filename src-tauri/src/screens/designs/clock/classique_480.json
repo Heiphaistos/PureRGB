@@ -1,0 +1,8 @@
+{"version": 1, "name": "Horloge classique", "width": 480, "height": 480, "background": {"kind": "gradient", "from": "#0a1020", "to": "#16213e", "angle": 90},"widgets":[
+  {"id": "halo", "x": 52, "y": 28, "w": 376, "h": 376, "type": "rect", "fill": "#1b2a4e", "stroke": null, "stroke_width": 0, "radius": 188},
+  {"id": "bezel", "x": 74, "y": 34, "w": 332, "h": 332, "type": "rect", "fill": "#00000000", "stroke": "#c9a85c", "stroke_width": 6, "radius": 166},
+  {"id": "horloge", "x": 80, "y": 40, "w": 320, "h": 320, "type": "analog_clock", "face": "#f4efe2", "hands": "#1a1f33", "accent": "#c0392b"},
+  {"id": "date", "x": 60, "y": 382.8, "w": 360, "h": 30, "type": "value", "source": "date", "format": "%A %d %B", "style": {"font": "Inter", "size": 24, "color": "#f0dfa6", "align": "center", "bold": true}},
+  {"id": "cpu", "x": 70, "y": 417.3, "w": 170, "h": 26, "type": "value", "source": "cpu.temp", "format": "CPU {:.0}°", "style": {"font": "Inter", "size": 20, "color": "#aab4d4", "align": "center", "bold": false}},
+  {"id": "gpu", "x": 240, "y": 417.3, "w": 170, "h": 26, "type": "value", "source": "gpu.temp", "format": "GPU {:.0}°", "style": {"font": "Inter", "size": 20, "color": "#aab4d4", "align": "center", "bold": false}}
+ ]}
