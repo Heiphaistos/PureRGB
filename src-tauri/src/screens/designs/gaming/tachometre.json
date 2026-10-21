@@ -1,0 +1,12 @@
+{"version":1,"name":"Tachymètre GPU","width":480,"height":480,
+ "background":{"kind": "gradient", "from": "#05060f", "to": "#12082a", "angle": 90},
+ "widgets":[
+  {"id": "gpu-arc-glow", "x": 40, "y": 40, "w": 400, "h": 400, "type": "gauge_arc", "source": "gpu.load", "min": 0, "max": 100, "start_deg": 135, "sweep_deg": 270, "thickness": 38, "track": "#00000000", "colors": [[0, "#00e5ff"], [0.5, "#b44cff"], [0.8, "#ff2bd6"], [1, "#ff2442"]], "opacity": 0.22},
+  {"id": "gpu-arc", "x": 40, "y": 40, "w": 400, "h": 400, "type": "gauge_arc", "source": "gpu.load", "min": 0, "max": 100, "start_deg": 135, "sweep_deg": 270, "thickness": 28, "track": "#1b1b36", "colors": [[0, "#00e5ff"], [0.5, "#b44cff"], [0.8, "#ff2bd6"], [1, "#ff2442"]]},
+  {"id": "cpu-arc", "x": 90, "y": 90, "w": 300, "h": 300, "type": "gauge_arc", "source": "cpu.load", "min": 0, "max": 100, "start_deg": 135, "sweep_deg": 270, "thickness": 12, "track": "#1b1b36", "colors": [[0, "#00ffa3"], [0.55, "#ffe600"], [0.8, "#ff7a00"], [1, "#ff1f3d"]]},
+  {"id": "lbl", "x": 140, "y": 128, "w": 200, "h": 28, "type": "text", "text": "GPU", "style": {"font": "Rajdhani", "size": 26, "color": "#00e5ff", "align": "center", "bold": true}},
+  {"id": "gpu-temp", "x": 90, "y": 160, "w": 300, "h": 130, "type": "value", "source": "gpu.temp", "format": "{:.0}°", "style": {"font": "Rajdhani", "size": 130, "color": "#ffffff", "align": "center", "bold": true}},
+  {"id": "gpu-load", "x": 140, "y": 290, "w": 200, "h": 36, "type": "value", "source": "gpu.load", "format": "{:.0} %", "style": {"font": "Rajdhani", "size": 34, "color": "#ff2bd6", "align": "center", "bold": true}},
+  {"id": "cpu-temp", "x": 140, "y": 330, "w": 200, "h": 30, "type": "value", "source": "cpu.temp", "format": "CPU {:.0}°", "style": {"font": "Rajdhani", "size": 26, "color": "#39ff14", "align": "center", "bold": true}},
+  {"id": "time", "x": 160, "y": 392, "w": 160, "h": 44, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 44, "color": "#cfd3ff", "align": "center", "bold": true}}
+ ]}

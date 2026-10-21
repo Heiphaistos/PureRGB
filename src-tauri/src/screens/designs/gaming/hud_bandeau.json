@@ -1,0 +1,20 @@
+{"version":1,"name":"Bandeau HUD","width":1920,"height":462,
+ "background":{"kind": "gradient", "from": "#03060e", "to": "#0b1226", "angle": 0},
+ "widgets":[
+  {"id": "time", "x": 154, "y": 60, "w": 420, "h": 200, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 190, "color": "#ffffff", "align": "left", "bold": true}},
+  {"id": "date", "x": 154, "y": 270, "w": 420, "h": 50, "type": "value", "source": "date", "format": "%A %d %B", "style": {"font": "Rajdhani", "size": 40, "color": "#00e5ff", "align": "left", "bold": true}},
+  {"id": "sep", "x": 600, "y": 50, "w": 2, "h": 362, "type": "rect", "fill": "#00e5ff", "stroke": null, "stroke_width": 0, "radius": 0, "opacity": 0.5},
+  {"id": "l0", "x": 640, "y": 50, "w": 300, "h": 50, "type": "text", "text": "CPU", "style": {"font": "Rajdhani", "size": 44, "color": "#ff9d2e", "align": "left", "bold": true}},
+  {"id": "v0", "x": 640, "y": 100, "w": 300, "h": 170, "type": "value", "source": "cpu.temp", "format": "{:.0}°", "style": {"font": "Rajdhani", "size": 160, "color": "#ffffff", "align": "left", "bold": true}},
+  {"id": "b0", "x": 640, "y": 290, "w": 300, "h": 28, "type": "bar", "source": "cpu.load", "min": 0, "max": 100, "vertical": false, "radius": 4, "track": "#16203a", "colors": [[0, "#ff9d2e"], [1, "#ff9d2e"]]},
+  {"id": "s0", "x": 640, "y": 330, "w": 300, "h": 34, "type": "text", "text": "charge", "style": {"font": "Rajdhani", "size": 28, "color": "#7f8bd0", "align": "left", "bold": true}},
+  {"id": "l1", "x": 1020, "y": 50, "w": 300, "h": 50, "type": "text", "text": "GPU", "style": {"font": "Rajdhani", "size": 44, "color": "#00ff9d", "align": "left", "bold": true}},
+  {"id": "v1", "x": 1020, "y": 100, "w": 300, "h": 170, "type": "value", "source": "gpu.temp", "format": "{:.0}°", "style": {"font": "Rajdhani", "size": 160, "color": "#ffffff", "align": "left", "bold": true}},
+  {"id": "b1", "x": 1020, "y": 290, "w": 300, "h": 28, "type": "bar", "source": "gpu.load", "min": 0, "max": 100, "vertical": false, "radius": 4, "track": "#16203a", "colors": [[0, "#00ff9d"], [1, "#00ff9d"]]},
+  {"id": "s1", "x": 1020, "y": 330, "w": 300, "h": 34, "type": "text", "text": "charge", "style": {"font": "Rajdhani", "size": 28, "color": "#7f8bd0", "align": "left", "bold": true}},
+  {"id": "l2", "x": 1400, "y": 50, "w": 300, "h": 50, "type": "text", "text": "RAM", "style": {"font": "Rajdhani", "size": 44, "color": "#4cc9ff", "align": "left", "bold": true}},
+  {"id": "v2", "x": 1400, "y": 100, "w": 300, "h": 170, "type": "value", "source": "ram.used_pct", "format": "{:.0} %", "style": {"font": "Rajdhani", "size": 160, "color": "#ffffff", "align": "left", "bold": true}},
+  {"id": "b2", "x": 1400, "y": 290, "w": 300, "h": 28, "type": "bar", "source": "ram.used_pct", "min": 0, "max": 100, "vertical": false, "radius": 4, "track": "#16203a", "colors": [[0, "#4cc9ff"], [1, "#4cc9ff"]]},
+  {"id": "s2", "x": 1400, "y": 330, "w": 300, "h": 34, "type": "text", "text": "mémoire", "style": {"font": "Rajdhani", "size": 28, "color": "#7f8bd0", "align": "left", "bold": true}},
+  {"id": "hist", "x": 154, "y": 380, "w": 420, "h": 45, "type": "graph", "source": "gpu.load", "min": 0, "max": 100, "seconds": 60, "line": "#00ff9d", "fill": "#00ff9d33", "thickness": 3}
+ ]}
