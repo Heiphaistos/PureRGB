@@ -37,6 +37,8 @@ image = { version = "0.25", default-features = false, features = ["png", "jpeg",
 jpeg-encoder = "0.6"
 serialport = { version = "4", default-features = false }
 nusb = "0.1"
+# DES-CBC de l'en-tête chiffré des écrans TURZX (1CBE) : RustCrypto, aucune autre dépendance nouvelle
+des = "=0.8.1"
 
 [target.'cfg(windows)'.dependencies]
 # SCSI pass-through des écrans Thermalright (screens/drivers/scsi_win.rs)
