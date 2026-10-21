@@ -1,0 +1,223 @@
+/* Styles partagés de l'onglet Écrans (préfixe sc-). Variables : voir style.css */
+.sc-page {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sc-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 26px;
+}
+
+.sc-h2 {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.sc-sub {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.sc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sc-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.sc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.sc-badge.warn {
+  color: var(--warn);
+  border-color: rgba(245, 185, 74, 0.5);
+  background: rgba(245, 185, 74, 0.1);
+}
+
+.sc-badge.ok {
+  color: var(--ok);
+  border-color: rgba(62, 207, 110, 0.45);
+  background: rgba(62, 207, 110, 0.08);
+}
+
+.sc-badge.err {
+  color: var(--err);
+  border-color: rgba(240, 86, 74, 0.5);
+  background: rgba(240, 86, 74, 0.1);
+}
+
+.sc-chip {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sc-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sc-chip .n {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+button.sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+button.icon {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+button.icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+button.danger:hover {
+  border-color: var(--err);
+  color: var(--err);
+}
+
+button.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.sc-field {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.sc-field > :last-child {
+  min-width: 0;
+}
+
+.sc-field input[type="text"],
+.sc-field input[type="number"],
+.sc-field select {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+select,
+.sc-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 13px;
+  font-family: inherit;
+  width: 100%;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.sc-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 26px;
+}
+
+.sc-tabs button {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--text-dim);
+  padding: 10px 16px;
+}
+
+.sc-tabs button:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+
+.sc-tabs button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.sc-demo {
+  background: rgba(245, 185, 74, 0.1);
+  border-bottom: 1px solid rgba(245, 185, 74, 0.4);
+  color: var(--warn);
+  font-size: 12px;
+  padding: 6px 26px;
+}
+
+.sc-thumb {
+  background: #000;
+  border-radius: var(--radius-sm);
+  display: block;
+  width: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+.sc-ph {
+  background: repeating-linear-gradient(45deg, var(--bg), var(--bg) 8px, var(--bg-card) 8px, var(--bg-card) 16px);
+  border-radius: var(--radius-sm);
+  width: 100%;
+}
+
+.sc-err {
+  color: var(--err);
+  font-size: 12px;
+}
