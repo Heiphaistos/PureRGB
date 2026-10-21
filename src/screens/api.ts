@@ -12,6 +12,7 @@ import type {
   ScreenInfo,
   ScreenOptions,
   ScreenState,
+  SensorsReport,
 } from "./types.ts";
 
 const isTauri = (): boolean => typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
@@ -90,6 +91,10 @@ export const mediaDelete = (id: string): Promise<void> =>
 
 export const screenValues = (): Promise<LiveValues> =>
   demo.value ? mock.screenValues() : invoke<LiveValues>("screen_values");
+
+/** Tous les capteurs bruts + diagnostic sensord (panneau « Capteurs détectés »). */
+export const screenSensors = (): Promise<SensorsReport> =>
+  demo.value ? mock.screenSensors() : invoke<SensorsReport>("screen_sensors");
 
 // --- Boîtes de dialogue (Tauri uniquement) ---
 
