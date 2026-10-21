@@ -24,7 +24,8 @@ const REPLY_MIN: usize = 41;
 const WRITE_CHUNK: usize = 16 * 1024;
 const CMD_JPEG: u32 = 2;
 const CMD_RGB565: u32 = 3;
-const JPEG_QUALITY: u8 = 80;
+/// Qualité de départ de TRCC.exe 2.1.8 (`ysl = 95`), baissée de 5 en 5 sous le plafond de 450 000 octets.
+const JPEG_QUALITY: u8 = 95;
 
 /// Poignée de main : 64 octets, magic, zéros, commande 01 à l'octet 56.
 pub fn handshake_packet() -> [u8; HEADER_SIZE] {
@@ -35,13 +36,14 @@ pub fn handshake_packet() -> [u8; HEADER_SIZE] {
 }
 
 /// Trame : en-tête de 64 octets (u32 LE : commande en 4, largeur en 8, hauteur en 12, constante 2 en 56,
-/// longueur de charge en 60) suivi de la charge.
-pub fn build_frame(img: &wire::WireImage) -> Result<Vec<u8>> {
+/// longueur de charge en 60) suivi de la charge. `width`/`height` = résolution NATIVE de l'écran : TRCC.exe 2.1.8
+/// (`ImageToJpg`) écrit des constantes (ex. 1920/462) même quand le JPEG tourné est en portrait (462x1920).
+pub fn build_frame(img: &wire::WireImage, width: u32, height: u32) -> Result<Vec<u8>> {
     let mut f = vec![0u8; HEADER_SIZE];
     f[..4].copy_from_slice(&MAGIC);
     f[4..8].copy_from_slice(&(if img.jpeg { CMD_JPEG } else { CMD_RGB565 }).to_le_bytes());
-    f[8..12].copy_from_slice(&img.width.to_le_bytes());
-    f[12..16].copy_from_slice(&img.height.to_le_bytes());
+    f[8..12].copy_from_slice(&width.to_le_bytes());
+    f[12..16].copy_from_slice(&height.to_le_bytes());
     f[56..60].copy_from_slice(&2u32.to_le_bytes());
     f[60..64].copy_from_slice(&u32::try_from(img.data.len())?.to_le_bytes());
     f.extend_from_slice(&img.data);
@@ -94,7 +96,7 @@ impl<T: Transport> ScreenDriver for BulkScreen<T> {
 
     fn push_frame(&mut self, frame: &Frame) -> Result<()> {
         let img = wire::encode_frame(&self.profile, frame, self.info.rotation, JPEG_QUALITY)?;
-        send_chunks(&mut self.transport, &build_frame(&img)?)
+        send_chunks(&mut self.transport, &build_frame(&img, self.profile.width, self.profile.height)?)
     }
 }
 
@@ -168,14 +170,17 @@ mod tests {
     #[test]
     fn frame_header_bytes() {
         let img = wire::WireImage { data: vec![7; 10], width: 480, height: 480, jpeg: true };
-        let f = build_frame(&img).unwrap();
+        let f = build_frame(&img, 480, 480).unwrap();
         // 480 = 0x1E0 -> E0 01 00 00 ; commande 2 = JPEG ; constante 2 en 56 ; longueur 10 en 60.
         assert_eq!(f[..16], [0x12, 0x34, 0x56, 0x78, 2, 0, 0, 0, 0xE0, 0x01, 0, 0, 0xE0, 0x01, 0, 0]);
         assert!(f[16..56].iter().all(|&b| b == 0));
         assert_eq!(f[56..64], [2, 0, 0, 0, 10, 0, 0, 0]);
         assert_eq!(f.len(), 74);
         let rgb = wire::WireImage { data: vec![0; 4], width: 320, height: 320, jpeg: false };
-        assert_eq!(build_frame(&rgb).unwrap()[4..8], [3, 0, 0, 0]);
+        assert_eq!(build_frame(&rgb, 320, 320).unwrap()[4..8], [3, 0, 0, 0]);
+        // Écran 1920x462 tourné à 90 : JPEG portrait 462x1920, mais en-tête natif 1920 (80 07) x 462 (CE 01).
+        let portrait = wire::WireImage { data: vec![7; 10], width: 462, height: 1920, jpeg: true };
+        assert_eq!(build_frame(&portrait, 1920, 462).unwrap()[8..16], [0x80, 0x07, 0, 0, 0xCE, 0x01, 0, 0]);
     }
 
     #[test]
