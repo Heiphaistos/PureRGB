@@ -1,0 +1,6 @@
+{"version":1,"name":"Minimal CPU","width":480,"height":480,"background":{"kind":"gradient","from":"#0c0c0e","to":"#16161a","angle":90},"widgets":[
+{"id":"lab","x":40,"y":51,"w":200,"h":30,"type":"text","text":"PROCESSEUR","style":{"font":"Inter","size":20,"color":"#8a8a93","align":"left","bold":false}},
+{"id":"temp","x":30,"y":186,"w":420,"h":230,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":230,"color":"#ffffff","align":"center","bold":true}},
+{"id":"load","x":40,"y":370,"w":400,"h":6,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":3.0,"track":"#26262c","colors":[[0,"#f5b041"],[1,"#f5b041"]]},
+{"id":"l1","x":40,"y":401,"w":120,"h":30,"type":"text","text":"CHARGE","style":{"font":"Inter","size":20,"color":"#8a8a93","align":"left","bold":false}},
+{"id":"l2","x":300,"y":400,"w":140,"h":36,"type":"value","source":"cpu.load","format":"{:.0} %","style":{"font":"Inter","size":30,"color":"#ffffff","align":"right","bold":true}}]}
