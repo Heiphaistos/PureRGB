@@ -1,7 +1,11 @@
 """Briques decoratives du lot styles : balayage, grilles, barres segmentees, halo neon, texte fantome."""
 import math
 
-from lib import fit_size, min_text
+import qa
+from content import CONTENT
+from lib import fit_size, measure, min_text
+
+REQ = ("cpu.temp", "gpu.temp")   # leur valeur secondaire (charge) est obligatoire : jamais omise
 
 
 def ink(col, al):
@@ -127,3 +131,71 @@ def lv(c, box, m, col, tcol=None, g="lv", font=None, bold=True, valign="left"):
     lh = max(h * 0.26, min(need(c.f), h * 0.45))
     c.text(x, y, w, lh, m.label, col, bold=True, align=valign, pre="l", group=g + "l", font=font, maxsize=lh)
     c.value(m.src, m.fmt, x, y + lh, w, h - lh, m.sample, tcol, bold=bold, align=valign, pre="v", group=g + "v", font=font)
+
+
+def order(ms, n):
+    """n premieres metriques, SSD 2 (conditionnel) en dernier : le trou eventuel reste en fin de grille."""
+    sh = list(ms[:n])
+    if n >= 5:
+        sh.append(sh.pop(4))
+    return sh
+
+
+def fit(p, fmt, content, draw, nmax=9):
+    """Plus grand nombre de metriques (>= 5, BASE d'abord) pour lequel `draw(p, fmt, metriques)` passe le QA ; sinon None."""
+    ms = CONTENT[content][1]
+    for n in range(min(nmax, len(ms)), 4, -1):
+        w = draw(p, fmt, order(ms, n))
+        if w is not None and not qa.problems(w, fmt):
+            return w
+    return None
+
+
+def body(c, box, m, i, col, tcol=None, bar=None, font=None, g="b", align="left", label=None, lsize=None, bold=True, lower=False):
+    """Libelle + valeur + valeur secondaire (+ barre) dans `box` ; tout dans la condition de la metrique.
+    Boite large et basse : libelle/secondaire a gauche, valeur a droite ; sinon empile."""
+    x, y, w, h = box
+    p = c.p
+    tcol = tcol or p.text
+    mt = min_text(c.f)
+    label = label or (m.label.lower() if lower else m.label)
+    vg = g + "v" + ("w" if len(m.sample) > 6 else "n")
+    with c.m(m):
+        bh = max(3.0, h * 0.09) if bar else 0.0
+        hh = h - (bh + h * 0.05 if bar else 0.0)
+        if w > 1.35 * h:
+            sub = m.sub and (m.src in REQ or hh * 0.5 >= mt * 1.25)
+            ts = mt * 1.1
+            fnt = font or p.font
+            need_lw = max(measure(label, fnt, True, ts), measure(m.sub[2], fnt, False, ts) if sub else 0.0)
+            lw = min(max(need_lw, w * 0.34), w * 0.56)
+            lh = hh * 0.5 if sub else hh
+            c.text(x, y, lw, lh, label, col, bold=bold, align=align, pre="l", group=g + "l", font=font, maxsize=lsize)
+            if sub:
+                c.value(m.sub[0], m.sub[1], x, y + lh, lw, hh - lh, m.sub[2], p.text2, align=align, pre="s", group=g + "s", font=font)
+            c.value(m.src, m.fmt, x + lw + w * 0.03, y, w - lw - w * 0.03, hh, m.sample, tcol, bold=bold, align="right", pre="v", group=vg, font=font, maxsize=hh * 0.72)
+        else:
+            sub = m.sub and (m.src in REQ or hh * 0.2 >= mt * 1.25)
+            lh, sh = hh * 0.24, (hh * 0.22 if sub else 0.0)
+            c.text(x, y, w, lh, label, col, bold=bold, align=align, pre="l", group=g + "l", font=font, maxsize=lsize)
+            c.value(m.src, m.fmt, x, y + lh, w, hh - lh - sh, m.sample, tcol, bold=bold, align=align, pre="v", group=vg, font=font)
+            if sub:
+                c.value(m.sub[0], m.sub[1], x, y + hh - sh, w, sh, m.sub[2], p.text2, align=align, pre="s", group=g + "s", font=font)
+        if bar:
+            if callable(bar):
+                bar(c, x, y + h - bh, w, bh, m, i)
+            else:
+                c.bar(x, y + h - bh, w, bh, m.src, m.lo, m.hi, m.colors(p, i), pre="b")
+
+
+ALL8 = ["sty-pc", "sty-therm", "sty-io", "sty-air", "sty-puiss", "sty-gpu", "sty-cpu", "sty-mem"]
+
+
+def dial(c, cx, cy, R, m, i, thick=None, g="d"):
+    """Jauge 270 deg : valeur au centre, valeur secondaire dessous, libelle dans l'ouverture."""
+    p = c.p
+    c.arc(cx, cy, R, m.src, m.lo, m.hi, thick or R * 0.11, m.colors(p, i))
+    vw = R * 1.3
+    c.value(m.src, m.fmt, cx - vw / 2, cy - R * 0.7, vw, R * 0.62, m.sample, p.text, bold=True, align="center", pre="dv", group=g + "v", font=p.font)
+    c.value(m.sub[0], m.sub[1], cx - vw / 2, cy - R * 0.05, vw, R * 0.32, m.sub[2], p.text2, align="center", pre="ds", group=g + "s", font=p.font)
+    c.text(cx - R * 0.5, cy + R * 0.42, R, R * 0.33, m.label, p.text2, bold=True, align="center", pre="dl", group=g + "l", font=p.font)
