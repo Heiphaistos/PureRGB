@@ -1,6 +1,0 @@
-{"version":1,"name":"Grand chiffre · Mémoire · Orchidée","width":1920,"height":462,"background":{"kind":"gradient","from":"#fbf1fb","to":"#f0d9f3","angle":90},"widgets":[
-{"id":"l1","x":37,"y":106.8,"w":553.8,"h":77.6,"type":"text","text":"RAM","style":{"font":"Inter","size":67.5,"color":"#b5179e","align":"left","bold":true}},
-{"id":"s1","x":37,"y":200,"w":553.8,"h":62.1,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Inter","size":54,"color":"#855a8f","align":"left","bold":false}},
-{"id":"b1","x":37,"y":308.6,"w":553.8,"h":27.2,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":13.6,"track":"#dcbbe4","colors":[[0,"#b5179e"],[1,"#7209b7"]]},
-{"id":"v1","x":664.6,"y":37,"w":1218.4,"h":388,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":337.4,"color":"#41204a","align":"right","bold":true}}
-]}

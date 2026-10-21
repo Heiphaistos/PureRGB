@@ -1,9 +1,0 @@
-{"version":1,"name":"Grand chiffre · Liquide · Lave","width":480,"height":480,"background":{"kind":"gradient","from":"#140403","to":"#2e0b06","angle":90},"widgets":[
-{"id":"gl1","x":81.6,"y":81.6,"w":316.8,"h":316.8,"opacity":0.07,"type":"rect","fill":"#ff5a1f","stroke":null,"stroke_width":0,"radius":158.4},
-{"id":"gl2","x":121.2,"y":121.2,"w":237.6,"h":237.6,"opacity":0.1,"type":"rect","fill":"#ff5a1f","stroke":null,"stroke_width":0,"radius":118.8},
-{"id":"gl3","x":160.8,"y":160.8,"w":158.4,"h":158.4,"opacity":0.13,"type":"rect","fill":"#ff5a1f","stroke":null,"stroke_width":0,"radius":79.2},
-{"id":"gl4","x":200.4,"y":200.4,"w":79.2,"h":79.2,"opacity":0.16,"type":"rect","fill":"#ff5a1f","stroke":null,"stroke_width":0,"radius":39.6},
-{"id":"l1","x":81.6,"y":81.6,"w":316.8,"h":38,"type":"text","text":"LIQUIDE","style":{"font":"Rajdhani","size":33.1,"color":"#ff5a1f","align":"center","bold":true}},
-{"id":"v1","x":81.6,"y":129.1,"w":316.8,"h":158.4,"type":"value","source":"liquid.temp","format":"{:.1}˚","style":{"font":"Rajdhani","size":127.1,"color":"#fff1e6","align":"center","bold":true}},
-{"id":"b1","x":129.1,"y":360.4,"w":221.8,"h":15.8,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":7.9,"track":"#40160f","colors":[[0,"#a3e635"],[0.55,"#fb923c"],[1,"#ef4444"]]}
-]}

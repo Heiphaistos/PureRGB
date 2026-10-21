@@ -1,0 +1,22 @@
+{"version":1,"name":"Rond et AIO · Températures · Noir et or","width":480,"height":480,"background":{"kind":"gradient","from":"#0a0805","to":"#1a150a","angle":90},"widgets":[
+{"id":"a1","x":161.3,"y":23,"w":157.4,"h":157.4,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2f2711","colors":[[0,"#c9d98a"],[0.55,"#e5b53c"],[1,"#e0523d"]]},
+{"id":"v1","x":188.1,"y":51.9,"w":103.9,"h":45.7,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":33.6,"color":"#f7ecd0","align":"center","bold":true}},
+{"id":"s1","x":191.5,"y":99,"w":97,"h":26.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":22.9,"color":"#a8966a","align":"center","bold":false}},
+{"id":"l1","x":181,"y":147.4,"w":118.1,"h":26.3,"type":"text","text":"CPU","style":{"font":"Inter","size":22.9,"color":"#e5b53c","align":"center","bold":true}},
+{"id":"a2","x":292.8,"y":118.6,"w":157.4,"h":157.4,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2f2711","colors":[[0,"#c9d98a"],[0.55,"#e5b53c"],[1,"#e0523d"]]},
+{"id":"v2","x":319.5,"y":147.4,"w":103.9,"h":45.7,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":33.6,"color":"#f7ecd0","align":"center","bold":true}},
+{"id":"s2","x":323,"y":194.5,"w":97,"h":26.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":22.9,"color":"#a8966a","align":"center","bold":false}},
+{"id":"l2","x":312.5,"y":242.9,"w":118.1,"h":26.3,"type":"text","text":"GPU","style":{"font":"Inter","size":22.9,"color":"#f5d77a","align":"center","bold":true}},
+{"id":"a3","x":242.6,"y":273.1,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2f2711","colors":[[0,"#b8862a"],[1,"#e5b53c"]]},
+{"id":"v3","x":269.3,"y":302,"w":103.9,"h":45.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":33.6,"color":"#f7ecd0","align":"center","bold":true}},
+{"id":"s3","x":272.8,"y":349.1,"w":97,"h":26.3,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Inter","size":22.9,"color":"#a8966a","align":"center","bold":false}},
+{"id":"l3","x":262.2,"y":397.5,"w":118.1,"h":26.3,"type":"text","text":"RAM","style":{"font":"Inter","size":22.9,"color":"#b8862a","align":"center","bold":true}},
+{"id":"a4","x":80,"y":273.1,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ssd.1.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2f2711","colors":[[0,"#e5b53c"],[1,"#f5d77a"]]},
+{"id":"v4","x":106.8,"y":302,"w":103.9,"h":45.7,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":33.6,"color":"#f7ecd0","align":"center","bold":true}},
+{"id":"s4","x":110.3,"y":349.1,"w":97,"h":26.3,"type":"value","source":"ssd.1.temp","format":"{:.0}°C","style":{"font":"Inter","size":22.9,"color":"#a8966a","align":"center","bold":false}},
+{"id":"l4","x":99.7,"y":397.5,"w":118.1,"h":26.3,"type":"text","text":"SSD","style":{"font":"Inter","size":22.9,"color":"#e5b53c","align":"center","bold":true}},
+{"id":"a5","x":29.8,"y":118.6,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ssd.2.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2f2711","colors":[[0,"#f5d77a"],[1,"#b8862a"]],"visible_if":"ssd.2.used_pct"},
+{"id":"v5","x":56.6,"y":147.4,"w":103.9,"h":45.7,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Inter","size":33.6,"color":"#f7ecd0","align":"center","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"s5","x":60,"y":194.5,"w":97,"h":26.3,"type":"value","source":"ssd.2.temp","format":"{:.0}°C","style":{"font":"Inter","size":22.9,"color":"#a8966a","align":"center","bold":false},"visible_if":"ssd.2.used_pct"},
+{"id":"l5","x":49.5,"y":242.9,"w":118.1,"h":26.3,"type":"text","text":"SSD 2","style":{"font":"Inter","size":22.9,"color":"#f5d77a","align":"center","bold":true},"visible_if":"ssd.2.used_pct"}
+]}

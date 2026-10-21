@@ -1,0 +1,22 @@
+{"version":1,"name":"Rond et AIO · Vue d'ensemble · Cyberpunk","width":480,"height":480,"background":{"kind":"gradient","from":"#0a0014","to":"#1d0036","angle":90},"widgets":[
+{"id":"a1","x":161.3,"y":23,"w":157.4,"h":157.4,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2e0f4d","colors":[[0,"#00f0ff"],[0.55,"#fcee09"],[1,"#ff003c"]]},
+{"id":"v1","x":188.1,"y":51.9,"w":103.9,"h":45.7,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":39.8,"color":"#fdf6ff","align":"center","bold":true}},
+{"id":"s1","x":191.5,"y":99,"w":97,"h":26.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":22.9,"color":"#c08bff","align":"center","bold":false}},
+{"id":"l1","x":181,"y":147.4,"w":118.1,"h":26.3,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":22.9,"color":"#fcee09","align":"center","bold":true}},
+{"id":"a2","x":292.8,"y":118.6,"w":157.4,"h":157.4,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2e0f4d","colors":[[0,"#00f0ff"],[0.55,"#fcee09"],[1,"#ff003c"]]},
+{"id":"v2","x":319.5,"y":147.4,"w":103.9,"h":45.7,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":39.8,"color":"#fdf6ff","align":"center","bold":true}},
+{"id":"s2","x":323,"y":194.5,"w":97,"h":26.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":22.9,"color":"#c08bff","align":"center","bold":false}},
+{"id":"l2","x":312.5,"y":242.9,"w":118.1,"h":26.3,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":22.9,"color":"#00f0ff","align":"center","bold":true}},
+{"id":"a3","x":242.6,"y":273.1,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2e0f4d","colors":[[0,"#ff003c"],[1,"#fcee09"]]},
+{"id":"v3","x":269.3,"y":302,"w":103.9,"h":45.7,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":39.8,"color":"#fdf6ff","align":"center","bold":true}},
+{"id":"s3","x":272.8,"y":349.1,"w":97,"h":26.3,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Rajdhani","size":22.9,"color":"#c08bff","align":"center","bold":false}},
+{"id":"l3","x":262.2,"y":397.5,"w":118.1,"h":26.3,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":22.9,"color":"#ff003c","align":"center","bold":true}},
+{"id":"a4","x":80,"y":273.1,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ssd.1.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2e0f4d","colors":[[0,"#fcee09"],[1,"#00f0ff"]]},
+{"id":"v4","x":106.8,"y":302,"w":103.9,"h":45.7,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":39.8,"color":"#fdf6ff","align":"center","bold":true}},
+{"id":"s4","x":110.3,"y":349.1,"w":97,"h":26.3,"type":"value","source":"ssd.1.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":22.9,"color":"#c08bff","align":"center","bold":false}},
+{"id":"l4","x":99.7,"y":397.5,"w":118.1,"h":26.3,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":22.9,"color":"#fcee09","align":"center","bold":true}},
+{"id":"a5","x":29.8,"y":118.6,"w":157.4,"h":157.4,"type":"gauge_arc","source":"ssd.2.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":9.4,"track":"#2e0f4d","colors":[[0,"#00f0ff"],[1,"#ff003c"]],"visible_if":"ssd.2.used_pct"},
+{"id":"v5","x":56.6,"y":147.4,"w":103.9,"h":45.7,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":39.8,"color":"#fdf6ff","align":"center","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"s5","x":60,"y":194.5,"w":97,"h":26.3,"type":"value","source":"ssd.2.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":22.9,"color":"#c08bff","align":"center","bold":false},"visible_if":"ssd.2.used_pct"},
+{"id":"l5","x":49.5,"y":242.9,"w":118.1,"h":26.3,"type":"text","text":"SSD 2","style":{"font":"Rajdhani","size":22.9,"color":"#00f0ff","align":"center","bold":true},"visible_if":"ssd.2.used_pct"}
+]}

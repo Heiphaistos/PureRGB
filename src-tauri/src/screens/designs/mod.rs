@@ -2,12 +2,7 @@
 //! (`%APPDATA%\PureRGB\screens\designs\<id>.json`).
 
 mod builtin;
-mod clock;
-mod gaming;
 mod generated;
-mod minimal;
-mod monitor;
-mod showcase;
 mod themes;
 #[cfg(test)]
 mod quality;
@@ -191,13 +186,13 @@ mod tests {
     #[test]
     fn user_designs_roundtrip_and_reject_hostile_ids() {
         let s = store();
-        let l = s.get("moniteur-duo").unwrap();
+        let l = s.get("gen-analogique-carte-mere-cyber-u1920").unwrap();
         let id = s.save_user(&l).unwrap();
         assert!(id.starts_with("u-"));
         assert_eq!(s.get(&id).unwrap().name, l.name);
         assert!(s.list().iter().any(|m| m.id == id && m.category == "user"));
         assert!(s.get("../settings").is_err());
-        assert!(s.delete_user("moniteur-duo").is_err());
+        assert!(s.delete_user("gen-analogique-carte-mere-cyber-u1920").is_err());
         s.delete_user(&id).unwrap();
         std::fs::remove_dir_all(&s.user_dir).ok();
     }

@@ -1,0 +1,23 @@
+{"version":1,"name":"Heure et calendrier · Heure, date et disques · Sable","width":320,"height":320,"background":{"kind":"gradient","from":"#f7f0e4","to":"#ecdcc0","angle":90},"widgets":[
+{"id":"time1","x":25.6,"y":25.6,"w":268.8,"h":69.9,"type":"value","source":"time","format":"%H:%M","style":{"font":"Inter","size":60.8,"color":"#3a2a14","align":"left","bold":false}},
+{"id":"d1","x":25.6,"y":106.9,"w":87.4,"h":20.2,"type":"value","source":"date","format":"%A","style":{"font":"Inter","size":17.6,"color":"#c2410c","align":"center","bold":true}},
+{"id":"d2","x":117.9,"y":106.9,"w":23.9,"h":20.2,"type":"value","source":"date","format":"%d","style":{"font":"Inter","size":17.6,"color":"#3a2a14","align":"center","bold":true}},
+{"id":"d3","x":146.8,"y":106.9,"w":95.9,"h":20.2,"type":"value","source":"date","format":"%B","style":{"font":"Inter","size":17.6,"color":"#a16207","align":"center","bold":true}},
+{"id":"d4","x":247.6,"y":106.9,"w":46.8,"h":20.2,"type":"value","source":"date","format":"%Y","style":{"font":"Inter","size":17.6,"color":"#80693f","align":"center","bold":true}},
+{"id":"rule1","x":25.6,"y":141.2,"w":268.8,"h":2,"type":"rect","fill":"#3a2a1424","stroke":null,"stroke_width":0,"radius":1},
+{"id":"l1","x":25.6,"y":151.9,"w":91.4,"h":22.3,"type":"text","text":"CPU","style":{"font":"Inter","size":19,"color":"#c2410c","align":"left","bold":true}},
+{"id":"v1","x":117,"y":151.9,"w":107.5,"h":22.3,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":19.4,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"s1","x":224.5,"y":151.9,"w":69.9,"h":22.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":17.9,"color":"#80693f","align":"right","bold":false}},
+{"id":"l2","x":25.6,"y":182,"w":91.4,"h":22.3,"type":"text","text":"GPU","style":{"font":"Inter","size":19,"color":"#a16207","align":"left","bold":true}},
+{"id":"v2","x":117,"y":182,"w":107.5,"h":22.3,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":19.4,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"s2","x":224.5,"y":182,"w":69.9,"h":22.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":17.9,"color":"#80693f","align":"right","bold":false}},
+{"id":"l3","x":25.6,"y":212,"w":91.4,"h":22.3,"type":"text","text":"RAM","style":{"font":"Inter","size":19,"color":"#0f766e","align":"left","bold":true}},
+{"id":"v3","x":117,"y":212,"w":107.5,"h":22.3,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":19.4,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"s3","x":224.5,"y":212,"w":69.9,"h":22.3,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Inter","size":17.9,"color":"#80693f","align":"right","bold":false}},
+{"id":"l4","x":25.6,"y":242,"w":91.4,"h":22.3,"type":"text","text":"SSD","style":{"font":"Inter","size":19,"color":"#c2410c","align":"left","bold":true}},
+{"id":"v4","x":117,"y":242,"w":107.5,"h":22.3,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":19.4,"color":"#3a2a14","align":"right","bold":true}},
+{"id":"s4","x":224.5,"y":242,"w":69.9,"h":22.3,"type":"value","source":"ssd.1.temp","format":"{:.0}°C","style":{"font":"Inter","size":17.9,"color":"#80693f","align":"right","bold":false}},
+{"id":"l5","x":25.6,"y":272.1,"w":91.4,"h":22.3,"type":"text","text":"SSD 2","style":{"font":"Inter","size":19,"color":"#a16207","align":"left","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"v5","x":117,"y":272.1,"w":107.5,"h":22.3,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Inter","size":19.4,"color":"#3a2a14","align":"right","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"s5","x":224.5,"y":272.1,"w":69.9,"h":22.3,"type":"value","source":"ssd.2.temp","format":"{:.0}°C","style":{"font":"Inter","size":17.9,"color":"#80693f","align":"right","bold":false},"visible_if":"ssd.2.used_pct"}
+]}

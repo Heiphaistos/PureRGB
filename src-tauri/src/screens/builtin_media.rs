@@ -36,7 +36,7 @@ pub fn install(media: &MediaStore) {
         if media.file_of(&id).is_some() {
             continue;
         }
-        let item = MediaItem { id, name: b.name.into(), kind: MediaKind::Video, width: b.width, height: b.height, frames: b.frames, duration_ms: b.duration_ms };
+        let item = MediaItem { id, name: b.name.into(), kind: MediaKind::Video, width: b.width, height: b.height, frames: b.frames, duration_ms: b.duration_ms, backend: Default::default() };
         if let Err(e) = media.install_known(&item, b.ext, b.bytes) {
             log::warn!("média intégré {} : {e:#}", b.name);
         }

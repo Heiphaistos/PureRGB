@@ -67,6 +67,8 @@ export interface WidgetBase {
   h: number;
   rotation: number;
   opacity: number;
+  /** Clé de donnée (ex. `ssd.2.used_pct`) : le widget n'est dessiné que si elle existe sur ce PC. */
+  visible_if?: string;
 }
 
 export type Widget = WidgetBase & WidgetKind;

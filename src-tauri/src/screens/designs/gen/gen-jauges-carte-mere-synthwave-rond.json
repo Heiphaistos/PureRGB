@@ -1,0 +1,22 @@
+{"version":1,"name":"Jauges et anneaux · Carte mère · Synthwave","width":480,"height":480,"background":{"kind":"gradient","from":"#120428","to":"#3b0a54","angle":90},"widgets":[
+{"id":"a1","x":81.6,"y":86.4,"w":148.8,"h":148.8,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":10.4,"track":"#4a1670","colors":[[0,"#2bd1ff"],[0.55,"#ffe66d"],[1,"#ff3cac"]]},
+{"id":"v1","x":109.6,"y":130.1,"w":92.8,"h":51.2,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":44.5,"color":"#fff0ff","align":"center","bold":true}},
+{"id":"l1","x":109.9,"y":209.9,"w":43.2,"h":22.3,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":19.4,"color":"#d09be8","align":"right","bold":true}},
+{"id":"s1","x":159,"y":209.9,"w":43.2,"h":22.3,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":19.4,"color":"#fff0ff","align":"left","bold":true}},
+{"id":"a2","x":249.6,"y":86.4,"w":148.8,"h":148.8,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":10.4,"track":"#4a1670","colors":[[0,"#2bd1ff"],[0.55,"#ffe66d"],[1,"#ff3cac"]]},
+{"id":"v2","x":277.6,"y":130.1,"w":92.8,"h":51.2,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":44.5,"color":"#fff0ff","align":"center","bold":true}},
+{"id":"l2","x":277.9,"y":209.9,"w":43.2,"h":22.3,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":19.4,"color":"#d09be8","align":"right","bold":true}},
+{"id":"s2","x":327,"y":209.9,"w":43.2,"h":22.3,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":19.4,"color":"#fff0ff","align":"left","bold":true}},
+{"id":"l3","x":81.6,"y":259.2,"w":95,"h":30.2,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":24.1,"color":"#d09be8","align":"left","bold":true}},
+{"id":"v3","x":176.6,"y":259.2,"w":140.6,"h":30.2,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":26.2,"color":"#fff0ff","align":"right","bold":true}},
+{"id":"s3","x":319.2,"y":262.2,"w":79.2,"h":24.1,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Rajdhani","size":21,"color":"#d09be8","align":"right","bold":false}},
+{"id":"b1","x":81.6,"y":292.3,"w":316.8,"h":3.3,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#4a1670","colors":[[0,"#ffe66d"],[1,"#ff3cac"]]},
+{"id":"l4","x":81.6,"y":310.4,"w":95,"h":30.2,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":24.1,"color":"#d09be8","align":"left","bold":true}},
+{"id":"v4","x":176.6,"y":310.4,"w":140.6,"h":30.2,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":26.2,"color":"#fff0ff","align":"right","bold":true}},
+{"id":"s4","x":319.2,"y":313.4,"w":79.2,"h":24.1,"type":"value","source":"ssd.1.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":21,"color":"#d09be8","align":"right","bold":false}},
+{"id":"b2","x":81.6,"y":343.5,"w":316.8,"h":3.3,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#4a1670","colors":[[0,"#ff3cac"],[1,"#2bd1ff"]]},
+{"id":"l5","x":81.6,"y":361.6,"w":95,"h":30.2,"type":"text","text":"SSD 2","style":{"font":"Rajdhani","size":24.1,"color":"#d09be8","align":"left","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"v5","x":176.6,"y":361.6,"w":140.6,"h":30.2,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":26.2,"color":"#fff0ff","align":"right","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"s5","x":319.2,"y":364.6,"w":79.2,"h":24.1,"type":"value","source":"ssd.2.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":21,"color":"#d09be8","align":"right","bold":false},"visible_if":"ssd.2.used_pct"},
+{"id":"b3","x":81.6,"y":394.7,"w":316.8,"h":3.3,"type":"bar","source":"ssd.2.used_pct","min":0,"max":100,"vertical":false,"radius":1.7,"track":"#4a1670","colors":[[0,"#2bd1ff"],[1,"#ffe66d"]],"visible_if":"ssd.2.used_pct"}
+]}

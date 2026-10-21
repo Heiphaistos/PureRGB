@@ -19,7 +19,7 @@ fn stores(dir: &Path) -> (DesignStore, MediaStore) {
 }
 
 fn themed_layout(media_id: &str) -> Layout {
-    let mut l = DesignStore::new(tmp("seed")).get("moniteur-duo").unwrap();
+    let mut l = DesignStore::new(tmp("seed")).get("gen-analogique-carte-mere-cyber-u1920").unwrap();
     l.name = "Thème test".into();
     l.background = Background::Media { media_id: media_id.into(), fit: Fit::Cover };
     let w: Widget = serde_json::from_value(serde_json::json!({

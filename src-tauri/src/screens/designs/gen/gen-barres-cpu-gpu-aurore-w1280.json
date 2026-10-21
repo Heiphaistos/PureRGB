@@ -1,0 +1,22 @@
+{"version":1,"name":"Barres et courbes · CPU et GPU · Aurore","width":1280,"height":480,"background":{"kind":"gradient","from":"#050a1c","to":"#0e3340","angle":45},"widgets":[
+{"id":"l1","x":38.4,"y":38.4,"w":130.9,"h":71,"type":"text","text":"CPU","style":{"font":"Inter","size":42.6,"color":"#5eead4","align":"left","bold":true}},
+{"id":"b1","x":173.3,"y":59.5,"w":788.2,"h":28.8,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":10.1,"track":"#1d4f63","colors":[[0,"#5eead4"],[0.55,"#fde68a"],[1,"#fb7185"]]},
+{"id":"v1","x":969.5,"y":38.4,"w":135.7,"h":71,"type":"value","source":"cpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":42.6,"color":"#effcff","align":"right","bold":true}},
+{"id":"s1","x":1105.2,"y":38.4,"w":136.4,"h":71,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Inter","size":34.1,"color":"#9bbcd0","align":"right","bold":false}},
+{"id":"l2","x":38.4,"y":121.4,"w":130.9,"h":71,"type":"text","text":"GPU","style":{"font":"Inter","size":42.6,"color":"#a78bfa","align":"left","bold":true}},
+{"id":"b2","x":173.3,"y":142.6,"w":788.2,"h":28.8,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":10.1,"track":"#1d4f63","colors":[[0,"#5eead4"],[0.55,"#fde68a"],[1,"#fb7185"]]},
+{"id":"v2","x":969.5,"y":121.4,"w":135.7,"h":71,"type":"value","source":"gpu.temp","format":"{:.0}°C","style":{"font":"Inter","size":42.6,"color":"#effcff","align":"right","bold":true}},
+{"id":"s2","x":1105.2,"y":121.4,"w":136.4,"h":71,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Inter","size":34.1,"color":"#9bbcd0","align":"right","bold":false}},
+{"id":"l3","x":38.4,"y":204.5,"w":130.9,"h":71,"type":"text","text":"RAM","style":{"font":"Inter","size":42.6,"color":"#f472b6","align":"left","bold":true}},
+{"id":"b3","x":173.3,"y":225.6,"w":788.2,"h":28.8,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#1d4f63","colors":[[0,"#f472b6"],[1,"#5eead4"]]},
+{"id":"v3","x":969.5,"y":204.5,"w":135.7,"h":71,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.6,"color":"#effcff","align":"right","bold":true}},
+{"id":"s3","x":1105.2,"y":204.5,"w":136.4,"h":71,"type":"value","source":"ram.used_gb","format":"{:.1} Go","style":{"font":"Inter","size":34.1,"color":"#9bbcd0","align":"right","bold":false}},
+{"id":"l4","x":38.4,"y":287.5,"w":130.9,"h":71,"type":"text","text":"SSD","style":{"font":"Inter","size":42.6,"color":"#5eead4","align":"left","bold":true}},
+{"id":"b4","x":173.3,"y":308.6,"w":788.2,"h":28.8,"type":"bar","source":"ssd.1.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#1d4f63","colors":[[0,"#5eead4"],[1,"#a78bfa"]]},
+{"id":"v4","x":969.5,"y":287.5,"w":135.7,"h":71,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.6,"color":"#effcff","align":"right","bold":true}},
+{"id":"s4","x":1105.2,"y":287.5,"w":136.4,"h":71,"type":"value","source":"ssd.1.temp","format":"{:.0}°C","style":{"font":"Inter","size":34.1,"color":"#9bbcd0","align":"right","bold":false}},
+{"id":"l5","x":38.4,"y":370.6,"w":130.9,"h":71,"type":"text","text":"SSD 2","style":{"font":"Inter","size":42.6,"color":"#a78bfa","align":"left","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"b5","x":173.3,"y":391.7,"w":788.2,"h":28.8,"type":"bar","source":"ssd.2.used_pct","min":0,"max":100,"vertical":false,"radius":10.1,"track":"#1d4f63","colors":[[0,"#a78bfa"],[1,"#f472b6"]],"visible_if":"ssd.2.used_pct"},
+{"id":"v5","x":969.5,"y":370.6,"w":135.7,"h":71,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Inter","size":42.6,"color":"#effcff","align":"right","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"s5","x":1105.2,"y":370.6,"w":136.4,"h":71,"type":"value","source":"ssd.2.temp","format":"{:.0}°C","style":{"font":"Inter","size":34.1,"color":"#9bbcd0","align":"right","bold":false},"visible_if":"ssd.2.used_pct"}
+]}

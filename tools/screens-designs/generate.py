@@ -101,6 +101,64 @@ def plan(per, fpc, only):
     return res, rejected
 
 
+# Categories affichees dans la galerie : ARCHETYPE (NAME) -> categorie francaise. Une categorie regroupe
+# plusieurs archetypes ; `--cap N` limite chaque categorie a N designs choisis pour la variete.
+CATEGORY_OF = {}
+for _cat, _names in {
+    "Moniteur complet": "cartes4 colonnes duo ligne cap-grille cap-liste cap-tableau cap-colonnes cap-panneaux cap-mosaique",
+    "Barres et courbes": "barres courbes egaliseur cap-piliers uw_timeline uw_frise",
+    "Jauges et anneaux": "jauges anneaux tachymetre cap-minijauges uw_ruban",
+    "Rond et AIO": "uw_halo uw_orbites uw_quatuor_rond",
+    "Gros chiffres et minimal": "chiffre typo heros sty-japon",
+    "Horloges": "clk-sport clk-charge clk-double clk-neon clk-segments horloge analogique",
+    "Heure et calendrier": "clk-bandeau clk-calendrier clk-duo clk-geant clk-minimal",
+    "Gaming et HUD": "hud sty-cyberhud sty-tactique sty-cockpit",
+    "Rétro et néon": "terminal sty-crt sty-lcd sty-synthwave sty-neon",
+    "Verre et blueprint": "sty-verre sty-blueprint",
+    "Ultra-large (fond libre)": "uw_flancs uw_coins uw_bandeaux uw_cinema cap-bandeau",
+}.items():
+    for _n in _names.split():
+        CATEGORY_OF[_n] = _cat
+
+
+def category(mod):
+    return CATEGORY_OF.get(mod.NAME, mod.TITLE)
+
+
+def select(res, cap):
+    """Au plus `cap` designs par categorie, repartis le plus uniformement possible entre archetypes,
+    contenus, formats et palettes (tirage deterministe par tourniquet sur des listes melangees)."""
+    import hashlib
+    by_cat = {}
+    for r in res:
+        by_cat.setdefault(category(r[0]), []).append(r)
+    out = []
+    for cat in sorted(by_cat):
+        items = by_cat[cat]
+        if len(items) <= cap:
+            out += items
+            continue
+        # tourniquet : un design par archetype a tour de role, en variant le (contenu, format)
+        buckets = {}
+        for r in sorted(items, key=lambda r: hashlib.md5(design_id(r[0], r[1], r[3], r[2]).encode()).hexdigest()):
+            buckets.setdefault(r[0].NAME, []).append(r)
+        picked, used = [], set()
+        while len(picked) < cap and any(buckets.values()):
+            for name in sorted(buckets):
+                lst = buckets[name]
+                # prefere un (contenu, format) pas encore pris pour cet archetype
+                i = next((i for i, r in enumerate(lst) if (name, r[1], r[2].key) not in used), 0) if lst else None
+                if i is None:
+                    continue
+                r = lst.pop(i)
+                used.add((name, r[1], r[2].key))
+                picked.append(r)
+                if len(picked) >= cap:
+                    break
+        out += picked
+    return out
+
+
 def design_id(mod, content, p, fmt):
     arch = mod.NAME if len(getattr(mod, "CONTENTS", [0])) == 1 else f"{mod.NAME}-{content}"
     return f"gen-{arch}-{p.key}-{fmt.key}"
@@ -130,6 +188,7 @@ def main():
     ap.add_argument("--per", type=int, default=1, help="palettes par (archetype, contenu, format)")
     ap.add_argument("--fpc", type=int, default=3, help="formats par (archetype, contenu)")
     ap.add_argument("--only", default="", help="archetypes (NAME) separes par des virgules")
+    ap.add_argument("--cap", type=int, default=60, help="designs maximum par categorie (0 = sans limite)")
     ap.add_argument("--dry", action="store_true", help="n'ecrit rien")
     ap.add_argument("--report", action="store_true", help="liste les rejets QA")
     a = ap.parse_args()
@@ -138,6 +197,8 @@ def main():
         if pr:
             print(f"palette ecartee {p.key} : {', '.join(pr)}")
     res, rejected = plan(a.per, a.fpc, set(filter(None, a.only.split(","))))
+    if a.cap and not a.only:
+        res = select(res, a.cap)
     if a.report:
         seen_r = set()
         for r in rejected:
@@ -158,9 +219,9 @@ def main():
             continue
         assert did not in seen and len(did) <= 64, did
         seen.add(did)
-        title = f"{mod.TITLE} · {CONTENT_FR.get(content, content)}"
+        title = f"{category(mod)} · {CONTENT_FR.get(content, content)}"
         tags = [fmt.label, p.label, *CONTENT[content][0], *p.tags]
-        items.append((did, mod.TITLE, tags, None))
+        items.append((did, category(mod), tags, None))
         if not a.dry:
             with open(os.path.join(GEN_DIR, did + ".json"), "w", encoding="utf-8", newline="\n") as f:
                 f.write(layout_json(f"{title} · {p.label}", fmt, p, w))

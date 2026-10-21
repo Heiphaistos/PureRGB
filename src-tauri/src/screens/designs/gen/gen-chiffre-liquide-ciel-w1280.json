@@ -1,5 +1,0 @@
-{"version":1,"name":"Grand chiffre · Liquide · Ciel","width":1280,"height":480,"background":{"kind":"gradient","from":"#eaf6ff","to":"#cfe8ff","angle":90},"widgets":[
-{"id":"l1","x":38.4,"y":111,"w":361,"h":80.6,"type":"text","text":"LIQUIDE","style":{"font":"Inter","size":70.1,"color":"#0b78d0","align":"left","bold":true}},
-{"id":"b1","x":38.4,"y":320.6,"w":361,"h":28.2,"type":"bar","source":"liquid.temp","min":20,"max":60,"vertical":false,"radius":14.1,"track":"#bddaf2","colors":[[0,"#1da770"],[0.55,"#cf8509"],[1,"#e0364f"]]},
-{"id":"v1","x":447.5,"y":38.4,"w":794.1,"h":403.2,"type":"value","source":"liquid.temp","format":"{:.1}°C","style":{"font":"Inter","size":192.3,"color":"#0d2a45","align":"right","bold":true}}
-]}

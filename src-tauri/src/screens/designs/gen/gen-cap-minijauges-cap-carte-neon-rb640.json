@@ -1,0 +1,23 @@
+{"version":1,"name":"Jauges et anneaux · Carte mère et puissance · Néon","width":640,"height":172,"background":{"kind":"gradient","from":"#07030f","to":"#14072e","angle":90},"widgets":[
+{"id":"a1","x":15.5,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#39ff88"],[0.55,"#ffb020"],[1,"#ff2d55"]]},
+{"id":"v1","x":31.7,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"cpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l1","x":13.8,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"TEMP. CPU","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a2","x":103.5,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"cpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#00e5ff"],[1,"#b6ff3c"]]},
+{"id":"v2","x":119.6,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"cpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l2","x":101.8,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"CHARGE CPU","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a3","x":191.4,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#39ff88"],[0.55,"#ffb020"],[1,"#ff2d55"]]},
+{"id":"v3","x":207.6,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"gpu.temp","format":"{:.0}˚","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l3","x":189.8,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"TEMP. GPU","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a4","x":279.4,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"gpu.load","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#ff2bd6"],[1,"#00e5ff"]]},
+{"id":"v4","x":295.6,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"gpu.load","format":"{:.0}%","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l4","x":277.7,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"CHARGE GPU","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a5","x":367.4,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#00e5ff"],[1,"#b6ff3c"]]},
+{"id":"v5","x":383.6,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l5","x":365.7,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a6","x":455.4,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"ssd.1.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#b6ff3c"],[1,"#ff2bd6"]]},
+{"id":"v6","x":471.5,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true}},
+{"id":"l6","x":453.7,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"SSD 1","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true}},
+{"id":"a7","x":543.4,"y":33.9,"w":81.2,"h":81.2,"type":"gauge_arc","source":"ssd.2.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":6.9,"track":"#271a4d","colors":[[0,"#ff2bd6"],[1,"#00e5ff"]],"visible_if":"ssd.2.used_pct"},
+{"id":"v7","x":559.5,"y":59.4,"w":48.8,"h":24.2,"type":"value","source":"ssd.2.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":21.1,"color":"#f5f0ff","align":"center","bold":true},"visible_if":"ssd.2.used_pct"},
+{"id":"l7","x":541.7,"y":135.1,"w":84.5,"h":23.1,"type":"text","text":"SSD 2","style":{"font":"Rajdhani","size":16,"color":"#a99bd6","align":"center","bold":true},"visible_if":"ssd.2.used_pct"}
+]}

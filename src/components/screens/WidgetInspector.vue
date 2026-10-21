@@ -45,6 +45,14 @@ function setBgKind(kind: Background["kind"]): void {
         <NumField v-model="single.h" label="Hauteur" :min="4" unit="px" @commit="commit" />
         <NumField v-model="single.rotation" label="Rotation" :min="-180" :max="180" unit="°" @commit="commit" />
         <NumField v-model="single.opacity" label="Opacité" :min="0" :max="1" :step="0.05" @commit="commit" />
+        <TextField
+          :model-value="single.visible_if ?? ''"
+          label="Visible si"
+          placeholder="ex. ssd.2.used_pct"
+          title="Afficher ce widget seulement si cette donnée existe sur le PC (ex. second SSD)"
+          @update:model-value="(v: string) => (single!.visible_if = v.trim() || undefined)"
+          @commit="commit"
+        />
       </div>
       <h4>Propriétés</h4>
       <div class="grp">
