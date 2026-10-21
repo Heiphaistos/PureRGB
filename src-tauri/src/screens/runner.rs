@@ -5,7 +5,7 @@
 use super::bindings::ValueStore;
 use super::driver::{Frame, ScreenDriver, ScreenInfo};
 use super::drivers::encode;
-use super::layout::Layout;
+use super::layout::{Background, Layout, WidgetKind};
 use super::media::MediaStore;
 use super::render;
 use super::state::ScreenConfig;
@@ -20,6 +20,8 @@ use std::time::{Duration, Instant};
 
 const RETRY_DELAY: Duration = Duration::from_secs(3);
 const SLICE: Duration = Duration::from_millis(50);
+/// Cadence minimale d'un design qui contient un GIF ou une vidéo.
+const ANIMATED_MIN_FPS: u8 = 15;
 
 pub struct Shared {
     pub cfg: Mutex<ScreenConfig>,
@@ -114,6 +116,24 @@ pub fn compose(
     Ok(frame)
 }
 
+/// Vrai si le fond ou un widget Image du design est un GIF ou une vidéo de la médiathèque.
+pub fn layout_has_animated_media(layout: &Layout, media: &MediaStore) -> bool {
+    let bg = match &layout.background {
+        Background::Media { media_id, .. } => Some(media_id),
+        _ => None,
+    };
+    let widgets = layout.widgets.iter().filter_map(|w| match &w.kind {
+        WidgetKind::Image { media_id, .. } => Some(media_id),
+        _ => None,
+    });
+    bg.into_iter().chain(widgets).any(|id| media.is_animated(id))
+}
+
+/// Cadence effective : celle de l'utilisateur, relevée à 15 i/s si le design est animé.
+fn effective_fps(user_fps: u8, animated: bool) -> u8 {
+    if animated { user_fps.max(ANIMATED_MIN_FPS) } else { user_fps }
+}
+
 fn hash_frame(f: &Frame) -> u64 {
     let mut h = DefaultHasher::new();
     f.rgba.hash(&mut h);
@@ -141,9 +161,13 @@ fn run_loop(
     let start = Instant::now();
     let mut last_hash = 0u64;
     let mut hw_brightness: Option<(u8, bool)> = None; // (valeur envoyée, géré par le matériel)
+    let mut animated = false;
     while !shared.stop.load(Ordering::Acquire) {
-        shared.dirty.store(false, Ordering::Release);
+        let changed = shared.dirty.swap(false, Ordering::AcqRel);
         let cfg = shared.cfg.lock().clone();
+        if changed {
+            animated = cfg.layout.as_ref().is_some_and(|l| layout_has_animated_media(l, &media));
+        }
 
         if hw_brightness.map(|(v, _)| v) != Some(cfg.brightness) {
             match driver.set_brightness(cfg.brightness) {
@@ -185,7 +209,7 @@ fn run_loop(
                 continue;
             }
         }
-        nap(&shared, Duration::from_millis(1000 / u64::from(cfg.fps.max(1))));
+        nap(&shared, Duration::from_millis(1000 / u64::from(effective_fps(cfg.fps, animated).max(1))));
     }
 }
 
@@ -199,6 +223,42 @@ mod tests {
             r##"{{"version":1,"name":"t","width":8,"height":8,"background":{{"kind":"solid","color":"{color}"}},"widgets":[]}}"##
         ))
         .unwrap()
+    }
+
+    #[test]
+    fn animated_media_raises_the_frame_rate() {
+        use image::{codecs::gif::GifEncoder, Delay, Frame, Rgba, RgbaImage};
+        let dir = std::env::temp_dir().join(format!("purergb-runner-anim-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).expect("dossier");
+        let gif = dir.join("a.gif");
+        {
+            let mut enc = GifEncoder::new(std::fs::File::create(&gif).expect("gif"));
+            for c in [[255, 0, 0, 255], [0, 0, 255, 255]] {
+                let f = Frame::from_parts(RgbaImage::from_pixel(4, 4, Rgba(c)), 0, 0, Delay::from_numer_denom_ms(100, 1));
+                enc.encode_frame(f).expect("frame");
+            }
+        }
+        let png = dir.join("b.png");
+        RgbaImage::from_pixel(4, 4, Rgba([1, 2, 3, 255])).save(&png).expect("png");
+        let media = MediaStore::new(dir.join("media"));
+        let (g, p) = (media.import(&gif).expect("import gif").id, media.import(&png).expect("import png").id);
+        let with = |bg: &str, widget: &str| -> Layout {
+            serde_json::from_str(&format!(
+                r##"{{"version":1,"name":"t","width":8,"height":8,"background":{bg},"widgets":[{widget}]}}"##
+            ))
+            .expect("layout")
+        };
+        let solid = r##"{"kind":"solid","color":"#000000"}"##;
+        let bg = |id: &str| format!(r##"{{"kind":"media","media_id":"{id}","fit":"cover"}}"##);
+        let img = |id: &str| format!(r##"{{"id":"i","x":0,"y":0,"w":4,"h":4,"type":"image","media_id":"{id}","fit":"cover"}}"##);
+        assert!(!layout_has_animated_media(&with(solid, ""), &media));
+        assert!(!layout_has_animated_media(&with(&bg(&p), &img(&p)), &media), "image fixe");
+        assert!(layout_has_animated_media(&with(&bg(&g), ""), &media), "GIF en fond");
+        assert!(layout_has_animated_media(&with(solid, &img(&g)), &media), "GIF en widget");
+        assert!(!layout_has_animated_media(&with(&bg("absent"), ""), &media), "média inconnu");
+        assert_eq!((effective_fps(5, true), effective_fps(30, true), effective_fps(5, false)), (15, 30, 5));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

@@ -15,7 +15,7 @@ const busy = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 let unlisten: (() => void) | undefined;
 
-const EXT = /\.(png|jpe?g|bmp|webp|gif|mp4|webm|mkv|avi|mov)$/i;
+const EXT = /\.(png|jpe?g|bmp|webp|gif|mp4|m4v|webm|mkv|avi|mov|wmv)$/i;
 
 async function importPaths(paths: string[]): Promise<void> {
   const ok = paths.filter((p) => EXT.test(p));
@@ -36,8 +36,8 @@ async function importFiles(files: File[]): Promise<void> {
   busy.value = true;
   try {
     for (const f of files) {
-      if (!f.type.startsWith("image/")) {
-        emit("toast", `${f.name} : seules les images sont acceptées en mode démonstration`);
+      if (!f.type.startsWith("image/") && !f.type.startsWith("video/")) {
+        emit("toast", `${f.name} : format non accepté en mode démonstration`);
         continue;
       }
       await mediaImportFile(f);
@@ -131,7 +131,7 @@ onBeforeUnmount(() => unlisten?.());
         <p class="sc-sub">Images, GIF animés et vidéos. Glissez-déposez des fichiers ici ou utilisez le bouton.</p>
       </div>
       <button class="primary" :disabled="busy" @click="pick">{{ busy ? "Import…" : "Importer" }}</button>
-      <input ref="fileInput" type="file" accept="image/*" multiple hidden @change="onInput" />
+      <input ref="fileInput" type="file" accept="image/*,video/*" multiple hidden @change="onInput" />
     </div>
 
     <div v-if="media.length" class="grid">

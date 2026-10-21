@@ -3129,6 +3129,7 @@ dependencies = [
  "tauri-plugin-updater",
  "thiserror 2.0.21",
  "tiny-skia",
+ "windows 0.61.3",
  "windows-sys 0.61.2",
 ]
 
