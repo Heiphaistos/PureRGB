@@ -26,6 +26,31 @@ pub const MAX_SOURCE_SIDE: u32 = 4096;
 pub const MSG_CODEC: &str =
     "format/codec non pris en charge par Windows (installez les extensions vidéo du Microsoft Store)";
 
+/// Erreurs typées : l'appelant (import, commandes Tauri) décide du repli ffmpeg ou du message à l'interface.
+#[derive(Debug, thiserror::Error)]
+pub enum VideoError {
+    /// Windows (Media Foundation) ne sait pas décoder ce fichier.
+    #[error("{MSG_CODEC} ({0})")]
+    Codec(String),
+    #[error("aucune piste vidéo dans ce fichier")]
+    NoTrack,
+    /// Windows ne sait pas lire le fichier et le décodeur universel (ffmpeg) n'est pas installé.
+    #[error("Windows ne sait pas lire cette vidéo (codec absent) et le décodeur vidéo universel n'est pas installé")]
+    DecoderMissing,
+}
+
+/// Préfixe du message d'erreur de `media_import` quand il faut proposer l'installation de ffmpeg.
+pub const CODE_DECODER_MISSING: &str = "DECODEUR_MANQUANT";
+
+/// Moteur de décodage d'une vidéo, mémorisé dans la fiche média pour la relecture.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Backend {
+    #[default]
+    MediaFoundation,
+    Ffmpeg,
+}
+
 const IDLE_STOP: Duration = Duration::from_secs(3);
 const FIRST_FRAME_WAIT: Duration = Duration::from_millis(2500);
 const RETRY_AFTER_ERROR: Duration = Duration::from_secs(3);
@@ -146,6 +171,38 @@ pub fn probe(path: &Path) -> Result<VideoInfo> {
         let _ = path;
         bail!("lecture vidéo disponible uniquement sous Windows")
     }
+}
+
+/// Sonde un fichier : Media Foundation d'abord ; s'il ne sait pas le lire (codec absent), ffmpeg
+/// s'il est installé, sinon `VideoError::DecoderMissing`. Les autres erreurs (fichier absent, trop grand...) sont rendues telles quelles.
+pub fn probe_any(path: &Path) -> Result<(VideoInfo, Backend)> {
+    match probe(path) {
+        Ok(info) => Ok((info, Backend::MediaFoundation)),
+        Err(e) if matches!(e.downcast_ref::<VideoError>(), Some(VideoError::Codec(_) | VideoError::NoTrack)) => {
+            let Some(exe) = super::ffmpeg_install::locate() else { return Err(VideoError::DecoderMissing.into()) };
+            super::ffmpeg_dec::probe_file(&exe, path).map(|i| (i, Backend::Ffmpeg))
+        }
+        Err(e) => Err(e),
+    }
+}
+
+/// Lecteur pour `preferred` ; si Media Foundation échoue maintenant (autre PC, codec retiré), repli sur ffmpeg installé.
+pub fn open_any(path: &Path, preferred: Backend) -> Result<VideoPlayer> {
+    if preferred == Backend::MediaFoundation {
+        match VideoPlayer::open(path) {
+            Ok(p) => return Ok(p),
+            Err(e) if super::ffmpeg_install::locate().is_none() => return Err(e),
+            Err(e) => log::info!("vidéo : Media Foundation refuse ({e:#}), essai ffmpeg"),
+        }
+    }
+    let exe = super::ffmpeg_install::locate().ok_or(VideoError::DecoderMissing)?;
+    let info = super::ffmpeg_dec::probe_file(&exe, path)?;
+    let path = path.to_path_buf();
+    let factory: Factory = Arc::new(move || {
+        let src = super::ffmpeg_dec::FfmpegSource::open(Arc::new(super::ffmpeg_dec::ExeSpawner::new(exe.clone())), &path, info)?;
+        Ok(Box::new(src) as Box<dyn FrameSource>)
+    });
+    Ok(VideoPlayer::with_factory(factory, IDLE_STOP))
 }
 
 impl VideoPlayer {

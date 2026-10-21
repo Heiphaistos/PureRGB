@@ -5,6 +5,8 @@ import { reactive, ref, watch } from "vue";
 import type { CaptureFileInfo, HardwareDiagnostics, Settings } from "../types";
 import { diagOk, diagText } from "../types";
 import { checkForUpdate, updateState } from "../autoUpdate";
+import { errMsg } from "../screens/api";
+import { ffmpeg, ffmpegBusy, ffmpegPct, installFfmpeg, refreshFfmpeg } from "../screens/useFfmpeg";
 
 export type LayoutMode = "grid" | "list" | "canvas";
 
@@ -20,6 +22,17 @@ const LAYOUTS: { id: LayoutMode; label: string; hint: string }[] = [
   { id: "list", label: "Liste dense", hint: "Lignes compactes, idéal avec beaucoup d'appareils." },
   { id: "canvas", label: "Canvas immersif", hint: "Grosses tuiles, effet appliqué directement dessus." },
 ];
+
+const ffmpegErr = ref("");
+void refreshFfmpeg();
+async function installDecoder(): Promise<void> {
+  ffmpegErr.value = "";
+  try {
+    await installFfmpeg();
+  } catch (e) {
+    ffmpegErr.value = errMsg(e);
+  }
+}
 
 const autostartBusy = ref(false);
 const autostartEnabled = ref(false);
@@ -311,6 +324,21 @@ async function save() {
                 : "Rechercher une mise à jour"
         }}
       </button>
+    </div>
+
+    <div class="card">
+      <h3>Décodeur vidéo universel</h3>
+      <p class="hint">
+        Utilisé quand Windows ne sait pas lire une vidéo des écrans (ffmpeg, 115 Mo, vérifié par
+        empreinte SHA-256, installé dans Program Files).
+      </p>
+      <div class="inline">
+        <span>Décodeur vidéo universel : <strong>{{ ffmpeg === null ? "inconnu" : ffmpeg.installed ? `installé (ffmpeg ${ffmpeg.version})` : "non installé" }}</strong></span>
+        <button v-if="ffmpeg && !ffmpeg.installed" :disabled="ffmpegBusy" @click="installDecoder">
+          {{ ffmpegBusy ? `Installation… ${ffmpegPct} %` : "Installer" }}
+        </button>
+      </div>
+      <p v-if="ffmpegErr" class="hint">{{ ffmpegErr }}</p>
     </div>
 
     <div class="card">

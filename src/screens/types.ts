@@ -160,6 +160,19 @@ export interface MediaItem {
   duration_ms: number;
 }
 
+export interface FfmpegStatus {
+  installed: boolean;
+  version: string | null;
+  path: string | null;
+}
+
+export interface FfmpegProgress {
+  phase: "idle" | "download" | "extract" | "done" | "error";
+  done: number;
+  total: number;
+  error: string | null;
+}
+
 export type LiveValues = Record<string, number>;
 
 /** Capteur brut tel que lu par sensord (LibreHardwareMonitor). */

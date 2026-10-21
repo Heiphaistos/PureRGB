@@ -4,7 +4,9 @@ use super::designs::DesignMeta;
 use super::driver::ScreenInfo;
 use super::layout::Layout;
 use super::manager::{ScreenManager, ScreenOptions, ScreenState};
+use super::ffmpeg_install::{self, FfmpegStatus, InstallProgress};
 use super::media::MediaItem;
+use super::video::{VideoError, CODE_DECODER_MISSING};
 use super::sensor_map::SensorsReport;
 use super::render;
 use super::theme_pack;
@@ -119,7 +121,36 @@ pub fn media_list(m: Mgr) -> Vec<MediaItem> {
 
 #[tauri::command]
 pub fn media_import(m: Mgr, path: String) -> Res<MediaItem> {
-    m.media.import(Path::new(&path)).map_err(err)
+    m.media.import(Path::new(&path)).map_err(|e| match e.downcast_ref::<VideoError>() {
+        // Code exploitable par l'interface : propose d'installer le décodeur universel.
+        Some(VideoError::DecoderMissing) => format!("{CODE_DECODER_MISSING}: {e}"),
+        _ => err(e),
+    })
+}
+
+/// Décodeur vidéo universel (ffmpeg) : installé ? version ? chemin ?
+#[tauri::command]
+pub fn ffmpeg_status() -> FfmpegStatus {
+    ffmpeg_install::status()
+}
+
+/// Télécharge (SHA-256 épinglé), vérifie et installe ffmpeg ; suivre l'avancement avec `ffmpeg_install_progress`.
+#[tauri::command]
+pub async fn ffmpeg_install(m: Mgr<'_>) -> Res<FfmpegStatus> {
+    let media = m.media.clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        ffmpeg_install::install()?;
+        media.retry_failed_players();
+        Ok(ffmpeg_install::status())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+    .map_err(err)
+}
+
+#[tauri::command]
+pub fn ffmpeg_install_progress() -> InstallProgress {
+    ffmpeg_install::progress()
 }
 
 #[tauri::command]

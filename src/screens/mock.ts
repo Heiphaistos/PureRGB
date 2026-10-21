@@ -2,6 +2,7 @@
 import { MOCK_DESIGNS } from "./mockDesigns.ts";
 import { mockImages, mockValues, renderMock } from "./mockRender.ts";
 import { mockSensors } from "./mockSensors.ts";
+import { ffmpegMock } from "./mockFfmpeg.ts";
 import type { DesignSummary, Layout, LiveValues, MediaItem, ScreenInfo, ScreenOptions, ScreenState, SensorsReport } from "./types.ts";
 import { cloneLayout } from "./widgets.ts";
 import { validateLayout } from "./validate.ts";
@@ -158,6 +159,9 @@ export const mock = {
   },
   /** Démo : importe un File du navigateur. */
   async mediaImportFile(file: File): Promise<MediaItem> {
+    if (file.type.startsWith("video/") && ffmpegMock.needsDecoder(file.name)) {
+      throw new Error("DECODEUR_MANQUANT: Windows ne sait pas lire cette vidéo (démonstration)");
+    }
     const url = URL.createObjectURL(file);
     if (file.type.startsWith("video/")) {
       const v = document.createElement("video");

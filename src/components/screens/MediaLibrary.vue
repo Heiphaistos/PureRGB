@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { demo, errMsg, mediaDelete, mediaImport, mediaImportFile, MEDIA_FILTERS, pickFiles } from "../../screens/api.ts";
+import { demo, errMsg, isDecoderMissing, mediaDelete, mediaImport, mediaImportFile, MEDIA_FILTERS, pickFiles } from "../../screens/api.ts";
 import { loadMedia, media } from "../../screens/store.ts";
 import { forgetThumb } from "../../screens/thumbs.ts";
 import type { MediaItem } from "../../screens/types.ts";
+import { ffmpegBusy, ffmpegPct, installFfmpeg } from "../../screens/useFfmpeg.ts";
 import MediaThumb from "./MediaThumb.vue";
 import "./screens.css";
 
@@ -17,16 +18,29 @@ let unlisten: (() => void) | undefined;
 
 const EXT = /\.(png|jpe?g|bmp|webp|gif|mp4|m4v|webm|mkv|avi|mov|wmv)$/i;
 
+/** Vidéos que Windows ne sait pas lire : en attente de l'installation du décodeur universel, puis ré-importées. */
+const waiting = ref<{ paths: string[]; files: File[] }>({ paths: [], files: [] });
+const installErr = ref("");
+
 async function importPaths(paths: string[]): Promise<void> {
   const ok = paths.filter((p) => EXT.test(p));
   if (ok.length < paths.length) emit("toast", `${paths.length - ok.length} fichier(s) ignoré(s) : format non supporté`);
   busy.value = true;
+  let done = 0;
+  const missing: string[] = [];
   try {
-    for (const p of ok) await mediaImport(p);
+    for (const p of ok) {
+      try {
+        await mediaImport(p);
+        done++;
+      } catch (e) {
+        if (isDecoderMissing(e)) missing.push(p);
+        else emit("toast", `Import : ${errMsg(e)}`);
+      }
+    }
     await loadMedia();
-    if (ok.length) emit("toast", `${ok.length} média(s) importé(s)`);
-  } catch (e) {
-    emit("toast", `Import : ${errMsg(e)}`);
+    if (done) emit("toast", `${done} média(s) importé(s)`);
+    if (missing.length) waiting.value = { paths: missing, files: [] };
   } finally {
     busy.value = false;
   }
@@ -34,20 +48,39 @@ async function importPaths(paths: string[]): Promise<void> {
 
 async function importFiles(files: File[]): Promise<void> {
   busy.value = true;
+  const missing: File[] = [];
   try {
     for (const f of files) {
       if (!f.type.startsWith("image/") && !f.type.startsWith("video/")) {
         emit("toast", `${f.name} : format non accepté en mode démonstration`);
         continue;
       }
-      await mediaImportFile(f);
+      try {
+        await mediaImportFile(f);
+      } catch (e) {
+        if (isDecoderMissing(e)) missing.push(f);
+        else emit("toast", `Import : ${errMsg(e)}`);
+      }
     }
     await loadMedia();
-  } catch (e) {
-    emit("toast", `Import : ${errMsg(e)}`);
+    if (missing.length) waiting.value = { paths: [], files: missing };
   } finally {
     busy.value = false;
   }
+}
+
+async function installAndRetry(): Promise<void> {
+  installErr.value = "";
+  try {
+    await installFfmpeg();
+  } catch (e) {
+    installErr.value = errMsg(e);
+    return;
+  }
+  const { paths, files } = waiting.value;
+  waiting.value = { paths: [], files: [] };
+  if (paths.length) await importPaths(paths);
+  if (files.length) await importFiles(files);
 }
 
 async function pick(): Promise<void> {
@@ -134,6 +167,22 @@ onBeforeUnmount(() => unlisten?.());
       <input ref="fileInput" type="file" accept="image/*,video/*" multiple hidden @change="onInput" />
     </div>
 
+    <div v-if="waiting.paths.length || waiting.files.length" class="sc-card need" role="alert">
+      <strong>Windows ne sait pas lire cette vidéo.</strong>
+      <p class="sc-sub">
+        PureRGB peut installer un décodeur universel (ffmpeg, 115 Mo, vérifié par empreinte SHA-256) et relire
+        automatiquement {{ waiting.paths.length + waiting.files.length > 1 ? "ces vidéos" : "cette vidéo" }}.
+      </p>
+      <div class="sc-row">
+        <button class="primary" :disabled="ffmpegBusy" @click="installAndRetry">
+          {{ ffmpegBusy ? `Installation… ${ffmpegPct} %` : "Installer et réessayer" }}
+        </button>
+        <button :disabled="ffmpegBusy" @click="waiting = { paths: [], files: [] }">Annuler</button>
+      </div>
+      <progress v-if="ffmpegBusy" class="bar" max="100" :value="ffmpegPct"></progress>
+      <p v-if="installErr" class="err">{{ installErr }}</p>
+    </div>
+
     <div v-if="media.length" class="grid">
       <article v-for="m in media" :key="m.id" class="sc-card item">
         <MediaThumb :item="m" />
@@ -187,6 +236,24 @@ h3 {
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+}
+
+.need {
+  margin-top: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-color: var(--accent);
+}
+
+.bar {
+  width: 100%;
+}
+
+.err {
+  color: var(--danger, #e5484d);
+  font-size: 12px;
 }
 
 .dim {

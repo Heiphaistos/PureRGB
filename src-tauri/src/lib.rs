@@ -1315,6 +1315,9 @@ pub fn run() {
             screens::commands::media_list,
             screens::commands::media_import,
             screens::commands::media_delete,
+            screens::commands::ffmpeg_status,
+            screens::commands::ffmpeg_install,
+            screens::commands::ffmpeg_install_progress,
             screens::commands::theme_export,
             screens::commands::theme_import
         ])

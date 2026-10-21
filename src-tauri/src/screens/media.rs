@@ -2,14 +2,14 @@
 //! `<racine>/<id>.<ext>` (+ fiche `<id>.json`). L'id est dérivé du contenu
 //! (SHA-256 tronqué) : réimporter le même fichier ne duplique rien.
 //! Les vidéos (mp4, avi, wmv...) sont copiées de même ; leur lecture passe par un
-//! `VideoPlayer` par média (Media Foundation de Windows, voir `video.rs`).
+//! `VideoPlayer` par média (Media Foundation de Windows, ou ffmpeg si installé et nécessaire, voir `video.rs`).
 
 use anyhow::{bail, Context, Result};
 use image::{AnimationDecoder, ImageFormat};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use super::video::{self, VideoPlayer, VIDEO_EXTS};
+use super::video::{self, Backend, VideoPlayer, VIDEO_EXTS};
 use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use std::path::{Path, PathBuf};
@@ -40,6 +40,13 @@ pub struct MediaItem {
     pub height: u32,
     pub frames: u32,
     pub duration_ms: u32,
+    /// Décodeur vidéo utilisé à l'import (relecture avec le même ; absent des anciennes fiches = Media Foundation).
+    #[serde(default, skip_serializing_if = "is_default_backend")]
+    pub backend: Backend,
+}
+
+fn is_default_backend(b: &Backend) -> bool {
+    *b == Backend::default()
 }
 
 struct Anim {
@@ -151,6 +158,7 @@ impl MediaStore {
             height: h,
             frames: frames.len() as u32,
             duration_ms,
+            backend: Backend::default(),
         };
         if let Some(existing) = self.read_item(&id) {
             return Ok(existing);
@@ -205,12 +213,12 @@ impl MediaStore {
         if let Some(existing) = self.read_item(&id) {
             return Ok(existing);
         }
-        let info = video::probe(path)?;
+        let (info, backend) = video::probe_any(path)?;
         let name: String = path
             .file_stem()
             .map(|s| s.to_string_lossy().chars().filter(|c| !c.is_control()).take(80).collect())
             .unwrap_or_default();
-        let item = MediaItem { id: id.clone(), name, kind: MediaKind::Video, width: info.width, height: info.height, frames: (info.fps * info.duration_ms as f32 / 1000.0).round() as u32, duration_ms: info.duration_ms };
+        let item = MediaItem { id: id.clone(), name, kind: MediaKind::Video, width: info.width, height: info.height, frames: (info.fps * info.duration_ms as f32 / 1000.0).round() as u32, duration_ms: info.duration_ms, backend };
         std::fs::create_dir_all(&self.root).context("création du dossier médias")?;
         let dest = self.root.join(format!("{id}.{ext}"));
         std::fs::copy(path, &dest).context("copie du média")?;
@@ -222,6 +230,11 @@ impl MediaStore {
         Ok(item)
     }
 
+    /// Oublie les ouvertures échouées (après l'installation de ffmpeg, elles peuvent réussir).
+    pub fn retry_failed_players(&self) {
+        self.players.lock().retain(|_, p| p.is_some());
+    }
+
     /// Lecteur de la vidéo `id` (créé à la demande) s'il s'agit bien d'une vidéo de la médiathèque.
     fn player(&self, id: &str) -> Option<Arc<VideoPlayer>> {
         let mut players = self.players.lock();
@@ -229,7 +242,8 @@ impl MediaStore {
             return p.clone();
         }
         let path = VIDEO_EXTS.iter().map(|e| self.root.join(format!("{id}.{e}"))).find(|p| p.is_file())?;
-        let player = match VideoPlayer::open(&path) {
+        let preferred = self.read_item(id).map_or_else(Backend::default, |m| m.backend);
+        let player = match video::open_any(&path, preferred) {
             Ok(p) => Some(Arc::new(p)),
             Err(e) => {
                 log::warn!("vidéo {id} illisible: {e:#}");
