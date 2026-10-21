@@ -81,7 +81,7 @@ pub fn draw(ctx: &mut Ctx, text: &str, style: &TextStyle, color: Color) -> Resul
     let width = measure(font, text, size);
     let k = size / em(font);
     // Centrage vertical sur la hauteur des capitales (les chiffres y sont alignés).
-    let cap = font.outline(font.glyph_id('H')).map(|o| o.bounds.max.y * k).unwrap_or(size * 0.7);
+    let cap = font.outline(font.glyph_id('H')).map(|o| (o.bounds.max.y - o.bounds.min.y).abs() * k).unwrap_or(size * 0.7);
     let x0 = match style.align {
         Align::Left => 0.0,
         Align::Center => (ctx.w - width) / 2.0,

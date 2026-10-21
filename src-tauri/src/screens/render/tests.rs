@@ -316,3 +316,14 @@ fn write_reference_previews() {
     ws.push(widget("gr", 360.0, 400.0, 560.0, 60.0, json!({"type": "graph", "source": "gpu.load", "min": 0, "max": 100, "seconds": 60, "line": "#7b5cff", "fill": "#7b5cff55", "thickness": 3})));
     save("wide_1280x480.png", &render(&layout_from(1280, 480, ws), &st, &m, 1280, 480, 0));
 }
+
+#[test]
+fn text_is_vertically_centred_on_its_box() {
+    // « H » : la hauteur des capitales doit être centrée sur le milieu de la boîte (y = 150).
+    let l = layout(300, 300, "#000000", json!([widget("t", 0.0, 100.0, 300.0, 100.0, json!({"type": "text", "text": "H", "style": style(80.0)}))]));
+    let f = render(&l, &ValueStore::empty(), &media(), 300, 300, 0);
+    let rows: Vec<u32> = (0..300).filter(|&y| (0..300).any(|x| px(&f, x, y)[0] > 128)).collect();
+    let (top, bottom) = (*rows.first().expect("rien dessiné"), *rows.last().unwrap());
+    let centre = (top + bottom) as f32 / 2.0;
+    assert!((centre - 150.0).abs() < 3.0, "capitales centrées en y={centre}, attendu 150 (haut {top}, bas {bottom})");
+}
