@@ -1,0 +1,158 @@
+// Backend factice (mode démo) : mêmes signatures que les commandes Tauri, état en mémoire.
+import { MOCK_DESIGNS } from "./mockDesigns.ts";
+import { mockImages, mockValues, renderMock } from "./mockRender.ts";
+import type { DesignSummary, Layout, LiveValues, MediaItem, ScreenInfo, ScreenOptions, ScreenState } from "./types.ts";
+import { cloneLayout } from "./widgets.ts";
+import { validateLayout } from "./validate.ts";
+
+const SIM: ScreenInfo = {
+  id: "sim:0000:demo",
+  vendor: "PureRGB",
+  model: "Écran simulé",
+  protocol: "simulated",
+  width: 480,
+  height: 480,
+  rotation: 0,
+  resolution_confirmed: true,
+  verified: true,
+};
+
+const TR: ScreenInfo = {
+  id: "87cd:70db:demo",
+  vendor: "Thermalright",
+  model: "Frozen Warframe 240 (LCD 320×240)",
+  protocol: "thermalright_scsi",
+  width: 320,
+  height: 240,
+  rotation: 0,
+  resolution_confirmed: false,
+  verified: false,
+};
+
+const params = new URLSearchParams(typeof location === "undefined" ? "" : location.search);
+let screens: ScreenInfo[] = params.get("mock") === "empty" ? [] : [SIM, TR];
+const states = new Map<string, ScreenState>();
+const userDesigns = new Map<string, Layout>();
+let media: MediaItem[] = [];
+let seq = 1;
+
+function stateOf(id: string): ScreenState {
+  let s = states.get(id);
+  if (!s) {
+    const first = MOCK_DESIGNS.values().next().value;
+    s = {
+      layout: first ? cloneLayout(first.layout) : null,
+      brightness: 80,
+      rotation: 0,
+      fps: 10,
+      running: true,
+      error: null,
+    };
+    states.set(id, s);
+  }
+  return s;
+}
+
+const tick = (): Promise<void> => new Promise((r) => setTimeout(r, 30));
+
+export const mock = {
+  async screensList(): Promise<ScreenInfo[]> {
+    await tick();
+    return screens;
+  },
+  async screensScan(withSimulated: boolean): Promise<ScreenInfo[]> {
+    await tick();
+    if (withSimulated && !screens.some((s) => s.id === SIM.id)) screens = [SIM, ...screens];
+    return screens;
+  },
+  async screenState(id: string): Promise<ScreenState> {
+    await tick();
+    return structuredClone(stateOf(id));
+  },
+  async setLayout(id: string, layout: Layout): Promise<void> {
+    const err = validateLayout(layout);
+    if (err) throw new Error(err);
+    const s = stateOf(id);
+    s.layout = cloneLayout(layout);
+    s.running = true;
+  },
+  async setOptions(id: string, o: ScreenOptions): Promise<void> {
+    Object.assign(stateOf(id), o);
+  },
+  async clear(id: string): Promise<void> {
+    const s = stateOf(id);
+    s.layout = null;
+    s.running = false;
+  },
+  async preview(layout: Layout, width: number, height: number, tMs: number): Promise<string> {
+    await tick();
+    return renderMock(layout, width, height, tMs);
+  },
+  async designsList(): Promise<DesignSummary[]> {
+    const out: DesignSummary[] = [];
+    for (const [id, d] of MOCK_DESIGNS) {
+      out.push({ id, name: d.layout.name, category: d.category, width: d.layout.width, height: d.layout.height, tags: d.tags });
+    }
+    for (const [id, l] of userDesigns) {
+      out.push({ id, name: l.name, category: "user", width: l.width, height: l.height, tags: ["user"] });
+    }
+    return out;
+  },
+  async designGet(id: string): Promise<Layout> {
+    const l = MOCK_DESIGNS.get(id)?.layout ?? userDesigns.get(id);
+    if (!l) throw new Error("design introuvable");
+    return cloneLayout(l);
+  },
+  async designUserSave(layout: Layout): Promise<string> {
+    const err = validateLayout(layout);
+    if (err) throw new Error(err);
+    const id = `user-${seq++}`;
+    userDesigns.set(id, cloneLayout(layout));
+    return id;
+  },
+  async designUserDelete(id: string): Promise<void> {
+    userDesigns.delete(id);
+  },
+  async designExport(id: string, _path: string): Promise<void> {
+    const l = await mock.designGet(id);
+    const url = URL.createObjectURL(new Blob([JSON.stringify(l, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${l.name}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  },
+  async mediaList(): Promise<MediaItem[]> {
+    return media;
+  },
+  /** Démo : importe un File du navigateur. */
+  async mediaImportFile(file: File): Promise<MediaItem> {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("image illisible"));
+      img.src = url;
+    });
+    const id = `media-${seq++}`;
+    mockImages.set(id, img);
+    const item: MediaItem = {
+      id,
+      name: file.name,
+      kind: file.type === "image/gif" ? "gif" : "image",
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+      frames: 1,
+      duration_ms: 0,
+    };
+    media = [...media, item];
+    return item;
+  },
+  async mediaDelete(id: string): Promise<void> {
+    media = media.filter((m) => m.id !== id);
+    mockImages.delete(id);
+  },
+  async screenValues(): Promise<LiveValues> {
+    return mockValues(Date.now());
+  },
+};

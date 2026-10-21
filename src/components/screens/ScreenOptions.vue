@@ -1,0 +1,131 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import { clearScreen, errMsg, setOptions } from "../../screens/api.ts";
+import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
+import "./screens.css";
+
+const props = defineProps<{ screen: ScreenInfo; state: ScreenState }>();
+const emit = defineEmits<{ changed: []; toast: [msg: string] }>();
+
+const brightness = ref(props.state.brightness);
+const rotation = ref(props.state.rotation);
+const fps = ref(props.state.fps);
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+const ROTATIONS = [0, 90, 180, 270];
+
+async function save(): Promise<void> {
+  try {
+    await setOptions(props.screen.id, { brightness: brightness.value, rotation: rotation.value, fps: fps.value });
+    emit("changed");
+  } catch (e) {
+    emit("toast", `Options : ${errMsg(e)}`);
+  }
+}
+
+/** Glisser un curseur envoie la valeur au plus toutes les 250 ms. */
+function later(): void {
+  clearTimeout(timer);
+  timer = setTimeout(() => void save(), 250);
+}
+
+async function clear(): Promise<void> {
+  try {
+    await clearScreen(props.screen.id);
+    emit("changed");
+    emit("toast", "Écran effacé");
+  } catch (e) {
+    emit("toast", errMsg(e));
+  }
+}
+</script>
+
+<template>
+  <div class="opt">
+    <div class="sc-card box">
+      <div class="sc-field">
+        <label for="sc-br">Luminosité</label>
+        <div class="sc-row">
+          <input id="sc-br" v-model.number="brightness" type="range" min="0" max="100" @input="later" />
+          <span class="val">{{ brightness }} %</span>
+        </div>
+      </div>
+      <div class="sc-field">
+        <label>Rotation</label>
+        <div class="sc-row">
+          <button
+            v-for="r in ROTATIONS"
+            :key="r"
+            class="sm"
+            :class="{ on: rotation === r }"
+            @click="(rotation = r), save()"
+          >
+            {{ r }}°
+          </button>
+        </div>
+      </div>
+      <div class="sc-field">
+        <label for="sc-fps">Cadence max</label>
+        <div class="sc-row">
+          <input id="sc-fps" v-model.number="fps" type="range" min="1" max="30" @input="later" />
+          <span class="val">{{ fps }} i/s</span>
+        </div>
+      </div>
+      <p class="sc-sub">
+        Une cadence basse économise le processeur : 1 i/s suffit pour des capteurs et une horloge, 15 à 30 i/s pour
+        les GIF et les vidéos.
+      </p>
+    </div>
+
+    <div class="sc-card box">
+      <div class="sc-row">
+        <div class="sc-grow">
+          <strong>Éteindre / effacer l'écran</strong>
+          <p class="sc-sub">Arrête l'affichage et envoie une image noire.</p>
+        </div>
+        <button class="danger" @click="clear">Effacer l'écran</button>
+      </div>
+    </div>
+
+    <div class="sc-card box warn">
+      <strong>Un seul logiciel à la fois</strong>
+      <p class="sc-sub">
+        Si TRCC, L-Connect ou un autre logiciel constructeur tourne en parallèle, les deux se disputent le périphérique :
+        l'écran peut clignoter ou rester figé. Fermez-le (y compris dans la zone de notification) pendant que PureRGB
+        pilote l'écran.
+      </p>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.opt {
+  padding: 18px 26px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+}
+
+.box {
+  padding: 16px 18px;
+}
+
+.box .sc-field {
+  grid-template-columns: 110px 1fr;
+  font-size: 13px;
+}
+
+.val {
+  min-width: 56px;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.warn {
+  border-color: rgba(245, 185, 74, 0.5);
+  background: rgba(245, 185, 74, 0.06);
+}
+</style>

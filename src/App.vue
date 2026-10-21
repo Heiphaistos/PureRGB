@@ -10,6 +10,7 @@ import EffectDrawer from "./components/EffectDrawer.vue";
 import FanPanel from "./components/FanPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
 import { checkForUpdate } from "./autoUpdate";
+import ScreensPanel from "./components/screens/ScreensPanel.vue";
 import SettingsPanel from "./components/SettingsPanel.vue";
 import type { LayoutMode } from "./components/SettingsPanel.vue";
 import SmartPanel from "./components/SmartPanel.vue";
@@ -24,7 +25,7 @@ import type {
 } from "./types";
 import { deviceHasRgb } from "./types";
 
-type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "conflicts" | "settings";
+type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "screens" | "conflicts" | "settings";
 
 interface UnknownDeviceAlert {
   vid: string;
@@ -53,6 +54,7 @@ const TABS: { id: TabId; label: string; icon: string[] }[] = [
     ],
   },
   { id: "lcd", label: "Écran LCD", icon: ["M3 4h18v12H3z", "M8 20h8", "M12 16v4"] },
+  { id: "screens", label: "Écrans", icon: ["M3 4h18v12H3z", "M8 20h8", "M12 16v4", "M7 9h10", "M7 12h6"] },
   { id: "conflicts", label: "Conflits", icon: ["M12 2 1 21h22L12 2z", "M12 9v5", "M12 17h.01"] },
   {
     id: "settings",
@@ -373,6 +375,7 @@ onUnmounted(() => {
         @saved="loadSettings"
       />
       <LcdPanel v-else-if="tab === 'lcd'" :devices="lcdDevices" @toast="showToast" />
+      <ScreensPanel v-else-if="tab === 'screens'" @toast="showToast" />
       <ConflictPanel
         v-else-if="tab === 'conflicts'"
         :conflicts="conflicts"
