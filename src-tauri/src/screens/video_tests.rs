@@ -244,11 +244,8 @@ fn real_decode_of_handmade_avi() {
 #[cfg(windows)]
 #[test]
 fn real_decode_of_a_video_found_on_this_machine() {
-    let candidates = [
-        std::env::var("PURERGB_TEST_VIDEO").unwrap_or_default(),
-        r"C:\Users\Momo\Videos\Intro parfaite son + image.mp4".into(),
-        r"C:\Users\Momo\Videos\Nitrite scene complete.mp4".into(),
-    ];
+    // Fournir un fichier avec PURERGB_TEST_VIDEO pour exécuter ce test sur une vraie vidéo.
+    let candidates = [std::env::var("PURERGB_TEST_VIDEO").unwrap_or_default()];
     let Some(path) = candidates.iter().map(PathBuf::from).find(|p| p.is_file()) else {
         eprintln!("aucune vidéo de test sur cette machine : test ignoré");
         return;
