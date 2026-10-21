@@ -50,6 +50,11 @@ pub fn screen_set_options(m: Mgr, id: String, options: ScreenOptions) -> Res<()>
 }
 
 #[tauri::command]
+pub fn screen_send_still(m: Mgr, id: String) -> Res<()> {
+    m.send_still(&id).map_err(err)
+}
+
+#[tauri::command]
 pub fn screen_clear(m: Mgr, id: String) -> Res<()> {
     m.clear(&id).map_err(err)
 }

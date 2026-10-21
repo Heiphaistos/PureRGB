@@ -27,6 +27,8 @@ pub struct ScreenState {
     pub rotation: u16,
     pub fps: u8,
     pub running: bool,
+    /// Faux : l'écran n'accepte que des images fixes (bouton « Envoyer comme image fixe »).
+    pub live: bool,
     pub error: Option<String>,
 }
 
@@ -132,6 +134,7 @@ impl ScreenManager {
                 rotation: c.rotation,
                 fps: c.fps,
                 running: r.is_running(),
+                live: r.shared.live,
                 error: r.shared.error.lock().clone(),
             }
         })
@@ -161,6 +164,17 @@ impl ScreenManager {
             c.rotation = o.rotation;
             c.fps = o.fps;
         })
+    }
+
+    /// Envoie le design courant comme image fixe (écrans sans flux direct).
+    pub fn send_still(&self, id: &str) -> Result<()> {
+        self.with_runner(id, |r| {
+            if r.shared.live {
+                return Err(anyhow!("cet écran affiche déjà le design en direct"));
+            }
+            r.request_still();
+            Ok(())
+        })?
     }
 
     pub fn clear(&self, id: &str) -> Result<()> {

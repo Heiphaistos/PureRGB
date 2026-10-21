@@ -1299,6 +1299,7 @@ pub fn run() {
             screens::commands::screen_set_layout,
             screens::commands::screen_set_options,
             screens::commands::screen_clear,
+            screens::commands::screen_send_still,
             screens::commands::screen_preview,
             screens::commands::screen_values,
             screens::commands::designs_list,

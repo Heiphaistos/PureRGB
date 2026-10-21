@@ -24,6 +24,10 @@ const SLICE: Duration = Duration::from_millis(50);
 pub struct Shared {
     pub cfg: Mutex<ScreenConfig>,
     pub error: Mutex<Option<String>>,
+    /// Faux si l'écran n'accepte que des images fixes (voir `ScreenDriver::live_frames`).
+    pub live: bool,
+    /// Demande d'envoi d'une image fixe mémorisée par l'écran.
+    still: AtomicBool,
     stop: AtomicBool,
     dirty: AtomicBool,
 }
@@ -45,6 +49,8 @@ impl Runner {
         let shared = Arc::new(Shared {
             cfg: Mutex::new(cfg),
             error: Mutex::new(None),
+            live: driver.live_frames(),
+            still: AtomicBool::new(false),
             stop: AtomicBool::new(false),
             dirty: AtomicBool::new(true),
         });
@@ -55,6 +61,12 @@ impl Runner {
             .map_err(|e| log::error!("thread écran: {e}"))
             .ok();
         Runner { info, shared, handle }
+    }
+
+    /// Demande l'envoi du design courant comme image fixe mémorisée (écrans sans flux direct).
+    pub fn request_still(&self) {
+        self.shared.still.store(true, Ordering::Release);
+        self.touch();
     }
 
     /// Demande un nouveau rendu immédiat (changement de design/options).
@@ -142,6 +154,14 @@ fn run_loop(
                     continue;
                 }
             }
+        }
+        if shared.still.swap(false, Ordering::AcqRel) {
+            let sent = compose(cfg.layout.as_ref(), &cfg, &info, &store, &media, 0, true).and_then(|f| driver.upload_still(&f));
+            *shared.error.lock() = sent.err().map(|e| format!("{e:#}"));
+        }
+        if !shared.live {
+            nap(&shared, RETRY_DELAY);
+            continue;
         }
         let software = !hw_brightness.is_some_and(|(_, handled)| handled);
         let t_ms = start.elapsed().as_millis() as u64;

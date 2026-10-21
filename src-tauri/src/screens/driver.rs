@@ -70,6 +70,17 @@ pub trait ScreenDriver: Send {
     fn set_brightness(&mut self, _percent: u8) -> Result<bool> {
         Ok(false)
     }
+
+    /// Faux si l'écran n'accepte pas de flux d'images en direct (ex. AIO dont seul
+    /// le stockage d'une image fixe est connu) : le gestionnaire n'envoie alors rien en boucle.
+    fn live_frames(&self) -> bool {
+        true
+    }
+
+    /// Envoie UNE image fixe mémorisée par l'écran (écriture flash : usage ponctuel).
+    fn upload_still(&mut self, _frame: &Frame) -> Result<()> {
+        anyhow::bail!("cet écran ne sait pas mémoriser une image fixe")
+    }
 }
 
 /// Un catalogue de détection : énumère les écrans présents et les ouvre.

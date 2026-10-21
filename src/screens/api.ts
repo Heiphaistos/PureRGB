@@ -49,6 +49,9 @@ export const setLayout = (id: string, layout: Layout): Promise<void> =>
 export const setOptions = (id: string, options: ScreenOptions): Promise<void> =>
   demo.value ? mock.setOptions(id, options) : invoke<void>("screen_set_options", { id, options });
 
+export const sendStill = (id: string): Promise<void> =>
+  demo.value ? Promise.resolve() : invoke<void>("screen_send_still", { id });
+
 export const clearScreen = (id: string): Promise<void> =>
   demo.value ? mock.clear(id) : invoke<void>("screen_clear", { id });
 

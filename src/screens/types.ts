@@ -116,6 +116,8 @@ export interface ScreenState {
   rotation: number;
   fps: number;
   running: boolean;
+  /** Faux : l'écran n'accepte que des images fixes (envoi manuel). */
+  live: boolean;
   error: string | null;
 }
 

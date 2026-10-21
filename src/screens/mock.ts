@@ -46,6 +46,7 @@ function stateOf(id: string): ScreenState {
       rotation: 0,
       fps: 10,
       running: true,
+      live: true,
       error: null,
     };
     states.set(id, s);

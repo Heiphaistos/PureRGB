@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { clearScreen, errMsg, setOptions } from "../../screens/api.ts";
+import { clearScreen, errMsg, sendStill, setOptions } from "../../screens/api.ts";
 import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
 import "./screens.css";
 
@@ -27,6 +27,16 @@ async function save(): Promise<void> {
 function later(): void {
   clearTimeout(timer);
   timer = setTimeout(() => void save(), 250);
+}
+
+async function still(): Promise<void> {
+  try {
+    await sendStill(props.screen.id);
+    emit("toast", "Image envoyée à l'écran (mémoire de l'appareil)");
+    emit("changed");
+  } catch (e) {
+    emit("toast", errMsg(e));
+  }
 }
 
 async function clear(): Promise<void> {
@@ -75,6 +85,19 @@ async function clear(): Promise<void> {
         Une cadence basse économise le processeur : 1 i/s suffit pour des capteurs et une horloge, 15 à 30 i/s pour
         les GIF et les vidéos.
       </p>
+    </div>
+
+    <div v-if="!state.live" class="sc-card box">
+      <div class="sc-row">
+        <div class="sc-grow">
+          <strong>Image fixe</strong>
+          <p class="sc-sub">
+            Cet écran n'accepte pas encore de flux en direct : le design actuel est envoyé comme une image fixe
+            (stockée dans l'appareil, à utiliser avec parcimonie). Les valeurs capteurs ne se mettent pas à jour.
+          </p>
+        </div>
+        <button class="primary" @click="still">Envoyer comme image fixe</button>
+      </div>
     </div>
 
     <div class="sc-card box">

@@ -33,6 +33,8 @@ const PACKET: usize = 65;
 const REPLY: usize = 64;
 const CHUNK: usize = 4096;
 const MAX_SLOT: u8 = 9; // Armoury Crate utilise 0..9 (le firmware a 16 bits de bitmap)
+/// Emplacement JPEG réservé aux images envoyées par PureRGB.
+const PUREGB_SLOT: u8 = MAX_SLOT;
 const MAX_JPEG: usize = 0xFFFF; // champ taille `7F 02` vérifié sur 2 octets seulement
 const SLOT_COST_KB: u32 = 8; // « each stored file cost 8 KB »
 const MAX_READS: usize = 16;
@@ -340,6 +342,28 @@ impl ScreenDriver for RyujinScreen {
     fn set_brightness(&mut self, percent: u8) -> Result<bool> {
         self.with_hid(|h| h.set_brightness(percent))?;
         Ok(true)
+    }
+
+    fn live_frames(&self) -> bool {
+        false
+    }
+
+    /// Image fixe dans l'emplacement réservé à PureRGB (le précédent contenu est remplacé).
+    fn upload_still(&mut self, frame: &Frame) -> Result<()> {
+        let mut quality = 90u8;
+        let jpeg = loop {
+            let j = super::encode::rgba_to_jpeg(&frame.rgba, frame.width, frame.height, quality)?;
+            if j.len() <= MAX_JPEG || quality <= 30 {
+                break j;
+            }
+            quality -= 10;
+        };
+        if jpeg.len() > MAX_JPEG {
+            bail!("Image trop lourde pour la mémoire de l'AIO ASUS ({} octets, max {MAX_JPEG}).", jpeg.len());
+        }
+        // Emplacement vide : l'AIO peut refuser la suppression, sans conséquence.
+        let _ = self.with_hid(|h| h.delete_jpeg_slot(PUREGB_SLOT));
+        self.upload_and_show_jpeg(PUREGB_SLOT, &jpeg)
     }
 }
 
