@@ -1,5 +1,6 @@
 //! Pilotes d'écrans : un fichier par protocole (voir l'en-tête de chacun pour ses sources).
 
+pub mod asus_ryujin;
 pub mod catalog;
 pub mod encode;
 #[cfg(windows)]

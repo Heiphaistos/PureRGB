@@ -31,6 +31,8 @@ pub enum Protocol {
     ThermalrightBulk,
     ThermalrightLy,
     TuringSerial,
+    AsusRyujin,
+    ThermaltakeLcd,
     Simulated,
 }
 
