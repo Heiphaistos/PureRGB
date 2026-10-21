@@ -1025,6 +1025,18 @@ pub fn run() {
             .expect("spawn telemetry-init");
     }
 
+    // Mini-écrans : détection en arrière-plan (ne retarde ni la fenêtre ni le RGB).
+    let screen_mgr = screens::manager::ScreenManager::new(sensors.clone());
+    {
+        let m = screen_mgr.clone();
+        if let Err(e) = std::thread::Builder::new().name("screens-init".into()).spawn(move || {
+            let n = m.scan(false).len();
+            log::info!("mini-écrans détectés au démarrage : {n}");
+        }) {
+            log::warn!("thread screens-init: {e}");
+        }
+    }
+
     let state = AppState {
         registry,
         engine,
@@ -1050,6 +1062,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .manage(state)
+        .manage(screen_mgr)
         .setup(|app| {
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
             if let Ok(res) = app.path().resource_dir() {
@@ -1227,6 +1240,7 @@ pub fn run() {
                                 usbcapture::stop_capture(session);
                             }
                         }
+                        app.state::<std::sync::Arc<screens::manager::ScreenManager>>().shutdown();
                         app.exit(0);
                     }
                     _ => {}
@@ -1278,7 +1292,24 @@ pub fn run() {
             usb_capture_install,
             usb_capture_start,
             usb_capture_stop,
-            usb_capture_upload
+            usb_capture_upload,
+            screens::commands::screens_list,
+            screens::commands::screens_scan,
+            screens::commands::screen_state,
+            screens::commands::screen_set_layout,
+            screens::commands::screen_set_options,
+            screens::commands::screen_clear,
+            screens::commands::screen_preview,
+            screens::commands::screen_values,
+            screens::commands::designs_list,
+            screens::commands::design_get,
+            screens::commands::design_user_save,
+            screens::commands::design_user_delete,
+            screens::commands::design_export,
+            screens::commands::design_import,
+            screens::commands::media_list,
+            screens::commands::media_import,
+            screens::commands::media_delete
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");

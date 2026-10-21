@@ -124,6 +124,11 @@ impl ValueStore {
             .collect()
     }
 
+    /// Toutes les valeurs courantes (inspecteur de l'éditeur).
+    pub fn snapshot(&self) -> HashMap<String, f64> {
+        self.inner.lock().values.clone()
+    }
+
     /// Injecte une valeur (tests de rendu, aperçu) ; alimente aussi l'historique.
     pub fn set_for_test(&self, key: &str, val: f64) {
         let mut inner = self.inner.lock();
