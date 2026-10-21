@@ -8,6 +8,7 @@ mod generated;
 mod minimal;
 mod monitor;
 mod showcase;
+mod themes;
 #[cfg(test)]
 mod quality;
 
@@ -233,6 +234,7 @@ mod tests {
         use crate::screens::{media::MediaStore, render};
         let store = preview_store();
         let media = MediaStore::new(std::env::temp_dir().join("purergb-design-preview"));
+        crate::screens::builtin_media::install(&media);
         let out = std::env::var_os("PURERGB_PREVIEW_DIR")
             .map(std::path::PathBuf::from)
             .unwrap_or_else(|| std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("target/screens-preview/designs"));

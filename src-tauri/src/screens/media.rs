@@ -162,6 +162,17 @@ impl MediaStore {
         Ok(item)
     }
 
+    /// Installe un média connu d'avance (intégré à l'application) sans le sonder ni le décoder.
+    pub fn install_known(&self, item: &MediaItem, ext: &str, bytes: &[u8]) -> Result<()> {
+        if !valid_id(&item.id) || !EXTS.iter().chain(VIDEO_EXTS.iter()).any(|e| *e == ext) {
+            bail!("média intégré invalide");
+        }
+        std::fs::create_dir_all(&self.root).context("création du dossier médias")?;
+        std::fs::write(self.root.join(format!("{}.{ext}", item.id)), bytes).context("copie du média")?;
+        std::fs::write(self.root.join(format!("{}.json", item.id)), serde_json::to_vec(item).context("fiche média")?)
+            .context("écriture de la fiche")
+    }
+
     /// Fichier média `<id>.<ext>` de la médiathèque (export de thème).
     pub fn file_of(&self, id: &str) -> Option<PathBuf> {
         if !valid_id(id) {

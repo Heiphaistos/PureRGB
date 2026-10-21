@@ -86,7 +86,11 @@ impl ScreenManager {
         }
         Arc::new(ScreenManager {
             store,
-            media: Arc::new(MediaStore::new(root.join("media"))),
+            media: {
+                let media = Arc::new(MediaStore::new(root.join("media")));
+                super::builtin_media::install(&media);
+                media
+            },
             designs: DesignStore::new(root),
             runners: Mutex::new(Vec::new()),
             configs: Mutex::new(state::load()),
