@@ -4,8 +4,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { ref } from "vue";
 import { mock } from "./mock.ts";
+import { ffmpegMock } from "./mockFfmpeg.ts";
 import type {
   DesignSummary,
+  FfmpegProgress,
+  FfmpegStatus,
   Layout,
   LiveValues,
   MediaItem,
@@ -97,6 +100,20 @@ export const mediaImportFile = (file: File): Promise<MediaItem> => mock.mediaImp
 
 export const mediaDelete = (id: string): Promise<void> =>
   demo.value ? mock.mediaDelete(id) : invoke<void>("media_delete", { id });
+
+/** Préfixe d'erreur de `media_import` : Windows ne sait pas lire la vidéo et ffmpeg n'est pas installé. */
+export const DECODER_MISSING = "DECODEUR_MANQUANT";
+export const isDecoderMissing = (e: unknown): boolean => errMsg(e).startsWith(DECODER_MISSING);
+
+/** Décodeur vidéo universel (ffmpeg, 115 Mo, SHA-256 vérifié). */
+export const ffmpegStatus = (): Promise<FfmpegStatus> =>
+  demo.value ? ffmpegMock.status() : invoke<FfmpegStatus>("ffmpeg_status");
+
+export const ffmpegInstall = (): Promise<FfmpegStatus> =>
+  demo.value ? ffmpegMock.install() : invoke<FfmpegStatus>("ffmpeg_install");
+
+export const ffmpegProgress = (): Promise<FfmpegProgress> =>
+  demo.value ? ffmpegMock.progress() : invoke<FfmpegProgress>("ffmpeg_install_progress");
 
 export const screenValues = (): Promise<LiveValues> =>
   demo.value ? mock.screenValues() : invoke<LiveValues>("screen_values");
