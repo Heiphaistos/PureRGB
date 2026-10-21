@@ -1,6 +1,8 @@
 //! Pilotes d'écrans : un fichier par protocole (voir l'en-tête de chacun pour ses sources).
 
 pub mod catalog;
+pub mod corsair_lcd;
+pub mod deepcool_lm;
 pub mod encode;
 #[cfg(windows)]
 pub mod scsi_win;
