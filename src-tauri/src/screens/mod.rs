@@ -10,9 +10,13 @@ pub mod drivers;
 pub mod commands;
 pub mod designs;
 pub mod manager;
+pub mod pacing;
+pub mod pipeline;
 pub mod runner;
 pub mod sim;
 pub mod video;
 #[cfg(windows)]
 mod video_mf;
 pub mod state;
+#[cfg(test)]
+mod perf_bench;

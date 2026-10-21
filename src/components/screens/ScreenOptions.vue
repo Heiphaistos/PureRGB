@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { clearScreen, errMsg, sendStill, setOptions } from "../../screens/api.ts";
-import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
+import { onMounted, onUnmounted, ref } from "vue";
+import { clearScreen, errMsg, screenState, sendStill, setOptions } from "../../screens/api.ts";
+import type { ScreenInfo, ScreenPerf, ScreenState } from "../../screens/types.ts";
 import "./screens.css";
 
 const props = defineProps<{ screen: ScreenInfo; state: ScreenState }>();
@@ -11,6 +11,17 @@ const brightness = ref(props.state.brightness);
 const rotation = ref(props.state.rotation);
 const fps = ref(props.state.fps);
 let timer: ReturnType<typeof setTimeout> | undefined;
+const perf = ref<ScreenPerf>(props.state.perf);
+let poll: ReturnType<typeof setInterval> | undefined;
+
+onMounted(() => {
+  poll = setInterval(() => {
+    screenState(props.screen.id)
+      .then((s) => (perf.value = s.perf))
+      .catch(() => undefined); // mesure facultative : un échec ponctuel n'a rien à signaler
+  }, 1500);
+});
+onUnmounted(() => clearInterval(poll));
 
 const ROTATIONS = [0, 90, 180, 270];
 
@@ -81,6 +92,13 @@ async function clear(): Promise<void> {
           <span class="val">{{ fps }} i/s</span>
         </div>
       </div>
+      <p class="sc-sub">
+        Cadence réelle : {{ perf.fps > 0 ? perf.fps.toFixed(1) + " i/s" : "aucune image envoyée (design fixe)" }} pour
+        {{ perf.target_fps.toFixed(0) }} i/s visées · {{ perf.dropped }} images abandonnées<br />
+        Temps moyens : rendu {{ perf.render_ms.toFixed(1) }} ms · encodage {{ perf.encode_ms.toFixed(1) }} ms · envoi
+        {{ perf.send_ms.toFixed(1) }} ms<br />
+        <template v-if="perf.quality > 0">Qualité JPEG : {{ perf.quality }} (s'adapte au débit USB)</template>
+      </p>
       <p class="sc-sub">
         Une cadence basse économise le processeur : 1 i/s suffit pour des capteurs et une horloge, 15 à 30 i/s pour
         les GIF et les vidéos.
