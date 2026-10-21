@@ -9,6 +9,7 @@ pub mod thermalright_bulk;
 pub mod thermalright_hid;
 pub mod thermalright_ly;
 pub mod thermalright_scsi;
+pub mod thermaltake_lcd;
 pub mod transport;
 pub mod turing_catalog;
 pub mod turing_rev_a;
