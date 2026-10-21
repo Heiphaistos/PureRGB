@@ -1,37 +1,37 @@
-"""Contenus du lot « Formats speciaux » (prefixe uw) : 8 mesures chacun pour les bandeaux larges.
-Les variantes `uw-l*` portent le tag « fond libre » (centre laisse vide pour une video/GIF de fond)."""
+"""Contenus du lot « Formats speciaux » (prefixe uw) : BASE (CPU, GPU, RAM, SSD 1-2) + extras (ajoutes par with_base).
+Dix jeux d'extras ; chacun existe en `uw-<cle>` et en `uw-l<cle>` (tag « fond libre » : centre laisse vide pour une video/GIF)."""
 from dataclasses import replace
 
-from content import (CPU, CPUT, GPU, GPUT, GPUH, RAM, SSD, SSDT, DC, DD, MOBO, CHIP, VRM, NETD, NETU, DRD, DWR, LIQ, PUMP,
+from content import (CPUT, GPUT, GPUH, SSDT, MOBO, CHIP, VRM, NETD, NETU, DRD, DWR, LIQ, PUMP,
                      FAN1, CFAN, GFAN, CLK, GCLK, CPW, GPW, VRAM, Metric)
 
 _L = lambda m, label: replace(m, label=label)
-CPU, GPU, RAM, SSD, LIQ, NETD, NETU, DRD, DWR = _L(CPU, "CPU"), _L(GPU, "GPU"), RAM, SSD, _L(LIQ, "LIQ."), _L(NETD, "DESC."), _L(NETU, "MONT."), _L(DRD, "LECT."), _L(DWR, "ÉCR.")
-CPUT, GPUT, MOBO, CHIP, VRM, SSDT, GPUH = CPUT, GPUT, _L(MOBO, "CARTE"), _L(CHIP, "PUCE"), VRM, SSDT, _L(GPUH, "G. HOT")
+_DISK = lambda l: Metric(f"{l}:", f"disk.{l}.used_pct", "{:.0}%", "100%", 0, 100, "load", (f"disk.{l}.free_gb", "{:.0} Go", "999 Go"))
+DC, DD = _DISK("C"), _DISK("D")
+LIQ, NETD, NETU, DRD, DWR = _L(LIQ, "LIQ."), _L(NETD, "DESC."), _L(NETU, "MONT."), _L(DRD, "LECT."), _L(DWR, "ÉCR.")
+MOBO, CHIP, GPUH = _L(MOBO, "CARTE"), _L(CHIP, "PUCE"), _L(GPUH, "G. HOT")
 CPW, GPW, CLK, GCLK = _L(CPW, "P. CPU"), _L(GPW, "P. GPU"), _L(CLK, "F. CPU"), _L(GCLK, "F. GPU")
-CFAN, GFAN, FAN1 = _L(CFAN, "V. CPU"), _L(GFAN, "V. GPU"), _L(FAN1, "VENT. 1")
+CFAN, GFAN = _L(CFAN, "V. CPU"), _L(GFAN, "V. GPU")
 FAN2 = Metric("VENT. 2", "fan.2.rpm", "{:.0} tr/min", "9999 tr/min", 0, 2500, "load")
 FAN3 = Metric("VENT. 3", "fan.3.rpm", "{:.0} tr/min", "9999 tr/min", 0, 2500, "load")
-SSD2 = Metric("SSD 2", "ssd.2.temp", "{:.0}°C", "100°C", 20, 90, "temp", ("ssd.2.used_pct", "{:.0}%", "100%"))
+SSD1T = _L(SSDT, "T° SSD 1")
 
-_SYS = [CPU, GPU, RAM, SSD, LIQ, NETD, NETU, DRD]
-_THERM = [CPUT, GPUT, MOBO, CHIP, VRM, SSDT, LIQ, GPUH]
-_STOCK = [DC, DD, SSD, RAM, DRD, DWR, NETD, NETU]
-_AIR = [LIQ, PUMP, FAN1, CFAN, GFAN, CPUT, GPUT, FAN2]
+_SETS = {   # cle : (tags, francais, extras)
+    "sys": (("système", "cpu", "gpu", "ram"), "Système", [LIQ, NETD, NETU, DRD, DWR, DC, DD]),
+    "therm": (("températures", "carte mère", "vrm"), "Températures", [MOBO, CHIP, VRM, LIQ, GPUH, SSD1T]),
+    "stock": (("disques", "réseau", "débit"), "Stockage et réseau", [DC, DD, DRD, DWR, NETD, NETU, SSD1T]),
+    "air": (("refroidissement", "liquide", "ventilateurs", "aio"), "Refroidissement", [LIQ, PUMP, FAN1, CFAN, GFAN, FAN2, FAN3]),
+    "puis": (("puissance", "fréquences", "gpu", "cpu"), "Puissance et fréquences", [CPW, GPW, CLK, GCLK, VRAM, CFAN, GFAN]),
+    "gpu": (("gpu", "vram", "puissance"), "GPU détaillé", [GPUH, VRAM, GCLK, GPW, GFAN, LIQ, NETD]),
+    "cpu": (("cpu", "fréquence", "puissance"), "CPU détaillé", [CLK, CPW, CFAN, MOBO, VRM, CHIP, LIQ]),
+    "reseau": (("réseau", "débit", "disque"), "Réseau et E/S", [NETD, NETU, DRD, DWR, DC, DD, LIQ]),
+    "disq": (("disques", "ssd", "températures"), "Disques", [DC, DD, SSD1T, DRD, DWR, MOBO]),
+    "mix": (("système", "températures", "ventilateurs"), "Vue d'ensemble", [LIQ, CLK, GCLK, NETD, FAN1, DC, MOBO]),
+}
 
-CONTENT_EXT = {
-    "uw-sys": (("système", "cpu", "gpu", "ram"), _SYS),
-    "uw-therm": (("températures", "carte mère", "vrm"), _THERM),
-    "uw-stock": (("disques", "réseau", "débit"), _STOCK),
-    "uw-air": (("refroidissement", "liquide", "ventilateurs", "aio"), _AIR),
-    "uw-puis": (("puissance", "fréquences", "gpu", "cpu"), [CPW, GPW, CLK, GCLK, CPUT, GPUT, VRAM, CFAN]),
-    "uw-lsys": (("fond libre", "système", "cpu", "gpu"), _SYS),
-    "uw-ltherm": (("fond libre", "températures", "carte mère"), _THERM),
-    "uw-lstock": (("fond libre", "disques", "réseau"), _STOCK),
-    "uw-lair": (("fond libre", "refroidissement", "aio"), _AIR),
-}
-CONTENT_FR_EXT = {
-    "uw-sys": "Système", "uw-therm": "Températures", "uw-stock": "Stockage et réseau", "uw-air": "Refroidissement",
-    "uw-puis": "Puissance et fréquences", "uw-lsys": "Système, fond libre", "uw-ltherm": "Températures, fond libre",
-    "uw-lstock": "Stockage, fond libre", "uw-lair": "Refroidissement, fond libre",
-}
+CONTENT_EXT, CONTENT_FR_EXT = {}, {}
+for _k, (_tags, _fr, _ms) in _SETS.items():
+    CONTENT_EXT[f"uw-{_k}"] = (_tags, _ms)
+    CONTENT_EXT[f"uw-l{_k}"] = (("fond libre", *_tags), _ms)
+    CONTENT_FR_EXT[f"uw-{_k}"] = _fr
+    CONTENT_FR_EXT[f"uw-l{_k}"] = f"{_fr}, fond libre"
