@@ -6,7 +6,7 @@ Usage : python tools/product-catalog/verify.py [--offline] [--prune] [catalogue.
   --prune   : retire du fichier les entrees dont l'image echoue (ecrit le JSON)
 Code de sortie : 0 si aucune erreur, 1 sinon. Les AVERTISSEMENTS n'echouent pas.
 """
-import hashlib, json, re, sys, unicodedata, urllib.request
+import hashlib, json, re, sys, unicodedata, urllib.error, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlparse
@@ -18,6 +18,7 @@ ID_RE = re.compile(r"^[a-z0-9-]+$")
 USB_RE = re.compile(r"^[0-9a-f]{4}:[0-9a-f]{4}$")
 MAX_BYTES = 4 * 1024 * 1024
 UA = {"User-Agent": "Mozilla/5.0 (PureRGB catalog verifier)"}
+NET = "RESEAU "  # prefixe des echecs reseau (non elagues)
 MAGIC = (b"\x89PNG\r\n\x1a\n", b"\xff\xd8\xff", b"GIF8", b"RIFF")  # PNG, JPEG, GIF, WebP
 
 
@@ -56,7 +57,7 @@ def check_schema(cat):
         for n in names:
             if not isinstance(n, str) or n != strip_accents(n).lower() or n != n.strip():
                 e(f"name non normalise {n!r}")
-            elif len(n) < 6 or n == p.get("vendor", "").lower():
+            elif len(n) < 5 or n == p.get("vendor", "").lower():
                 e(f"name trop court/generique {n!r}")
         for u in usb:
             if not USB_RE.match(u):
@@ -101,8 +102,10 @@ def fetch(p):
             if not body.startswith(MAGIC):
                 return p["id"], "octets non reconnus comme image", None, len(body), ct
             return p["id"], None, hashlib.sha256(body).hexdigest(), len(body), ct
-    except Exception as ex:  # reseau : on rapporte, on ne masque rien
-        return p["id"], f"{type(ex).__name__}: {ex}", None, 0, ""
+    except urllib.error.HTTPError as ex:  # 4xx/5xx : le serveur a repondu
+        return p["id"], f"HTTP {ex.code}", None, 0, ""
+    except Exception as ex:  # reseau (DNS, timeout...) : JAMAIS elague, a relancer
+        return p["id"], f"{NET}{type(ex).__name__}: {ex}", None, 0, ""
 
 
 def main():
@@ -139,6 +142,7 @@ def main():
     for e in errs:
         print("ERREUR", e)
     if fails and "--prune" in sys.argv:
+        fails = {k: v for k, v in fails.items() if not v.startswith(NET)}  # pas d'elagage sur panne reseau
         cat["products"] = [p for p in prods if p["id"] not in fails]
         path.write_text(json.dumps(cat, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"{len(fails)} entree(s) retiree(s) : {', '.join(fails)}")

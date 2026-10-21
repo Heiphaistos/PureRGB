@@ -1642,6 +1642,416 @@
     "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Memory/vengeance-rgb-ddr5-blk-config/Gallery/2up/VENGEANCE_RGB_DDR5_BLK_01.webp",
     "source_page": "https://www.corsair.com/us/en/p/memory/cmh32gx5m2b6000c30/vengeance-rgb-32gb-2x16gb-ddr5-dram-6000mt-s-c30-memory-kit-black-cmh32gx5m2b6000c30"
    }
+  },
+  {
+   "id": "deepcool-lm240",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "LM240",
+   "match": {
+    "names": [
+     "lm240"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/LM240/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LM240-6th-Gen-ARGB-Liquid-Cooler-with-mini-LCD-Screen/2025/21342.shtml"
+   }
+  },
+  {
+   "id": "deepcool-lm360",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "LM360",
+   "match": {
+    "names": [
+     "lm360"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/LM360/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LM360-6th-Gen-ARGB-Liquid-Cooler-with-mini-LCD-Screen/2025/21346.shtml"
+   }
+  },
+  {
+   "id": "deepcool-mystique-360",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "MYSTIQUE 360 ARGB",
+   "match": {
+    "names": [
+     "mystique 360"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/MYSTIQUE_360_ARGB/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/MYSTIQUE-360-ARGB-5th-Gen-LCD-Liquid-Cooler-1851-1700-AM5/2024/18771.shtml"
+   }
+  },
+  {
+   "id": "deepcool-lt720",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "LT720",
+   "match": {
+    "names": [
+     "lt720"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/LT720/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LT720-360mm-Liquid-CPU-Cooler-1851-1700-AM5/2024/16286.shtml"
+   }
+  },
+  {
+   "id": "deepcool-ls720",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "LS720",
+   "match": {
+    "names": [
+     "ls720"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/LS720/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LS720-High-Performance-360mm-Liquid-CPU-Cooler-1851-1700-AM5/2024/15858.shtml"
+   }
+  },
+  {
+   "id": "deepcool-castle-360ex",
+   "kind": "aio",
+   "vendor": "DeepCool",
+   "name": "CASTLE 360EX",
+   "match": {
+    "names": [
+     "castle 360ex"
+    ]
+   },
+   "image": {
+    "url": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/CPULiquidCoolers/CASTLE_360EX/Gallery/1440X850/01.jpg",
+    "source_page": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/Castle-360EX-Liquid-CPU-Cooler/2021/121.shtml"
+   }
+  },
+  {
+   "id": "asus-rog-ryujin-iii-360-argb",
+   "kind": "aio",
+   "vendor": "ASUS",
+   "name": "ROG Ryujin III 360 ARGB",
+   "match": {
+    "names": [
+     "rog ryujin iii 360 argb",
+     "ryujin iii 360"
+    ],
+    "usb": [
+     "0b05:1aa2"
+    ]
+   },
+   "image": {
+    "url": "https://dlcdnwebimgs.asus.com/gain/C0D81AF2-05F4-44F1-B62F-538EC0FEC7F8",
+    "source_page": "https://rog.asus.com/be-fr/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb/"
+   }
+  },
+  {
+   "id": "asus-rog-ryujin-iii-360-argb-extreme",
+   "kind": "aio",
+   "vendor": "ASUS",
+   "name": "ROG Ryujin III 360 ARGB Extreme",
+   "match": {
+    "names": [
+     "ryujin iii 360 argb extreme",
+     "ryujin iii extreme"
+    ],
+    "usb": [
+     "0b05:1bcb"
+    ]
+   },
+   "image": {
+    "url": "https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD",
+    "source_page": "https://rog.asus.com/be-fr/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb-extreme/"
+   }
+  },
+  {
+   "id": "asus-rog-ryujin-iii-360-argb-white-edition",
+   "kind": "aio",
+   "vendor": "ASUS",
+   "name": "ROG Ryujin III 360 ARGB White Edition",
+   "match": {
+    "names": [
+     "ryujin iii 360 argb white edition",
+     "ryujin iii white edition"
+    ],
+    "usb": [
+     "0b05:1ada"
+    ]
+   },
+   "image": {
+    "url": "https://dlcdnwebimgs.asus.com/gain/E1784088-9171-46A6-BD0E-BCDF0C8CCC87",
+    "source_page": "https://rog.asus.com/be-fr/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb-white-edition/"
+   }
+  },
+  {
+   "id": "asus-rog-ryujin-iii-360-argb-extreme-white-edition",
+   "kind": "aio",
+   "vendor": "ASUS",
+   "name": "ROG Ryujin III 360 ARGB Extreme White Edition",
+   "match": {
+    "names": [
+     "ryujin iii extreme white edition"
+    ]
+   },
+   "image": {
+    "url": "https://dlcdnwebimgs.asus.com/gain/9AAEAA39-06C1-4F2D-89D5-8F5D3231C13D",
+    "source_page": "https://rog.asus.com/be-fr/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb-extreme-white-edition/"
+   }
+  },
+  {
+   "id": "asus-rog-ryujin-iii-240-argb",
+   "kind": "aio",
+   "vendor": "ASUS",
+   "name": "ROG Ryujin III 240 ARGB",
+   "match": {
+    "names": [
+     "ryujin iii 240"
+    ]
+   },
+   "image": {
+    "url": "https://dlcdnwebimgs.asus.com/gain/DEFF549F-AE6C-429F-B28E-DFAC6FA55B2F",
+    "source_page": "https://rog.asus.com/be-fr/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-240-argb/"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-360l-core-argb",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid 360L Core ARGB",
+   "match": {
+    "names": [
+     "masterliquid 360l core argb"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw508632fb/Assets/masterliquid-360l-core-argb/large/masterliquid-360l-core-argb-01-gallery-01.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-360l-core-argb.html"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-core-lcd-360-4-inch",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid Core LCD 360 4\"",
+   "match": {
+    "names": [
+     "masterliquid core lcd 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw9ee7f43d/Assets/masterliquid-core-lcd-360-4-inch/large/masterliquid-core-lcd-4-inch-gallery-1.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-core-lcd-360-4-inch.html"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-core-lcd-6",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid Core LCD 6\"",
+   "match": {
+    "names": [
+     "masterliquid core lcd 6"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw1cb2f517/Assets/masterliquid-core-lcd-6-series/MasterLiquid_Core_LCD_6_Inch_001.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-core-lcd-6-series.html"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-atmos-ii",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid Atmos II",
+   "match": {
+    "names": [
+     "masterliquid atmos ii"
+    ],
+    "usb": [
+     "2516:021c"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dwcaa64cf9/Assets/masterliquid-atmos-ii-series/large/gallary-05.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-atmos-ii-series.html"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-360-atmos",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid 360 Atmos",
+   "match": {
+    "names": [
+     "masterliquid 360 atmos"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw38ac4c94/Assets/masterliquid-360-atmos-white/large/masterliquid-360-atmos-white-01-gallery-01.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-360-atmos-white.html"
+   }
+  },
+  {
+   "id": "coolermaster-masterliquid-core-nex-digital",
+   "kind": "aio",
+   "vendor": "Cooler Master",
+   "name": "MasterLiquid Core Nex Digital",
+   "match": {
+    "names": [
+     "core nex digital"
+    ],
+    "usb": [
+     "2516:0234"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw637d3e01/Assets/masterliquid-core-nex-digital-series/large/masterliquid-core-nex-digital-series-01-gallary-01.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/masterliquid-core-nex-digital-series.html"
+   }
+  },
+  {
+   "id": "coolermaster-hyper-212-flow-argb",
+   "kind": "cooler",
+   "vendor": "Cooler Master",
+   "name": "Hyper 212 Flow ARGB",
+   "match": {
+    "names": [
+     "hyper 212 flow"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw5c5b17f2/Assets/hyper-212-flow-argb-series/HYPER_212_FLOW_ARGB_BLK_001.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/hyper-212-flow-argb-series.html"
+   }
+  },
+  {
+   "id": "coolermaster-hyper-612-apex",
+   "kind": "cooler",
+   "vendor": "Cooler Master",
+   "name": "Hyper 612 Apex",
+   "match": {
+    "names": [
+     "hyper 612 apex"
+    ]
+   },
+   "image": {
+    "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw46ae70f9/Assets/hyper-612-apex/large/gallary-01.png",
+    "source_page": "https://www.coolermaster.com/en-global/products/hyper-612-apex.html"
+   }
+  },
+  {
+   "id": "arctic-liquid-freezer-iii-pro-360-argb",
+   "kind": "aio",
+   "vendor": "Arctic",
+   "name": "Liquid Freezer III Pro 360 A-RGB",
+   "match": {
+    "names": [
+     "liquid freezer iii pro 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.arctic.de/media/85/2a/c4/1780902063/Liquid_Freezer_III_Pro_360_Black_ARGB_Rainbow_g01.png",
+    "source_page": "https://www.arctic.de/en/Liquid-Freezer-III-Pro-360-A-RGB/ACFRE00184A"
+   }
+  },
+  {
+   "id": "arctic-liquid-freezer-iii-360-argb",
+   "kind": "aio",
+   "vendor": "Arctic",
+   "name": "Liquid Freezer III 360 A-RGB",
+   "match": {
+    "names": [
+     "liquid freezer iii 360"
+    ]
+   },
+   "image": {
+    "url": "https://www.arctic.de/media/64/23/1f/1707473053/Liquid_Freezer_III_360_ARGB_Black_Rainbow_G03_2.jpg",
+    "source_page": "https://www.arctic.de/us/Liquid-Freezer-III-360-A-RGB-Black/ACFRE00144A"
+   }
+  },
+  {
+   "id": "arctic-p12-pwm-pst",
+   "kind": "fan",
+   "vendor": "Arctic",
+   "name": "P12 PWM PST",
+   "match": {
+    "names": [
+     "arctic p12 pwm pst",
+     "p12 pwm pst"
+    ]
+   },
+   "image": {
+    "url": "https://www.arctic.de/media/8f/d3/33/1590572045/P12_PWM_PST_black_01_grey_bg.jpg",
+    "source_page": "https://www.arctic.de/en/P12-PWM-PST/ACFAN00170A"
+   }
+  },
+  {
+   "id": "razer-blackwidow-v4-pro-75",
+   "kind": "keyboard",
+   "vendor": "Razer",
+   "name": "BlackWidow V4 Pro 75%",
+   "match": {
+    "names": [
+     "blackwidow v4 pro 75",
+     "blackwidow v4 pro"
+    ]
+   },
+   "image": {
+    "url": "https://assets3.razerzone.com/7B3Td61IWVw-IHVjUxTKjHAlQYI=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhe7%2Fh76%2F9815507599390%2Fbw-v4-pro-75-500x500.png",
+    "source_page": "https://www.razer.com/gaming-keyboards/razer-blackwidow-v4-pro-75/RZ03-05130200-R3U1"
+   }
+  },
+  {
+   "id": "razer-huntsman-v3-pro",
+   "kind": "keyboard",
+   "vendor": "Razer",
+   "name": "Huntsman V3 Pro",
+   "match": {
+    "names": [
+     "huntsman v3 pro"
+    ]
+   },
+   "image": {
+    "url": "https://assets3.razerzone.com/8bKvlhJO2ixWtp_8U6_ypfXZ4JE=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhb8%2Fh66%2F9705254125598%2Fhuntsman-v3-pro-2-500x500.png",
+    "source_page": "https://www.razer.com/gaming-keyboards/razer-huntsman-v3-pro/RZ03-04970200-R3U1"
+   }
+  },
+  {
+   "id": "razer-deathadder-v3-pro",
+   "kind": "mouse",
+   "vendor": "Razer",
+   "name": "DeathAdder V3 Pro",
+   "match": {
+    "names": [
+     "deathadder v3 pro"
+    ]
+   },
+   "image": {
+    "url": "https://assets3.razerzone.com/dOP2DK_I0atFnySIxfEjKqa-cig=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh26%2Fh29%2F9729772224542%2Fdav3pro-hyperpolling-smooth-touch-500x500.png",
+    "source_page": "https://www.razer.com/gaming-mice/razer-deathadder-v3-pro/RZ01-04630300-R3WL"
+   }
+  },
+  {
+   "id": "corsair-k95-rgb-platinum-xt",
+   "kind": "keyboard",
+   "vendor": "Corsair",
+   "name": "K95 RGB PLATINUM XT",
+   "match": {
+    "names": [
+     "k95 rgb platinum xt"
+    ]
+   },
+   "image": {
+    "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Gaming-Keyboards/CH-9127414-NA/Gallery/K95_PLATINUM_RGB_XT_01.png",
+    "source_page": "https://www.corsair.com/us/en/p/keyboards/ch-9127414-na/k95-rgb-platinum-xt-mechanical-gaming-keyboard-cherry-mx-speed-na-layout-ch-9127414-na"
+   }
   }
  ]
 }
