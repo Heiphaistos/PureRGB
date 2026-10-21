@@ -1,0 +1,13 @@
+{"version": 1, "name": "Horloge LCD", "width": 480, "height": 480, "background": {"kind": "solid", "color": "#070d08"},"widgets":[
+  {"id": "titre", "x": 48, "y": 55.3, "w": 384, "h": 28, "type": "text", "text": "HORLOGE  LCD", "style": {"font": "Roboto Mono", "size": 20, "color": "#3f8f4c", "align": "left", "bold": true}},
+  {"id": "panneau", "x": 44, "y": 90, "w": 392, "h": 210, "type": "rect", "fill": "#0e1b10", "stroke": "#2a5a31", "stroke_width": 3, "radius": 16},
+  {"id": "fantome", "x": 60, "y": 155.8, "w": 360, "h": 130, "type": "text", "text": "88:88", "style": {"font": "Roboto Mono", "size": 120, "color": "#17321b", "align": "center", "bold": true}},
+  {"id": "heure", "x": 60, "y": 155.8, "w": 360, "h": 130, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Roboto Mono", "size": 120, "color": "#62ff80", "align": "center", "bold": true}},
+  {"id": "sec-label", "x": 70, "y": 261.3, "w": 120, "h": 28, "type": "text", "text": "SEC", "style": {"font": "Roboto Mono", "size": 20, "color": "#3f8f4c", "align": "left", "bold": true}},
+  {"id": "sec-fantome", "x": 300, "y": 262.4, "w": 110, "h": 36, "type": "text", "text": "88", "style": {"font": "Roboto Mono", "size": 34, "color": "#17321b", "align": "right", "bold": true}},
+  {"id": "secondes", "x": 300, "y": 262.4, "w": 110, "h": 36, "type": "value", "source": "time", "format": "%S", "style": {"font": "Roboto Mono", "size": 34, "color": "#62ff80", "align": "right", "bold": true}},
+  {"id": "date", "x": 44, "y": 333.9, "w": 392, "h": 40, "type": "value", "source": "date", "format": "%d/%m/%Y", "style": {"font": "Roboto Mono", "size": 38, "color": "#62ff80", "align": "center", "bold": true}},
+  {"id": "jour", "x": 44, "y": 372.8, "w": 392, "h": 30, "type": "value", "source": "date", "format": "%A", "style": {"font": "Roboto Mono", "size": 24, "color": "#3f8f4c", "align": "center", "bold": false}},
+  {"id": "cpu", "x": 44, "y": 410.0, "w": 196, "h": 30, "type": "value", "source": "cpu.temp", "format": "CPU {:.0}°", "style": {"font": "Roboto Mono", "size": 22, "color": "#a4ffb4", "align": "center", "bold": false}},
+  {"id": "gpu", "x": 240, "y": 410.0, "w": 196, "h": 30, "type": "value", "source": "gpu.temp", "format": "GPU {:.0}°", "style": {"font": "Roboto Mono", "size": 22, "color": "#a4ffb4", "align": "center", "bold": false}}
+ ]}

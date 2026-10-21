@@ -1,0 +1,15 @@
+{"version": 1, "name": "Horloge néon", "width": 480, "height": 480, "background": {"kind": "gradient", "from": "#07040f", "to": "#1c0538", "angle": 90},"widgets":[
+  {"id": "date", "x": 50, "y": 61.8, "w": 380, "h": 36, "type": "value", "source": "date", "format": "%A %d %B", "style": {"font": "Rajdhani", "size": 30, "color": "#38f5ff", "align": "center", "bold": true}},
+  {"id": "halo-haut", "x": 60, "y": 98, "w": 360, "h": 12, "opacity": 0.18, "type": "rect", "fill": "#ff2fd6", "stroke": null, "stroke_width": 0, "radius": 6},
+  {"id": "ligne-haut", "x": 60, "y": 102, "w": 360, "h": 4, "type": "rect", "fill": "#ff2fd6", "stroke": null, "stroke_width": 0, "radius": 2},
+  {"id": "lueur0", "x": 47, "y": 170.8, "w": 380, "h": 150, "opacity": 0.2, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 150, "color": "#ff2fd6", "align": "center", "bold": true}},
+  {"id": "lueur1", "x": 53, "y": 170.8, "w": 380, "h": 150, "opacity": 0.2, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 150, "color": "#ff2fd6", "align": "center", "bold": true}},
+  {"id": "lueur2", "x": 50, "y": 167.8, "w": 380, "h": 150, "opacity": 0.2, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 150, "color": "#ff2fd6", "align": "center", "bold": true}},
+  {"id": "lueur3", "x": 50, "y": 173.8, "w": 380, "h": 150, "opacity": 0.2, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 150, "color": "#ff2fd6", "align": "center", "bold": true}},
+  {"id": "heure", "x": 50, "y": 170.8, "w": 380, "h": 150, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 150, "color": "#ffffff", "align": "center", "bold": true}},
+  {"id": "secondes", "x": 140, "y": 296.9, "w": 200, "h": 50, "type": "value", "source": "time", "format": "%S", "style": {"font": "Rajdhani", "size": 46, "color": "#38f5ff", "align": "center", "bold": true}},
+  {"id": "halo-bas", "x": 60, "y": 346, "w": 360, "h": 12, "opacity": 0.18, "type": "rect", "fill": "#38f5ff", "stroke": null, "stroke_width": 0, "radius": 6},
+  {"id": "ligne-bas", "x": 60, "y": 350, "w": 360, "h": 4, "type": "rect", "fill": "#38f5ff", "stroke": null, "stroke_width": 0, "radius": 2},
+  {"id": "cpu", "x": 50, "y": 381.8, "w": 190, "h": 34, "type": "value", "source": "cpu.temp", "format": "CPU {:.0}°", "style": {"font": "Rajdhani", "size": 30, "color": "#ff9bea", "align": "center", "bold": true}},
+  {"id": "gpu", "x": 240, "y": 381.8, "w": 190, "h": 34, "type": "value", "source": "gpu.temp", "format": "GPU {:.0}°", "style": {"font": "Rajdhani", "size": 30, "color": "#9bfaff", "align": "center", "bold": true}}
+ ]}
