@@ -110,6 +110,17 @@ export interface ScreenInfo {
   verified: boolean;
 }
 
+/** Mesures de cadence d'un écran (rendu -> encodage -> envoi). */
+export interface ScreenPerf {
+  fps: number;
+  target_fps: number;
+  render_ms: number;
+  encode_ms: number;
+  send_ms: number;
+  dropped: number;
+  quality: number;
+}
+
 export interface ScreenState {
   layout: Layout | null;
   brightness: number;
@@ -119,6 +130,7 @@ export interface ScreenState {
   /** Faux : l'écran n'accepte que des images fixes (envoi manuel). */
   live: boolean;
   error: string | null;
+  perf: ScreenPerf;
 }
 
 export interface ScreenOptions {

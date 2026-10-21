@@ -16,7 +16,8 @@
 use super::catalog::{self, DeviceEntry, Kind, Profile};
 use super::transport::{self, NusbTransport, Transport};
 use super::wire;
-use crate::screens::driver::{Frame, ScreenDriver, ScreenInfo, ScreenProvider};
+use crate::screens::driver::{Frame, FramePreparer, ScreenDriver, ScreenInfo, ScreenProvider};
+use std::sync::Arc;
 use anyhow::{anyhow, bail, Result};
 use std::time::Duration;
 
@@ -182,8 +183,21 @@ impl<T: Transport> ScreenDriver for LyScreen<T> {
         &self.info
     }
 
+    /// TRCC n'envoie jamais plus de 16 images/s à l'écran LY (`nowTimerVal += 62.5`, REA-trcc.md §4).
+    fn max_fps(&self) -> u8 {
+        16
+    }
+
+    fn preparer(&self) -> Option<Arc<dyn FramePreparer>> {
+        wire::jpeg_preparer(&self.profile, self.info.rotation, JPEG_QUALITY)
+    }
+
     fn push_frame(&mut self, frame: &Frame) -> Result<()> {
         let img = wire::encode_frame(&self.profile, frame, self.info.rotation, JPEG_QUALITY)?;
+        self.send_prepared(&img)
+    }
+
+    fn send_prepared(&mut self, img: &wire::WireImage) -> Result<()> {
         let chunks = build_chunks(self.variant, &img.data)?;
         self.write_all(&chunks)?;
         // ACK : lu mais son contenu n'est pas documenté (INCONNU) ; un délai dépassé est une erreur.

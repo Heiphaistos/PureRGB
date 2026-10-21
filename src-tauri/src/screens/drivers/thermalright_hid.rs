@@ -16,8 +16,9 @@
 use super::catalog::{self, DeviceEntry, Kind, Profile};
 use super::transport::{HidTransport, Transport};
 use super::wire;
-use crate::screens::driver::{Frame, ScreenDriver, ScreenInfo, ScreenProvider};
+use crate::screens::driver::{Frame, FramePreparer, ScreenDriver, ScreenInfo, ScreenProvider};
 use anyhow::{anyhow, bail, Result};
+use std::sync::Arc;
 use std::time::Duration;
 
 const MAGIC: [u8; 4] = [0xDA, 0xDB, 0xDC, 0xDD];
@@ -194,11 +195,19 @@ impl<T: Transport> ScreenDriver for HidScreen<T> {
         &self.info
     }
 
+    fn preparer(&self) -> Option<Arc<dyn FramePreparer>> {
+        wire::jpeg_preparer(&self.profile, self.info.rotation, JPEG_QUALITY)
+    }
+
     fn push_frame(&mut self, frame: &Frame) -> Result<()> {
         let img = wire::encode_frame(&self.profile, frame, self.info.rotation, JPEG_QUALITY)?;
+        self.send_prepared(&img)
+    }
+
+    fn send_prepared(&mut self, img: &wire::WireImage) -> Result<()> {
         match self.kind {
-            Kind::HidType2 => self.push_type2(&img),
-            _ => self.push_f5(&img),
+            Kind::HidType2 => self.push_type2(img),
+            _ => self.push_f5(img),
         }
     }
 }

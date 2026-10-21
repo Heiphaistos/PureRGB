@@ -33,7 +33,7 @@ async function loadStates(): Promise<void> {
     try {
       states.value[s.id] = await screenState(s.id);
     } catch (e) {
-      states.value[s.id] = { layout: null, brightness: 0, rotation: 0, fps: 0, running: false, live: true, error: errMsg(e) };
+      states.value[s.id] = { layout: null, brightness: 0, rotation: 0, fps: 0, running: false, live: true, perf: { fps: 0, target_fps: 0, render_ms: 0, encode_ms: 0, send_ms: 0, dropped: 0, quality: 0 }, error: errMsg(e) };
     }
   }
 }

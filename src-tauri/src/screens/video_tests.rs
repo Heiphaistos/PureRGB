@@ -110,12 +110,38 @@ fn lazy_start_paced_and_looping() {
 }
 
 #[test]
+fn serves_the_frame_of_the_requested_instant() {
+    // 20 images de 40 ms : à t = 100·k ms, l'image attendue est celle d'indice t/40 (rouge = 10·(indice+1)).
+    let (p, _) = fake_player(20, Duration::from_secs(5));
+    let t0 = Instant::now();
+    let first = p.frame().expect("première image");
+    assert_eq!(red_of(&first), 10);
+    for k in 1..=7u64 {
+        let target = Duration::from_millis(100 * k);
+        std::thread::sleep(target.saturating_sub(t0.elapsed()));
+        let at = t0.elapsed().as_millis() as u64;
+        let got = u64::from(red_of(&p.frame().expect("image")) / 10) - 1;
+        let want = at / 40;
+        assert!(got.abs_diff(want) <= 1, "à {at} ms : image {got}, attendue {want}");
+    }
+}
+
+#[test]
+fn decodes_only_a_few_frames_ahead() {
+    let (p, _) = fake_player(20, Duration::from_secs(5));
+    let _ = p.frame();
+    std::thread::sleep(Duration::from_millis(60));
+    let slot = p.shared.slot.lock();
+    assert!(slot.frames.len() <= AHEAD + 2, "tampon trop grand : {}", slot.frames.len());
+}
+
+#[test]
 fn stops_when_idle_and_restarts_from_the_beginning() {
     let (p, c) = fake_player(3, Duration::from_millis(150));
     assert!(p.frame().is_some());
     assert!(wait_for(|| !p.shared.running.load(Ordering::SeqCst), 1500), "doit s'arrêter seul");
     assert_eq!(c.dropped.load(Ordering::SeqCst), 1, "source libérée");
-    assert!(p.shared.slot.lock().frame.is_none(), "image libérée");
+    assert!(p.shared.slot.lock().frames.is_empty(), "images libérées");
     let again = p.frame().expect("reprise");
     assert_eq!(red_of(&again), 10, "la reprise repart de la première image");
     assert_eq!(c.opened.load(Ordering::SeqCst), 2);

@@ -10,6 +10,7 @@ use super::drivers::{
 };
 use super::layout::Layout;
 use super::media::MediaStore;
+use super::pacing::Perf;
 use super::runner::Runner;
 use super::sim::SimProvider;
 use super::state::{self, ConfigMap, ScreenConfig};
@@ -30,6 +31,8 @@ pub struct ScreenState {
     /// Faux : l'écran n'accepte que des images fixes (bouton « Envoyer comme image fixe »).
     pub live: bool,
     pub error: Option<String>,
+    /// Cadence réelle et temps moyens rendu/encodage/envoi.
+    pub perf: Perf,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -136,6 +139,7 @@ impl ScreenManager {
                 running: r.is_running(),
                 live: r.shared.live,
                 error: r.shared.error.lock().clone(),
+                perf: r.perf(),
             }
         })
     }

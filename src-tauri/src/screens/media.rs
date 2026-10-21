@@ -199,7 +199,7 @@ impl MediaStore {
             .file_stem()
             .map(|s| s.to_string_lossy().chars().filter(|c| !c.is_control()).take(80).collect())
             .unwrap_or_default();
-        let item = MediaItem { id: id.clone(), name, kind: MediaKind::Video, width: info.width, height: info.height, frames: 0, duration_ms: info.duration_ms };
+        let item = MediaItem { id: id.clone(), name, kind: MediaKind::Video, width: info.width, height: info.height, frames: (info.fps * info.duration_ms as f32 / 1000.0).round() as u32, duration_ms: info.duration_ms };
         std::fs::create_dir_all(&self.root).context("création du dossier médias")?;
         let dest = self.root.join(format!("{id}.{ext}"));
         std::fs::copy(path, &dest).context("copie du média")?;
@@ -273,6 +273,18 @@ impl MediaStore {
     /// Vrai si le média est animé (GIF ou vidéo) : l'écran doit alors tourner à 15 i/s au moins.
     pub fn is_animated(&self, id: &str) -> bool {
         valid_id(id) && self.read_item(id).is_some_and(|m| matches!(m.kind, MediaKind::Gif | MediaKind::Video))
+    }
+
+    /// Cadence native (i/s) d'un GIF ou d'une vidéo ; `None` pour une image fixe ou un média inconnu.
+    /// Les vidéos importées avant l'enregistrement du nombre d'images (frames = 0) comptent pour 24 i/s.
+    pub fn source_fps(&self, id: &str) -> Option<f32> {
+        let m = if valid_id(id) { self.read_item(id)? } else { return None };
+        match m.kind {
+            MediaKind::Gif | MediaKind::Video if m.frames > 0 && m.duration_ms > 0 => Some(m.frames as f32 * 1000.0 / m.duration_ms as f32),
+            MediaKind::Video => Some(24.0),
+            MediaKind::Gif => Some(10.0),
+            _ => None,
+        }
     }
 
     fn load(&self, id: &str) -> Option<Arc<Anim>> {
@@ -394,7 +406,7 @@ mod tests {
         std::fs::write(&src, crate::screens::video::tests::tiny_avi()).unwrap();
         let store = MediaStore::new(dir.join("media"));
         let item = store.import(&src).unwrap();
-        assert_eq!((item.kind, item.width, item.height, item.frames), (MediaKind::Video, 32, 24, 0));
+        assert_eq!((item.kind, item.width, item.height, item.frames), (MediaKind::Video, 32, 24, 5));
         assert!(item.duration_ms > 0);
         assert_eq!(store.import(&src).unwrap().id, item.id, "dédoublonné");
         assert_eq!(store.list().len(), 1);

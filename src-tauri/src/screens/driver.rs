@@ -1,8 +1,10 @@
 //! Contrat commun des pilotes d'écrans : un pilote ne connaît que `Frame` (RGBA)
 //! et le convertit vers le format de fil de son matériel.
 
+use super::drivers::wire::WireImage;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 /// Image prête à envoyer : RGBA 8 bits, ligne par ligne, sans padding.
 #[derive(Debug, Clone)]
@@ -58,9 +60,32 @@ pub struct ScreenInfo {
     pub verified: bool,
 }
 
+/// Encodage d'une image hors du thread d'envoi (pilotes JPEG Thermalright) : permet de
+/// recouvrir le calcul d'une image et le transfert USB de la précédente.
+pub trait FramePreparer: Send + Sync {
+    /// Encode `frame` ; `max_quality` plafonne la qualité JPEG de départ du pilote.
+    fn prepare(&self, frame: &Frame, max_quality: u8) -> Result<WireImage>;
+}
+
 /// Un écran ouvert, prêt à recevoir des images.
 pub trait ScreenDriver: Send {
     fn info(&self) -> &ScreenInfo;
+
+    /// Cadence maximale utile du matériel (i/s) ; le planificateur ne la dépasse pas.
+    fn max_fps(&self) -> u8 {
+        30
+    }
+
+    /// Encodeur autonome si le pilote sait préparer ses images hors du thread d'envoi ;
+    /// l'envoi passe alors par `send_prepared`. Défaut : aucun (`push_frame` fait tout).
+    fn preparer(&self) -> Option<Arc<dyn FramePreparer>> {
+        None
+    }
+
+    /// Envoie une image produite par `preparer().prepare(..)`.
+    fn send_prepared(&mut self, _img: &WireImage) -> Result<()> {
+        anyhow::bail!("cet écran n'a pas de pré-encodage")
+    }
 
     /// Envoie une image. `frame` a exactement la taille `info().width × height`.
     fn push_frame(&mut self, frame: &Frame) -> Result<()>;

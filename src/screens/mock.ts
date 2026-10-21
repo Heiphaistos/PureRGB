@@ -52,6 +52,7 @@ function stateOf(id: string): ScreenState {
       running: true,
       live: true,
       error: null,
+      perf: { fps: 0, target_fps: 5, render_ms: 0, encode_ms: 0, send_ms: 0, dropped: 0, quality: 0 },
     };
     states.set(id, s);
   }

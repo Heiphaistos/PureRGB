@@ -1,13 +1,15 @@
 //! Lecture de vidéos pour les fonds et widgets image.
 //!
 //! `VideoPlayer` = un thread de décodage paresseux (démarre à la première demande
-//! d'image, cadencé sur les horodatages réels, boucle à la fin, s'arrête seul après
-//! quelques secondes sans demande) qui publie la dernière image dans un slot partagé.
+//! d'image, boucle à la fin, s'arrête seul après quelques secondes sans demande) qui garde
+//! quelques images décodées d'avance, horodatées sur l'horloge de lecture. `frame()` sert
+//! l'image qui correspond à l'instant de la demande (pas « la dernière publiée »).
 //! Le décodage lui-même est derrière le trait `FrameSource` : Media Foundation sous
 //! Windows (`video_mf.rs`), un faux lecteur dans les tests.
 
 use anyhow::{anyhow, bail, Result};
 use parking_lot::{Condvar, Mutex};
+use std::collections::VecDeque;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -27,9 +29,11 @@ pub const MSG_CODEC: &str =
 const IDLE_STOP: Duration = Duration::from_secs(3);
 const FIRST_FRAME_WAIT: Duration = Duration::from_millis(2500);
 const RETRY_AFTER_ERROR: Duration = Duration::from_secs(3);
-const SLICE: Duration = Duration::from_millis(15);
-/// Retard au-delà duquel l'horloge de lecture est recalée (décodage trop lent, veille...).
-const MAX_LAG: Duration = Duration::from_millis(500);
+const SLICE: Duration = Duration::from_millis(10);
+/// Retard (ms) au-delà duquel l'horloge de lecture est recalée (décodage trop lent, veille...).
+const MAX_LAG_MS: u64 = 500;
+/// Images décodées d'avance par rapport à l'instant de lecture.
+const AHEAD: usize = 3;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct VideoInfo {
@@ -57,13 +61,38 @@ type Factory = Arc<dyn Fn() -> Result<Box<dyn FrameSource>> + Send + Sync>;
 
 #[derive(Default)]
 struct Slot {
-    frame: Option<Arc<Pixmap>>,
+    /// Images décodées, croissantes : (horodatage de lecture en ms depuis `origin`, image).
+    frames: VecDeque<(u64, Arc<Pixmap>)>,
+    /// Heure réelle de l'horodatage 0 de la lecture (recalée si le décodage prend du retard).
+    origin: Option<Instant>,
     error: Option<String>,
     failed_at: Option<Instant>,
 }
 
+impl Slot {
+    fn pos_ms(&self, now: Instant) -> u64 {
+        self.origin.map_or(0, |o| now.saturating_duration_since(o).as_millis() as u64)
+    }
+
+    /// Image à afficher à `now` : la dernière dont l'horodatage est atteint (sinon la première,
+    /// en attente) ; les images plus anciennes sont libérées.
+    fn pick(&mut self, now: Instant) -> Option<Arc<Pixmap>> {
+        let pos = self.pos_ms(now);
+        while self.frames.len() > 1 && self.frames.get(1).is_some_and(|(ts, _)| *ts <= pos) {
+            self.frames.pop_front();
+        }
+        self.frames.front().map(|(_, f)| f.clone())
+    }
+
+    fn ahead(&self, now: Instant) -> usize {
+        let pos = self.pos_ms(now);
+        self.frames.iter().filter(|(ts, _)| *ts > pos).count()
+    }
+}
+
 struct Shared {
     slot: Mutex<Slot>,
+    /// Signalé à chaque image décodée (réveille `frame()`) et à chaque consommation.
     ready: Condvar,
     last_req: Mutex<Instant>,
     running: AtomicBool,
@@ -160,15 +189,19 @@ impl VideoPlayer {
         self.shared.slot.lock().error.clone()
     }
 
-    /// Image courante. Lance le décodage si besoin ; à l'éveil attend la première image (2,5 s max).
+    /// Image à afficher maintenant. Lance le décodage si besoin ; à l'éveil attend la première image (2,5 s max).
     pub fn frame(&self) -> Option<Arc<Pixmap>> {
-        *self.shared.last_req.lock() = Instant::now();
+        let now = Instant::now();
+        *self.shared.last_req.lock() = now;
         self.ensure_running();
         let mut slot = self.shared.slot.lock();
-        if slot.frame.is_none() && self.shared.running.load(Ordering::Acquire) {
+        if slot.frames.is_empty() && self.shared.running.load(Ordering::Acquire) {
             self.shared.ready.wait_for(&mut slot, FIRST_FRAME_WAIT);
         }
-        slot.frame.clone()
+        let f = slot.pick(Instant::now());
+        drop(slot);
+        self.shared.ready.notify_all(); // le décodeur peut reprendre : de la place s'est libérée
+        f
     }
 
     fn ensure_running(&self) {
@@ -194,7 +227,11 @@ impl VideoPlayer {
                 s.error = Some(format!("{e:#}"));
                 s.failed_at = Some(Instant::now());
             }
-            shared.slot.lock().frame = None; // libère l'image ; la reprise repartira du début
+            {
+                let mut s = shared.slot.lock();
+                s.frames.clear(); // libère les images ; la reprise repartira du début
+                s.origin = None;
+            }
             shared.running.store(false, Ordering::Release);
             shared.ready.notify_all();
         }) {
@@ -221,55 +258,53 @@ impl Drop for VideoPlayer {
     }
 }
 
-/// Dort jusqu'à `due` ; faux si arrêt demandé ou inactivité dépassée.
-fn wait_until(shared: &Shared, due: Instant, idle: Duration) -> bool {
+/// Attend (par tranches) qu'une place se libère dans l'avance de décodage ; faux si arrêt ou inactivité.
+fn wait_room(shared: &Shared, idle: Duration) -> bool {
     loop {
         if shared.stop.load(Ordering::Acquire) || shared.last_req.lock().elapsed() > idle {
             return false;
         }
-        let left = due.saturating_duration_since(Instant::now());
-        if left.is_zero() {
+        let mut slot = shared.slot.lock();
+        if slot.ahead(Instant::now()) < AHEAD {
             return true;
         }
-        std::thread::sleep(left.min(SLICE));
+        shared.ready.wait_for(&mut slot, SLICE);
     }
 }
 
 fn decode_loop(shared: &Shared, factory: &Factory, idle: Duration) -> Result<()> {
     let mut src = factory()?;
-    let mut origin: Option<(Instant, u64)> = None; // (heure réelle, horodatage) de référence
-    let mut loop_start: Option<Instant> = None; // heure prévue de la 1re image après une boucle
+    // Horodatage de lecture = base (cumul des boucles passées) + ts de l'image - ts de la 1re image de la boucle.
+    let (mut base, mut ts0): (u64, Option<u64>) = (0, None);
     let (mut since_rewind, mut prev_ts, mut last_dur) = (0u32, 0u64, 33u64);
     loop {
-        if shared.stop.load(Ordering::Acquire) || shared.last_req.lock().elapsed() > idle {
+        if !wait_room(shared, idle) {
             return Ok(());
         }
         let Some(f) = src.next_frame()? else {
             if since_rewind == 0 {
                 bail!("la vidéo ne contient aucune image");
             }
-            // La dernière image reste affichée sa durée normale avant de reboucler.
-            let (t0, ts0) = origin.unwrap_or((Instant::now(), 0));
-            let end = t0 + Duration::from_millis(prev_ts.saturating_sub(ts0) + last_dur);
-            if !wait_until(shared, end, idle) {
-                return Ok(());
-            }
+            // La dernière image garde sa durée normale avant de reboucler (boucle sans à-coup).
+            base += prev_ts.saturating_sub(ts0.unwrap_or(0)) + last_dur;
             src.rewind()?;
-            (since_rewind, origin, loop_start) = (0, None, Some(end.max(Instant::now() - MAX_LAG)));
+            (since_rewind, ts0) = (0, None);
             continue;
         };
         if since_rewind > 0 && f.ts_ms > prev_ts {
             last_dur = (f.ts_ms - prev_ts).min(1000);
         }
         (since_rewind, prev_ts) = (since_rewind + 1, f.ts_ms);
-        let (t0, ts0) = *origin.get_or_insert((loop_start.take().unwrap_or_else(Instant::now), f.ts_ms));
-        let due = t0 + Duration::from_millis(f.ts_ms.saturating_sub(ts0));
-        if due.elapsed() > MAX_LAG {
-            origin = Some((Instant::now(), f.ts_ms));
-        } else if !wait_until(shared, due, idle) {
-            return Ok(());
+        let abs = base + f.ts_ms.saturating_sub(*ts0.get_or_insert(f.ts_ms));
+        let now = Instant::now();
+        let mut slot = shared.slot.lock();
+        // Première image, ou décodage en retard de plus de MAX_LAG_MS (veille, 4K...) : on recale l'horloge.
+        if slot.origin.is_none() || slot.pos_ms(now) > abs + MAX_LAG_MS {
+            slot.origin = Some(now.checked_sub(Duration::from_millis(abs)).unwrap_or(now));
+            slot.frames.clear(); // l'ancien contenu est dans un autre repère de temps
         }
-        shared.slot.lock().frame = Some(Arc::new(f.pixmap));
+        slot.frames.push_back((abs, Arc::new(f.pixmap)));
+        drop(slot);
         shared.ready.notify_all();
     }
 }

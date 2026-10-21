@@ -3,8 +3,9 @@
 
 use super::catalog::Profile;
 use super::encode;
-use crate::screens::driver::Frame;
+use crate::screens::driver::{Frame, FramePreparer};
 use anyhow::{bail, Result};
+use std::sync::Arc;
 
 /// Plafond de taille d'un JPEG accepté par le firmware (protocol.py `max_frame_bytes` :
 /// TRCC n'envoie jamais 450000 octets ou plus). On baisse la qualité jusqu'à passer sous le plafond.
@@ -52,6 +53,22 @@ pub fn encode_frame(profile: &Profile, frame: &Frame, user_rotation: u16, qualit
         data = repack_rows(&data, w, h, profile.wire_row_px);
     }
     Ok(WireImage { data, width: w, height: h, jpeg: false })
+}
+
+/// Encodeur autonome d'un écran JPEG (copie du profil et de la rotation) ; `None` pour le RGB565,
+/// trop léger pour justifier un étage de pipeline.
+pub fn jpeg_preparer(profile: &Profile, rotation: u16, base_quality: u8) -> Option<Arc<dyn FramePreparer>> {
+    struct Jpeg {
+        profile: Profile,
+        rotation: u16,
+        base_quality: u8,
+    }
+    impl FramePreparer for Jpeg {
+        fn prepare(&self, frame: &Frame, max_quality: u8) -> Result<WireImage> {
+            encode_frame(&self.profile, frame, self.rotation, self.base_quality.min(max_quality))
+        }
+    }
+    profile.jpeg.then(|| Arc::new(Jpeg { profile: *profile, rotation, base_quality }) as Arc<dyn FramePreparer>)
 }
 
 /// Recopie chaque ligne RGB565 de `w` pixels dans une ligne de `row_px` pixels, décalée de 4 octets
