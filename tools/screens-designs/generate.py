@@ -28,6 +28,19 @@ CONTENT_FR = {
 }
 
 
+def load_content_extensions():
+    """Fichiers `content_ext_*.py` : jeux de contenu supplementaires (CONTENT_EXT, CONTENT_FR_EXT),
+    un par contributeur, pour eviter les conflits sur content.py."""
+    for info in sorted(pkgutil.iter_modules([HERE]), key=lambda i: i.name):
+        if info.name.startswith("content_ext_"):
+            m = importlib.import_module(info.name)
+            CONTENT.update(getattr(m, "CONTENT_EXT", {}))
+            CONTENT_FR.update(getattr(m, "CONTENT_FR_EXT", {}))
+
+
+load_content_extensions()
+
+
 def modules():
     out = []
     for info in pkgutil.iter_modules(layouts.__path__):
