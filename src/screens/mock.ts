@@ -33,7 +33,10 @@ const params = new URLSearchParams(typeof location === "undefined" ? "" : locati
 let screens: ScreenInfo[] = params.get("mock") === "empty" ? [] : [SIM, TR];
 const states = new Map<string, ScreenState>();
 const userDesigns = new Map<string, Layout>();
-let media: MediaItem[] = [];
+// Média vidéo factice : le moteur réel lit les vidéos via Windows, la démo n'affiche qu'un espace réservé.
+let media: MediaItem[] = [
+  { id: "demo-video", name: "Vidéo de démonstration", kind: "video", width: 1920, height: 1080, frames: 0, duration_ms: 12000 },
+];
 let seq = 1;
 
 function stateOf(id: string): ScreenState {
@@ -128,6 +131,25 @@ export const mock = {
   /** Démo : importe un File du navigateur. */
   async mediaImportFile(file: File): Promise<MediaItem> {
     const url = URL.createObjectURL(file);
+    if (file.type.startsWith("video/")) {
+      const v = document.createElement("video");
+      await new Promise<void>((res, rej) => {
+        v.onloadedmetadata = () => res();
+        v.onerror = () => rej(new Error("vidéo illisible par le navigateur"));
+        v.src = url;
+      });
+      const item: MediaItem = {
+        id: `media-${seq++}`,
+        name: file.name,
+        kind: "video",
+        width: v.videoWidth,
+        height: v.videoHeight,
+        frames: 0,
+        duration_ms: Math.round((Number.isFinite(v.duration) ? v.duration : 0) * 1000),
+      };
+      media = [...media, item];
+      return item;
+    }
     const img = new Image();
     await new Promise<void>((res, rej) => {
       img.onload = () => res();

@@ -105,7 +105,7 @@ export async function pickSavePath(title: string, defaultPath: string): Promise<
 }
 
 export const MEDIA_FILTERS = [
-  { name: "Images, GIF et vidéos", extensions: ["png", "jpg", "jpeg", "bmp", "webp", "gif", "mp4", "webm", "mkv", "avi", "mov"] },
+  { name: "Images, GIF et vidéos", extensions: ["png", "jpg", "jpeg", "bmp", "webp", "gif", "mp4", "m4v", "webm", "mkv", "avi", "mov", "wmv"] },
 ];
 
 export const DESIGN_FILTERS = [{ name: "Design PureRGB", extensions: ["json"] }];
