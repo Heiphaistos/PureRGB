@@ -12,4 +12,7 @@ pub mod designs;
 pub mod manager;
 pub mod runner;
 pub mod sim;
+pub mod video;
+#[cfg(windows)]
+mod video_mf;
 pub mod state;

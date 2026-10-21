@@ -1,15 +1,17 @@
 //! Médiathèque des écrans : images (PNG/JPG/BMP/WebP) et GIF animés copiés dans
 //! `<racine>/<id>.<ext>` (+ fiche `<id>.json`). L'id est dérivé du contenu
 //! (SHA-256 tronqué) : réimporter le même fichier ne duplique rien.
-//! La vidéo (ffmpeg sidecar) est prévue en phase 2 : `MediaKind::Video` existe
-//! mais l'import est refusé.
+//! Les vidéos (mp4, avi, wmv...) sont copiées de même ; leur lecture passe par un
+//! `VideoPlayer` par média (Media Foundation de Windows, voir `video.rs`).
 
 use anyhow::{bail, Context, Result};
 use image::{AnimationDecoder, ImageFormat};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::io::Cursor;
+use super::video::{self, VideoPlayer, VIDEO_EXTS};
+use std::collections::HashMap;
+use std::io::{Cursor, Read};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use tiny_skia::Pixmap;
@@ -26,7 +28,6 @@ const EXTS: [&str; 5] = ["png", "jpg", "bmp", "webp", "gif"];
 pub enum MediaKind {
     Image,
     Gif,
-    /// Phase 2 (non implémenté).
     Video,
 }
 
@@ -51,6 +52,9 @@ pub struct MediaStore {
     root: PathBuf,
     /// LRU : le plus récemment utilisé en dernier.
     cache: Mutex<Vec<(String, Arc<Anim>)>>,
+    /// Un lecteur par vidéo, partagé entre l'aperçu et les écrans réels. `None` = ouverture
+    /// échouée (mémorisée pour ne pas retenter à chaque image).
+    players: Mutex<HashMap<String, Option<Arc<VideoPlayer>>>>,
 }
 
 fn valid_id(id: &str) -> bool {
@@ -103,10 +107,14 @@ fn decode(bytes: &[u8], format: ImageFormat) -> Result<Vec<(Arc<Pixmap>, u32)>> 
 impl MediaStore {
     /// `root` : en production `%APPDATA%\PureRGB\screens\media` ; injectable pour les tests.
     pub fn new(root: PathBuf) -> MediaStore {
-        MediaStore { root, cache: Mutex::new(Vec::new()) }
+        MediaStore { root, cache: Mutex::new(Vec::new()), players: Mutex::new(HashMap::new()) }
     }
 
     pub fn import(&self, path: &Path) -> Result<MediaItem> {
+        let ext = path.extension().map(|e| e.to_string_lossy().to_lowercase()).unwrap_or_default();
+        if VIDEO_EXTS.contains(&ext.as_str()) {
+            return self.import_video(path, &ext);
+        }
         let meta = std::fs::metadata(path).context("fichier introuvable")?;
         if !meta.is_file() {
             bail!("ce n'est pas un fichier");
@@ -154,6 +162,65 @@ impl MediaStore {
         Ok(item)
     }
 
+    /// Vidéo : sondée par Windows avant la copie (un fichier illisible n'entre pas dans la médiathèque).
+    fn import_video(&self, path: &Path, ext: &str) -> Result<MediaItem> {
+        let ext = VIDEO_EXTS.iter().find(|e| **e == ext).context("extension vidéo inconnue")?;
+        let meta = std::fs::metadata(path).context("fichier introuvable")?;
+        if !meta.is_file() {
+            bail!("ce n'est pas un fichier");
+        }
+        if meta.len() > MAX_FILE_BYTES {
+            bail!("fichier trop gros (max {} Mo)", MAX_FILE_BYTES / 1024 / 1024);
+        }
+        let mut hasher = Sha256::new();
+        let mut file = std::fs::File::open(path).context("lecture du fichier")?;
+        let mut buf = vec![0u8; 1 << 20];
+        loop {
+            let n = file.read(&mut buf).context("lecture du fichier")?;
+            if n == 0 {
+                break;
+            }
+            hasher.update(&buf[..n]);
+        }
+        let id: String = hasher.finalize().iter().take(8).map(|b| format!("{b:02x}")).collect();
+        if let Some(existing) = self.read_item(&id) {
+            return Ok(existing);
+        }
+        let info = video::probe(path)?;
+        let name: String = path
+            .file_stem()
+            .map(|s| s.to_string_lossy().chars().filter(|c| !c.is_control()).take(80).collect())
+            .unwrap_or_default();
+        let item = MediaItem { id: id.clone(), name, kind: MediaKind::Video, width: info.width, height: info.height, frames: 0, duration_ms: info.duration_ms };
+        std::fs::create_dir_all(&self.root).context("création du dossier médias")?;
+        let dest = self.root.join(format!("{id}.{ext}"));
+        std::fs::copy(path, &dest).context("copie du média")?;
+        let json = serde_json::to_vec(&item).context("fiche média")?;
+        if let Err(e) = std::fs::write(self.root.join(format!("{id}.json")), json) {
+            let _ = std::fs::remove_file(&dest);
+            return Err(anyhow::Error::new(e).context("écriture de la fiche"));
+        }
+        Ok(item)
+    }
+
+    /// Lecteur de la vidéo `id` (créé à la demande) s'il s'agit bien d'une vidéo de la médiathèque.
+    fn player(&self, id: &str) -> Option<Arc<VideoPlayer>> {
+        let mut players = self.players.lock();
+        if let Some(p) = players.get(id) {
+            return p.clone();
+        }
+        let path = VIDEO_EXTS.iter().map(|e| self.root.join(format!("{id}.{e}"))).find(|p| p.is_file())?;
+        let player = match VideoPlayer::open(&path) {
+            Ok(p) => Some(Arc::new(p)),
+            Err(e) => {
+                log::warn!("vidéo {id} illisible: {e:#}");
+                None
+            }
+        };
+        players.insert(id.to_string(), player.clone());
+        player
+    }
+
     fn read_item(&self, id: &str) -> Option<MediaItem> {
         let raw = std::fs::read(self.root.join(format!("{id}.json"))).ok()?;
         serde_json::from_slice(&raw).ok()
@@ -181,14 +248,23 @@ impl MediaStore {
             bail!("média introuvable");
         }
         self.cache.lock().retain(|(k, _)| k != id);
+        // Le lecteur tient le fichier ouvert : l'arrêter avant de le supprimer.
+        if let Some(Some(p)) = self.players.lock().remove(id) {
+            p.shutdown();
+        }
         let _ = std::fs::remove_file(self.root.join(format!("{id}.json")));
-        for ext in EXTS {
+        for ext in EXTS.iter().chain(VIDEO_EXTS.iter()) {
             let p = self.root.join(format!("{id}.{ext}"));
             if p.exists() {
                 std::fs::remove_file(&p).with_context(|| format!("suppression de {}", p.display()))?;
             }
         }
         Ok(())
+    }
+
+    /// Vrai si le média est animé (GIF ou vidéo) : l'écran doit alors tourner à 15 i/s au moins.
+    pub fn is_animated(&self, id: &str) -> bool {
+        valid_id(id) && self.read_item(id).is_some_and(|m| matches!(m.kind, MediaKind::Gif | MediaKind::Video))
     }
 
     fn load(&self, id: &str) -> Option<Arc<Anim>> {
@@ -225,10 +301,17 @@ impl MediaStore {
         Some(anim)
     }
 
-    /// Image du média à l'instant `t_ms` (GIF bouclé selon ses délais).
+    /// Image du média à l'instant `t_ms` (GIF bouclé selon ses délais). Pour une vidéo,
+    /// `t_ms` est ignoré : le temps de lecture est celui du lecteur (partagé entre aperçu et écrans).
     pub fn frame_at(&self, id: &str, t_ms: u64) -> Option<Arc<Pixmap>> {
         if !valid_id(id) {
             return None;
+        }
+        let is_image = self.cache.lock().iter().any(|(k, _)| k == id);
+        if !is_image {
+            if let Some(p) = self.player(id) {
+                return p.frame();
+            }
         }
         let anim = self.load(id)?;
         if anim.frames.len() == 1 || anim.total_ms == 0 {
@@ -293,6 +376,41 @@ mod tests {
         assert_eq!(red(0), Some(255));
         assert_eq!(red(150), Some(0));
         assert_eq!(red(250), Some(255)); // boucle
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn video_import_play_and_delete() {
+        let dir = tmp("video");
+        let src = dir.join("mini.avi");
+        std::fs::write(&src, crate::screens::video::tests::tiny_avi()).unwrap();
+        let store = MediaStore::new(dir.join("media"));
+        let item = store.import(&src).unwrap();
+        assert_eq!((item.kind, item.width, item.height, item.frames), (MediaKind::Video, 32, 24, 0));
+        assert!(item.duration_ms > 0);
+        assert_eq!(store.import(&src).unwrap().id, item.id, "dédoublonné");
+        assert_eq!(store.list().len(), 1);
+        assert!(store.is_animated(&item.id));
+        let f = store.frame_at(&item.id, 123_456).expect("première image");
+        assert_eq!((f.width(), f.height()), (32, 24));
+        // Même lecteur pour deux demandes (partagé entre aperçu et écran).
+        assert!(Arc::ptr_eq(&store.player(&item.id).unwrap(), &store.player(&item.id).unwrap()));
+        store.delete(&item.id).unwrap();
+        assert!(store.list().is_empty());
+        assert!(store.frame_at(&item.id, 0).is_none());
+        assert!(!dir.join("media").join(format!("{}.avi", item.id)).exists(), "fichier copié supprimé");
+    }
+
+    #[test]
+    fn unreadable_video_is_refused_without_copy() {
+        let dir = tmp("badvideo");
+        let store = MediaStore::new(dir.join("media"));
+        let fake = dir.join("faux.mp4");
+        std::fs::write(&fake, b"pas une video").unwrap();
+        assert!(store.import(&fake).is_err());
+        assert!(store.list().is_empty());
+        let copies = std::fs::read_dir(dir.join("media")).map(|d| d.count()).unwrap_or(0);
+        assert_eq!(copies, 0, "rien copié");
     }
 
     #[test]
