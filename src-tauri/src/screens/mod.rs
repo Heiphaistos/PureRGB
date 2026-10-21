@@ -17,6 +17,8 @@ pub mod pipeline;
 pub mod runner;
 pub mod sim;
 pub mod video;
+pub mod ffmpeg_dec;
+pub mod ffmpeg_install;
 #[cfg(windows)]
 mod video_mf;
 pub mod state;

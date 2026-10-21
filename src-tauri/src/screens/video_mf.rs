@@ -5,7 +5,7 @@
 //! COM et MF sont initialisés par thread (`MfGuard`) : une `MfSource` vit et meurt sur
 //! le thread qui l'a ouverte.
 
-use super::video::{bgrx_to_pixmap, Decoded, FrameSource, VideoInfo, MAX_OUT, MAX_SOURCE_SIDE, MSG_CODEC};
+use super::video::{bgrx_to_pixmap, Decoded, FrameSource, VideoError, VideoInfo, MAX_OUT, MAX_SOURCE_SIDE};
 use anyhow::{anyhow, bail, Result};
 use std::os::windows::ffi::OsStrExt;
 use std::path::Path;
@@ -46,7 +46,7 @@ impl MfGuard {
                 // SAFETY: CoInitializeEx a réussi juste au-dessus.
                 unsafe { CoUninitialize() };
             }
-            bail!("Media Foundation indisponible : {e}");
+            return Err(VideoError::Codec(format!("Media Foundation indisponible : {e}")).into());
         }
         Ok(MfGuard { com })
     }
@@ -84,7 +84,7 @@ fn unpack(v: u64) -> (u32, u32) {
 }
 
 fn codec_err<E: std::fmt::Display>(e: E) -> anyhow::Error {
-    anyhow!("{MSG_CODEC} ({e})")
+    VideoError::Codec(e.to_string()).into()
 }
 
 /// Taille de sortie : celle de la source, réduite (côtés pairs) pour tenir dans `MAX_OUT`.
@@ -108,7 +108,7 @@ fn create_reader(path: &Path, advanced: bool) -> Result<IMFSourceReader> {
         attrs.SetUINT32(&key, 1).map_err(codec_err)?;
         let reader = MFCreateSourceReaderFromURL(PCWSTR(wide.as_ptr()), &attrs).map_err(codec_err)?;
         reader.SetStreamSelection(ALL, false).map_err(codec_err)?;
-        reader.SetStreamSelection(VIDEO, true).map_err(|_| anyhow!("aucune piste vidéo dans ce fichier"))?;
+        reader.SetStreamSelection(VIDEO, true).map_err(|_| anyhow::Error::from(VideoError::NoTrack))?;
         Ok(reader)
     }
 }
@@ -117,7 +117,7 @@ fn create_reader(path: &Path, advanced: bool) -> Result<IMFSourceReader> {
 fn native_info(reader: &IMFSourceReader) -> Result<(u32, u32, f32)> {
     // SAFETY: appels COM sur un lecteur valide.
     unsafe {
-        let t = reader.GetNativeMediaType(VIDEO, 0).map_err(|_| anyhow!("aucune piste vidéo dans ce fichier"))?;
+        let t = reader.GetNativeMediaType(VIDEO, 0).map_err(|_| anyhow::Error::from(VideoError::NoTrack))?;
         let (w, h) = unpack(t.GetUINT64(&MF_MT_FRAME_SIZE).map_err(codec_err)?);
         let fps = t.GetUINT64(&MF_MT_FRAME_RATE).map(unpack).ok().filter(|r| r.1 != 0).map_or(0.0, |(n, d)| n as f32 / d as f32);
         Ok((w, h, fps))
