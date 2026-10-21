@@ -389,4 +389,33 @@ mod tests {
         assert_eq!(h.len(), 64);
         assert!(h.chars().all(|c| c.is_ascii_hexdigit()));
     }
+
+    /// Réseau réel (ignoré par défaut) : télécharge la photo de chaque produit du catalogue embarqué
+    /// avec le vrai `curl.exe` et la validation complète ; `cargo test real_download -- --ignored --nocapture`.
+    #[test]
+    #[ignore]
+    fn real_download_of_the_whole_catalog() {
+        let trofeo = super::super::catalog::identify("Thermalright", "Trofeo Vision 9.16 LCD", &["0416:5408"]).expect("Trofeo identifié");
+        let dir = std::env::temp_dir().join(format!("purergb-photo-real-{}", std::process::id()));
+        let path = fetch_in(&dir, now_secs(), trofeo, &CurlHop).expect("photo du Trofeo");
+        let img = image::open(&path).expect("PNG valide");
+        eprintln!("Trofeo : {}x{} -> {}", img.width(), img.height(), path.display());
+        assert!(img.width() <= 640 && img.height() <= 640 && img.width() >= 100);
+        let mut failed = Vec::new();
+        let all = super::super::catalog::all();
+        for p in all {
+            if p.image.is_none() {
+                continue;
+            }
+            if let Err(e) = fetch_in(&dir, now_secs(), p, &CurlHop) {
+                failed.push(format!("{} : {e:#}", p.id));
+            }
+        }
+        eprintln!("{} échecs sur {} produits", failed.len(), all.len());
+        for f in &failed {
+            eprintln!("  {f}");
+        }
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(failed.len() * 10 < all.len(), "trop d'échecs : {}", failed.len());
+    }
 }

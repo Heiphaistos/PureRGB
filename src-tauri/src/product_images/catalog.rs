@@ -146,6 +146,12 @@ fn products() -> &'static [Product] {
     })
 }
 
+/// Tous les produits du catalogue embarqué (tests réseau, outils).
+#[cfg(test)]
+pub fn all() -> &'static [Product] {
+    products()
+}
+
 pub fn product_by_id(id: &str) -> Option<&'static Product> {
     products().iter().find(|p| p.id == id)
 }
