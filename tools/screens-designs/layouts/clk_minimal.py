@@ -1,31 +1,28 @@
-"""Minimal : heure fine alignee a gauche, filet, date et infos en texte seul."""
-from content import CONTENT
-from lib import Canvas
-from parts import row
-from layouts.clk_common import cells, date_line
+"""Minimal : heure fine alignee a gauche, filet, date complete et socle en texte seul."""
+from layouts.clk_common import CONTENTS, attempt, date_block, panel
 
-NAME, TITLE = "clk-minimal", "Heure minimale"
-CONTENTS = ["clk-systeme", "clk-temps", "clk-reseau"]
+NAME, TITLE = "clk-minimal", "Heure et calendrier"
+
+
+def _draw(c, ms, mode):
+    p, fmt = c.p, c.f
+    x, y, w, h = fmt.zone
+    g = fmt.short * 0.04
+    if mode == "cards":
+        return False
+    if fmt.wide:
+        tw = w * 0.5
+        c.value("time", "%H:%M", x, y, tw, h * 0.55, "88:88", p.text, align="left", pre="time")
+        date_block(c, (x, y + h * 0.62, tw, h * 0.34), align="left")
+        c.rect(x + tw + g, y + h * 0.06, 2, h * 0.88, p.acc[0], 1, pre="sep")
+        rx = x + tw + g * 3
+        panel(c, (rx, y, x + w - rx, h), ms, mode, gap=g, bar=False, card=False)
+        return
+    c.value("time", "%H:%M", x, y, w, h * 0.26, "88:88", p.text, align="left", pre="time")
+    date_block(c, (x, y + h * 0.28, w, h * 0.12), align="left")
+    c.rect(x, y + h * 0.43, w, 2, p.line, 1, pre="rule")
+    panel(c, (x, y + h * 0.47, w, h * 0.53), ms, mode, gap=g, bar=False, card=False)
 
 
 def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1]
-    x, y, w, h = fmt.zone
-    g = fmt.short * 0.04
-    if fmt.wide:
-        tw = w * 0.56
-        c.value("time", "%H:%M", x, y, tw, h * 0.7, "88:88", p.text, align="left", pre="time")
-        date_line(c, (x, y + h * 0.76, tw, h * 0.2), p.acc[0], align="left", short=not fmt.strip)
-        c.rect(x + tw + g, y + h * 0.1, 2, h * 0.8, p.acc[0], 1, pre="sep")
-        rx = x + tw + g * 3
-        n = 4 if fmt.strip else 3
-        bh = h / n
-        for i in range(n):
-            row(c, (rx, y + i * bh, x + w - rx, bh * 0.9), ms[i], i, bar=False)
-        return c.finish()
-    c.value("time", "%H:%M", x, y, w, h * 0.5, "88:88", p.text, align="left", pre="time")
-    date_line(c, (x, y + h * 0.52, w, h * 0.1), p.acc[0], align="left", short=True)
-    c.rect(x, y + h * 0.66, w, 2, p.line, 1, pre="rule")
-    cells(c, (x, y + h * 0.72, w, h * 0.28), ms[:3], gap=g, bar=False)
-    return c.finish()
+    return attempt(_draw, p, fmt, content)

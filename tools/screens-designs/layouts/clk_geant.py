@@ -1,31 +1,29 @@
-"""Heure numerique geante, date dessous, infos avec barres."""
-from content import CONTENT
-from lib import Canvas
+"""Heure numerique geante, date complete dessous, socle et extras en cartes."""
 from parts import glow
-from layouts.clk_common import cell, cells, date_line
+from layouts.clk_common import CONTENTS, attempt, date_block, panel
 
-NAME, TITLE = "clk-geant", "Heure géante"
-CONTENTS = ["clk-systeme", "clk-temps", "clk-etat"]
+NAME, TITLE = "clk-geant", "Heure et calendrier"
 
 
-def build(p, fmt, content):
-    c = Canvas(p, fmt)
-    ms = CONTENT[content][1]
+def _draw(c, ms, mode):
+    p, fmt = c.p, c.f
     x, y, w, h = fmt.zone
     g = fmt.short * 0.03
     if p.dark:
-        glow(c, x + w * 0.3, y + h * 0.4, min(w, h) * 0.4, p.acc[0])
+        glow(c, x + w * 0.3, y + h * 0.3, min(w, h) * 0.4, p.acc[0])
     if fmt.wide:
-        tw = w * (0.46 if fmt.strip else 0.56)
-        c.value("time", "%H:%M", x, y + h * 0.04, tw, h * 0.66, "88:88", p.text, bold=True, align="center", pre="time")
-        c.rect(x + tw * 0.3, y + h * 0.72, tw * 0.4, max(3, h * 0.015), p.acc[0], 2, pre="rule")
-        date_line(c, (x, y + h * 0.78, tw, h * 0.18))
-        k = 4 if fmt.strip else 3
+        tw = w * (0.44 if fmt.strip else 0.5)
+        c.value("time", "%H:%M", x, y + h * 0.02, tw, h * 0.58, "88:88", p.text, bold=True, align="center", pre="time")
+        c.rect(x + tw * 0.3, y + h * 0.63, tw * 0.4, max(3, h * 0.015), p.acc[0], 2, pre="rule")
+        date_block(c, (x, y + h * 0.68, tw, h * 0.3))
         rx = x + tw + g * 2
-        cells(c, (rx, y, x + w - rx, h), ms[:k], horizontal=fmt.strip, gap=g, card=True)
-        return c.finish()
-    c.value("time", "%H:%M", x, y, w, h * 0.44, "88:88", p.text, bold=True, align="center", pre="time")
-    c.rect(x + w * 0.36, y + h * 0.46, w * 0.28, max(3, h * 0.012), p.acc[0], 2, pre="rule")
-    date_line(c, (x, y + h * 0.49, w, h * 0.1))
-    cells(c, (x, y + h * 0.66, w, h * 0.34), ms[:3], gap=g, card=True)
-    return c.finish()
+        panel(c, (rx, y, x + w - rx, h), ms, mode, gap=g)
+        return
+    c.value("time", "%H:%M", x, y, w, h * 0.32, "88:88", p.text, bold=True, align="center", pre="time")
+    c.rect(x + w * 0.36, y + h * 0.34, w * 0.28, max(3, h * 0.012), p.acc[0], 2, pre="rule")
+    date_block(c, (x, y + h * 0.37, w, h * 0.12))
+    panel(c, (x, y + h * 0.52, w, h * 0.48), ms, mode, gap=g)
+
+
+def build(p, fmt, content):
+    return attempt(_draw, p, fmt, content)
