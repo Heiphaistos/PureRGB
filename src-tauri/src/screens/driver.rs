@@ -33,6 +33,8 @@ pub enum Protocol {
     TuringSerial,
     CorsairLcd,
     DeepcoolLm,
+    AsusRyujin,
+    ThermaltakeLcd,
     Simulated,
 }
 
