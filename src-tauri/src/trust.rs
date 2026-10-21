@@ -8,14 +8,19 @@
 use anyhow::{bail, Context, Result};
 use sha2::{Digest, Sha256};
 use std::path::{Component, Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 /// Seuls hôtes/préfixes depuis lesquels un binaire peut être téléchargé.
 const ALLOWED_URL_PREFIXES: &[&str] = &[
     "https://codeberg.org/OpenRGB/OpenRGB/releases/download/",
     "https://github.com/namazso/PawnIO.Setup/releases/download/",
     "https://github.com/Heiphaistos/PureRGB/releases/download/",
+    "https://github.com/GyanD/codexffmpeg/releases/download/",
 ];
+
+/// Hôtes où une redirection GitHub (releases) peut légitimement aboutir.
+pub const GITHUB_REDIRECT_HOSTS: &[&str] =
+    &["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"];
 
 const PF_VARS: [&str; 3] = ["ProgramFiles", "ProgramW6432", "ProgramFiles(x86)"];
 
@@ -87,25 +92,78 @@ pub fn verify_sha256(path: &Path, expected: &str) -> Result<()> {
     Ok(())
 }
 
+/// Limites d'un téléchargement épinglé.
+pub struct DlLimits<'a> {
+    pub max_bytes: u64,
+    pub max_secs: u32,
+    /// Si présent : l'URL finale (après redirections) doit être https sur l'un de ces hôtes.
+    pub redirect_hosts: Option<&'a [&'a str]>,
+}
+
+/// Hôte d'une URL https (`None` si ce n'est pas une URL https simple).
+pub fn https_host(url: &str) -> Option<&str> {
+    let rest = url.strip_prefix("https://")?;
+    let host = rest.split(['/', '?', '#']).next()?;
+    (!host.is_empty() && !host.contains(['@', ':', '\\'])).then_some(host)
+}
+
 /// Télécharge `url` (liste blanche) vers `dest`, vérifie le SHA-256 puis
 /// renomme : `dest` n'existe jamais avec un contenu non vérifié. Client :
 /// curl.exe (arguments, aucun shell, https uniquement même après redirection).
 pub fn download_verified(url: &str, sha256: &str, dest: &Path) -> Result<()> {
+    download_pinned(url, sha256, dest, &DlLimits { max_bytes: 512 << 20, max_secs: 180, redirect_hosts: None }, &|_| {})
+}
+
+/// Comme `download_verified`, avec taille/durée maximales, hôtes de redirection autorisés et
+/// progression (`progress(octets reçus)`, appelée ~4 fois par seconde).
+pub fn download_pinned(url: &str, sha256: &str, dest: &Path, lim: &DlLimits, progress: &dyn Fn(u64)) -> Result<()> {
     validate_url(url)?;
     let tmp = dest.with_extension("download");
     let mut cmd = Command::new("curl.exe");
-    cmd.args(["-sSfL", "--proto", "=https", "--proto-redir", "=https", "--max-time", "180", "-o"])
+    cmd.args(["-sSfL", "--proto", "=https", "--proto-redir", "=https", "--max-time"])
+        .arg(lim.max_secs.to_string())
+        .arg("--max-filesize")
+        .arg(lim.max_bytes.to_string())
+        .args(["-w", "%{url_effective}", "-o"])
         .arg(&tmp)
-        .arg(url);
+        .arg(url)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
         cmd.creation_flags(0x0800_0000);
     }
-    let out = cmd.output().context("lancement de curl.exe")?;
-    if !out.status.success() {
+    let fail = |e: anyhow::Error| {
         let _ = std::fs::remove_file(&tmp);
-        bail!("téléchargement échoué : {}", String::from_utf8_lossy(&out.stderr).trim());
+        e
+    };
+    let mut child = cmd.spawn().context("lancement de curl.exe")?;
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(st)) => break st,
+            Ok(None) => {
+                progress(std::fs::metadata(&tmp).map_or(0, |m| m.len()));
+                std::thread::sleep(std::time::Duration::from_millis(250));
+            }
+            Err(e) => {
+                let _ = child.kill();
+                return Err(fail(anyhow::Error::new(e).context("attente de curl.exe")));
+            }
+        }
+    };
+    let out = child.wait_with_output().context("sortie de curl.exe")?;
+    if !status.success() {
+        return Err(fail(anyhow::anyhow!("téléchargement échoué : {}", String::from_utf8_lossy(&out.stderr).trim())));
+    }
+    if let Some(hosts) = lim.redirect_hosts {
+        let fin = String::from_utf8_lossy(&out.stdout);
+        if !https_host(fin.trim()).is_some_and(|h| hosts.contains(&h)) {
+            return Err(fail(anyhow::anyhow!("redirection refusée vers un hôte hors liste blanche : {}", fin.trim())));
+        }
+    }
+    if std::fs::metadata(&tmp).map_or(0, |m| m.len()) > lim.max_bytes {
+        return Err(fail(anyhow::anyhow!("fichier téléchargé trop gros")));
     }
     verify_sha256(&tmp, sha256)?;
     let _ = std::fs::remove_file(dest);
@@ -146,6 +204,15 @@ mod tests {
         assert!(!is_under(Path::new(r"C:\Users\x\AppData\Local\PureRGB\purergb.exe"), &roots));
         assert!(!is_under(Path::new(r"C:\Program Files Evil\a.exe"), &roots));
         assert!(!is_under(Path::new(r"C:\Program Files\..\Users\a.exe"), &roots));
+    }
+
+    #[test]
+    fn redirect_hosts() {
+        assert_eq!(https_host("https://release-assets.githubusercontent.com/a/b?x=1"), Some("release-assets.githubusercontent.com"));
+        for bad in ["http://github.com/x", "https://github.com@evil.com/x", "https://github.com:8443/x", "ftp://github.com/x", "https:///x"] {
+            assert_eq!(https_host(bad), None, "{bad}");
+        }
+        assert!(validate_url("https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip").is_ok());
     }
 
     #[test]
