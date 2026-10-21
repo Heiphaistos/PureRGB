@@ -90,6 +90,12 @@ export type Protocol =
   | "thermalright_bulk"
   | "thermalright_ly"
   | "turing_serial"
+  | "corsair_lcd"
+  | "deepcool_lm"
+  | "asus_ryujin"
+  | "thermaltake_lcd"
+  | "lian_li_hid"
+  | "turzx_usb"
   | "simulated";
 
 export interface ScreenInfo {

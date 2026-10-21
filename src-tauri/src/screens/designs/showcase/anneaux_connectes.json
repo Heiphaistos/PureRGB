@@ -1,14 +1,280 @@
-{"version":1,"name":"Anneaux connectés","width":480,"height":480,"background":{"kind":"gradient","from":"#05060d","to":"#0d1226","angle":90},"widgets":[{"id":"w1","x":60.0,"y":30.0,"w":360,"h":360,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":22,"track":"#2a1410","colors":[[0.0,"#ff5a36"],[1.0,"#ffb347"]]},
-{"id":"w2","x":92.0,"y":62.0,"w":296,"h":296,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":22,"track":"#0f2a22","colors":[[0.0,"#2ee6a6"],[1.0,"#9dff6b"]]},
-{"id":"w3","x":124.0,"y":94.0,"w":232,"h":232,"type":"gauge_arc","source":"ram.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":22,"track":"#10223a","colors":[[0.0,"#38bdf8"],[1.0,"#7c5cff"]]},
-{"id":"w4","x":156.0,"y":126.0,"w":168,"h":168,"type":"gauge_arc","source":"ssd.1.used_pct","min":0,"max":100,"start_deg":135,"sweep_deg":270,"thickness":22,"track":"#2a1030","colors":[[0.0,"#ff4fd8"],[1.0,"#ffa0f0"]]},
-{"id":"w5","x":170,"y":187.1,"w":140,"h":56,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":58,"color":"#ffffff","align":"center","bold":true}},
-{"id":"w6","x":170,"y":231.3,"w":140,"h":24,"type":"value","source":"date","format":"%d %b","style":{"font":"Inter","size":20,"color":"#9aa4d0","align":"center","bold":false}},
-{"id":"w7","x":60,"y":400.9,"w":90,"h":18,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":15,"color":"#8890b8","align":"center","bold":true}},
-{"id":"w8","x":60,"y":423.9,"w":90,"h":32,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":30,"color":"#ffb347","align":"center","bold":true}},
-{"id":"w9","x":150,"y":400.9,"w":90,"h":18,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":15,"color":"#8890b8","align":"center","bold":true}},
-{"id":"w10","x":150,"y":423.9,"w":90,"h":32,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":30,"color":"#9dff6b","align":"center","bold":true}},
-{"id":"w11","x":240,"y":400.9,"w":90,"h":18,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":15,"color":"#8890b8","align":"center","bold":true}},
-{"id":"w12","x":240,"y":423.9,"w":90,"h":32,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":30,"color":"#7cc8ff","align":"center","bold":true}},
-{"id":"w13","x":330,"y":400.9,"w":90,"h":18,"type":"text","text":"SSD","style":{"font":"Rajdhani","size":15,"color":"#8890b8","align":"center","bold":true}},
-{"id":"w14","x":330,"y":423.9,"w":90,"h":32,"type":"value","source":"ssd.1.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":30,"color":"#ff8aea","align":"center","bold":true}}]}
+{
+ "version": 1,
+ "name": "Anneaux connectés",
+ "width": 480,
+ "height": 480,
+ "background": {
+  "kind": "gradient",
+  "from": "#05060d",
+  "to": "#0d1226",
+  "angle": 90
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 60.0,
+   "y": 30.0,
+   "w": 360,
+   "h": 360,
+   "type": "gauge_arc",
+   "source": "cpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 22,
+   "track": "#2a1410",
+   "colors": [
+    [
+     0.0,
+     "#ff5a36"
+    ],
+    [
+     1.0,
+     "#ffb347"
+    ]
+   ]
+  },
+  {
+   "id": "w2",
+   "x": 92.0,
+   "y": 62.0,
+   "w": 296,
+   "h": 296,
+   "type": "gauge_arc",
+   "source": "gpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 22,
+   "track": "#0f2a22",
+   "colors": [
+    [
+     0.0,
+     "#2ee6a6"
+    ],
+    [
+     1.0,
+     "#9dff6b"
+    ]
+   ]
+  },
+  {
+   "id": "w3",
+   "x": 124.0,
+   "y": 94.0,
+   "w": 232,
+   "h": 232,
+   "type": "gauge_arc",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 22,
+   "track": "#10223a",
+   "colors": [
+    [
+     0.0,
+     "#38bdf8"
+    ],
+    [
+     1.0,
+     "#7c5cff"
+    ]
+   ]
+  },
+  {
+   "id": "w4",
+   "x": 156.0,
+   "y": 126.0,
+   "w": 168,
+   "h": 168,
+   "type": "gauge_arc",
+   "source": "ssd.1.used_pct",
+   "min": 0,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 22,
+   "track": "#2a1030",
+   "colors": [
+    [
+     0.0,
+     "#ff4fd8"
+    ],
+    [
+     1.0,
+     "#ffa0f0"
+    ]
+   ]
+  },
+  {
+   "id": "w5",
+   "x": 170,
+   "y": 168.2,
+   "w": 140,
+   "h": 56,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 58,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w6",
+   "x": 170,
+   "y": 224.0,
+   "w": 140,
+   "h": 24,
+   "type": "value",
+   "source": "date",
+   "format": "%d %b",
+   "style": {
+    "font": "Inter",
+    "size": 20,
+    "color": "#9aa4d0",
+    "align": "center",
+    "bold": false
+   }
+  },
+  {
+   "id": "w7",
+   "x": 60,
+   "y": 396.0,
+   "w": 90,
+   "h": 18,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 15,
+    "color": "#8890b8",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w8",
+   "x": 60,
+   "y": 414.1,
+   "w": 90,
+   "h": 32,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#ffb347",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w9",
+   "x": 150,
+   "y": 396.0,
+   "w": 90,
+   "h": 18,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 15,
+    "color": "#8890b8",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w10",
+   "x": 150,
+   "y": 414.1,
+   "w": 90,
+   "h": 32,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#9dff6b",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w11",
+   "x": 240,
+   "y": 396.0,
+   "w": 90,
+   "h": 18,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 15,
+    "color": "#8890b8",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w12",
+   "x": 240,
+   "y": 414.1,
+   "w": 90,
+   "h": 32,
+   "type": "value",
+   "source": "ram.used_pct",
+   "format": "{:.0}%",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#7cc8ff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w13",
+   "x": 330,
+   "y": 396.0,
+   "w": 90,
+   "h": 18,
+   "type": "text",
+   "text": "SSD",
+   "style": {
+    "font": "Rajdhani",
+    "size": 15,
+    "color": "#8890b8",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w14",
+   "x": 330,
+   "y": 414.1,
+   "w": 90,
+   "h": 32,
+   "type": "value",
+   "source": "ssd.1.used_pct",
+   "format": "{:.0}%",
+   "style": {
+    "font": "Rajdhani",
+    "size": 30,
+    "color": "#ff8aea",
+    "align": "center",
+    "bold": true
+   }
+  }
+ ]
+}

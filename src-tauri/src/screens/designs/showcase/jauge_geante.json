@@ -1,8 +1,159 @@
-{"version":1,"name":"Jauge géante","width":480,"height":480,"background":{"kind":"gradient","from":"#14070a","to":"#2b0f12","angle":90},"widgets":[{"id":"w1","x":40,"y":34,"w":400,"h":400,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":44,"track":"#3a1a1c","colors":[[0.0,"#ffd23f"],[0.5,"#ff7a1a"],[1.0,"#ff2e4d"]]},
-{"id":"w2","x":80,"y":199.5,"w":320,"h":150,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":150,"color":"#ffffff","align":"center","bold":true}},
-{"id":"w3","x":140,"y":108.6,"w":200,"h":34,"type":"text","text":"PROCESSEUR","style":{"font":"Rajdhani","size":26,"color":"#f0b8a0","align":"center","bold":true}},
-{"id":"w4","x":140,"y":310.9,"w":200,"h":44,"type":"value","source":"cpu.load","format":"{:.0} % charge","style":{"font":"Inter","size":30,"color":"#ffd9c4","align":"center","bold":false}},
-{"id":"w5","x":150,"y":391.9,"w":80,"h":22,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":18,"color":"#c98f80","align":"center","bold":true}},
-{"id":"w6","x":250,"y":391.9,"w":80,"h":22,"type":"text","text":"RAM","style":{"font":"Rajdhani","size":18,"color":"#c98f80","align":"center","bold":true}},
-{"id":"w7","x":140,"y":414.6,"w":100,"h":36,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":32,"color":"#ffb36b","align":"center","bold":true}},
-{"id":"w8","x":240,"y":414.6,"w":100,"h":36,"type":"value","source":"ram.used_pct","format":"{:.0}%","style":{"font":"Rajdhani","size":32,"color":"#ffb36b","align":"center","bold":true}}]}
+{
+ "version": 1,
+ "name": "Jauge géante",
+ "width": 480,
+ "height": 480,
+ "background": {
+  "kind": "gradient",
+  "from": "#14070a",
+  "to": "#2b0f12",
+  "angle": 90
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 40,
+   "y": 34,
+   "w": 400,
+   "h": 400,
+   "type": "gauge_arc",
+   "source": "cpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 44,
+   "track": "#3a1a1c",
+   "colors": [
+    [
+     0.0,
+     "#ffd23f"
+    ],
+    [
+     0.5,
+     "#ff7a1a"
+    ],
+    [
+     1.0,
+     "#ff2e4d"
+    ]
+   ]
+  },
+  {
+   "id": "w2",
+   "x": 80,
+   "y": 150.8,
+   "w": 320,
+   "h": 150,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 150,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w3",
+   "x": 140,
+   "y": 100.1,
+   "w": 200,
+   "h": 34,
+   "type": "text",
+   "text": "PROCESSEUR",
+   "style": {
+    "font": "Rajdhani",
+    "size": 26,
+    "color": "#f0b8a0",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w4",
+   "x": 140,
+   "y": 299.9,
+   "w": 200,
+   "h": 44,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} % charge",
+   "style": {
+    "font": "Inter",
+    "size": 30,
+    "color": "#ffd9c4",
+    "align": "center",
+    "bold": false
+   }
+  },
+  {
+   "id": "w5",
+   "x": 150,
+   "y": 386.0,
+   "w": 80,
+   "h": 22,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 18,
+    "color": "#c98f80",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w6",
+   "x": 250,
+   "y": 386.0,
+   "w": 80,
+   "h": 22,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 18,
+    "color": "#c98f80",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w7",
+   "x": 140,
+   "y": 404.2,
+   "w": 100,
+   "h": 36,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffb36b",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w8",
+   "x": 240,
+   "y": 404.2,
+   "w": 100,
+   "h": 36,
+   "type": "value",
+   "source": "ram.used_pct",
+   "format": "{:.0}%",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffb36b",
+    "align": "center",
+    "bold": true
+   }
+  }
+ ]
+}

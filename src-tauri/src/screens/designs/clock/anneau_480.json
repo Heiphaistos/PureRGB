@@ -1,9 +1,151 @@
-{"version": 1, "name": "Horloge anneaux", "width": 480, "height": 480, "background": {"kind": "gradient", "from": "#05080f", "to": "#0e1d2e", "angle": 90},"widgets":[
-  {"id": "anneau-cpu", "x": 40, "y": 40, "w": 400, "h": 400, "type": "gauge_arc", "source": "cpu.load", "min": 0, "max": 100, "start_deg": 135, "sweep_deg": 270, "thickness": 16, "track": "#16263a", "colors": [[0.0, "#22d3ee"], [0.5, "#a78bfa"], [1.0, "#f472b6"]]},
-  {"id": "anneau-gpu", "x": 66, "y": 66, "w": 348, "h": 348, "type": "gauge_arc", "source": "gpu.load", "min": 0, "max": 100, "start_deg": 135, "sweep_deg": 270, "thickness": 8, "track": "#16263a", "colors": [[0.0, "#34d399"], [0.5, "#facc15"], [1.0, "#fb7185"]]},
-  {"id": "horloge", "x": 120, "y": 120, "w": 240, "h": 240, "type": "analog_clock", "face": "#0b1626", "hands": "#e6f0ff", "accent": "#22d3ee"},
-  {"id": "heure", "x": 150, "y": 397.0, "w": 180, "h": 38, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Rajdhani", "size": 40, "color": "#ffffff", "align": "center", "bold": true}},
-  {"id": "date", "x": 120, "y": 426.6, "w": 240, "h": 22, "type": "value", "source": "date", "format": "%a %d %b", "style": {"font": "Inter", "size": 18, "color": "#8fa6c4", "align": "center", "bold": false}},
-  {"id": "cpu", "x": 46, "y": 402.6, "w": 110, "h": 28, "type": "value", "source": "cpu.load", "format": "CPU {:.0}%", "style": {"font": "Inter", "size": 18, "color": "#22d3ee", "align": "left", "bold": true}},
-  {"id": "gpu", "x": 324, "y": 402.6, "w": 110, "h": 28, "type": "value", "source": "gpu.load", "format": "GPU {:.0}%", "style": {"font": "Inter", "size": 18, "color": "#34d399", "align": "right", "bold": true}}
- ]}
+{
+ "version": 1,
+ "name": "Horloge anneaux",
+ "width": 480,
+ "height": 480,
+ "background": {
+  "kind": "gradient",
+  "from": "#05080f",
+  "to": "#0e1d2e",
+  "angle": 90
+ },
+ "widgets": [
+  {
+   "id": "anneau-cpu",
+   "x": 40,
+   "y": 40,
+   "w": 400,
+   "h": 400,
+   "type": "gauge_arc",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 16,
+   "track": "#16263a",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.5,
+     "#a78bfa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ]
+  },
+  {
+   "id": "anneau-gpu",
+   "x": 66,
+   "y": 66,
+   "w": 348,
+   "h": 348,
+   "type": "gauge_arc",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 8,
+   "track": "#16263a",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.5,
+     "#facc15"
+    ],
+    [
+     1.0,
+     "#fb7185"
+    ]
+   ]
+  },
+  {
+   "id": "horloge",
+   "x": 120,
+   "y": 120,
+   "w": 240,
+   "h": 240,
+   "type": "analog_clock",
+   "face": "#0b1626",
+   "hands": "#e6f0ff",
+   "accent": "#22d3ee"
+  },
+  {
+   "id": "heure",
+   "x": 150,
+   "y": 384.0,
+   "w": 180,
+   "h": 38,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 40,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "date",
+   "x": 120,
+   "y": 420.0,
+   "w": 240,
+   "h": 22,
+   "type": "value",
+   "source": "date",
+   "format": "%a %d %b",
+   "style": {
+    "font": "Inter",
+    "size": 18,
+    "color": "#8fa6c4",
+    "align": "center",
+    "bold": false
+   }
+  },
+  {
+   "id": "cpu",
+   "x": 46,
+   "y": 396.0,
+   "w": 110,
+   "h": 28,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "CPU {:.0}%",
+   "style": {
+    "font": "Inter",
+    "size": 18,
+    "color": "#22d3ee",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "gpu",
+   "x": 324,
+   "y": 396.0,
+   "w": 110,
+   "h": 28,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "GPU {:.0}%",
+   "style": {
+    "font": "Inter",
+    "size": 18,
+    "color": "#34d399",
+    "align": "right",
+    "bold": true
+   }
+  }
+ ]
+}

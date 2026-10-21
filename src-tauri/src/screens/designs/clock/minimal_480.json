@@ -1,7 +1,92 @@
-{"version": 1, "name": "Horloge minimale", "width": 480, "height": 480, "background": {"kind": "solid", "color": "#f5f1e8"},"widgets":[
-  {"id": "heure", "x": 48, "y": 172.9, "w": 384, "h": 180, "type": "value", "source": "time", "format": "%H:%M", "style": {"font": "Inter", "size": 190, "color": "#14110f", "align": "center", "bold": true}},
-  {"id": "accent", "x": 208, "y": 316, "w": 64, "h": 6, "type": "rect", "fill": "#e4572e", "stroke": null, "stroke_width": 0, "radius": 3},
-  {"id": "date", "x": 48, "y": 348.2, "w": 384, "h": 36, "type": "value", "source": "date", "format": "%A %d %B", "style": {"font": "Inter", "size": 28, "color": "#4a443c", "align": "center", "bold": false}},
-  {"id": "cpu", "x": 48, "y": 391.3, "w": 192, "h": 28, "type": "value", "source": "cpu.temp", "format": "CPU {:.0}°", "style": {"font": "Inter", "size": 20, "color": "#7a7266", "align": "center", "bold": false}},
-  {"id": "gpu", "x": 240, "y": 391.3, "w": 192, "h": 28, "type": "value", "source": "gpu.temp", "format": "GPU {:.0}°", "style": {"font": "Inter", "size": 20, "color": "#7a7266", "align": "center", "bold": false}}
- ]}
+{
+ "version": 1,
+ "name": "Horloge minimale",
+ "width": 480,
+ "height": 480,
+ "background": {
+  "kind": "solid",
+  "color": "#f5f1e8"
+ },
+ "widgets": [
+  {
+   "id": "heure",
+   "x": 48,
+   "y": 103.6,
+   "w": 384,
+   "h": 180,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Inter",
+    "size": 190,
+    "color": "#14110f",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "accent",
+   "x": 208,
+   "y": 316,
+   "w": 64,
+   "h": 6,
+   "type": "rect",
+   "fill": "#e4572e",
+   "stroke": null,
+   "stroke_width": 0,
+   "radius": 3
+  },
+  {
+   "id": "date",
+   "x": 48,
+   "y": 338.0,
+   "w": 384,
+   "h": 36,
+   "type": "value",
+   "source": "date",
+   "format": "%A %d %B",
+   "style": {
+    "font": "Inter",
+    "size": 28,
+    "color": "#4a443c",
+    "align": "center",
+    "bold": false
+   }
+  },
+  {
+   "id": "cpu",
+   "x": 48,
+   "y": 384.0,
+   "w": 192,
+   "h": 28,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "CPU {:.0}°",
+   "style": {
+    "font": "Inter",
+    "size": 20,
+    "color": "#7a7266",
+    "align": "center",
+    "bold": false
+   }
+  },
+  {
+   "id": "gpu",
+   "x": 240,
+   "y": 384.0,
+   "w": 192,
+   "h": 28,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "GPU {:.0}°",
+   "style": {
+    "font": "Inter",
+    "size": 20,
+    "color": "#7a7266",
+    "align": "center",
+    "bold": false
+   }
+  }
+ ]
+}

@@ -35,6 +35,8 @@ pub enum Protocol {
     DeepcoolLm,
     AsusRyujin,
     ThermaltakeLcd,
+    LianLiHid,
+    TurzxUsb,
     Simulated,
 }
 

@@ -19,6 +19,12 @@ const PROTOCOLS: Record<string, string> = {
   thermalright_bulk: "Thermalright Bulk",
   thermalright_ly: "Thermalright LY",
   turing_serial: "Turing (série)",
+  corsair_lcd: "Corsair iCUE LINK",
+  deepcool_lm: "DeepCool LM",
+  asus_ryujin: "ASUS Ryujin",
+  thermaltake_lcd: "Thermaltake",
+  lian_li_hid: "Lian Li",
+  turzx_usb: "TURZX / Lian Li USB",
   simulated: "Simulé",
 };
 

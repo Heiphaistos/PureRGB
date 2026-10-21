@@ -1,5 +1,87 @@
-{"version":1,"name":"Minimal anneau","width":480,"height":480,"background":{"kind":"solid","color":"#000000"},"widgets":[
-{"id":"arc","x":50,"y":50,"w":380,"h":380,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":8,"track":"#1d1d22","colors":[[0,"#ffffff"],[1,"#e8c547"]]},
-{"id":"temp","x":110,"y":216,"w":260,"h":130,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":140,"color":"#ffffff","align":"center","bold":true}},
-{"id":"lab","x":140,"y":322,"w":200,"h":30,"type":"text","text":"CPU","style":{"font":"Inter","size":24,"color":"#8a8a93","align":"center","bold":true}},
-{"id":"ld","x":140,"y":355,"w":200,"h":36,"type":"value","source":"cpu.load","format":"{:.0} %","style":{"font":"Inter","size":28,"color":"#e8c547","align":"center","bold":false}}]}
+{
+ "version": 1,
+ "name": "Minimal anneau",
+ "width": 480,
+ "height": 480,
+ "background": {
+  "kind": "solid",
+  "color": "#000000"
+ },
+ "widgets": [
+  {
+   "id": "arc",
+   "x": 50,
+   "y": 50,
+   "w": 380,
+   "h": 380,
+   "type": "gauge_arc",
+   "source": "cpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 8,
+   "track": "#1d1d22",
+   "colors": [
+    [
+     0,
+     "#ffffff"
+    ],
+    [
+     1,
+     "#e8c547"
+    ]
+   ]
+  },
+  {
+   "id": "temp",
+   "x": 110,
+   "y": 170.5,
+   "w": 260,
+   "h": 130,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 140,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "lab",
+   "x": 140,
+   "y": 313.2,
+   "w": 200,
+   "h": 30,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Inter",
+    "size": 24,
+    "color": "#8a8a93",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "ld",
+   "x": 140,
+   "y": 344.8,
+   "w": 200,
+   "h": 36,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Inter",
+    "size": 28,
+    "color": "#e8c547",
+    "align": "center",
+    "bold": false
+   }
+  }
+ ]
+}

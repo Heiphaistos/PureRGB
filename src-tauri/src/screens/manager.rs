@@ -4,7 +4,8 @@ use super::bindings::ValueStore;
 use super::designs::DesignStore;
 use super::driver::{ScreenDriver, ScreenInfo, ScreenProvider};
 use super::drivers::{
-    thermalright_bulk::BulkProvider, thermalright_hid::HidProvider, thermalright_ly::LyProvider,
+    asus_ryujin::RyujinProvider, lianli_hid::LianLiHidProvider, turzx_usb::TurzxUsbProvider, corsair_lcd::CorsairProvider, deepcool_lm::DeepcoolLmProvider,
+    thermaltake_lcd::ThermaltakeProvider, thermalright_bulk::BulkProvider, thermalright_hid::HidProvider, thermalright_ly::LyProvider,
     thermalright_scsi::ScsiProvider, turing_serial::TuringProvider,
 };
 use super::layout::Layout;
@@ -53,6 +54,12 @@ fn providers(with_sim: bool) -> Vec<Box<dyn ScreenProvider>> {
         Box::new(BulkProvider),
         Box::new(LyProvider),
         Box::new(TuringProvider::default()),
+        Box::new(CorsairProvider::default()),
+        Box::new(DeepcoolLmProvider),
+        Box::new(RyujinProvider),
+        Box::new(ThermaltakeProvider),
+        Box::new(LianLiHidProvider),
+        Box::new(TurzxUsbProvider),
     ];
     if with_sim {
         v.push(Box::new(SimProvider));

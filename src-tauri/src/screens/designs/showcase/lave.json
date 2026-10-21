@@ -1,21 +1,421 @@
-{"version":1,"name":"Lave","width":1920,"height":462,"background":{"kind":"gradient","from":"#120303","to":"#3a0a04","angle":0},"widgets":[{"id":"w1","x":70,"y":40,"w":600,"h":382,"type":"rect","fill":"#00000066","stroke":"#ff6a1a","stroke_width":3,"radius":40},
-{"id":"w2","x":100,"y":67.2,"w":200,"h":40,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":34,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w3","x":100,"y":175.9,"w":540,"h":230,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":230,"color":"#ffe9b0","align":"center","bold":true}},
-{"id":"w4","x":110,"y":350,"w":520,"h":34,"type":"bar","source":"cpu.temp","min":20,"max":100,"vertical":false,"radius":17,"track":"#3a1208","colors":[[0.0,"#ffd23f"],[0.5,"#ff7a1a"],[1.0,"#ff1e1e"]]},
-{"id":"w5","x":1250,"y":40,"w":600,"h":382,"type":"rect","fill":"#00000066","stroke":"#ff6a1a","stroke_width":3,"radius":40},
-{"id":"w6","x":1280,"y":67.2,"w":200,"h":40,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":34,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w7","x":1280,"y":175.9,"w":540,"h":230,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":230,"color":"#ffd0a0","align":"center","bold":true}},
-{"id":"w8","x":1290,"y":350,"w":520,"h":34,"type":"bar","source":"gpu.temp","min":20,"max":100,"vertical":false,"radius":17,"track":"#3a1208","colors":[[0.0,"#ffd23f"],[0.5,"#ff7a1a"],[1.0,"#ff1e1e"]]},
-{"id":"w9","x":700,"y":53.3,"w":300,"h":26,"type":"text","text":"CHARGE CPU","style":{"font":"Rajdhani","size":22,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w10","x":1010,"y":50.6,"w":170,"h":38,"type":"value","source":"cpu.load","format":"{:.0} %","style":{"font":"Rajdhani","size":32,"color":"#ffffff","align":"right","bold":true}},
-{"id":"w11","x":700,"y":80,"w":480,"h":26,"type":"bar","source":"cpu.load","min":0,"max":100,"vertical":false,"radius":13,"track":"#3a1208","colors":[[0.0,"#ff9a1f"],[0.5,"#ff3a1a"],[1.0,"#ff0a3c"]]},
-{"id":"w12","x":700,"y":137.3,"w":300,"h":26,"type":"text","text":"CHARGE GPU","style":{"font":"Rajdhani","size":22,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w13","x":1010,"y":134.6,"w":170,"h":38,"type":"value","source":"gpu.load","format":"{:.0} %","style":{"font":"Rajdhani","size":32,"color":"#ffffff","align":"right","bold":true}},
-{"id":"w14","x":700,"y":164,"w":480,"h":26,"type":"bar","source":"gpu.load","min":0,"max":100,"vertical":false,"radius":13,"track":"#3a1208","colors":[[0.0,"#ff9a1f"],[0.5,"#ff3a1a"],[1.0,"#ff0a3c"]]},
-{"id":"w15","x":700,"y":221.3,"w":300,"h":26,"type":"text","text":"MÉMOIRE","style":{"font":"Rajdhani","size":22,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w16","x":1010,"y":218.6,"w":170,"h":38,"type":"value","source":"ram.used_pct","format":"{:.0} %","style":{"font":"Rajdhani","size":32,"color":"#ffffff","align":"right","bold":true}},
-{"id":"w17","x":700,"y":248,"w":480,"h":26,"type":"bar","source":"ram.used_pct","min":0,"max":100,"vertical":false,"radius":13,"track":"#3a1208","colors":[[0.0,"#ff9a1f"],[0.5,"#ff3a1a"],[1.0,"#ff0a3c"]]},
-{"id":"w18","x":700,"y":305.3,"w":300,"h":26,"type":"text","text":"VRAM","style":{"font":"Rajdhani","size":22,"color":"#ffb27a","align":"left","bold":true}},
-{"id":"w19","x":1010,"y":302.6,"w":170,"h":38,"type":"value","source":"gpu.vram_used_pct","format":"{:.0} %","style":{"font":"Rajdhani","size":32,"color":"#ffffff","align":"right","bold":true}},
-{"id":"w20","x":700,"y":332,"w":480,"h":26,"type":"bar","source":"gpu.vram_used_pct","min":0,"max":100,"vertical":false,"radius":13,"track":"#3a1208","colors":[[0.0,"#ff9a1f"],[0.5,"#ff3a1a"],[1.0,"#ff0a3c"]]},
-{"id":"w21","x":700,"y":397.2,"w":480,"h":36,"type":"value","source":"time","format":"%H:%M  -  %d %B","style":{"font":"Rajdhani","size":28,"color":"#ffd9b0","align":"center","bold":true}}]}
+{
+ "version": 1,
+ "name": "Lave",
+ "width": 1920,
+ "height": 462,
+ "background": {
+  "kind": "gradient",
+  "from": "#120303",
+  "to": "#3a0a04",
+  "angle": 0
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 70,
+   "y": 40,
+   "w": 600,
+   "h": 382,
+   "type": "rect",
+   "fill": "#00000066",
+   "stroke": "#ff6a1a",
+   "stroke_width": 3,
+   "radius": 40
+  },
+  {
+   "id": "w2",
+   "x": 100,
+   "y": 56.2,
+   "w": 200,
+   "h": 40,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 34,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w3",
+   "x": 100,
+   "y": 101.2,
+   "w": 540,
+   "h": 230,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 230,
+    "color": "#ffe9b0",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w4",
+   "x": 110,
+   "y": 350,
+   "w": 520,
+   "h": 34,
+   "type": "bar",
+   "source": "cpu.temp",
+   "min": 20,
+   "max": 100,
+   "vertical": false,
+   "radius": 17,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ffd23f"
+    ],
+    [
+     0.5,
+     "#ff7a1a"
+    ],
+    [
+     1.0,
+     "#ff1e1e"
+    ]
+   ]
+  },
+  {
+   "id": "w5",
+   "x": 1250,
+   "y": 40,
+   "w": 600,
+   "h": 382,
+   "type": "rect",
+   "fill": "#00000066",
+   "stroke": "#ff6a1a",
+   "stroke_width": 3,
+   "radius": 40
+  },
+  {
+   "id": "w6",
+   "x": 1280,
+   "y": 56.2,
+   "w": 200,
+   "h": 40,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 34,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w7",
+   "x": 1280,
+   "y": 101.2,
+   "w": 540,
+   "h": 230,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 230,
+    "color": "#ffd0a0",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w8",
+   "x": 1290,
+   "y": 350,
+   "w": 520,
+   "h": 34,
+   "type": "bar",
+   "source": "gpu.temp",
+   "min": 20,
+   "max": 100,
+   "vertical": false,
+   "radius": 17,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ffd23f"
+    ],
+    [
+     0.5,
+     "#ff7a1a"
+    ],
+    [
+     1.0,
+     "#ff1e1e"
+    ]
+   ]
+  },
+  {
+   "id": "w9",
+   "x": 700,
+   "y": 46.1,
+   "w": 300,
+   "h": 26,
+   "type": "text",
+   "text": "CHARGE CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w10",
+   "x": 1010,
+   "y": 40.2,
+   "w": 170,
+   "h": 38,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w11",
+   "x": 700,
+   "y": 80,
+   "w": 480,
+   "h": 26,
+   "type": "bar",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 13,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ff9a1f"
+    ],
+    [
+     0.5,
+     "#ff3a1a"
+    ],
+    [
+     1.0,
+     "#ff0a3c"
+    ]
+   ]
+  },
+  {
+   "id": "w12",
+   "x": 700,
+   "y": 130.2,
+   "w": 300,
+   "h": 26,
+   "type": "text",
+   "text": "CHARGE GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w13",
+   "x": 1010,
+   "y": 124.2,
+   "w": 170,
+   "h": 38,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w14",
+   "x": 700,
+   "y": 164,
+   "w": 480,
+   "h": 26,
+   "type": "bar",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 13,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ff9a1f"
+    ],
+    [
+     0.5,
+     "#ff3a1a"
+    ],
+    [
+     1.0,
+     "#ff0a3c"
+    ]
+   ]
+  },
+  {
+   "id": "w15",
+   "x": 700,
+   "y": 214.2,
+   "w": 300,
+   "h": 26,
+   "type": "text",
+   "text": "MÉMOIRE",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w16",
+   "x": 1010,
+   "y": 208.2,
+   "w": 170,
+   "h": 38,
+   "type": "value",
+   "source": "ram.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w17",
+   "x": 700,
+   "y": 248,
+   "w": 480,
+   "h": 26,
+   "type": "bar",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 13,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ff9a1f"
+    ],
+    [
+     0.5,
+     "#ff3a1a"
+    ],
+    [
+     1.0,
+     "#ff0a3c"
+    ]
+   ]
+  },
+  {
+   "id": "w18",
+   "x": 700,
+   "y": 298.2,
+   "w": 300,
+   "h": 26,
+   "type": "text",
+   "text": "VRAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22,
+    "color": "#ffb27a",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w19",
+   "x": 1010,
+   "y": 292.2,
+   "w": 170,
+   "h": 38,
+   "type": "value",
+   "source": "gpu.vram_used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w20",
+   "x": 700,
+   "y": 332,
+   "w": 480,
+   "h": 26,
+   "type": "bar",
+   "source": "gpu.vram_used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 13,
+   "track": "#3a1208",
+   "colors": [
+    [
+     0.0,
+     "#ff9a1f"
+    ],
+    [
+     0.5,
+     "#ff3a1a"
+    ],
+    [
+     1.0,
+     "#ff0a3c"
+    ]
+   ]
+  },
+  {
+   "id": "w21",
+   "x": 700,
+   "y": 388.1,
+   "w": 480,
+   "h": 36,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M  -  %d %B",
+   "style": {
+    "font": "Rajdhani",
+    "size": 28,
+    "color": "#ffd9b0",
+    "align": "center",
+    "bold": true
+   }
+  }
+ ]
+}

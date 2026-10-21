@@ -1,8 +1,163 @@
-{"version":1,"name":"Aurore","width":320,"height":240,"background":{"kind":"gradient","from":"#031a20","to":"#2a0a4a","angle":60},"widgets":[{"id":"w1","x":20,"y":17.9,"w":280,"h":24,"type":"text","text":"AURORE","style":{"font":"Rajdhani","size":18,"color":"#a6ffe0","align":"center","bold":true}},
-{"id":"w2","x":20,"y":44,"w":140,"h":140,"type":"gauge_arc","source":"cpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":16,"track":"#ffffff20","colors":[[0.0,"#2dffb0"],[1.0,"#7cf0ff"]]},
-{"id":"w3","x":45,"y":92.5,"w":90,"h":50,"type":"value","source":"cpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":44,"color":"#ffffff","align":"center","bold":true}},
-{"id":"w4","x":55,"y":127.6,"w":70,"h":22,"type":"text","text":"CPU","style":{"font":"Rajdhani","size":17,"color":"#c5f3ff","align":"center","bold":true}},
-{"id":"w5","x":160,"y":44,"w":140,"h":140,"type":"gauge_arc","source":"gpu.temp","min":20,"max":100,"start_deg":135,"sweep_deg":270,"thickness":16,"track":"#ffffff20","colors":[[0.0,"#b07cff"],[1.0,"#ff7cf0"]]},
-{"id":"w6","x":185,"y":92.5,"w":90,"h":50,"type":"value","source":"gpu.temp","format":"{:.0}°","style":{"font":"Rajdhani","size":44,"color":"#ffffff","align":"center","bold":true}},
-{"id":"w7","x":195,"y":127.6,"w":70,"h":22,"type":"text","text":"GPU","style":{"font":"Rajdhani","size":17,"color":"#c5f3ff","align":"center","bold":true}},
-{"id":"w8","x":20,"y":206.6,"w":280,"h":36,"type":"value","source":"time","format":"%H:%M","style":{"font":"Rajdhani","size":32,"color":"#ffffff","align":"center","bold":true}}]}
+{
+ "version": 1,
+ "name": "Aurore",
+ "width": 320,
+ "height": 240,
+ "background": {
+  "kind": "gradient",
+  "from": "#031a20",
+  "to": "#2a0a4a",
+  "angle": 60
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 20,
+   "y": 12.0,
+   "w": 280,
+   "h": 24,
+   "type": "text",
+   "text": "AURORE",
+   "style": {
+    "font": "Rajdhani",
+    "size": 18,
+    "color": "#a6ffe0",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w2",
+   "x": 20,
+   "y": 44,
+   "w": 140,
+   "h": 140,
+   "type": "gauge_arc",
+   "source": "cpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 16,
+   "track": "#ffffff20",
+   "colors": [
+    [
+     0.0,
+     "#2dffb0"
+    ],
+    [
+     1.0,
+     "#7cf0ff"
+    ]
+   ]
+  },
+  {
+   "id": "w3",
+   "x": 45,
+   "y": 78.2,
+   "w": 90,
+   "h": 50,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 44,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w4",
+   "x": 55,
+   "y": 122.1,
+   "w": 70,
+   "h": 22,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17,
+    "color": "#c5f3ff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w5",
+   "x": 160,
+   "y": 44,
+   "w": 140,
+   "h": 140,
+   "type": "gauge_arc",
+   "source": "gpu.temp",
+   "min": 20,
+   "max": 100,
+   "start_deg": 135,
+   "sweep_deg": 270,
+   "thickness": 16,
+   "track": "#ffffff20",
+   "colors": [
+    [
+     0.0,
+     "#b07cff"
+    ],
+    [
+     1.0,
+     "#ff7cf0"
+    ]
+   ]
+  },
+  {
+   "id": "w6",
+   "x": 185,
+   "y": 78.2,
+   "w": 90,
+   "h": 50,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 44,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w7",
+   "x": 195,
+   "y": 122.1,
+   "w": 70,
+   "h": 22,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17,
+    "color": "#c5f3ff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w8",
+   "x": 20,
+   "y": 196.2,
+   "w": 280,
+   "h": 36,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 32,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  }
+ ]
+}
