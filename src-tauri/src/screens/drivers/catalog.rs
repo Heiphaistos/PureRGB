@@ -99,10 +99,12 @@ pub struct Profile {
     pub rotate: bool,
     /// Largeur de ligne RGB565 du framebuffer si > à celle de l'image (0 = identique).
     pub wire_row_px: u32,
+    /// (PM, SUB) du handshake pour les écrans « mode 2 » (bulk/LY) : choisit la rotation de montage.
+    pub pm_sub: Option<(u8, u8)>,
 }
 
 const fn p(width: u32, height: u32, jpeg: bool, big_endian: bool, rotate: bool) -> Profile {
-    Profile { width, height, jpeg, big_endian, rotate, wire_row_px: 0 }
+    Profile { width, height, jpeg, big_endian, rotate, wire_row_px: 0, pm_sub: None }
 }
 
 /// FBL -> profil (REFERENCE_TECHNICAL.md « FBL Detection » ; drapeaux : protocol.py `FBL_PROFILES`).
@@ -191,15 +193,26 @@ pub fn bulk_profile(pm: u8, sub: u8) -> Option<Profile> {
     let mut prof = fbl_profile(fbl, pm, sub)?;
     prof.jpeg = pm != 32 && pm != 50;
     prof.big_endian = prof.big_endian || pm == 50;
+    prof.pm_sub = Some((pm, sub));
     Some(prof)
 }
 
 /// Rotation de montage de l'écran (base, inversé) avant rotation utilisateur.
-/// Valeurs : protocole `ENCODE_ROTATIONS`, bras principal seulement.
-// INCONNU : les bras dépendant du SUB (1280x480 SUB 2 -> 90, 1920x462/440 SUB 2-4 -> 0,
-// 1600x720 SUB 3 -> 0, 960x540 SUB 5/7 -> 180, 960x320 SUB 5+ -> 180, 640x172 SUB 5 -> 90)
-// ne sont PAS gérés : l'image peut être retournée sur ces variantes, à corriger sur matériel.
-fn mount_rotation(w: u32, h: u32, jpeg: bool) -> (u16, bool) {
+/// Valeurs : protocole `ENCODE_ROTATIONS`, bras principal ; pour les écrans « mode 2 » (`pm_sub` connu)
+/// les bras dépendant de PM/SUB suivent `ImageToJpg` de TRCC.exe 2.1.8 (`docs/screens-protocols/REA-trcc.md`).
+// INCONNU : 854x480 / 800x480 SUB 0 (TRCC ajoute un miroir horizontal), 640x172 SUB 5 (non vérifié dans TRCC).
+fn mount_rotation(w: u32, h: u32, jpeg: bool, pm_sub: Option<(u8, u8)>) -> (u16, bool) {
+    if let (true, Some((pm, sub))) = (jpeg, pm_sub) {
+        match (w, h) {
+            // PM 66 + SUB 2 : 180 ; sinon SUB 2 ou 4 : 0 ; tout autre SUB : 180.
+            (1920, 462) | (1920, 440) => return (if matches!(sub, 2 | 4) && !(pm == 66 && sub == 2) { 0 } else { 180 }, true),
+            (1600, 720) => return (if sub == 3 { 0 } else { 180 }, true),
+            (1280, 480) => return (if sub == 2 { 90 } else { 0 }, true),
+            (960, 540) => return (if matches!(sub, 5 | 7) { 180 } else { 0 }, true),
+            (960, 320) => return (if sub == 7 { 180 } else { 0 }, true),
+            _ => {}
+        }
+    }
     match (w, h, jpeg) {
         (1600, 720, true) | (1920, 462, true) | (1920, 440, true) | (960, 320, true) => (180, true),
         (854, 480, true) | (800, 480, true) => (0, false),
@@ -217,7 +230,7 @@ impl Profile {
     pub fn wire_angle(&self, user: u16) -> u16 {
         let user = user % 360;
         if self.rotate {
-            let (base, invert) = mount_rotation(self.width, self.height, self.jpeg);
+            let (base, invert) = mount_rotation(self.width, self.height, self.jpeg, self.pm_sub);
             let signed = if invert { (360 - user) % 360 } else { user };
             (base + signed) % 360
         } else {
@@ -331,6 +344,35 @@ mod tests {
         assert_eq!([0, 90, 180, 270].map(|u| w854.wire_angle(u)), [0, 90, 180, 270]);
         let trofeo = bulk_profile(65, 0).unwrap(); // 1920x462 JPEG : base 180
         assert_eq!(trofeo.wire_angle(0), 180);
+    }
+
+    #[test]
+    fn wire_angles_by_sub_from_trcc_imagetojpg() {
+        // Valeurs écrites à la main d'après TRCC.exe 2.1.8 (ImageToJpg), ordre : rotation utilisateur 0/90/180/270.
+        let at = |pm, sub| bulk_profile(pm, sub).unwrap();
+        let a = |p: Profile| [0, 90, 180, 270].map(|u| p.wire_angle(u));
+        // 1920x462, SUB 2 ou 4 : 0->0, 90->270, 180->180, 270->90.
+        assert_eq!(a(at(65, 2)), [0, 270, 180, 90]);
+        assert_eq!(a(at(65, 4)), [0, 270, 180, 90]);
+        // 1920x462, autres SUB (dont 3) : 0->180, 90->90, 180->0, 270->270.
+        for sub in [0, 1, 3, 5] {
+            assert_eq!(a(at(65, sub)), [180, 90, 0, 270], "SUB {sub}");
+        }
+        // PM 66 + SUB 2 : cas particulier = 180.
+        assert_eq!(a(at(66, 2)), [180, 90, 0, 270]);
+        assert_eq!(a(at(66, 4)), [0, 270, 180, 90]);
+        // 1280x480 SUB 2 : 0->90, 90->0, 180->270, 270->180 ; sinon identité inversée.
+        assert_eq!(a(at(68, 2)), [90, 0, 270, 180]);
+        assert_eq!(a(at(68, 1)), [0, 270, 180, 90]);
+        // 1600x720 SUB 3 : 0 ; sinon 180.
+        assert_eq!(a(at(64, 3)), [0, 270, 180, 90]);
+        assert_eq!(a(at(64, 1)), [180, 90, 0, 270]);
+        // 960x320 : seul SUB 7 est à 180.
+        assert_eq!(a(at(13, 1)), [0, 270, 180, 90]);
+        assert_eq!(a(at(13, 7)), [180, 90, 0, 270]);
+        // 960x540 : SUB 5 et 7 à 180.
+        assert_eq!(a(at(10, 5)), [180, 90, 0, 270]);
+        assert_eq!(a(at(10, 2)), [0, 270, 180, 90]);
     }
 
     #[test]
