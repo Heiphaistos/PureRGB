@@ -209,6 +209,7 @@ mod tests {
                 managed: false,
                 pawnio_installed: false,
                 pawnio_ready: false,
+                last_error: None,
             },
             hid_raw: Vec::new(),
         };

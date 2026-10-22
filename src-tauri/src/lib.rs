@@ -985,11 +985,26 @@ fn cleanup_before_exit(app: &tauri::AppHandle) {
     }
 }
 
+/// Journal dans %APPDATA%\PureRGB\purergb.log (l'exe n'a pas de console) ; repli stderr. Repart de zéro au-delà de 1 Mo.
+fn init_logging() {
+    let mut b = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"));
+    if let Some(dir) = settings::dirs_dir() {
+        let path = dir.join("purergb.log");
+        let big = std::fs::metadata(&path).is_ok_and(|m| m.len() > 1 << 20);
+        let _ = std::fs::create_dir_all(&dir);
+        let file = std::fs::OpenOptions::new().create(true).write(true).append(!big).truncate(big).open(&path);
+        if let Ok(f) = file {
+            b.target(env_logger::Target::Pipe(Box::new(f)));
+        }
+    }
+    b.init();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Tous les processus enfants meurent avec PureRGB (même en cas de plantage).
     job::kill_children_on_exit();
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    init_logging();
 
     let saved = settings::load();
     // Créer settings.json dès le premier lancement (valeurs par défaut visibles).
@@ -1217,6 +1232,7 @@ pub fn run() {
                         let mut previous: std::collections::HashSet<(String, String)> =
                             std::collections::HashSet::new();
                         let mut first = true;
+                        let mut last_rescan: Option<std::time::Instant> = None;
                         loop {
                             std::thread::sleep(std::time::Duration::from_secs(5));
                             let state = app_handle.state::<AppState>();
@@ -1242,7 +1258,11 @@ pub fn run() {
                             let new_unrecognized = hotplug::diff_new_unrecognized(&previous, &current);
                             let new_rgb = hotplug::diff_new_rgb(&previous, &current);
                             previous = current_keys;
-                            if !new_rgb.is_empty() {
+                            // Au plus une re-détection par 2 min : un appareil qui se réénumère en boucle
+                            // ne doit jamais relancer OpenRGB sans cesse.
+                            let calm = last_rescan.map_or(true, |t| t.elapsed() > std::time::Duration::from_secs(120));
+                            if !new_rgb.is_empty() && calm {
+                                last_rescan = Some(std::time::Instant::now());
                                 rescan_after_plug(&app_handle, &new_rgb);
                             }
                             if new_unrecognized.is_empty() {

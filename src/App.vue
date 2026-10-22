@@ -112,6 +112,7 @@ const orgb = ref<OpenRgbStatus>({
   managed: false,
   pawnio_installed: true,
   pawnio_ready: true,
+  last_error: null,
 });
 const orgbStarting = ref(false);
 const pawnioInstalling = ref(false);
@@ -347,6 +348,8 @@ onUnmounted(() => {
       <span>
         Serveur OpenRGB non joignable — nécessaire pour piloter 900+ appareils.
         {{ orgb.exe_path ? "OpenRGB embarqué prêt." : "OpenRGB sera téléchargé (officiel, vérifié)." }}
+        <br v-if="orgb.last_error" />
+        <strong v-if="orgb.last_error">Dernier échec : {{ orgb.last_error }}</strong>
       </span>
       <button class="primary" :disabled="orgbStarting" @click="startOpenRgb">
         {{ orgbStarting ? "Démarrage..." : "Démarrer OpenRGB" }}

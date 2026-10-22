@@ -44,10 +44,13 @@ pub struct OpenRgbStatus {
     /// PnP peut manquer même service enregistré (SwDeviceCreate asynchrone du
     /// setup, parfois incomplet en install silencieuse).
     pub pawnio_ready: bool,
+    /// Dernière raison pour laquelle OpenRGB n'a pas pu démarrer (vide si tout va bien).
+    pub last_error: Option<String>,
 }
 
 pub struct OpenRgbManager {
     child: Mutex<Option<Child>>,
+    last_error: Mutex<Option<String>>,
     /// Dossier ressources du bundle (résolu par Tauri au démarrage).
     resource_dir: Mutex<Option<PathBuf>>,
 }
@@ -56,6 +59,7 @@ impl OpenRgbManager {
     pub fn new() -> Self {
         OpenRgbManager {
             child: Mutex::new(None),
+            last_error: Mutex::new(None),
             resource_dir: Mutex::new(None),
         }
     }
@@ -110,6 +114,7 @@ impl OpenRgbManager {
             managed: self.child.lock().is_some(),
             pawnio_installed: Self::pawnio_installed(),
             pawnio_ready: Self::pawnio_ready(),
+            last_error: self.last_error.lock().clone(),
         }
     }
 
@@ -260,13 +265,21 @@ impl OpenRgbManager {
 
     /// Lance le serveur OpenRGB en arrière-plan (fenêtre minimisée dans le tray).
     /// No-op si un serveur répond déjà (OpenRGB de l'utilisateur, par exemple).
+    /// En cas d'échec, la cause (avec diagnostic) est gardée pour l'interface.
     pub fn ensure_running(&self, host: &str, port: u16) -> Result<bool> {
+        let r = self.start_server(host, port);
+        *self.last_error.lock() = r.as_ref().err().map(|e| format!("{e:#}"));
+        r
+    }
+
+    fn start_server(&self, host: &str, port: u16) -> Result<bool> {
         if Self::server_reachable(host, port) {
             return Ok(false); // déjà servi, rien à lancer
         }
+        // Fichiers de notre copie manquants (antivirus, suppression) : on la réinstalle (SHA-256 vérifié).
         let exe = match self.locate() {
-            Some(e) => e,
-            None => self.install().context("installation OpenRGB")?,
+            Some(e) if missing_files(&e).is_empty() => e,
+            _ => self.install().context("installation OpenRGB")?,
         };
         // Best-effort : sans PawnIO actif, OpenRGB démarre mais ignore RAM/carte mère.
         if !Self::pawnio_ready() {
@@ -274,7 +287,7 @@ impl OpenRgbManager {
                 log::warn!("installation PawnIO: {e:#} — RAM et carte mère non détectables");
             }
         }
-        let child = Command::new(&exe)
+        let mut child = Command::new(&exe)
             .args([
                 "--server",
                 "--server-host",
@@ -286,17 +299,23 @@ impl OpenRgbManager {
             .current_dir(exe.parent().context("dossier OpenRGB")?)
             .spawn()
             .context("lancement OpenRGB")?;
-        *self.child.lock() = Some(child);
 
-        // Attendre que le serveur écoute (init matériel : jusqu'à 20 s).
+        // Attendre que le serveur écoute (init matériel : jusqu'à 20 s). Si le processus
+        // s'arrête avant, inutile d'attendre : on rapporte son code de sortie.
         let deadline = Instant::now() + Duration::from_secs(20);
         while Instant::now() < deadline {
             if Self::server_reachable(host, port) {
+                *self.child.lock() = Some(child);
                 return Ok(true);
+            }
+            if let Ok(Some(status)) = child.try_wait() {
+                bail!("OpenRGB s'est arrêté tout seul ({status}). {}", diagnose(port, child.id()));
             }
             std::thread::sleep(Duration::from_millis(500));
         }
-        bail!("OpenRGB lancé mais le serveur SDK ne répond pas après 20 s")
+        let child_id = child.id();
+        *self.child.lock() = Some(child);
+        bail!("OpenRGB lancé mais le serveur SDK ne répond pas après 20 s. {}", diagnose(port, child_id))
     }
 
     /// Arrête OpenRGB uniquement s'il a été lancé par PureRGB.
@@ -311,6 +330,55 @@ impl OpenRgbManager {
 impl Drop for OpenRgbManager {
     fn drop(&mut self) {
         self.stop();
+    }
+}
+
+/// Fichiers indispensables de notre copie d'OpenRGB (vide si ce n'en est pas une, ou si tout est là).
+fn missing_files(exe: &std::path::Path) -> Vec<&'static str> {
+    let Some(dir) = exe.parent().filter(|d| d.join("PawnIOLib.dll").is_file()) else { return Vec::new() };
+    ["Qt5Core.dll", "Qt5Gui.dll", "Qt5Widgets.dll", "hidapi.dll"].into_iter().filter(|f| !dir.join(f).is_file()).collect()
+}
+
+/// Pistes quand OpenRGB ne démarre pas : un autre OpenRGB ou un logiciel RGB déjà actif,
+/// ou un programme qui occupe déjà le port du serveur.
+fn diagnose(port: u16, own_pid: u32) -> String {
+    let sys = sysinfo::System::new_with_specifics(
+        sysinfo::RefreshKind::nothing().with_processes(sysinfo::ProcessRefreshKind::nothing()),
+    );
+    let mut hints = Vec::new();
+    let (active, _) = crate::conflicts::scan();
+    let other_orgb = sys.processes().iter().any(|(pid, p)| {
+        pid.as_u32() != own_pid && p.name().to_string_lossy().to_lowercase().starts_with("openrgb")
+    });
+    if other_orgb {
+        hints.push("un autre OpenRGB est déjà ouvert (le fermer)".to_string());
+    }
+    for c in active.iter().filter(|c| c.active) {
+        hints.push(format!("{} est actif et peut verrouiller les appareils", c.name));
+    }
+    let netstat = Command::new("netstat.exe").args(["-ano", "-p", "TCP"]).creation_flags_no_window().output();
+    if let Ok(out) = netstat {
+        let suffix = format!(":{port}");
+        let owner = String::from_utf8_lossy(&out.stdout)
+            .lines()
+            .filter(|l| l.contains("LISTENING"))
+            .filter_map(|l| {
+                let cols: Vec<&str> = l.split_whitespace().collect();
+                (cols.get(1)?.ends_with(&suffix)).then(|| cols.last()?.parse::<u32>().ok()).flatten()
+            })
+            .next();
+        if let Some(pid) = owner {
+            let name = sys
+                .process(sysinfo::Pid::from_u32(pid))
+                .map(|p| p.name().to_string_lossy().into_owned())
+                .unwrap_or_else(|| "inconnu".into());
+            hints.push(format!("le port {port} est déjà utilisé par « {name} » (PID {pid})"));
+        }
+    }
+    if hints.is_empty() {
+        "Aucun conflit repéré : antivirus qui bloque OpenRGB.exe, ou pilote manquant ? (voir purergb.log dans le dossier PureRGB de APPDATA)".into()
+    } else {
+        format!("Pistes : {}.", hints.join(" ; "))
     }
 }
 

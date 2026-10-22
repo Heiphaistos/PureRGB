@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.30.0
+
+- OpenRGB qui ne démarre pas : la bannière affiche maintenant la vraie raison du dernier échec (code de sortie, autre OpenRGB ouvert, logiciel RGB constructeur actif, port 6742 pris par un autre programme) au lieu d'un simple bouton.
+- Réparation automatique : si des fichiers de l'OpenRGB embarqué manquent (antivirus, suppression), il est retéléchargé (SHA-256 vérifié) au lancement. Si le processus s'arrête seul, l'échec est signalé tout de suite au lieu d'attendre 20 s.
+- Journal de diagnostic dans `%APPDATA%\PureRGB\purergb.log` (l'exécutable n'a pas de console), remis à zéro au-delà de 1 Mo.
+- Re-détection au branchement : au plus une fois toutes les 2 minutes, pour qu'un appareil qui se réénumère en boucle ne relance jamais OpenRGB sans cesse.
+
 ## 0.29.0
 
 - Drivers natifs USB (expérimentaux, sous « Drivers natifs » dans Réglages, désactivés par défaut) : nouveau cadre `backends/hid/native/` (une famille de protocole par fichier, tests d'octets sur faux périphérique). Familles livrées : ASUS Aura (5 PID), ASRock Polychrome (2), MSI Mystic Light 185 octets (mode statique par zone), Gigabyte RGB Fusion 2 (3 PID, 2 connecteurs ARGB), Razer (7 modèles, matrice moderne), Wooting V2/V3 (5), HyperX Alloy Origins et tapis (8), Thermaltake Riing Plus (18 PID, ventilateurs + RGB), Corsair Commander Pro (ventilateurs), Lian Li Uni Hub SL (RGB). Rien n'a encore tourné sur du vrai matériel ; OpenRGB reste le repli pour tout le reste.

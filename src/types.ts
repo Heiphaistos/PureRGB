@@ -244,6 +244,7 @@ export interface OpenRgbStatus {
   managed: boolean;
   pawnio_installed: boolean;
   pawnio_ready: boolean;
+  last_error: string | null;
 }
 
 export const EFFECT_LABELS: Record<EffectKind, string> = {
