@@ -9,6 +9,8 @@ import { errMsg } from "../screens/api";
 import { photosEnabled, setPhotosEnabled } from "../productPhotos";
 import RgbInventory from "./RgbInventory.vue";
 import DecoderSetting from "./DecoderSetting.vue";
+import DriversSetting from "./DriversSetting.vue";
+import SelfTest from "./SelfTest.vue";
 
 export type LayoutMode = "grid" | "list" | "canvas";
 
@@ -238,6 +240,15 @@ const form = reactive({
   telemetry_opt_in: false,
   auto_update_check: true,
 });
+type Section = "general" | "drivers" | "media" | "security" | "diag";
+const SECTIONS: { id: Section; label: string }[] = [
+  { id: "general", label: "Général" },
+  { id: "drivers", label: "Appareils et pilotes" },
+  { id: "media", label: "Photos et vidéo" },
+  { id: "security", label: "Test de sécurité" },
+  { id: "diag", label: "Diagnostic" },
+];
+const section = ref<Section>("general");
 const saving = ref(false);
 const error = ref("");
 
@@ -297,9 +308,12 @@ async function save() {
 <template>
   <section class="settings">
     <h2>Réglages</h2>
+    <nav class="sections" aria-label="Sections des réglages">
+      <button v-for="x in SECTIONS" :key="x.id" type="button" :class="{ active: section === x.id }" @click="section = x.id">{{ x.label }}</button>
+    </nav>
 
     <div class="cols">
-    <div class="card">
+    <div v-show="section === 'general'" class="card">
       <h3>Disposition</h3>
       <p class="hint">Agencement de l'onglet Éclairage.</p>
       <div class="layout-options">
@@ -317,7 +331,7 @@ async function save() {
       </div>
     </div>
 
-    <div class="card">
+    <div v-show="section === 'general'" class="card">
       <h3>Mises à jour de PureRGB</h3>
       <p class="hint">
         Les mises à jour sont signées et vérifiées avant installation, puis
@@ -340,7 +354,7 @@ async function save() {
       </button>
     </div>
 
-    <div class="card">
+    <div v-show="section === 'media'" class="card">
       <h3>Photos des produits</h3>
       <p class="hint">
         Quand un appareil est reconnu avec certitude (identifiant USB ou modèle exact), PureRGB affiche sa photo,
@@ -353,54 +367,13 @@ async function save() {
       </div>
     </div>
 
-    <DecoderSetting />
+    <DecoderSetting v-show="section === 'media'" />
 
-    <div class="card">
-      <h3>Serveur OpenRGB</h3>
-      <p class="hint">
-        PureRGB embarque OpenRGB et pilote 900+ appareils via son SDK. Le serveur
-        est démarré automatiquement en arrière-plan si aucun n'est joignable
-        (installation NSIS : inclus ; portable : téléchargé et vérifié SHA-256 au
-        premier besoin). Un OpenRGB déjà lancé par vous est réutilisé tel quel.
-      </p>
-      <div class="inline" style="margin-bottom: 12px">
-        <input id="autostart" type="checkbox" v-model="form.auto_start_openrgb" />
-        <label for="autostart">Démarrer OpenRGB automatiquement avec PureRGB</label>
-      </div>
-      <div class="grid2">
-        <div>
-          <label>Hôte</label>
-          <input type="text" v-model="form.openrgb_host" maxlength="253" />
-        </div>
-        <div>
-          <label>Port</label>
-          <input type="number" v-model.number="form.openrgb_port" min="1" max="65535" />
-        </div>
-      </div>
-    </div>
+    <DriversSetting v-show="section === 'drivers'" :form="form" />
 
-    <div class="card">
-      <h3>Drivers natifs (expérimental)</h3>
-      <p class="hint">
-        Pilotage USB direct sans OpenRGB : Corsair Lighting Node Pro/Core et Commander Pro, NZXT
-        HUE 2 / Smart Device V2 / RGB &amp; Fan Controller, Thermaltake Riing Plus, Lian Li Uni Hub,
-        cartes mères ASUS Aura / ASRock Polychrome / MSI Mystic Light / Gigabyte Fusion (USB),
-        Razer (7 modèles), Wooting, HyperX Alloy Origins, mémoire Corsair Vengeance RGB / Dominator (bus SMBus via
-        PawnIO, très expérimental). Les autres appareils restent pilotés par OpenRGB.
-        <strong>Fermez iCUE/CAM avant d'activer</strong> — deux logiciels sur le
-        même appareil provoquent des comportements erratiques.
-      </p>
-      <div class="inline">
-        <input id="native" type="checkbox" v-model="form.native_drivers_enabled" />
-        <label for="native">Activer les drivers natifs</label>
-      </div>
-      <div class="inline">
-        <input id="smbusw" type="checkbox" v-model="form.smbus_writes_enabled" :disabled="!form.native_drivers_enabled" />
-        <label for="smbusw">Autoriser l'écriture sur la mémoire RAM (bus SMBus). Sans cela, la mémoire est seulement détectée en lecture.</label>
-      </div>
-    </div>
+    <SelfTest v-show="section === 'security'" />
 
-    <div class="card">
+    <div v-show="section === 'general'" class="card">
       <h3>Système &amp; profils</h3>
       <div class="inline" style="margin-bottom: 12px">
         <input
@@ -412,13 +385,6 @@ async function save() {
         />
         <label for="winstart">
           Lancer PureRGB au démarrage de Windows (tâche planifiée, sans fenêtre UAC)
-        </label>
-      </div>
-      <div class="inline" style="margin-bottom: 12px">
-        <input id="automanage" type="checkbox" v-model="form.auto_manage_conflicts" />
-        <label for="automanage">
-          Gérer automatiquement les conflits (arrête les logiciels constructeur au
-          lancement, les relance à la fermeture)
         </label>
       </div>
       <div class="inline" style="margin-bottom: 12px">
@@ -440,7 +406,7 @@ async function save() {
       </p>
     </div>
 
-    <div class="card">
+    <div v-show="section === 'general'" class="card">
       <h3>Performance</h3>
       <div class="grid2">
         <div>
@@ -469,9 +435,9 @@ async function save() {
       <span v-if="error" class="error">{{ error }}</span>
     </div>
 
-    <RgbInventory @restart="restartOpenRgb" />
+    <RgbInventory v-show="section === 'diag'" @restart="restartOpenRgb" />
 
-    <div class="card">
+    <div v-show="section === 'diag'" class="card">
       <h3>Diagnostic matériel</h3>
       <p class="hint">
         Interroge directement liquidctl, sensord, OpenRGB et l'énumération USB
@@ -607,6 +573,27 @@ async function save() {
 </template>
 
 <style scoped>
+.sections {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sections button {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+.sections button.active {
+  background: var(--accent, #ff5a1f);
+  border-color: transparent;
+  color: #fff;
+}
+
 .settings {
   flex: 1;
   overflow-y: auto;

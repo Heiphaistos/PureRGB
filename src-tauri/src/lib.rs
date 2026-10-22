@@ -6,6 +6,7 @@ mod diag_extra;
 mod hotplug;
 mod inventory;
 mod led_catalog;
+mod selftest;
 mod job;
 mod netdev;
 mod product_commands;
@@ -698,6 +699,18 @@ fn rescan_and_notify(app: &tauri::AppHandle, why: &str) {
     if let Err(e) = app.emit("devices-changed", devices.len()) {
         log::debug!("émission devices-changed : {e:#}");
     }
+}
+
+/// Test de compatibilité : vérifications en lecture seule de chaque composant détecté.
+#[tauri::command(async)]
+fn selftest_scan(state: State<AppState>) -> Vec<selftest::Item> {
+    selftest::scan(&state)
+}
+
+/// Essai d'écriture minimal sur UN appareil (couleur très faible puis extinction), après confirmation explicite.
+#[tauri::command(async)]
+fn selftest_apply(state: State<AppState>, id: String, confirmed: bool) -> Result<selftest::TestResult, String> {
+    selftest::apply(&state, &id, confirmed)
 }
 
 /// Inventaire du PC (WMI) comparé au matériel pilotable : explique les écarts (driver SMBus, logiciel en conflit…).
@@ -1456,6 +1469,8 @@ pub fn run() {
             conflict_guard_set,
             hardware_diagnostics,
             rgb_inventory,
+            selftest_scan,
+            selftest_apply,
             send_telemetry_report,
             usb_capture_ready,
             usb_capture_install,

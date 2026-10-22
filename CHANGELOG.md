@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.38.0
+
+- Une seule liste d'appareils, un seul pilotage : un appareil vu à la fois par un pilote intégré et par OpenRGB n'apparaît qu'une fois. Le pilote intégré travaille en premier ; après 3 échecs de suite, OpenRGB prend le relais automatiquement (note « repli automatique sur OpenRGB » sur la carte) et le pilote intégré n'écrit plus jamais en même temps, donc aucun conflit. Un nouveau scan redonne sa chance au pilote intégré.
+- Réglages réorganisés en 5 sections (Général, Appareils et pilotes, Photos et vidéo, Test de sécurité, Diagnostic). Les anciennes cartes « Serveur OpenRGB » et « Drivers natifs » forment une seule carte « Pilotage des appareils » (le serveur OpenRGB passe sous « Avancé »).
+- Test de compatibilité et de sécurité (Réglages) : revue en lecture seule de chaque composant (pilote, LEDs, logiciels concurrents, accès au bus), puis essai d'écriture à la demande, appareil par appareil, après confirmation : une couleur très faible et une extinction (2 écritures), puis remise de l'état d'origine. La mémoire (risque élevé) reste bloquée tant que l'écriture RAM n'est pas autorisée ; une écriture lente (bus saturé) est signalée.
+- Familles natives ajoutées en structure (Corsair Commander Core / iCUE LINK / Hydro, Cooler Master, Roccat / Turtle Beach) : les pilotes arrivent version par version.
+
 ## 0.37.0
 
 - Sécurité du matériel : l'écriture sur la mémoire RAM (bus SMBus) devient un réglage à part, désactivé par défaut (« Autoriser l'écriture sur la mémoire RAM », sous Drivers natifs). Sans lui, « Drivers natifs » ne fait que DÉTECTER les barrettes en lecture seule (aucune écriture, pas même les sélecteurs d'identité) et les affiche « détectée, non pilotable ». Testé : zéro écriture sur le bus, et refus de toute couleur.
