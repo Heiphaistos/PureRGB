@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.31.0
+
+- Port du serveur OpenRGB (6742) occupé par un autre programme : PureRGB vérifie que ce qui répond parle bien le protocole OpenRGB ; sinon il nomme le programme (et son PID) dans la bannière au lieu de croire que tout va bien.
+
 ## 0.30.0
 
 - OpenRGB qui ne démarre pas : la bannière affiche maintenant la vraie raison du dernier échec (code de sortie, autre OpenRGB ouvert, logiciel RGB constructeur actif, port 6742 pris par un autre programme) au lieu d'un simple bouton.

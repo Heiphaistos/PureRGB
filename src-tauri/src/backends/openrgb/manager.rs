@@ -274,7 +274,13 @@ impl OpenRgbManager {
 
     fn start_server(&self, host: &str, port: u16) -> Result<bool> {
         if Self::server_reachable(host, port) {
-            return Ok(false); // déjà servi, rien à lancer
+            if speaks_openrgb(host, port) {
+                return Ok(false); // déjà servi, rien à lancer
+            }
+            let who = port_owner(port).map(|(pid, name)| format!(" par « {name} » (PID {pid})")).unwrap_or_default();
+            bail!(
+                "Le port {port} est déjà utilisé{who} et ce n'est pas un serveur OpenRGB. Fermez ce programme ou changez le port d'OpenRGB dans Réglages."
+            );
         }
         // Fichiers de notre copie manquants (antivirus, suppression) : on la réinstalle (SHA-256 vérifié).
         let exe = match self.locate() {
@@ -339,6 +345,70 @@ fn missing_files(exe: &std::path::Path) -> Vec<&'static str> {
     ["Qt5Core.dll", "Qt5Gui.dll", "Qt5Widgets.dll", "hidapi.dll"].into_iter().filter(|f| !dir.join(f).is_file()).collect()
 }
 
+/// Le serveur répond-il au protocole OpenRGB (en-tête « ORGB » en réponse à une demande de version) ?
+fn speaks_openrgb(host: &str, port: u16) -> bool {
+    use std::io::{Read, Write};
+    let Ok(addr) = format!("{host}:{port}").parse() else { return false };
+    let Ok(mut s) = TcpStream::connect_timeout(&addr, Duration::from_millis(800)) else { return false };
+    let _ = s.set_read_timeout(Some(Duration::from_secs(2)));
+    let mut req = super::protocol::header(0, super::protocol::REQUEST_PROTOCOL_VERSION, 4).to_vec();
+    req.extend_from_slice(&super::protocol::PROTOCOL_VERSION.to_le_bytes());
+    let mut head = [0u8; 4];
+    s.write_all(&req).is_ok() && s.read_exact(&mut head).is_ok() && &head == super::protocol::MAGIC
+}
+
+/// Programme qui écoute sur ce port TCP (PID, nom), d'après `netstat`.
+fn port_owner(port: u16) -> Option<(u32, String)> {
+    let out = Command::new("netstat.exe").args(["-ano", "-p", "TCP"]).creation_flags_no_window().output().ok()?;
+    let suffix = format!(":{port}");
+    let pid = String::from_utf8_lossy(&out.stdout).lines().filter(|l| l.contains("LISTENING")).find_map(|l| {
+        let cols: Vec<&str> = l.split_whitespace().collect();
+        if cols.get(1)?.ends_with(&suffix) { cols.last()?.parse::<u32>().ok() } else { None }
+    })?;
+    let sys = sysinfo::System::new_with_specifics(
+        sysinfo::RefreshKind::nothing().with_processes(sysinfo::ProcessRefreshKind::nothing()),
+    );
+    let name = sys.process(sysinfo::Pid::from_u32(pid)).map(|p| p.name().to_string_lossy().into_owned());
+    Some((pid, name.unwrap_or_else(|| "inconnu".into())))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
+
+    fn serve(reply: &'static [u8]) -> u16 {
+        let l = TcpListener::bind("127.0.0.1:0").unwrap();
+        let port = l.local_addr().unwrap().port();
+        std::thread::spawn(move || {
+            if let Ok((mut c, _)) = l.accept() {
+                let mut buf = [0u8; 20];
+                let _ = c.read(&mut buf);
+                let _ = c.write_all(reply);
+                std::thread::sleep(Duration::from_millis(300));
+            }
+        });
+        port
+    }
+
+    #[test]
+    fn recognizes_an_openrgb_server() {
+        assert!(speaks_openrgb("127.0.0.1", serve(b"ORGB\0\0\0\0")));
+    }
+
+    #[test]
+    fn rejects_a_foreign_server() {
+        assert!(!speaks_openrgb("127.0.0.1", serve(b"HTTP/1.1 400")));
+    }
+
+    #[test]
+    fn rejects_a_silent_server() {
+        let l = TcpListener::bind("127.0.0.1:0").unwrap();
+        assert!(!speaks_openrgb("127.0.0.1", l.local_addr().unwrap().port()));
+    }
+}
+
 /// Pistes quand OpenRGB ne démarre pas : un autre OpenRGB ou un logiciel RGB déjà actif,
 /// ou un programme qui occupe déjà le port du serveur.
 fn diagnose(port: u16, own_pid: u32) -> String {
@@ -356,24 +426,8 @@ fn diagnose(port: u16, own_pid: u32) -> String {
     for c in active.iter().filter(|c| c.active) {
         hints.push(format!("{} est actif et peut verrouiller les appareils", c.name));
     }
-    let netstat = Command::new("netstat.exe").args(["-ano", "-p", "TCP"]).creation_flags_no_window().output();
-    if let Ok(out) = netstat {
-        let suffix = format!(":{port}");
-        let owner = String::from_utf8_lossy(&out.stdout)
-            .lines()
-            .filter(|l| l.contains("LISTENING"))
-            .filter_map(|l| {
-                let cols: Vec<&str> = l.split_whitespace().collect();
-                (cols.get(1)?.ends_with(&suffix)).then(|| cols.last()?.parse::<u32>().ok()).flatten()
-            })
-            .next();
-        if let Some(pid) = owner {
-            let name = sys
-                .process(sysinfo::Pid::from_u32(pid))
-                .map(|p| p.name().to_string_lossy().into_owned())
-                .unwrap_or_else(|| "inconnu".into());
-            hints.push(format!("le port {port} est déjà utilisé par « {name} » (PID {pid})"));
-        }
+    if let Some((pid, name)) = port_owner(port) {
+        hints.push(format!("le port {port} est déjà utilisé par « {name} » (PID {pid})"));
     }
     if hints.is_empty() {
         "Aucun conflit repéré : antivirus qui bloque OpenRGB.exe, ou pilote manquant ? (voir purergb.log dans le dossier PureRGB de APPDATA)".into()

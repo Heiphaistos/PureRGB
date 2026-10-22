@@ -344,10 +344,10 @@ onUnmounted(() => {
         {{ pawnioInstalling ? "Installation..." : orgb.pawnio_installed ? "Réparer PawnIO" : "Installer PawnIO" }}
       </button>
     </div>
-    <div v-if="!orgb.server_reachable" class="info-banner">
+    <div v-if="!orgb.server_reachable || orgb.last_error" class="info-banner">
       <span>
-        Serveur OpenRGB non joignable — nécessaire pour piloter 900+ appareils.
-        {{ orgb.exe_path ? "OpenRGB embarqué prêt." : "OpenRGB sera téléchargé (officiel, vérifié)." }}
+        <template v-if="!orgb.server_reachable">Serveur OpenRGB non joignable — nécessaire pour piloter 900+ appareils.</template>
+        <template v-if="!orgb.server_reachable">{{ orgb.exe_path ? "OpenRGB embarqué prêt." : "OpenRGB sera téléchargé (officiel, vérifié)." }}</template>
         <br v-if="orgb.last_error" />
         <strong v-if="orgb.last_error">Dernier échec : {{ orgb.last_error }}</strong>
       </span>
