@@ -13,11 +13,22 @@ const FALLBACK_AFTER_FAILURES: u32 = 3;
 pub struct DeviceRegistry {
     backends: Vec<Box<dyn Backend>>,
     devices: HashMap<String, DeviceInfo>,
-    /// Appareil piloté en natif -> id de sa copie OpenRGB (masquée), prête à prendre le relais.
-    fallbacks: HashMap<String, String>,
+    /// Appareil affiché -> (id de son double masqué, nombre de LEDs de ce double), prêt à prendre le relais.
+    fallbacks: HashMap<String, (String, usize)>,
     /// Appareils dont le pilote intégré a échoué : ils passent par OpenRGB jusqu'au prochain scan.
     degraded: HashSet<String>,
     failures: HashMap<String, u32>,
+}
+
+/// Ramène `colors` à `n` LEDs (plus proche voisin) : un double à moins de LEDs reçoit un aperçu fidèle de l'ensemble.
+fn resample(colors: &[Color], n: usize) -> Vec<Color> {
+    if n == 0 || colors.len() == n {
+        return colors.to_vec();
+    }
+    if colors.is_empty() {
+        return vec![Color::BLACK; n];
+    }
+    (0..n).map(|i| colors[i * colors.len() / n]).collect()
 }
 
 /// Fabricant normalisé pour comparer « Micro-Star International » (Windows) à « MSI » (OpenRGB).
@@ -72,9 +83,10 @@ impl DeviceRegistry {
         self.device_list()
     }
 
-    /// Un même appareil vu par deux backends n'est affiché qu'une fois. Le pilote intégré activé est le pilote
-    /// principal ; la copie OpenRGB est masquée mais gardée comme repli (voir `set_colors`). Une simple ligne
-    /// « vu en USB » disparaît dès qu'un autre backend pilote l'appareil.
+    /// Un même appareil vu par un pilote intégré ET par OpenRGB n'est affiché qu'une fois. Le pilote le plus riche
+    /// (le plus de LEDs pilotables) est le principal, à égalité le pilote intégré : on ne perd jamais de
+    /// fonction en activant les pilotes intégrés. L'autre est masqué mais gardé comme repli (voir `set_colors`).
+    /// Une ligne « vu en USB » ou « détectée en lecture seule » disparaît dès qu'un autre backend pilote l'appareil.
     fn drop_duplicates(&mut self) {
         let key = |d: &DeviceInfo| format!("{}|{:?}", maker(&d.vendor, &d.name), d.device_type);
         let mut natives: HashMap<String, Vec<String>> = HashMap::new();
@@ -89,16 +101,17 @@ impl DeviceRegistry {
         }
         let mut ids: Vec<String> = self.devices.values().filter(|d| d.backend == "openrgb").map(|d| d.id.clone()).collect();
         ids.sort();
-        for id in ids {
-            let k = key(&self.devices[&id]);
-            if let Some(primary) = natives.get_mut(&k).filter(|v| !v.is_empty()).map(|v| v.remove(0)) {
-                // La copie OpenRGB reste interrogeable par son id (backend "openrgb"), mais n'est plus listée.
-                self.devices.remove(&id);
-                self.fallbacks.insert(primary, id);
-            }
+        for orgb_id in ids {
+            let k = key(&self.devices[&orgb_id]);
+            let Some(native_id) = natives.get_mut(&k).filter(|v| !v.is_empty()).map(|v| v.remove(0)) else { continue };
+            let (n_leds, o_leds) = (self.devices[&native_id].led_count, self.devices[&orgb_id].led_count);
+            let (primary, hidden, hidden_leds) =
+                if o_leds > n_leds { (orgb_id, native_id, n_leds) } else { (native_id, orgb_id, o_leds) };
+            self.devices.remove(&hidden);
+            self.fallbacks.insert(primary, (hidden, hidden_leds as usize));
         }
         let driven: Vec<String> = self.devices.values().filter(|d| d.controllable).map(key).collect();
-        self.devices.retain(|_, d| d.backend != "hid" || d.controllable || !driven.contains(&key(d)));
+        self.devices.retain(|_, d| !(d.backend == "hid" || d.backend == "smbus") || d.controllable || !driven.contains(&key(d)));
     }
 
     /// Bascule définitivement (jusqu'au prochain scan) un appareil sur sa copie OpenRGB et le dit dans sa note.
@@ -136,12 +149,12 @@ impl DeviceRegistry {
             .ok_or_else(|| anyhow!("id d'appareil invalide: {id}"))
     }
 
-    /// Envoie les couleurs : au pilote intégré d'abord ; après `FALLBACK_AFTER_FAILURES` échecs de suite, à la
-    /// copie OpenRGB du même appareil (un seul des deux écrit à la fois, jamais les deux).
+    /// Envoie les couleurs au pilote principal ; après `FALLBACK_AFTER_FAILURES` échecs de suite, au double du même
+    /// appareil (un seul des deux écrit à la fois, jamais les deux), couleurs ré-échantillonnées à son nombre de LEDs.
     pub fn set_colors(&mut self, id: &str, colors: &[Color]) -> Result<()> {
         let fallback = self.fallbacks.get(id).cloned();
-        if let Some(fb) = fallback.as_ref().filter(|_| self.degraded.contains(id)) {
-            return self.colors_via(fb, colors);
+        if let Some((fb, n)) = fallback.as_ref().filter(|_| self.degraded.contains(id)) {
+            return self.colors_via(fb, &resample(colors, *n));
         }
         match self.colors_via(id, colors) {
             Ok(()) => {
@@ -149,14 +162,14 @@ impl DeviceRegistry {
                 Ok(())
             }
             Err(e) => {
-                let Some(fb) = fallback else { return Err(e) };
-                let n = self.failures.entry(id.to_string()).or_default();
-                *n += 1;
-                if *n < FALLBACK_AFTER_FAILURES {
+                let Some((fb, n)) = fallback else { return Err(e) };
+                let count = self.failures.entry(id.to_string()).or_default();
+                *count += 1;
+                if *count < FALLBACK_AFTER_FAILURES {
                     return Err(e);
                 }
                 self.degrade(id, &e);
-                self.colors_via(&fb, colors)
+                self.colors_via(&fb, &resample(colors, n))
             }
         }
     }
@@ -192,10 +205,10 @@ mod dedup_tests {
     use std::sync::atomic::{AtomicBool, Ordering};
 
     /// Faux backend : `fail` fait échouer set_colors ; `calls` journalise les appels reçus.
-    struct Fake(&'static str, Vec<DeviceInfo>, Arc<AtomicBool>, Arc<Mutex<Vec<String>>>);
+    struct Fake(&'static str, Vec<DeviceInfo>, Arc<AtomicBool>, Arc<Mutex<Vec<String>>>, Arc<Mutex<Vec<usize>>>);
 
     fn fake(name: &'static str, devs: Vec<DeviceInfo>) -> Fake {
-        Fake(name, devs, Arc::new(AtomicBool::new(false)), Arc::new(Mutex::new(Vec::new())))
+        Fake(name, devs, Arc::new(AtomicBool::new(false)), Arc::new(Mutex::new(Vec::new())), Arc::new(Mutex::new(Vec::new())))
     }
 
     impl Backend for Fake {
@@ -205,8 +218,9 @@ mod dedup_tests {
         fn scan(&mut self) -> Result<Vec<DeviceInfo>> {
             Ok(self.1.clone())
         }
-        fn set_colors(&mut self, local: &str, _: &[Color]) -> Result<()> {
+        fn set_colors(&mut self, local: &str, colors: &[Color]) -> Result<()> {
             self.3.lock().push(format!("{}:{local}", self.0));
+            self.4.lock().push(colors.len());
             if self.2.load(Ordering::SeqCst) {
                 anyhow::bail!("panne simulée");
             }
@@ -340,5 +354,48 @@ mod dedup_tests {
         for _ in 0..5 {
             assert!(r.set_colors("hid:1462:7d93:0", &[Color::default()]).is_err());
         }
+    }
+
+    #[test]
+    fn the_richer_driver_is_primary_and_the_poorer_one_becomes_the_fallback() {
+        // Cas réel (carte MSI Z790) : le pilote intégré n'offre que 6 LEDs, OpenRGB 77 : OpenRGB reste principal.
+        let mut orgb = dev("3", "MSI", "MSI Z790 GAMING PRO WIFI", DeviceType::Motherboard, true, "");
+        orgb.led_count = 77;
+        let mut nat = dev("1462:7d93:0", "Micro-Star", "MSI Mystic Light", DeviceType::Motherboard, true, "driver natif expérimental");
+        nat.led_count = 6;
+        let (o, h) = (fake("openrgb", vec![orgb]), fake("hid", vec![nat]));
+        let (o_fail, o_calls, h_calls, h_lens) = (o.2.clone(), o.3.clone(), h.3.clone(), h.4.clone());
+        let mut r = DeviceRegistry::new(vec![Box::new(o), Box::new(h)]);
+        let list = r.scan_all();
+        assert_eq!(list.len(), 1);
+        assert_eq!(list[0].id, "openrgb:3", "le pilote le plus riche est affiché");
+        r.set_colors("openrgb:3", &vec![Color::default(); 77]).unwrap();
+        assert!(h_calls.lock().is_empty(), "le pilote intégré n'écrit pas tant qu'OpenRGB répond");
+        o_fail.store(true, Ordering::SeqCst);
+        for _ in 0..2 {
+            assert!(r.set_colors("openrgb:3", &vec![Color::default(); 77]).is_err());
+        }
+        r.set_colors("openrgb:3", &vec![Color::new(1, 2, 3); 77]).unwrap();
+        assert_eq!(h_calls.lock().as_slice(), ["hid:1462:7d93:0"]);
+        assert_eq!(h_lens.lock().as_slice(), [6], "les 77 couleurs sont ramenées aux 6 LEDs du repli");
+        assert_eq!(o_calls.lock().len(), 4, "1 succès, puis 3 échecs consécutifs dont celui qui déclenche le repli");
+    }
+
+    #[test]
+    fn read_only_memory_line_disappears_when_openrgb_drives_the_same_memory() {
+        let orgb = dev("0", "Corsair", "Corsair Vengeance RGB DDR5", DeviceType::Dram, true, "");
+        let seen = dev("58", "Corsair", "Mémoire Corsair RGB (détectée)", DeviceType::Dram, false, "détectée en lecture seule");
+        let mut r = DeviceRegistry::new(vec![Box::new(fake("openrgb", vec![orgb])), Box::new(fake("smbus", vec![seen]))]);
+        let ids: Vec<String> = r.scan_all().into_iter().map(|d| d.id).collect();
+        assert_eq!(ids, vec!["openrgb:0"]);
+    }
+
+    #[test]
+    fn resample_keeps_length_and_samples_evenly() {
+        let c: Vec<Color> = (0..4).map(|i| Color::new(i, 0, 0)).collect();
+        assert_eq!(resample(&c, 4), c);
+        assert_eq!(resample(&c, 2), vec![Color::new(0, 0, 0), Color::new(2, 0, 0)]);
+        assert_eq!(resample(&c, 8).len(), 8);
+        assert_eq!(resample(&[], 3), vec![Color::BLACK; 3]);
     }
 }

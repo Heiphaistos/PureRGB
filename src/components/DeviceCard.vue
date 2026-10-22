@@ -23,6 +23,12 @@ const chip = computed(() => brandChip(props.device.vendor, props.device.name));
 const product = ref<ProductView | null>(null);
 const shownName = computed(() => product.value?.name ?? props.device.name);
 const hasRgb = computed(() => deviceHasRgb(props.device));
+/** Quel pilote tient l'appareil (une seule carte par appareil, même s'il est vu par deux backends). */
+const driverBadge = computed(() => {
+  const d = props.device;
+  if (d.note.includes("repli automatique")) return "Repli OpenRGB";
+  return d.controllable && (d.backend === "hid" || d.backend === "smbus") ? "Pilote intégré" : "";
+});
 const isOff = computed(() => !props.effect || props.effect.kind === "off");
 const swatch = computed(() => {
   const c = props.effect?.colors[0];
@@ -47,6 +53,7 @@ const swatch = computed(() => {
       <span class="dc-type">
         {{ typeLabel }}
         <span v-if="!hasRgb" class="dc-no-rgb" title="Pilotage PWM/vitesse uniquement — RGB non disponible sur cet appareil">Pas de RGB</span>
+        <span v-if="driverBadge" class="dc-no-rgb" :title="device.note">{{ driverBadge }}</span>
       </span>
     </span>
     <span

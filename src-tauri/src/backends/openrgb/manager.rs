@@ -125,7 +125,7 @@ impl OpenRgbManager {
         format!("{host}:{port}")
             .parse()
             .ok()
-            .and_then(|addr| TcpStream::connect_timeout(&addr, Duration::from_millis(400)).ok())
+            .and_then(|addr| TcpStream::connect_timeout(&addr, Duration::from_millis(1500)).ok())
             .is_some()
     }
 
