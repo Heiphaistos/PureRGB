@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.29.0
+
+- Drivers natifs USB (expérimentaux, sous « Drivers natifs » dans Réglages, désactivés par défaut) : nouveau cadre `backends/hid/native/` (une famille de protocole par fichier, tests d'octets sur faux périphérique). Familles livrées : ASUS Aura (5 PID), ASRock Polychrome (2), MSI Mystic Light 185 octets (mode statique par zone), Gigabyte RGB Fusion 2 (3 PID, 2 connecteurs ARGB), Razer (7 modèles, matrice moderne), Wooting V2/V3 (5), HyperX Alloy Origins et tapis (8), Thermaltake Riing Plus (18 PID, ventilateurs + RGB), Corsair Commander Pro (ventilateurs), Lian Li Uni Hub SL (RGB). Rien n'a encore tourné sur du vrai matériel ; OpenRGB reste le repli pour tout le reste.
+- Catalogue de 1 087 identifiants USB de contrôleurs RGB (85 fabricants) : l'inventaire reconnaît le modèle exact et dit pourquoi un appareil connu n'est pas piloté.
+- Corrections d'identifiants : Lian Li A100 = Uni Hub SL (A101 = AL), Kraken 2023 (300C = Elite, 300E = standard).
+- Documentation de protocoles dans `docs/rgb-protocols/` (SignalRGB, cartes mères, périphériques, refroidissement, RAM/GPU).
+
 ## 0.28.0
 
 - Détection automatique : quand un périphérique d'un fabricant d'éclairage (Corsair, Razer, NZXT, ASUS, MSI, Gigabyte/ITE, SteelSeries, Lian Li, Cooler Master, Thermaltake, HyperX, Logitech, Roccat) est branché, PureRGB relance l'OpenRGB qu'il gère, re-détecte et met la liste à jour, sans clic (avant : seulement les appareils inconnus étaient signalés).

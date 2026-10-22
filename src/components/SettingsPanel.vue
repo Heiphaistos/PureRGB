@@ -379,8 +379,10 @@ async function save() {
     <div class="card">
       <h3>Drivers natifs (expérimental)</h3>
       <p class="hint">
-        Pilotage USB direct sans OpenRGB : Corsair Lighting Node Pro/Core, NZXT
-        HUE 2 / Smart Device V2 / RGB &amp; Fan Controller (LED + ventilateurs).
+        Pilotage USB direct sans OpenRGB : Corsair Lighting Node Pro/Core et Commander Pro, NZXT
+        HUE 2 / Smart Device V2 / RGB &amp; Fan Controller, Thermaltake Riing Plus, Lian Li Uni Hub,
+        cartes mères ASUS Aura / ASRock Polychrome / MSI Mystic Light / Gigabyte Fusion (USB),
+        Razer (7 modèles), Wooting, HyperX Alloy Origins. Les autres appareils restent pilotés par OpenRGB.
         <strong>Fermez iCUE/CAM avant d'activer</strong> — deux logiciels sur le
         même appareil provoquent des comportements erratiques.
       </p>
