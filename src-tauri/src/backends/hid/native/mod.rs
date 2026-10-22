@@ -10,13 +10,16 @@ use anyhow::{bail, Result};
 
 pub mod asrock_polychrome;
 pub mod asus_aura;
+pub mod coolermaster;
 pub mod corsair_commander;
+pub mod corsair_core;
 pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod lianli_uni;
 pub mod logitech;
 pub mod msi_mystic;
 pub mod razer;
+pub mod roccat;
 pub mod steelseries;
 pub mod thermaltake;
 pub mod wooting;
@@ -96,13 +99,16 @@ pub struct Family {
 pub const FAMILIES: &[&Family] = &[
     &asrock_polychrome::FAMILY,
     &asus_aura::FAMILY,
+    &coolermaster::FAMILY,
     &corsair_commander::FAMILY,
+    &corsair_core::FAMILY,
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
     &lianli_uni::FAMILY,
     &logitech::FAMILY,
     &msi_mystic::FAMILY,
     &razer::FAMILY,
+    &roccat::FAMILY,
     &steelseries::FAMILY,
     &thermaltake::FAMILY,
     &wooting::FAMILY,
@@ -197,7 +203,7 @@ mod tests {
         ids.dedup();
         assert_eq!(ids.len(), FAMILIES.len());
         // Aucun couple VID/PID ne doit être revendiqué par deux familles.
-        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71] {
+        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71, 0x2516, 0x1E7D, 0x10F5] {
             for pid in 0..=u16::MAX {
                 let n = FAMILIES.iter().filter(|f| (f.probe)(vid, pid).is_some()).count();
                 assert!(n <= 1, "{vid:04x}:{pid:04x} revendiqué par {n} familles");
