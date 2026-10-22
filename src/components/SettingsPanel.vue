@@ -7,7 +7,8 @@ import { diagOk, diagText } from "../types";
 import { checkForUpdate, updateState } from "../autoUpdate";
 import { errMsg } from "../screens/api";
 import { photosEnabled, setPhotosEnabled } from "../productPhotos";
-import { ffmpeg, ffmpegBusy, ffmpegPct, installFfmpeg, refreshFfmpeg } from "../screens/useFfmpeg";
+import RgbInventory from "./RgbInventory.vue";
+import DecoderSetting from "./DecoderSetting.vue";
 
 export type LayoutMode = "grid" | "list" | "canvas";
 
@@ -24,14 +25,12 @@ const LAYOUTS: { id: LayoutMode; label: string; hint: string }[] = [
   { id: "canvas", label: "Canvas immersif", hint: "Grosses tuiles, effet appliqué directement dessus." },
 ];
 
-const ffmpegErr = ref("");
-void refreshFfmpeg();
-async function installDecoder(): Promise<void> {
-  ffmpegErr.value = "";
+async function restartOpenRgb(): Promise<void> {
   try {
-    await installFfmpeg();
+    await invoke("openrgb_restart");
+    emit("saved");
   } catch (e) {
-    ffmpegErr.value = errMsg(e);
+    error.value = errMsg(e);
   }
 }
 
@@ -351,20 +350,7 @@ async function save() {
       </div>
     </div>
 
-    <div class="card">
-      <h3>Décodeur vidéo universel</h3>
-      <p class="hint">
-        Utilisé quand Windows ne sait pas lire une vidéo des écrans (ffmpeg, 115 Mo, vérifié par
-        empreinte SHA-256, installé dans Program Files).
-      </p>
-      <div class="inline">
-        <span>Décodeur vidéo universel : <strong>{{ ffmpeg === null ? "inconnu" : ffmpeg.installed ? `installé (ffmpeg ${ffmpeg.version})` : "non installé" }}</strong></span>
-        <button v-if="ffmpeg && !ffmpeg.installed" :disabled="ffmpegBusy" @click="installDecoder">
-          {{ ffmpegBusy ? `Installation… ${ffmpegPct} %` : "Installer" }}
-        </button>
-      </div>
-      <p v-if="ffmpegErr" class="hint">{{ ffmpegErr }}</p>
-    </div>
+    <DecoderSetting />
 
     <div class="card">
       <h3>Serveur OpenRGB</h3>
@@ -472,6 +458,8 @@ async function save() {
       </button>
       <span v-if="error" class="error">{{ error }}</span>
     </div>
+
+    <RgbInventory @restart="restartOpenRgb" />
 
     <div class="card">
       <h3>Diagnostic matériel</h3>

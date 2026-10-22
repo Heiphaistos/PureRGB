@@ -19,6 +19,16 @@ pub fn diff_new_unrecognized(
         .collect()
 }
 
+/// Nouveaux appareils (reconnus ou non) d'un fabricant d'éclairage : OpenRGB ne les voit qu'après une
+/// nouvelle détection, que PureRGB déclenche seul au lieu d'attendre un clic de l'utilisateur.
+pub fn diff_new_rgb(previous: &HashSet<(String, String)>, current: &[RawHidDevice]) -> Vec<RawHidDevice> {
+    current
+        .iter()
+        .filter(|d| crate::inventory::is_rgb_vendor(&d.vid) && !previous.contains(&(d.vid.clone(), d.pid.clone())))
+        .cloned()
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,6 +67,15 @@ mod tests {
         let current = vec![device("1b1c", "0c0b", true)];
         let result = diff_new_unrecognized(&previous, &current);
         assert!(result.is_empty());
+    }
+
+    #[test]
+    fn nouveau_peripherique_rgb_declenche_une_redetection_meme_reconnu() {
+        let previous: HashSet<_> = [("1b1c".to_string(), "0c0b".to_string())].into();
+        let current = vec![device("1b1c", "0c0b", true), device("1532", "0084", true), device("8087", "0033", false)];
+        let r = diff_new_rgb(&previous, &current);
+        assert_eq!(r.len(), 1);
+        assert_eq!(r[0].vid, "1532");
     }
 
     #[test]

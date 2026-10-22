@@ -93,6 +93,7 @@ const toast = ref("");
 const pendingAlerts = ref<UnknownDeviceAlert[]>([]);
 const diagnosticTrigger = ref(0);
 let unlisten: (() => void) | undefined;
+let unlistenPlug: (() => void) | undefined;
 
 function openDiagnosticFor(vid: string, pid: string) {
   const idx = pendingAlerts.value.findIndex((a) => a.vid === vid && a.pid === pid);
@@ -267,10 +268,16 @@ onMounted(async () => {
     const fresh = event.payload.filter((a) => !existingKeys.has(`${a.vid}:${a.pid}`));
     pendingAlerts.value.push(...fresh);
   });
+  // Nouveau périphérique RGB branché : le backend a déjà re-détecté, on relit simplement la liste.
+  unlistenPlug = await listen<number>("devices-changed", async () => {
+    devices.value = await invoke<DeviceInfo[]>("list_devices");
+    showToast("Nouveau périphérique détecté : liste mise à jour");
+  });
 });
 
 onUnmounted(() => {
   unlisten?.();
+  unlistenPlug?.();
 });
 </script>
 

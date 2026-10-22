@@ -3,6 +3,7 @@ mod conflicts;
 mod core;
 mod engine;
 mod hotplug;
+mod inventory;
 mod job;
 mod netdev;
 mod product_commands;
@@ -654,6 +655,50 @@ fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
     compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port)
 }
 
+/// Un périphérique RGB vient d'être branché : on laisse USB finir son énumération, on relance l'OpenRGB
+/// géré par PureRGB (il ne détecte qu'au démarrage) puis on re-scanne et on prévient l'interface.
+fn rescan_after_plug(app: &tauri::AppHandle, plugged: &[crate::backends::hid::RawHidDevice]) {
+    std::thread::sleep(std::time::Duration::from_secs(3));
+    let state = app.state::<AppState>();
+    let (host, port, sizes) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port, s.zone_sizes.clone())
+    };
+    if state.openrgb_mgr.status(&host, port).managed {
+        state.openrgb_mgr.stop();
+        if let Err(e) = state.openrgb_mgr.ensure_running(&host, port) {
+            log::warn!("redémarrage OpenRGB après branchement : {e:#}");
+        }
+    }
+    let devices = scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
+    state.engine.invalidate();
+    log::info!("branchement RGB ({} nouveau(x)) : {} appareil(s) après re-détection", plugged.len(), devices.len());
+    if let Err(e) = app.emit("devices-changed", devices.len()) {
+        log::debug!("émission devices-changed : {e:#}");
+    }
+}
+
+/// Inventaire du PC (WMI) comparé au matériel pilotable : explique les écarts (driver SMBus, logiciel en conflit…).
+#[tauri::command(async)]
+fn rgb_inventory(state: State<AppState>) -> Result<Vec<inventory::Finding>, String> {
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    let inv = inventory::collect()?;
+    let st = state.openrgb_mgr.status(&host, port);
+    let sensors = state.sensors.snapshot();
+    let ctx = inventory::Context {
+        openrgb_up: st.server_reachable,
+        pawnio_ready: st.pawnio_ready,
+        sensord_up: state.sensors.running(),
+        fans_measured: sensors.iter().filter(|s| s.kind == "Fan" && s.id.starts_with("/lpc/")).count(),
+        fans_controllable: sensors.iter().filter(|s| s.kind == "Control" && s.controllable && s.id.starts_with("/lpc/")).count(),
+    };
+    let devices = state.registry.lock().device_list();
+    Ok(inventory::analyze(&inv, &devices, &ctx))
+}
+
 /// Commande manuelle du bouton "Envoyer maintenant" — ignore le hash de
 /// déduplication, envoie toujours si l'opt-in est actif. Point d'application
 /// réel de l'opt-in pour cette commande : `telemetry::send_report_now` ne
@@ -1194,7 +1239,11 @@ pub fn run() {
                                 continue;
                             }
                             let new_unrecognized = hotplug::diff_new_unrecognized(&previous, &current);
+                            let new_rgb = hotplug::diff_new_rgb(&previous, &current);
                             previous = current_keys;
+                            if !new_rgb.is_empty() {
+                                rescan_after_plug(&app_handle, &new_rgb);
+                            }
                             if new_unrecognized.is_empty() {
                                 continue;
                             }
@@ -1296,6 +1345,7 @@ pub fn run() {
             nanoleaf_pair,
             conflict_guard_set,
             hardware_diagnostics,
+            rgb_inventory,
             send_telemetry_report,
             usb_capture_ready,
             usb_capture_install,

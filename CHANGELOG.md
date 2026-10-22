@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.28.0
+
+- Détection automatique : quand un périphérique d'un fabricant d'éclairage (Corsair, Razer, NZXT, ASUS, MSI, Gigabyte/ITE, SteelSeries, Lian Li, Cooler Master, Thermaltake, HyperX, Logitech, Roccat) est branché, PureRGB relance l'OpenRGB qu'il gère, re-détecte et met la liste à jour, sans clic (avant : seulement les appareils inconnus étaient signalés).
+- Réglages > « Inventaire RGB et ventilateurs » : compare ce que Windows voit (carte mère, barrettes de mémoire, cartes graphiques, USB) à ce que PureRGB pilote, et explique chaque écart : pilote PawnIO absent pour la mémoire, logiciel constructeur en conflit, connecteurs ARGB à 0 LED, ventilateurs mesurés mais non pilotables, capteurs indisponibles. Bouton « Redémarrer OpenRGB » dans le panneau.
+- Interne : le réglage du décodeur vidéo devient son propre composant (SettingsPanel repasse sous 800 lignes).
+
 ## 0.27.0
 
 - Écrans : l'aperçu n'est plus pivoté par la rotation. Elle compense le montage de l'écran dans le boîtier ; l'aperçu montre le design tel qu'on le voit sur l'écran, à l'endroit (corrige l'aperçu « à l'envers » avec une rotation de 180°).
