@@ -37,7 +37,15 @@ fn probe_claims_only_listed_pids_with_interface() {
     let k = probe(VID, 0x0228).expect("Elite");
     assert_eq!((k.interface, k.usage_page, k.led_count()), (Some(2), Some(0x0001), 132));
     assert_eq!(probe(VID, 0x024E).expect("V3").interface, Some(3));
-    assert_eq!(table::MODELS.len(), 7);
+    assert_eq!(table::MODELS.len(), 31);
+    let ids: std::collections::HashSet<_> = table::MODELS.iter().map(|e| e.pid).collect();
+    let names: std::collections::HashSet<_> = table::MODELS.iter().map(|e| e.name).collect();
+    assert_eq!((ids.len(), names.len()), (31, 31)); // `open` retrouve l'entree par nom : noms uniques
+    let cobra = probe(VID, 0x00A3).expect("Cobra");
+    assert_eq!((cobra.interface, cobra.usage_page, cobra.led_count()), (Some(3), Some(0x000C), 10));
+    assert_eq!(probe(VID, 0x006C).expect("Mamba Elite").led_count(), 20);
+    assert!(probe(VID, 0x0068).is_none()); // Hyperflux : init supplementaire INCONNUE ici
+    assert!(probe(VID, 0x007C).is_none()); // sans fil : non repris
     assert!(global_probe(VID, 0x0221).map(|(f, _)| f.id) == Some("razer"));
 }
 
