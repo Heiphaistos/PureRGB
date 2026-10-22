@@ -272,6 +272,16 @@ impl OpenRgbManager {
         r
     }
 
+    /// Le serveur qui écoute répond-il au protocole OpenRGB ?
+    pub fn serves_openrgb(host: &str, port: u16) -> bool {
+        Self::server_reachable(host, port) && speaks_openrgb(host, port)
+    }
+
+    /// Efface l'erreur mémorisée ; true s'il y en avait une.
+    pub fn take_error(&self) -> bool {
+        self.last_error.lock().take().is_some()
+    }
+
     fn start_server(&self, host: &str, port: u16) -> Result<bool> {
         if Self::server_reachable(host, port) {
             if speaks_openrgb(host, port) {

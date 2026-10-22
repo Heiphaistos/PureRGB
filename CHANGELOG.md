@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.32.0
+
+- Nombre de LEDs automatique : un connecteur ARGB de carte mère (ou canal de hub) qui n'annonce aucune LED reçoit 60 LEDs d'office, plus rien à compter ; la valeur reste modifiable à la main (un 0 choisi est respecté). Un connecteur ne peut pas dire ce qui y est branché, donc c'est une taille courante, pas une mesure.
+- Logiciels constructeur : seuls ceux qui TOURNENT sont signalés comme gênants (inventaire, panneau). Un logiciel installé mais arrêté affiche « aucun conflit ». Quand OpenRGB est arrêté, les appareils USB indiquent « en attente d'OpenRGB » au lieu de réclamer de fermer un logiciel.
+- Inventaire : la cause de l'échec d'OpenRGB est affichée sur le constat « Serveur OpenRGB injoignable ».
+- OpenRGB à initialisation lente : s'il finit par démarrer après l'échec, PureRGB re-détecte tout seul. La re-détection au branchement n'a plus lieu pendant l'initialisation d'OpenRGB, et un appareil qui disparaît puis revient n'est plus compté comme nouveau (cause probable des relances en boucle de la 0.29).
+
 ## 0.31.0
 
 - Port du serveur OpenRGB (6742) occupé par un autre programme : PureRGB vérifie que ce qui répond parle bien le protocole OpenRGB ; sinon il nomme le programme (et son PID) dans la bannière au lieu de croire que tout va bien.

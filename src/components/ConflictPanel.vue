@@ -81,10 +81,10 @@ async function restartOpenRgb() {
 
 <template>
   <section class="conflict-panel">
-    <h2>Logiciels en conflit</h2>
+    <h2>Logiciels constructeur</h2>
     <p class="hint">
-      Les logiciels constructeur (iCUE, CAM, Armoury Crate…) verrouillent l'accès
-      au matériel : OpenRGB ne voit alors pas ces appareils. Stoppez-les ici, puis
+      Seuls les logiciels constructeur EN COURS D'EXÉCUTION (iCUE, CAM, Armoury Crate…) verrouillent l'accès
+      au matériel; un logiciel simplement installé et arrêté ne gêne pas : OpenRGB ne voit alors pas ces appareils. Stoppez-les ici, puis
       redémarrez OpenRGB pour relancer la détection. « Désactiver » empêche aussi
       leur relance au démarrage de Windows (réversible). Attention : leurs
       fonctions propres (macros, écrans LCD, mises à jour) seront indisponibles
@@ -103,6 +103,7 @@ async function restartOpenRgb() {
           matériel {{ c.affects.join(", ") }}
         </span>
       </header>
+      <p class="detail" v-if="!c.active"><strong>Installé mais arrêté : aucun conflit.</strong></p>
       <p class="detail" v-if="c.processes.length">
         Processus actifs : {{ c.processes.join(", ") }}
       </p>

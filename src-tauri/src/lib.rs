@@ -63,6 +63,16 @@ struct ConflictReport {
     guarded_families: std::collections::HashSet<String>,
 }
 
+/// Nombre de LEDs appliqué à un connecteur ARGB dont le contrôleur n'annonce aucune LED : un connecteur ne
+/// peut pas dire ce qui y est branché, on prend une taille courante plutôt que d'exiger un comptage
+/// (les LEDs en trop n'existent pas, aucun effet néfaste ; modifiable à la main).
+const AUTO_ARGB_LEDS: u32 = 60;
+
+/// Taille voulue pour une zone : choix enregistré (même 0), sinon `AUTO_ARGB_LEDS` si la zone est vide et redimensionnable.
+fn wanted_zone_size(sizes: &std::collections::HashMap<String, u32>, key: &str, z: &crate::core::ZoneInfo) -> Option<u32> {
+    sizes.get(key).copied().or_else(|| (z.led_count == 0 && z.resizable()).then_some(AUTO_ARGB_LEDS))
+}
+
 /// Ré-applique les tailles de zones ARGB sauvegardées (clé nom appareil +
 /// nom zone : stable entre les redémarrages, contrairement à l'index).
 /// Retourne true si au moins un resize a été envoyé (=> re-scan nécessaire).
@@ -70,9 +80,6 @@ fn apply_saved_zone_sizes(
     reg: &mut crate::core::registry::DeviceRegistry,
     sizes: &std::collections::HashMap<String, u32>,
 ) -> bool {
-    if sizes.is_empty() {
-        return false;
-    }
     let devices = reg.device_list();
     let mut resized = false;
     for d in devices.iter().filter(|d| d.backend == "openrgb") {
@@ -81,7 +88,7 @@ fn apply_saved_zone_sizes(
         };
         for (z_idx, z) in d.zones.iter().enumerate() {
             let key = format!("{}|{}", d.name, z.name);
-            let Some(&wanted) = sizes.get(&key) else {
+            let Some(wanted) = wanted_zone_size(sizes, &key, z) else {
                 continue;
             };
             if wanted == z.led_count || !z.resizable() {
@@ -661,9 +668,9 @@ fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
 fn rescan_after_plug(app: &tauri::AppHandle, plugged: &[crate::backends::hid::RawHidDevice]) {
     std::thread::sleep(std::time::Duration::from_secs(3));
     let state = app.state::<AppState>();
-    let (host, port, sizes) = {
+    let (host, port) = {
         let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port, s.zone_sizes.clone())
+        (s.openrgb_host.clone(), s.openrgb_port)
     };
     if state.openrgb_mgr.status(&host, port).managed {
         state.openrgb_mgr.stop();
@@ -671,9 +678,16 @@ fn rescan_after_plug(app: &tauri::AppHandle, plugged: &[crate::backends::hid::Ra
             log::warn!("redémarrage OpenRGB après branchement : {e:#}");
         }
     }
+    rescan_and_notify(app, &format!("branchement RGB ({} nouveau(x))", plugged.len()));
+}
+
+/// Re-scan complet puis prévient l'interface (événement `devices-changed`).
+fn rescan_and_notify(app: &tauri::AppHandle, why: &str) {
+    let state = app.state::<AppState>();
+    let sizes = state.settings.lock().zone_sizes.clone();
     let devices = scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
     state.engine.invalidate();
-    log::info!("branchement RGB ({} nouveau(x)) : {} appareil(s) après re-détection", plugged.len(), devices.len());
+    log::info!("{why} : {} appareil(s) après re-détection", devices.len());
     if let Err(e) = app.emit("devices-changed", devices.len()) {
         log::debug!("émission devices-changed : {e:#}");
     }
@@ -695,6 +709,8 @@ fn rgb_inventory(state: State<AppState>) -> Result<Vec<inventory::Finding>, Stri
         sensord_up: state.sensors.running(),
         fans_measured: sensors.iter().filter(|s| s.kind == "Fan" && s.id.starts_with("/lpc/")).count(),
         fans_controllable: sensors.iter().filter(|s| s.kind == "Control" && s.controllable && s.id.starts_with("/lpc/")).count(),
+        active_conflicts: conflicts::scan().0.into_iter().filter(|c| c.active).map(|c| c.name).collect(),
+        openrgb_error: st.last_error.clone(),
     };
     let devices = state.registry.lock().device_list();
     Ok(inventory::analyze(&inv, &devices, &ctx))
@@ -1233,6 +1249,7 @@ pub fn run() {
                             std::collections::HashSet::new();
                         let mut first = true;
                         let mut last_rescan: Option<std::time::Instant> = None;
+                        let mut orgb_was_up = false;
                         loop {
                             std::thread::sleep(std::time::Duration::from_secs(5));
                             let state = app_handle.state::<AppState>();
@@ -1250,6 +1267,17 @@ pub fn run() {
                                 .iter()
                                 .map(|d| (d.vid.clone(), d.pid.clone()))
                                 .collect();
+                            let (host, port) = {
+                                let st = app_handle.state::<AppState>();
+                                let g = st.settings.lock();
+                                (g.openrgb_host.clone(), g.openrgb_port)
+                            };
+                            let orgb_up = backends::openrgb::manager::OpenRgbManager::serves_openrgb(&host, port);
+                            // OpenRGB a fini par démarrer après un échec (init lente) : on re-scanne sans attendre un clic.
+                            if orgb_up && !orgb_was_up && !first && app_handle.state::<AppState>().openrgb_mgr.take_error() {
+                                rescan_and_notify(&app_handle, "OpenRGB démarré tardivement");
+                            }
+                            orgb_was_up = orgb_up;
                             if first {
                                 previous = current_keys;
                                 first = false;
@@ -1400,6 +1428,30 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("erreur au lancement de PureRGB");
+}
+
+#[cfg(test)]
+mod zone_size_tests {
+    use super::wanted_zone_size;
+    use crate::core::ZoneInfo;
+    use std::collections::HashMap;
+
+    fn argb(count: u32) -> ZoneInfo {
+        ZoneInfo { name: "JRAINBOW1".into(), led_count: count, zone_type: 1, leds_min: 0, leds_max: 240 }
+    }
+
+    #[test]
+    fn empty_argb_header_gets_an_automatic_size() {
+        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &argb(0)), Some(60));
+    }
+
+    #[test]
+    fn saved_size_wins_even_zero_and_sized_or_fixed_zones_are_left_alone() {
+        let saved: HashMap<String, u32> = [("k".to_string(), 0)].into();
+        assert_eq!(wanted_zone_size(&saved, "k", &argb(0)), Some(0));
+        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &argb(24)), None);
+        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &ZoneInfo::fixed("Carte", 0)), None);
+    }
 }
 
 #[cfg(test)]

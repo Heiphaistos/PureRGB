@@ -49,6 +49,21 @@ pub struct Context {
     pub sensord_up: bool,
     pub fans_measured: usize,
     pub fans_controllable: usize,
+    /// Logiciels constructeur réellement en cours d'exécution (pas simplement installés).
+    pub active_conflicts: Vec<String>,
+    /// Dernière raison de l'échec du démarrage d'OpenRGB.
+    pub openrgb_error: Option<String>,
+}
+
+impl Context {
+    /// Phrase à ajouter aux explications : vide si aucun logiciel constructeur n'est actif.
+    fn conflict_hint(&self) -> String {
+        if self.active_conflicts.is_empty() {
+            String::new()
+        } else {
+            format!(" Logiciel(s) en cours d'exécution qui peuvent verrouiller le matériel : {} (voir « Logiciels en conflit »).", self.active_conflicts.join(", "))
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -79,12 +94,13 @@ fn count(devices: &[DeviceInfo], t: DeviceType) -> usize {
 pub fn analyze(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context) -> Vec<Finding> {
     let mut out = Vec::new();
     if !ctx.openrgb_up {
+        let why = ctx.openrgb_error.as_deref().map(|e| format!(" Cause : {e}")).unwrap_or_default();
         out.push(f("OpenRGB", Status::Warn, "Serveur OpenRGB injoignable",
-            "Sans lui, ni la carte mère, ni la mémoire, ni la plupart des périphériques ne sont détectés. Utilisez « Démarrer OpenRGB »."));
+            format!("Sans lui, ni la carte mère, ni la mémoire, ni la plupart des périphériques ne sont détectés. Utilisez « Démarrer OpenRGB ».{why}")));
     }
-    board(inv, devices, &mut out);
+    board(inv, devices, ctx, &mut out);
     memory(inv, devices, ctx, &mut out);
-    usb(inv, devices, &mut out);
+    usb(inv, devices, ctx, &mut out);
     fans(ctx, &mut out);
     if !inv.gpus.is_empty() {
         let n = count(devices, DeviceType::Gpu);
@@ -99,13 +115,12 @@ pub fn analyze(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context) -> Vec<Fi
     out
 }
 
-fn board(inv: &Inventory, devices: &[DeviceInfo], out: &mut Vec<Finding>) {
+fn board(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Finding>) {
     let name = format!("{} {}", inv.board.manufacturer, inv.board.product).trim().to_string();
     let boards: Vec<&DeviceInfo> = devices.iter().filter(|d| d.device_type == DeviceType::Motherboard && d.controllable).collect();
     if boards.is_empty() {
         out.push(f("Carte mère", Status::Info, format!("Aucun éclairage de carte mère pilotable ({name})"),
-            "Normal si la carte n'a pas de RGB. Sinon : fermer Armoury Crate / MSI Center / RGB Fusion (ils occupent le contrôleur), \
-             puis « Redémarrer OpenRGB »."));
+            format!("Normal si la carte n'a pas de RGB. Sinon, « Redémarrer OpenRGB ».{}", ctx.conflict_hint())));
         return;
     }
     out.push(f("Carte mère", Status::Ok, format!("Éclairage de la carte mère pilotable ({name})"),
@@ -134,12 +149,11 @@ fn memory(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<
             "L'éclairage de la mémoire passe par le bus SMBus, inaccessible sans le pilote PawnIO (Réglages, installer PawnIO), puis redémarrer OpenRGB."));
     } else {
         out.push(f("Mémoire", Status::Info, format!("{sticks} barrette(s) vue(s), aucune pilotable"),
-            format!("{} : barrettes sans RGB, modèle non supporté, ou logiciel constructeur (iCUE, Armoury Crate…) qui tient le bus SMBus. \
-                     Fermez-le puis « Redémarrer OpenRGB ».", names.join(" · "))));
+            format!("{} : barrettes sans RGB ou modèle non supporté.{}", names.join(" · "), ctx.conflict_hint())));
     }
 }
 
-fn usb(inv: &Inventory, devices: &[DeviceInfo], out: &mut Vec<Finding>) {
+fn usb(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Finding>) {
     use crate::rgb_catalog::catalog;
     let cat = catalog();
     for u in &inv.usb {
@@ -148,8 +162,10 @@ fn usb(inv: &Inventory, devices: &[DeviceInfo], out: &mut Vec<Finding>) {
         let driven = devices.iter().any(|d| d.controllable && format!("{} {}", d.vendor, d.name).to_lowercase().contains(&key));
         match cat.device(u.vid, u.pid) {
             Some(model) if driven => out.push(f("USB", Status::Ok, format!("{model} pilotable"), format!("{} (USB {:04X}:{:04X})", u.name, u.vid, u.pid))),
+            Some(model) if !ctx.openrgb_up => out.push(f("USB", Status::Info, format!("{model} reconnu, en attente d'OpenRGB"),
+                format!("USB {:04X}:{:04X} sera pilotable dès que le serveur OpenRGB tourne.", u.vid, u.pid))),
             Some(model) => out.push(f("USB", Status::Warn, format!("{model} reconnu mais non détecté"),
-                format!("USB {:04X}:{:04X} est un contrôleur RGB connu : fermez le logiciel du constructeur, rebranchez-le, puis « Redémarrer OpenRGB ».", u.vid, u.pid))),
+                format!("USB {:04X}:{:04X} est un contrôleur RGB connu mais OpenRGB ne l'a pas pris : rebranchez-le puis « Redémarrer OpenRGB ».{}", u.vid, u.pid, ctx.conflict_hint()))),
             None => out.push(f("USB", Status::Info, format!("{vendor} : {} (USB {:04X}:{:04X}) hors catalogue", u.name, u.vid, u.pid),
                 "Fabricant RGB connu mais ce modèle précis n'est pas encore pris en charge (ou n'a pas d'éclairage). Signalez-le via le diagnostic matériel.")),
         }
@@ -316,7 +332,7 @@ mod tests {
     #[test]
     fn missing_ram_driver_and_unseen_razer_are_explained() {
         let inv = parse_inventory(SAMPLE).unwrap();
-        let ctx = Context { openrgb_up: true, pawnio_ready: false, sensord_up: true, fans_measured: 3, fans_controllable: 0 };
+        let ctx = Context { openrgb_up: true, pawnio_ready: false, sensord_up: true, fans_measured: 3, fans_controllable: 0, ..Default::default() };
         let r = analyze(&inv, &[], &ctx);
         let by = |c: &str| r.iter().find(|x| x.category == c).unwrap_or_else(|| panic!("constat {c} absent"));
         assert_eq!(by("Mémoire").status, Status::Warn);
@@ -329,7 +345,7 @@ mod tests {
     #[test]
     fn controllable_hardware_is_reported_ok_and_empty_argb_headers_warn() {
         let inv = parse_inventory(SAMPLE).unwrap();
-        let ctx = Context { openrgb_up: true, pawnio_ready: true, sensord_up: true, fans_measured: 2, fans_controllable: 2 };
+        let ctx = Context { openrgb_up: true, pawnio_ready: true, sensord_up: true, fans_measured: 2, fans_controllable: 2, ..Default::default() };
         let devices = vec![
             dev("ROG STRIX B650-F", "ASUS", DeviceType::Motherboard, vec![("Addressable 1", 0), ("Mainboard", 8)]),
             dev("Corsair Vengeance 1", "Corsair", DeviceType::Dram, vec![]),
@@ -342,6 +358,27 @@ mod tests {
         let w = r.iter().find(|x| x.status == Status::Warn).expect("ARGB à 0 LED signalé");
         assert!(w.title.contains("Addressable 1") && !w.title.contains("Mainboard"));
         assert!(r.iter().any(|x| x.category == "Ventilateurs" && x.status == Status::Ok));
+    }
+
+    #[test]
+    fn installed_but_stopped_software_is_never_called_a_conflict() {
+        let inv = parse_inventory(SAMPLE).unwrap();
+        let calm = Context { openrgb_up: true, pawnio_ready: true, sensord_up: true, ..Default::default() };
+        let r = analyze(&inv, &[], &calm);
+        assert!(r.iter().all(|x| !x.detail.contains("en cours d'exécution") && !x.detail.contains("fermez")));
+        let busy = Context { active_conflicts: vec!["Corsair iCUE".into()], ..calm };
+        let r = analyze(&inv, &[], &busy);
+        assert!(r.iter().any(|x| x.category == "USB" && x.detail.contains("Corsair iCUE")));
+    }
+
+    #[test]
+    fn usb_devices_wait_for_openrgb_instead_of_blaming_software() {
+        let inv = parse_inventory(SAMPLE).unwrap();
+        let down = Context { openrgb_error: Some("port pris".into()), ..Default::default() };
+        let r = analyze(&inv, &[], &down);
+        let o = r.iter().find(|x| x.category == "OpenRGB").expect("constat OpenRGB");
+        assert!(o.detail.contains("port pris"));
+        assert!(r.iter().filter(|x| x.category == "USB").all(|x| x.status != Status::Warn));
     }
 
     /// Vrai appel WMI sur cette machine : `cargo test real_inventory -- --ignored --nocapture`.
