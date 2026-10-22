@@ -1063,6 +1063,27 @@ pub fn run() {
     let engine = EffectsEngine::start(registry.clone());
     engine.set_fps(saved.fps);
     let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
+    // Port d'OpenRGB changé automatiquement (le port réglé était pris) : on l'enregistre et on réoriente le client.
+    {
+        let (registry, settings_shared) = (registry.clone(), settings_shared.clone());
+        openrgb_mgr.set_port_hook(Box::new(move |port| {
+            let host = {
+                let mut s = settings_shared.lock();
+                s.openrgb_port = port;
+                if let Err(e) = settings::save(&s) {
+                    log::warn!("enregistrement du nouveau port OpenRGB: {e:#}");
+                }
+                s.openrgb_host.clone()
+            };
+            if let Some(mut reg) = registry.try_lock_for(std::time::Duration::from_secs(5)) {
+                for b in reg.backends_mut() {
+                    if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
+                        orgb.set_endpoint(host.clone(), port);
+                    }
+                }
+            }
+        }));
+    }
     let curve_engine = CurveEngine::start(registry.clone(), sensors.clone(), saved.curves.clone());
 
     let auto_stopped: std::sync::Arc<Mutex<Vec<String>>> = std::sync::Arc::new(Mutex::new(Vec::new()));

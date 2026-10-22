@@ -142,6 +142,8 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
     // frame_time) répété, qui ralentit visiblement l'animation quand le
     // rendu/l'écriture réseau prend du temps (plusieurs appareils OpenRGB).
     let mut next_tick = Instant::now();
+    // Une erreur d'envoi par appareil et par minute dans le journal (visible en diagnostic), pas une par image.
+    let mut last_warn: HashMap<String, Instant> = HashMap::new();
 
     while inner.running.load(Ordering::Relaxed) {
         let generation = inner.generation.load(Ordering::Relaxed);
@@ -174,7 +176,12 @@ fn engine_loop(inner: Arc<EngineInner>, registry: SharedRegistry) {
                         applied_static.insert(id.clone(), assignment.clone());
                     }
                 }
-                Err(e) => log::debug!("set_colors {id}: {e:#}"),
+                Err(e) => {
+                    if last_warn.get(id).map_or(true, |t| t.elapsed() > Duration::from_secs(60)) {
+                        last_warn.insert(id.clone(), Instant::now());
+                        log::warn!("envoi des couleurs à {id} : {e:#}");
+                    }
+                }
             }
         }
 

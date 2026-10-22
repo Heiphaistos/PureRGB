@@ -48,7 +48,28 @@ pub struct OpenRgbStatus {
     pub last_error: Option<String>,
 }
 
+/// Port occupé par un autre programme : on peut démarrer OpenRGB sur un autre port.
+#[derive(Debug)]
+struct PortTaken(String);
+
+impl std::fmt::Display for PortTaken {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl std::error::Error for PortTaken {}
+
+/// Premier port libre (127.0.0.1) à partir de `from`, parmi 30 essais.
+fn free_port(from: u16) -> Option<u16> {
+    (from..from.saturating_add(30)).find(|p| std::net::TcpListener::bind(("127.0.0.1", *p)).is_ok())
+}
+
+type PortHook = Box<dyn Fn(u16) + Send + Sync>;
+
 pub struct OpenRgbManager {
+    /// Prévenu quand le serveur est démarré sur un autre port que celui des réglages (pour l'enregistrer).
+    port_hook: Mutex<Option<PortHook>>,
     child: Mutex<Option<Child>>,
     last_error: Mutex<Option<String>>,
     /// Dossier ressources du bundle (résolu par Tauri au démarrage).
@@ -58,6 +79,7 @@ pub struct OpenRgbManager {
 impl OpenRgbManager {
     pub fn new() -> Self {
         OpenRgbManager {
+            port_hook: Mutex::new(None),
             child: Mutex::new(None),
             last_error: Mutex::new(None),
             resource_dir: Mutex::new(None),
@@ -266,10 +288,27 @@ impl OpenRgbManager {
     /// Lance le serveur OpenRGB en arrière-plan (fenêtre minimisée dans le tray).
     /// No-op si un serveur répond déjà (OpenRGB de l'utilisateur, par exemple).
     /// En cas d'échec, la cause (avec diagnostic) est gardée pour l'interface.
+    /// Si le port est pris par un autre programme (hôte local), bascule seul sur un port libre.
     pub fn ensure_running(&self, host: &str, port: u16) -> Result<bool> {
-        let r = self.start_server(host, port);
+        let local = matches!(host, "127.0.0.1" | "localhost" | "::1");
+        let mut p = port;
+        let r = loop {
+            let r = self.start_server(host, p);
+            let taken = r.as_ref().err().is_some_and(|e| e.downcast_ref::<PortTaken>().is_some());
+            let next = if taken && local && p < port.saturating_add(30) { free_port(p.saturating_add(1)) } else { None };
+            let Some(np) = next else { break r };
+            log::warn!("port {p} occupé par un autre programme : OpenRGB démarre sur le port {np}");
+            if let Some(hook) = self.port_hook.lock().as_ref() {
+                hook(np);
+            }
+            p = np;
+        };
         *self.last_error.lock() = r.as_ref().err().map(|e| format!("{e:#}"));
         r
+    }
+
+    pub fn set_port_hook(&self, hook: PortHook) {
+        *self.port_hook.lock() = Some(hook);
     }
 
     /// Le serveur qui écoute répond-il au protocole OpenRGB ?
@@ -288,9 +327,9 @@ impl OpenRgbManager {
                 return Ok(false); // déjà servi, rien à lancer
             }
             let who = port_owner(port).map(|(pid, name)| format!(" par « {name} » (PID {pid})")).unwrap_or_default();
-            bail!(
-                "Le port {port} est déjà utilisé{who} et ce n'est pas un serveur OpenRGB. Fermez ce programme ou changez le port d'OpenRGB dans Réglages."
-            );
+            return Err(anyhow::Error::new(PortTaken(format!(
+                "Le port {port} est déjà utilisé{who} et ce n'est pas un serveur OpenRGB."
+            ))));
         }
         // Fichiers de notre copie manquants (antivirus, suppression) : on la réinstalle (SHA-256 vérifié).
         let exe = match self.locate() {

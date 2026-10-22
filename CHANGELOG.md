@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.35.0
+
+- Délais dépassés quand on change un réglage : l'envoi des couleurs à OpenRGB n'attendait jamais de réponse, donc un contrôleur lent (RAM en SMBus, carte mère) accumulait des images en file et chaque réglage suivant expirait derrière. Chaque envoi attend maintenant que le serveur l'ait traité (test sur un faux serveur lent). Les erreurs d'envoi sont écrites dans le journal (une par appareil et par minute).
+- Port 6742 occupé par un autre programme : PureRGB démarre OpenRGB sur le premier port libre suivant, l'enregistre dans les réglages et reconnecte le client, sans intervention.
+- Appareils affichés deux fois : avec les drivers natifs activés, la copie OpenRGB d'une carte déjà pilotée en natif est masquée ; une ligne « vu en USB » disparaît dès qu'un autre backend pilote l'appareil.
+- Écran Thermalright « accès refusé » : le message ne réclamait plus à tort WinUSB quand le pilote est bon ; il nomme les processus suspects (TRCC, L-Connect, iCUE…) avec leur PID. TRCC rejoint la liste des logiciels gérés (Stopper dans le panneau, ou arrêt automatique).
+
 ## 0.34.0
 
 - Ventilateurs, pompes et bandeaux : le sélecteur « Modèle connu » (Éclairage, zone ARGB) propose maintenant 71 références de 14 marques (Corsair, Lian Li, NZXT, Thermaltake, Cooler Master, be quiet!, Arctic, DeepCool, Phanteks, Antec, Fractal, Montech, HYTE, Razer) avec leur nombre de LEDs relevé sur la documentation du constructeur ; quantité × LEDs/unité, plus rien à compter. Catalogue généré depuis `docs/led-catalog/fans.json` (`tools/led-catalog/gen_fans.py`).

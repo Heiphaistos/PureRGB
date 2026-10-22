@@ -80,6 +80,17 @@ pub fn winusb_hint(vid: u16, pid: u16, driver: Option<&str>) -> String {
     )
 }
 
+/// Le pilote est bon mais l'accès est refusé : un autre programme tient l'écran. On nomme les suspects.
+pub fn busy_hint() -> String {
+    let holders = crate::conflicts::running_screen_software();
+    let who = if holders.is_empty() {
+        "aucun logiciel d'écran connu n'est repéré parmi les processus (vérifiez le Gestionnaire des tâches, onglet Détails)".to_string()
+    } else {
+        format!("processus suspects : {}", holders.join(", "))
+    };
+    format!("L'écran est déjà utilisé par un autre programme ({who}). Fermez-le complètement, y compris dans la zone de notification, puis « Rechercher ».")
+}
+
 impl NusbTransport {
     /// Ouvre le périphérique, trouve la première interface portant un point d'accès bulk OUT et IN
     /// (en préférant `pref_out` / `pref_in` quand ils existent), et la réclame.
@@ -122,10 +133,14 @@ impl NusbTransport {
         })?;
         let iface = device.claim_interface(num).map_err(|e| {
             #[cfg(windows)]
-            let extra = winusb_hint(vid, pid, info.driver());
+            let extra = if info.driver().is_some_and(|d| d.eq_ignore_ascii_case("winusb")) {
+                busy_hint()
+            } else {
+                winusb_hint(vid, pid, info.driver())
+            };
             #[cfg(not(windows))]
             let extra = String::new();
-            anyhow!("Impossible de réclamer l'interface {num} de {vid:04X}:{pid:04X} ({e}). Fermez TRCC. {extra}")
+            anyhow!("Impossible de réclamer l'interface {num} de {vid:04X}:{pid:04X} ({e}). {extra}")
         })?;
         Ok(NusbTransport { iface, ep_out, ep_in, timeout })
     }

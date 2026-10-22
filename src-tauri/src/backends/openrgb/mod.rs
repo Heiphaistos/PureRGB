@@ -202,6 +202,12 @@ impl OpenRgbBackend {
         bail!("réponse OpenRGB {packet_id} non reçue");
     }
 
+    /// Attend que le serveur ait traité tout ce qu'on lui a envoyé (il répond dans l'ordre) : sans cela, un
+    /// contrôleur lent (RAM en SMBus) accumule des images en file et chaque réglage suivant tombe en délai dépassé.
+    fn barrier(&mut self) -> Result<()> {
+        self.controller_count().map(|_| ())
+    }
+
     fn controller_count(&mut self) -> Result<u32> {
         self.send(0, p::REQUEST_CONTROLLER_COUNT, &[])?;
         let (_, _, data) = self.recv_expect(p::REQUEST_CONTROLLER_COUNT)?;
@@ -284,7 +290,8 @@ impl Backend for OpenRgbBackend {
             fixed.resize(expected, colors.last().copied().unwrap_or(Color::BLACK));
             p::encode_update_leds(&fixed)
         };
-        self.send(idx, p::RGBCONTROLLER_UPDATELEDS, &payload)
+        self.send(idx, p::RGBCONTROLLER_UPDATELEDS, &payload)?;
+        self.barrier()
     }
 
     fn is_available(&self) -> bool {
@@ -293,5 +300,60 @@ impl Backend for OpenRgbBackend {
 
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::sync::Arc;
+
+    fn reply(c: &mut std::net::TcpStream, packet: u32, data: &[u8]) {
+        let _ = c.write_all(&p::header(0, packet, data.len() as u32));
+        let _ = c.write_all(data);
+    }
+
+    /// Faux serveur dont le traitement des LEDs est lent (150 ms) et qui répond dans l'ordre.
+    fn slow_server(done: Arc<AtomicBool>) -> u16 {
+        let l = TcpListener::bind("127.0.0.1:0").unwrap();
+        let port = l.local_addr().unwrap().port();
+        std::thread::spawn(move || {
+            let Ok((mut c, _)) = l.accept() else { return };
+            loop {
+                let mut h = [0u8; 16];
+                if c.read_exact(&mut h).is_err() {
+                    return;
+                }
+                let id = u32::from_le_bytes(h[8..12].try_into().unwrap());
+                let mut data = vec![0u8; u32::from_le_bytes(h[12..16].try_into().unwrap()) as usize];
+                if c.read_exact(&mut data).is_err() {
+                    return;
+                }
+                match id {
+                    p::REQUEST_PROTOCOL_VERSION => reply(&mut c, id, &1u32.to_le_bytes()),
+                    p::REQUEST_CONTROLLER_COUNT => reply(&mut c, id, &1u32.to_le_bytes()),
+                    p::RGBCONTROLLER_UPDATELEDS => {
+                        std::thread::sleep(Duration::from_millis(150));
+                        done.store(true, Ordering::SeqCst);
+                    }
+                    _ => {}
+                }
+            }
+        });
+        port
+    }
+
+    #[test]
+    fn set_colors_returns_only_once_the_server_has_processed_the_frame() {
+        let done = Arc::new(AtomicBool::new(false));
+        let port = slow_server(done.clone());
+        let mut b = OpenRgbBackend::new("127.0.0.1".into(), port);
+        b.led_counts = vec![2];
+        b.custom_mode_set = vec![false];
+        b.set_colors("0", &[Color::new(1, 2, 3), Color::new(4, 5, 6)]).unwrap();
+        assert!(done.load(Ordering::SeqCst), "la trame doit être traitée avant le retour (pas de file d'attente cachée)");
     }
 }

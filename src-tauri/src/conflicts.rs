@@ -166,6 +166,13 @@ const FAMILIES: &[Family] = &[
         service_keywords: &["cougar"],
     },
     Family {
+        key: "thermalright",
+        name: "Thermalright TRCC",
+        affects: &["Thermalright (écrans)"],
+        processes: &["trcc.exe", "thermalright.exe", "trcc service.exe", "thermalrightcontrolcenter.exe"],
+        service_keywords: &["trcc"],
+    },
+    Family {
         key: "signalrgb",
         name: "SignalRGB",
         affects: &["toutes"],
@@ -179,6 +186,22 @@ fn find_family(key: &str) -> Result<&'static Family> {
         .iter()
         .find(|f| f.key == key)
         .with_context(|| format!("famille inconnue: {key}"))
+}
+
+/// Logiciels qui tiennent habituellement un mini-écran USB (nom + PID), pour expliquer un « accès refusé ».
+pub fn running_screen_software() -> Vec<String> {
+    const HINTS: &[&str] = &["trcc", "thermalright", "l-connect", "lconnect", "icue", "nzxt cam", "turzx", "turing", "armoury"];
+    let sys = System::new_with_specifics(RefreshKind::nothing().with_processes(ProcessRefreshKind::nothing()));
+    let mut v: Vec<String> = sys
+        .processes()
+        .iter()
+        .filter_map(|(pid, p)| {
+            let n = p.name().to_string_lossy().to_string();
+            HINTS.iter().any(|h| n.to_lowercase().contains(h)).then(|| format!("{n} (PID {pid})"))
+        })
+        .collect();
+    v.sort();
+    v
 }
 
 /// OpenRGB n'est PAS un conflit : c'est notre pont. Listé à part.
