@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.36.0
+
+- Photos de produits : le catalogue passe de 133 à 330 produits (95 cartes mères MSI/Gigabyte/ASUS, mémoires Corsair/G.Skill/Kingston/TeamGroup, ventilateurs, hubs et contrôleurs, boîtiers, cartes graphiques). Photos prises sur le site du constructeur, redimensionnées et vérifiées ; chaque produit renvoie vers sa page. Non couverts : cartes ASRock (site bloqué aux robots) et quelques marques sans image exploitable. `tools/led-catalog/merge_images.py` régénère le catalogue.
+- Mémoire native (très expérimental, désactivé par défaut) : première couche SMBus sans OpenRGB (accès PawnIO) avec le pilote Corsair Vengeance RGB Pro / Dominator / Vengeance RGB DDR5. Détection en lecture quasi seule (liste blanche d'écritures, jamais de zone SPD/PMIC), protégée par les tests d'octets sur faux bus ; AUCUN essai sur vrai matériel à ce jour. Activer « Drivers natifs » dans Réglages, et fermer iCUE.
+- Test d'écran rendu indépendant de la charge de la machine (il échouait parfois quand l'ordinateur était occupé).
+
 ## 0.35.0
 
 - Délais dépassés quand on change un réglage : l'envoi des couleurs à OpenRGB n'attendait jamais de réponse, donc un contrôleur lent (RAM en SMBus, carte mère) accumulait des images en file et chaque réglage suivant expirait derrière. Chaque envoi attend maintenant que le serveur l'ait traité (test sur un faux serveur lent). Les erreurs d'envoi sont écrites dans le journal (une par appareil et par minute).
