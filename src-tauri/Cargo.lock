@@ -3111,6 +3111,7 @@ dependencies = [
  "hidapi",
  "image",
  "jpeg-encoder",
+ "libloading",
  "log",
  "nusb",
  "parking_lot",

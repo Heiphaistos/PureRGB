@@ -24,6 +24,7 @@ use crate::backends::liquidctl::LiquidctlBackend;
 use crate::backends::mobo::MoboFanBackend;
 use crate::backends::openrgb::manager::{OpenRgbManager, OpenRgbStatus};
 use crate::backends::openrgb::OpenRgbBackend;
+use crate::backends::smbus::SmbusBackend;
 use crate::backends::Backend;
 use crate::core::registry::{DeviceRegistry, SharedRegistry};
 use crate::core::DeviceInfo;
@@ -925,6 +926,10 @@ fn update_settings(
                 if let Some(hid) = b.as_any_mut().downcast_mut::<HidBackend>() {
                     hid.set_native_enabled(native_drivers_enabled);
                 }
+            } else if b.name() == "smbus" {
+                if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
+                    sm.set_native_enabled(native_drivers_enabled);
+                }
             }
         }
     }
@@ -1056,6 +1061,7 @@ pub fn run() {
             saved.openrgb_port,
         )),
         Box::new(HidBackend::new(saved.native_drivers_enabled)),
+        Box::new(SmbusBackend::new(saved.native_drivers_enabled)),
         Box::new(LiquidctlBackend::new()),
         Box::new(MoboFanBackend::new(sensors.clone())),
     ];

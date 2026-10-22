@@ -44,6 +44,8 @@ des = "=0.8.1"
 zip = { version = "4.6.1", default-features = false, features = ["deflate-flate2"] }
 
 [target.'cfg(windows)'.dependencies]
+# Chargement dynamique de PawnIOLib.dll (backends/smbus/pawnio.rs) ; 0.7.4 est déjà dans Cargo.lock
+libloading = "0.7"
 # SCSI pass-through des écrans Thermalright (screens/drivers/scsi_win.rs)
 windows-sys = { version = "0.61", features = [
     "Win32_Foundation",

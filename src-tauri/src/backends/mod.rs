@@ -2,6 +2,7 @@ pub mod hid;
 pub mod liquidctl;
 pub mod mobo;
 pub mod openrgb;
+pub mod smbus;
 
 use crate::core::{Color, DeviceInfo};
 use anyhow::Result;
