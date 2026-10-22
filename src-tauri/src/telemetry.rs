@@ -133,7 +133,18 @@ pub fn send_report_now(diagnostics_json: &str, app_version: &str) -> Result<()> 
         &url,
     ]);
     let _ = std::fs::remove_file(&tmp_path);
-    result.map(|_| ())
+    ensure_accepted(&result?)
+}
+
+/// Le serveur répond `{"ok":true}` ; un refus (schéma, taille, quota) arrive avec un statut HTTP d'erreur mais curl
+/// réussit quand même : sans cette vérification, un rapport rejeté passerait pour envoyé.
+fn ensure_accepted(body: &str) -> Result<()> {
+    let ok = serde_json::from_str::<serde_json::Value>(body.trim()).ok().and_then(|v| v.get("ok")?.as_bool()).unwrap_or(false);
+    if ok {
+        Ok(())
+    } else {
+        anyhow::bail!("rapport refusé par le serveur : {}", body.trim().chars().take(200).collect::<String>())
+    }
 }
 
 /// Récupère la table distante, la fusionne en mémoire (`known_remote`) et
@@ -172,6 +183,13 @@ fn load_known_devices_cache() -> Option<Vec<RemoteDevice>> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn a_refused_report_is_an_error() {
+        assert!(super::ensure_accepted(r#"{"ok":true}"#).is_ok());
+        assert!(super::ensure_accepted(r#"{"error":"Rapport trop volumineux"}"#).unwrap_err().to_string().contains("volumineux"));
+        assert!(super::ensure_accepted("").is_err());
+    }
+
     use super::*;
 
     #[test]
@@ -212,6 +230,7 @@ mod tests {
                 last_error: None,
             },
             hid_raw: Vec::new(),
+            extra: None,
         };
 
         redact_paths_for_telemetry(&mut diag);

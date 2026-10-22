@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 0.34.0
+
+- Ventilateurs, pompes et bandeaux : le sélecteur « Modèle connu » (Éclairage, zone ARGB) propose maintenant 71 références de 14 marques (Corsair, Lian Li, NZXT, Thermaltake, Cooler Master, be quiet!, Arctic, DeepCool, Phanteks, Antec, Fractal, Montech, HYTE, Razer) avec leur nombre de LEDs relevé sur la documentation du constructeur ; quantité × LEDs/unité, plus rien à compter. Catalogue généré depuis `docs/led-catalog/fans.json` (`tools/led-catalog/gen_fans.py`).
+- Cartes mères : l'inventaire affiche les connecteurs ARGB/RGB du modèle (136 cartes ASUS, MSI, Gigabyte, ASRock… au catalogue) et la limite de LEDs documentée par le constructeur (MSI 75, ASRock 80, etc.). Un connecteur ne pouvant pas détecter ce qui y est branché, le nombre de LEDs d'un ventilateur reste à choisir par son modèle.
+- Télémétrie (opt-in, désactivée par défaut) : le rapport contient désormais carte mère, mémoire, GPU, USB RGB vus par Windows avec leur modèle au catalogue ou « hors catalogue », constats de l'inventaire, appareils pilotés et zones, logiciels en conflit actifs, erreurs de détection des écrans, dernières erreurs du journal (sans nom de compte ni chemin). Premier envoi 90 s après le démarrage, puis toutes les 30 min si quelque chose a changé.
+- Télémétrie : un rapport refusé par le serveur (schéma, taille) était compté comme envoyé ; c'est maintenant une erreur visible. Le rapport est réduit sous la limite de 64 Ko du serveur.
+- Catalogues de recherche (docs) : `docs/led-catalog/` regroupe les ventilateurs, cartes mères et mémoires (DDR4/DDR5) avec source et niveau de confiance ; les nombres introuvables restent `null`, rien n'est deviné.
+
 ## 0.33.0
 
 - Mini-écrans : la détection n'avait lieu qu'une fois au démarrage. Un écran branché mais sans pilote actif (ouverture ratée, branchement tardif, démarrage USB lent) est maintenant ré-essayé automatiquement (au changement d'état, sinon chaque minute) et la liste se met à jour toute seule.

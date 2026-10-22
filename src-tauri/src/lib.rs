@@ -2,8 +2,10 @@ mod backends;
 mod conflicts;
 mod core;
 mod engine;
+mod diag_extra;
 mod hotplug;
 mod inventory;
+mod led_catalog;
 mod job;
 mod netdev;
 mod product_commands;
@@ -553,6 +555,9 @@ struct HardwareDiagnostics {
     sensord: crate::sensors::SensorDiag,
     openrgb: OpenRgbStatus,
     hid_raw: Vec<crate::backends::hid::RawHidDevice>,
+    /// Diagnostics étendus (télémétrie et diagnostic complet) ; absent des appels légers.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    extra: Option<diag_extra::ExtraDiag>,
 }
 
 /// Diagnostic complet : capture les erreurs réelles de chaque sous-système
@@ -597,6 +602,7 @@ fn compute_hardware_diagnostics(
         sensord: sensors.diag(),
         openrgb: openrgb_mgr.status(openrgb_host, openrgb_port),
         hid_raw,
+        extra: None,
     }
 }
 
@@ -696,22 +702,8 @@ fn rescan_and_notify(app: &tauri::AppHandle, why: &str) {
 /// Inventaire du PC (WMI) comparé au matériel pilotable : explique les écarts (driver SMBus, logiciel en conflit…).
 #[tauri::command(async)]
 fn rgb_inventory(state: State<AppState>) -> Result<Vec<inventory::Finding>, String> {
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
     let inv = inventory::collect()?;
-    let st = state.openrgb_mgr.status(&host, port);
-    let sensors = state.sensors.snapshot();
-    let ctx = inventory::Context {
-        openrgb_up: st.server_reachable,
-        pawnio_ready: st.pawnio_ready,
-        sensord_up: state.sensors.running(),
-        fans_measured: sensors.iter().filter(|s| s.kind == "Fan" && s.id.starts_with("/lpc/")).count(),
-        fans_controllable: sensors.iter().filter(|s| s.kind == "Control" && s.controllable && s.id.starts_with("/lpc/")).count(),
-        active_conflicts: conflicts::scan().0.into_iter().filter(|c| c.active).map(|c| c.name).collect(),
-        openrgb_error: st.last_error.clone(),
-    };
+    let ctx = diag_extra::inventory_context(&state);
     let devices = state.registry.lock().device_list();
     Ok(inventory::analyze(&inv, &devices, &ctx))
 }
@@ -724,18 +716,46 @@ fn rgb_inventory(state: State<AppState>) -> Result<Vec<inventory::Finding>, Stri
 /// la télémétrie entre-temps (l'UI masque le bouton, mais `invoke()` reste
 /// appelable directement, p. ex. depuis les devtools).
 #[tauri::command(async)]
-fn send_telemetry_report(state: State<AppState>) -> Result<(), String> {
-    let (host, port, opt_in) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port, s.telemetry_opt_in)
-    };
-    if !opt_in {
+fn send_telemetry_report(app: tauri::AppHandle) -> Result<(), String> {
+    if !app.state::<AppState>().settings.lock().telemetry_opt_in {
         return Err("Télémétrie désactivée dans les réglages".into());
     }
-    let mut diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
-    telemetry::redact_paths_for_telemetry(&mut diag);
-    let json = serde_json::to_string(&diag).map_err(|e| e.to_string())?;
+    let json = diagnostics_json(&app).map_err(|e| e.to_string())?;
     telemetry::send_report_now(&json, env!("CARGO_PKG_VERSION")).map_err(|e| format!("{e:#}"))
+}
+
+/// JSON du diagnostic complet, réduit (journal, appareils) sous la limite de 64 Ko du serveur de télémétrie.
+fn diagnostics_json(app: &tauri::AppHandle) -> serde_json::Result<String> {
+    const LIMIT: usize = 60_000;
+    let mut diag = full_diagnostics(app);
+    let mut json = serde_json::to_string(&diag)?;
+    for step in 0..3 {
+        if json.len() <= LIMIT {
+            break;
+        }
+        if let Some(x) = diag.extra.as_mut() {
+            match step {
+                0 => x.log_tail.truncate(10),
+                1 => x.devices.truncate(30),
+                _ => x.findings.clear(),
+            }
+        }
+        json = serde_json::to_string(&diag)?;
+    }
+    Ok(json)
+}
+
+/// Diagnostic complet prêt à envoyer : base + extras, chemins réduits au nom de fichier.
+fn full_diagnostics(app: &tauri::AppHandle) -> HardwareDiagnostics {
+    let state = app.state::<AppState>();
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    let mut diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
+    diag.extra = Some(diag_extra::collect(&state, &app.state::<std::sync::Arc<screens::manager::ScreenManager>>()));
+    telemetry::redact_paths_for_telemetry(&mut diag);
+    diag
 }
 
 /// Étape 1 de l'appairage Hue : récupère la MAC du pont. L'utilisateur doit
@@ -1108,35 +1128,12 @@ pub fn run() {
     // bloqueraient sinon la restauration visible des effets RGB, même pour
     // les utilisateurs hors-ligne ou non opt-in). Tourne en parallèle.
     {
-        let registry = registry.clone();
-        let mgr = openrgb_mgr.clone();
-        let sensors_hub = sensors.clone();
-        let saved = saved.clone();
         std::thread::Builder::new()
             .name("telemetry-init".into())
             .spawn(move || {
                 // Table de reconnaissance distante (diagnostic uniquement,
                 // jamais utilisée pour le pilotage réel — voir known_remote.rs).
                 telemetry::refresh_known_devices();
-
-                if saved.telemetry_opt_in {
-                    let mut diag = compute_hardware_diagnostics(
-                        &registry,
-                        &sensors_hub,
-                        &mgr,
-                        &saved.openrgb_host,
-                        saved.openrgb_port,
-                    );
-                    telemetry::redact_paths_for_telemetry(&mut diag);
-                    match serde_json::to_string(&diag) {
-                        Ok(json) => match telemetry::maybe_send_report(&json, env!("CARGO_PKG_VERSION")) {
-                            Ok(true) => log::info!("rapport télémétrie envoyé"),
-                            Ok(false) => log::debug!("rapport télémétrie inchangé, pas d'envoi"),
-                            Err(e) => log::warn!("envoi télémétrie: {e:#}"),
-                        },
-                        Err(e) => log::warn!("sérialisation diagnostic télémétrie: {e:#}"),
-                    }
-                }
             })
             .expect("spawn telemetry-init");
     }
@@ -1334,6 +1331,28 @@ pub fn run() {
                             }
                         }
                     })?;
+            }
+
+            // Télémétrie opt-in : un premier rapport quand le démarrage a eu le temps de finir (OpenRGB, écrans), puis
+            // un rapport toutes les 30 min si quelque chose a changé.
+            {
+                let app_handle = app.handle().clone();
+                std::thread::Builder::new().name("telemetry-report".into()).spawn(move || {
+                    std::thread::sleep(std::time::Duration::from_secs(90));
+                    loop {
+                        if app_handle.state::<AppState>().settings.lock().telemetry_opt_in {
+                            match diagnostics_json(&app_handle) {
+                                Ok(json) => match telemetry::maybe_send_report(&json, env!("CARGO_PKG_VERSION")) {
+                                    Ok(true) => log::info!("rapport télémétrie envoyé"),
+                                    Ok(false) => log::debug!("rapport télémétrie inchangé"),
+                                    Err(e) => log::warn!("envoi télémétrie: {e:#}"),
+                                },
+                                Err(e) => log::warn!("sérialisation diagnostic télémétrie: {e:#}"),
+                            }
+                        }
+                        std::thread::sleep(std::time::Duration::from_secs(1800));
+                    }
+                })?;
             }
 
             let start_minimized = app.state::<AppState>().settings.lock().start_minimized;

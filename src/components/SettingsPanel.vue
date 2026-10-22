@@ -416,9 +416,9 @@ async function save() {
       <div class="inline" style="margin-bottom: 12px">
         <input id="telemetry" type="checkbox" v-model="form.telemetry_opt_in" />
         <label for="telemetry">
-          Envoyer les informations de diagnostic matériel (VID/PID détectés,
-          état OpenRGB/liquidctl/sensord) pour aider à identifier le matériel
-          non reconnu. Aucune donnée personnelle, désactivé par défaut.
+          Envoyer les informations de diagnostic (modèle de carte mère, mémoire, VID/PID USB, constats
+          de l'inventaire, erreurs de détection et de démarrage, derniers avertissements du journal) pour
+          corriger le matériel non reconnu. Ni numéro de série, ni chemin, ni nom de compte. Désactivé par défaut.
         </label>
       </div>
       <div class="inline" style="gap: 10px">

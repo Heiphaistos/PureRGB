@@ -1,0 +1,1102 @@
+[
+ {
+  "brand": "Corsair",
+  "model": "iCUE LL120 RGB",
+  "kind": "fan",
+  "led_count": 16,
+  "leds_note": "16 LEDs across two light loops; per fan (also sold in 3-packs)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050091-ww/ll120-rgb-120mm-dual-light-loop-white-rgb-led-pwm-fan-single-pack-co-9050091-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LL140 RGB",
+  "kind": "fan",
+  "led_count": 16,
+  "leds_note": "16 independent RGB LEDs across two light loops; per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050073-ww/ll140-rgb-140mm-dual-light-loop-rgb-led-pwm-fan-single-pack-co-9050073-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE QL120 RGB",
+  "kind": "fan",
+  "led_count": 34,
+  "leds_note": "34 LEDs across four light loops; per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050097-ww/icue-ql120-rgb-120mm-pwm-single-fan-co-9050097-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE QL140 RGB",
+  "kind": "fan",
+  "led_count": 34,
+  "leds_note": "34 LEDs across four light loops; per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050099-ww/icue-ql140-rgb-140mm-pwm-single-fan-co-9050099-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE SP120 RGB Elite",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "Eight LEDs on the central hub; per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050108-ww/icue-sp120-rgb-elite-performance-120mm-pwm-fan-a-single-pack-co-9050108-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE ML120 RGB Elite",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "Eight hub-mounted RGB LEDs; per fan (page is the triple kit)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9050113-ww/icue-ml120-rgb-elite-premium-120mm-pwm-magnetic-levitation-fan-triple-fan-kit-with-icue-lighting-node-core-co-9050113-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK QX120 RGB",
+  "kind": "fan",
+  "led_count": 34,
+  "leds_note": "34 RGB LEDs per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9051001-ww/icue-link-qx120-rgb-120mm-pwm-pc-fan-expansion-kit-co-9051001-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK QX140 RGB",
+  "kind": "fan",
+  "led_count": 34,
+  "leds_note": "34 individually addressable per fan (RX vs QX comparison table)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/explorer/diy-builder/fans/corsair-icue-link-rx-vs-qx-fans-whats-the-difference/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK RX120 RGB",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "8 individually addressable per fan (RX vs QX comparison table)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/explorer/diy-builder/fans/corsair-icue-link-rx-vs-qx-fans-whats-the-difference/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK RX140 RGB",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "8 individually addressable per fan (RX vs QX comparison table)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/explorer/diy-builder/fans/corsair-icue-link-rx-vs-qx-fans-whats-the-difference/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK TITAN 360 RX RGB",
+  "kind": "cooler",
+  "led_count": 20,
+  "leds_note": "Pump cap: 20 addressable LEDs; fans: 8 per fan (3 fans). led_count = pump only",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061018-ww/icue-link-titan-360-rx-rgb-aio-liquid-cpu-cooler-cw-9061018-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK H100i RGB",
+  "kind": "cooler",
+  "led_count": 20,
+  "leds_note": "Pump base: 20 LEDs; QX RGB fans: 34 per fan. led_count = pump only",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061001-ww/icue-link-h100i-rgb-aio-liquid-cpu-cooler-cw-9061001-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK H150i LCD",
+  "kind": "cooler",
+  "led_count": 20,
+  "leds_note": "Pump base: 20 LEDs; QX RGB fans: 34 per fan. led_count = pump only (LCD ring not verified)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061008-ww/icue-link-h150i-lcd-liquid-cpu-cooler-cw-9061008-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE H100i Elite Capellix",
+  "kind": "pump",
+  "led_count": 33,
+  "leds_note": "Pump head 33 Capellix LEDs; ML RGB fans 8 per fan",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060046-ww/icue-h100i-elite-capellix-liquid-cpu-cooler-cw-9060046-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE H150i Elite Capellix",
+  "kind": "pump",
+  "led_count": 33,
+  "leds_note": "Pump head 33 Capellix LEDs; 8 LEDs per fan (3 fans)",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060048-ww/icue-h150i-elite-capellix-liquid-cpu-cooler-cw-9060048-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE H100i RGB Elite",
+  "kind": "pump",
+  "led_count": 16,
+  "leds_note": "Pump head 16 RGB LEDs; fan LED count not stated on page",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060058-ww/icue-h100i-rgb-elite-liquid-cpu-cooler-cw-9060058-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE H150i RGB Elite",
+  "kind": "pump",
+  "led_count": 16,
+  "leds_note": "Pump head 16 RGB LEDs; fan LED count not stated on page",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060060-ww/icue-h150i-rgb-elite-liquid-cpu-cooler-cw-9060060-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN SL120 (V1)",
+  "kind": "fan",
+  "led_count": 32,
+  "leds_note": "32 addressable LEDs per fan, 16 per side",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-sl/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN SL120 V2",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Product page gives no LED count",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-sl-v2/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN SL120 V2 Reverse Blade",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Product page gives no LED count",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-sl-v2-reverse-blade/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN SL-Infinity 120",
+  "kind": "fan",
+  "led_count": 40,
+  "leds_note": "Page: 40 LEDs in each fan",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-sl-infinity/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN AL120 V2",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Product page gives no LED count",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-al-v2/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN TL120",
+  "kind": "fan",
+  "led_count": 26,
+  "leds_note": "Page states 26 LEDs for each UNI FAN TL fan (family statement, not per size)",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-tl/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "UNI FAN TL LCD",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Page only repeats the generic TL statement (26 LEDs), nothing specific to TL LCD",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/uni-fan-tl-lcd/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "Galahad II Trinity Performance",
+  "kind": "pump",
+  "led_count": null,
+  "leds_note": "Page gives no LED count (pump cap has two separately controlled rings)",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/galahad-ii-trinity-performance/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "Galahad II LCD",
+  "kind": "pump",
+  "led_count": null,
+  "leds_note": "Page gives no pump/fan LED count (only 2 ARGB LED strips for the screen)",
+  "connector": "proprietaire",
+  "source_url": "https://lian-li.com/product/galahad-ii-lcd/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "Strimer Plus V2 24-pin",
+  "kind": "strip",
+  "led_count": 120,
+  "leds_note": "120 LEDs, 12 light guides",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://lian-li.com/product/strimer-plus-v2/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Lian Li",
+  "model": "Strimer Plus V2 8-pin",
+  "kind": "strip",
+  "led_count": 108,
+  "leds_note": "108 LEDs, 8 light guides",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://lian-li.com/product/strimer-plus-v2/",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "F120 RGB",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "LED Quantity: 8; per fan; NZXT 4-pin RGB (also usable on 5V ARGB header)",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/products/f120-rgb",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "F120 RGB Core",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "LED Quantity: 8; per fan; NZXT 4-pin RGB",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/products/f120-core-rgb-1",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "F120 RGB Duo",
+  "kind": "fan",
+  "led_count": 20,
+  "leds_note": "LED Quantity: 20; per fan; NZXT 4-pin RGB",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/products/f120-rgb-duo",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "Aer RGB 2 120mm",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "8 LEDs per fan per NZXT support spec page (EOL). Page returned 403 to direct fetch; count taken from search result text of that official page, not read directly",
+  "connector": "proprietaire",
+  "source_url": "https://support.nzxt.com/hc/en-us/articles/38274797965723-Aer-2-RGB-120-mm-Fan-Specs",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "Kraken Elite 360 RGB (2023)",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "Pump ring LED count not listed on product page; included F360 RGB Core fans: 8 LEDs per fan",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/en-US/product/kraken-360-elite-2023",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "NZXT",
+  "model": "Kraken Core RGB",
+  "kind": "ring",
+  "led_count": 19,
+  "leds_note": "Pump cap listed as RGB infinity ring, 19 LEDs",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/product/kraken-360-elite-rgb-2023",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "Kraken X (X53/X63/X73)",
+  "kind": "ring",
+  "led_count": null,
+  "leds_note": "No official page readable; a search snippet hinted 8 LED ring + logo for X3 but not verified",
+  "connector": "proprietaire",
+  "source_url": "https://support.nzxt.com/hc/en-us/articles/37948576723355-Kraken-X3-Series-Specs",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "NZXT",
+  "model": "HUE 2 Underglow 200mm",
+  "kind": "strip",
+  "led_count": 20,
+  "leds_note": "20 LEDs total (10 per module) per NZXT support text seen in search result; page 403 on direct fetch, not read directly",
+  "connector": "proprietaire",
+  "source_url": "https://support.nzxt.com/hc/en-us/articles/1260803395829-NZXT-RGB-Underglow-FAQ",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "HUE 2 Ambient Lighting",
+  "kind": "strip",
+  "led_count": null,
+  "leds_note": "NZXT support table says count varies, see manual",
+  "connector": "proprietaire",
+  "source_url": "https://support.nzxt.com/hc/en-us/articles/1260806488769-NZXT-RGB-Connection-Guide",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Riing Plus 12 RGB",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "Fiche: 12 addressable LEDs (une page de pack parle de 12 sets de 2 LEDs = ambigu); par ventilateur",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/riing-plus-12-rgb-radiator-fan-tt-premium-edition-3-fan-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Riing Quad 14 RGB",
+  "kind": "fan",
+  "led_count": 54,
+  "leds_note": "4 anneaux: 18+18+9+9 par ventilateur; meme valeur annoncee pour Riing Quad 12",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/riing-quad-14-rgb-pradiator-fan-tt-premium-edition-3-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Toughfan 12 RGB",
+  "kind": "fan",
+  "led_count": 24,
+  "leds_note": "24 addressable LEDs dans le cadre, par ventilateur; USB 2.0 9 broches + Molex",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/toughfan-12-rgb-high-static-pressure-radiator-fan-3-fan-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Pure 12 ARGB Sync",
+  "kind": "fan",
+  "led_count": 9,
+  "leds_note": "9 LEDs adressables par ventilateur (pack de 3)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.thermaltake.com/pure-12-argb-sync-radiator-fan-tt-premium-edition-3-fan-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Pure Plus 12 RGB",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Page trouvee (TT RGB Plus), nombre de LEDs non verifie",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/pure-plus-12-rgb-radiator-fan-tt-premium-edition-3-fan-pack.html",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Floe Ultra 360 RGB (pompe)",
+  "kind": "pump",
+  "led_count": null,
+  "leds_note": "Fiche: pas de LED annoncee sur le bloc (ecran LCD 2.1in); 9 LEDs adressables par ventilateur",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/floe-ultra-360-rgb-all-in-one-liquid-cooler.html",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "Floe Riing RGB 360 (bloc+ventilos)",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "Page indique plusieurs LEDs adressables bloc et ventilos, nombre non verifie",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/floe-riing-rgb-360-tt-premium-edition.html",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "CT120 ARGB Sync",
+  "kind": "fan",
+  "led_count": 9,
+  "leds_note": "9 LEDs adressables par ventilateur (pack de 2)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.thermaltake.com/ct120-argb-sync-pc-cooling-fan-2-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "SWAFAN 12 RGB",
+  "kind": "fan",
+  "led_count": 30,
+  "leds_note": "3 anneaux: 12+6+12 par ventilateur; USB 2.0 9 broches (TT RGB Plus), pas ARGB",
+  "connector": "proprietaire",
+  "source_url": "https://www.thermaltake.com/swafan-12-rgb-radiator-fan-3-fan-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Thermaltake",
+  "model": "SWAFAN EX12 ARGB Sync",
+  "kind": "fan",
+  "led_count": 20,
+  "leds_note": "2 anneaux: 6 interieur + 14 exterieur, par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.thermaltake.com/swafan-ex12-argb-sync-pc-cooling-fan-tt-premium-edition-3-fan-pack.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Cooler Master",
+  "model": "SickleFlow 120 ARGB Reverse Edition",
+  "kind": "fan",
+  "led_count": 6,
+  "leds_note": "6 LEDs par ventilateur, valeur lue sur la variante Reverse; la White Edition n indique pas le nombre",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.coolermaster.com/en-global/products/sickleflow-120-argb-reverse-edition.html",
+  "confidence": "official"
+ },
+ {
+  "brand": "Cooler Master",
+  "model": "SickleFlow Edge 120 ARGB",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Nombre de LEDs non ecrit dans les resultats consultes",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.coolermaster.com/en-global/products/sickleflow-edge-120-argb.html",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Cooler Master",
+  "model": "MasterFan MF120 Halo",
+  "kind": "fan",
+  "led_count": 24,
+  "leds_note": "24 LEDs ARGB individuelles par ventilateur (source: fiche ML360 Illusion qui embarque 3x MF120 Halo); Halo2 White: 24 LEDs aussi",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.coolermaster.com/id-id/products/masterliquid-ml360-illusion/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Cooler Master",
+  "model": "MasterLiquid ML360 Illusion (pompe)",
+  "kind": "pump",
+  "led_count": 12,
+  "leds_note": "12 LEDs ARGB sur la pompe; les 3 ventilateurs ont 24 LEDs chacun",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.coolermaster.com/id-id/products/masterliquid-ml360-illusion/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Cooler Master",
+  "model": "MasterLiquid PL360 Flux",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "Fiche: Addressable Gen 2 RGB, nombre de LEDs non ecrit",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.coolermaster.com/en-us/products/masterliquid-pl360-flux.html",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "be quiet!",
+  "model": "Light Wings 120mm PWM high-speed",
+  "kind": "fan",
+  "led_count": 18,
+  "leds_note": "18 LEDs ARGB par ventilateur (avant et arriere)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.bequiet.com/en/casefans/3454",
+  "confidence": "official"
+ },
+ {
+  "brand": "be quiet!",
+  "model": "Light Wings LX 120mm",
+  "kind": "fan",
+  "led_count": 16,
+  "leds_note": "16 LEDs dans le moyeu, par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.bequiet.com/en/casefans/5307",
+  "confidence": "official"
+ },
+ {
+  "brand": "be quiet!",
+  "model": "Light Loop 360mm",
+  "kind": "cooler",
+  "led_count": 64,
+  "leds_note": "64 LEDs au total pour l ensemble (spec sheet); ventilateurs Light Wings LX = 16 LEDs chacun; repartition pompe non precisee",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.bequiet.com/en/watercooler/5184",
+  "confidence": "official"
+ },
+ {
+  "brand": "Arctic",
+  "model": "P12 PWM PST A-RGB",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "12 LEDs A-RGB dans le moyeu, par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.arctic.de/en/P12-PWM-PST-A-RGB",
+  "confidence": "official"
+ },
+ {
+  "brand": "Arctic",
+  "model": "P14 PWM PST A-RGB",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "12 LEDs A-RGB dans le moyeu, par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.arctic.de/en/P14-PWM-PST-A-RGB/ACFAN00239A",
+  "confidence": "official"
+ },
+ {
+  "brand": "Arctic",
+  "model": "P12 Pro A-RGB",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "12 LEDs A-RGB par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.arctic.de/en/P12-Pro-A-RGB/ACFAN00309A",
+  "confidence": "official"
+ },
+ {
+  "brand": "Arctic",
+  "model": "BioniX P12 A-RGB",
+  "kind": "fan",
+  "led_count": 16,
+  "leds_note": "16 LEDs par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.arctic.de/en/BioniX-P12-A-RGB/ACFAN00335A",
+  "confidence": "official"
+ },
+ {
+  "brand": "Arctic",
+  "model": "Liquid Freezer III 360 A-RGB",
+  "kind": "cooler",
+  "led_count": 12,
+  "leds_note": "Spec sheet: 12x A-RGB LEDs (correspond aux ventilateurs P12, par ventilateur); pas de LED pompe annoncee; fiche ambigue",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.arctic.de/media/d4/9f/04/1708429821/Spec_Sheet_Liquid_Freezer_III_360_A-RGB_EN.pdf",
+  "confidence": "official"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "FC120",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Specs: ARGB 5V 3 broches, nombre de LEDs non ecrit",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/fans/FC120-Daisy-Chain-Performance-ARGB-Fan/2021/13581.shtml",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "CF120 (3 IN 1)",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "12 LEDs adressables par ventilateur (36 pour le kit de 3)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/fans/CF120-RGB-PWM-Fan-3-Pack/2021/141.shtml",
+  "confidence": "official"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "FD12 ARGB",
+  "kind": "fan",
+  "led_count": 6,
+  "leds_note": "6 LEDs autour du moyeu (variante WH et page kit 3 en 1 ES); V2 = 9 LEDs",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/fans/FD12-ARGB-WH-120mm-Fan/2024/19215.shtml",
+  "confidence": "official"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "FD12 ARGB V2",
+  "kind": "fan",
+  "led_count": 9,
+  "leds_note": "9 LEDs autour du moyeu, par ventilateur",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/fans/FD12-ARGB-V2-ARGB-Integral-Blade-Silent-Ring/2026/22988.shtml",
+  "confidence": "official"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "LS720 SE (pompe)",
+  "kind": "pump",
+  "led_count": 16,
+  "leds_note": "Capot miroir infini de 16 LEDs RGB sur la pompe",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LS720-SE-360mm-Liquid-CPU-Cooler-1851-1700-AM5/2022/16469.shtml",
+  "confidence": "official"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "LS720 (pompe)",
+  "kind": "pump",
+  "led_count": null,
+  "leds_note": "Type addressable RGB, 2.2 W; nombre de LEDs non ecrit",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.deepcool.com/products/Cooling/cpuliquidcoolers/LS720-High-Performance-360mm-Liquid-CPU-Cooler/2022/15826.shtml",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "DeepCool",
+  "model": "Assassin IV",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "Aucune lumiere listee dans les specs; absence non confirmee explicitement",
+  "connector": "inconnu",
+  "source_url": "https://www.deepcool.com/products/Cooling/cpuaircoolers/Assassin-IV-Premium-CPU-Air-Cooler-1851-1700-AM5/2024/17129.shtml",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Phanteks",
+  "model": "D30-120 D-RGB",
+  "kind": "fan",
+  "led_count": 30,
+  "leds_note": "LED Number 30 par ventilateur (D30-140 aussi 30)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://phanteks.com/product/d30-120-black/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Phanteks",
+  "model": "T30-120 D-RGB",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "Page T30-120 sans nombre de LEDs trouve",
+  "connector": "inconnu",
+  "source_url": "https://phanteks.com/product/t30-120/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Phanteks",
+  "model": "M25 Gen2 120 D-RGB",
+  "kind": "fan",
+  "led_count": 12,
+  "leds_note": "LED Number 12 par ventilateur (courant max 0.43A)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://phanteks.com/product/m25g2-120-black-d-rgb/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Phanteks",
+  "model": "Neon D-RGB LED Strip",
+  "kind": "strip",
+  "led_count": null,
+  "leds_note": "Nombre par bandeau non confirme dans les resultats",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://phanteks.com/product/neon-drgb-black/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Noctua",
+  "model": "NF-A12x25 PWM",
+  "kind": "fan",
+  "led_count": 0,
+  "leds_note": "Aucune LED (gamme sans RGB); page noctua.at non relue (HTTP 429) (page non relue : HTTP 429, a reverifier)",
+  "connector": "inconnu",
+  "source_url": "https://noctua.at/en/nf-a12x25-pwm",
+  "confidence": "official"
+ },
+ {
+  "brand": "Antec",
+  "model": "Prizm 120 ARGB",
+  "kind": "fan",
+  "led_count": 18,
+  "leds_note": "18 independent RGB LED beads, dual ring; same fan in 5+C and 3+2+C packs (per unit)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://antec.com/product/cooling/prizm-120-argb",
+  "confidence": "official"
+ },
+ {
+  "brand": "Antec",
+  "model": "Prizm X 120 ARGB",
+  "kind": "fan",
+  "led_count": 24,
+  "leds_note": "24 independent RGB LED beads per fan (seen in Antec search snippet of Prizm X page; not fetched directly)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.antec.com/product/cooling/prizm-x-120-argb-3c",
+  "confidence": "official"
+ },
+ {
+  "brand": "Antec",
+  "model": "Fusion 120 ARGB",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "count not found on page consulted",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.antec.com/product/cooling/fusion120-argb",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Fractal Design",
+  "model": "Prisma AL-12 PWM",
+  "kind": "fan",
+  "led_count": 6,
+  "leds_note": "six hub-mounted addressable LEDs per fan (3-pack: per unit); from product page text via search, direct fetch showed no count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.fractal-design.com/products/fans/prisma/prisma-al-12-pwm/black-rgb/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Fractal Design",
+  "model": "Prisma AL-14 PWM",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "count not found on page consulted",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.fractal-design.com/products/fans/prisma/prisma-al-14-pwm/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Fractal Design",
+  "model": "Lumen S36 RGB V2",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "search snippet said 'six addressable LEDs' but unclear if pump or fans and not confirmed on fetched page; left null",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.fractal-design.com/products/water-cooling/lumen/lumen-s36-rgb/lumen-s36-rgb/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Fractal Design",
+  "model": "Lumen S24 V2 RGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "count not found",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.fractal-design.com/products/water-cooling/lumen-series/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Montech",
+  "model": "AX120 PWM",
+  "kind": "fan",
+  "led_count": 20,
+  "leds_note": "'integrates a total of 20 LEDs', hexagonal ring on frame (per fan)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.montechpc.com/ax120-pwm",
+  "confidence": "official"
+ },
+ {
+  "brand": "Montech",
+  "model": "RX120 PWM",
+  "kind": "fan",
+  "led_count": 20,
+  "leds_note": "20 LEDs per search snippet of Montech page; not fetched directly",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.montechpc.com/rx120-pwm",
+  "confidence": "official"
+ },
+ {
+  "brand": "Montech",
+  "model": "HyperFlow ARGB 360",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "page states ARGB 5V 3-pin on pump and fans but no LED count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.montechpc.com/hyperflow-argb-360",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "HYTE",
+  "model": "THICC Q60",
+  "kind": "pump",
+  "led_count": 42,
+  "leds_note": "42-pixel qRGB array behind LCD back cover + separate 4-pixel logo array; from HYTE page text seen via search (direct fetch 403); fan pixel count not found",
+  "connector": "proprietaire",
+  "source_url": "https://hyte.com/store/q60/fan-hyte-q60-bw",
+  "confidence": "official"
+ },
+ {
+  "brand": "HYTE",
+  "model": "LS30 qRGB Light Strip",
+  "kind": "strip",
+  "led_count": 62,
+  "leds_note": "62-pixel qRGB array (per strip) per HYTE page seen via search; Nexus Link Type-C",
+  "connector": "proprietaire",
+  "source_url": "https://hyte.com/store/ls/acc-hyte-ls30-b-2",
+  "confidence": "official"
+ },
+ {
+  "brand": "Darkflash",
+  "model": "DR12 PWM ARGB",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "spec sheet has no LED count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.darkflash.com/product/dr12pwmargb",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermalright",
+  "model": "TL-C12C-S X3",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "page lists 3-pin 5V ARGB, no LED count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.thermalright.com/product/tl-c12c-s-x3/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Thermalright",
+  "model": "Frozen Warframe 360 BLACK ARGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "no pump LED count on page",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.thermalright.com/product/frozen-warframe-360-black-argb/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "ID-Cooling",
+  "model": "ZF-12025-ARGB-SNOW",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "page lists 5V 3-pin ARGB, no LED count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.idcooling.com/product/detail?id=333&name=ZF-12025-ARGB-SNOW",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Zalman",
+  "model": "Reserator5 Z24 ARGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "page lists 3-pin addressable RGB 5V, no LED count",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.zalman.com/EN/Product/ProductDetail.do?productSeq=1454",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Enermax",
+  "model": "T.B. RGB AD.",
+  "kind": "fan",
+  "led_count": null,
+  "leds_note": "spec table has no LED count (a '24 LEDs' figure found on an unidentified Enermax listing, not attributed)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.enermax.com/en/products/t.b.-rgb-adv",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LS100 Smart Lighting Strip 450mm (Starter Kit)",
+  "kind": "strip",
+  "led_count": 27,
+  "leds_note": "par bande; kit = 2 bandes 450mm",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/ambient-lights/cd-9010001-na/icue-ls100-smart-lighting-strip-starter-kit-cd-9010001-na",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LS100 Smart Lighting Strip 250mm (Starter Kit)",
+  "kind": "strip",
+  "led_count": 15,
+  "leds_note": "par bande; kit = 2 bandes 250mm",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/ambient-lights/cd-9010001-na/icue-ls100-smart-lighting-strip-starter-kit-cd-9010001-na",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LS100 Expansion Kit 350mm",
+  "kind": "strip",
+  "led_count": 21,
+  "leds_note": "par bande; kit de 2 bandes",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/ambient-lights/cd-9010006-ww/icue-ls100-smart-lighting-strip-expansion-kit-350mm-cd-9010006-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LS100 Expansion Kit 1.4M",
+  "kind": "strip",
+  "led_count": 84,
+  "leds_note": "bande unique",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/ambient-lights/cd-9010005-ww/icue-ls100-smart-lighting-strip-expansion-kit-1-4m-cd-9010005-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK RX120 MAX RGB",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "par ventilateur; page: Eight RGB LEDs",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/p/case-fans/co-9051033-ww/icue-link-rx120-max-rgb-120mm-pwm-thick-fan-expansion-black-co-9051033-ww",
+  "confidence": "official"
+ },
+ {
+  "brand": "Corsair",
+  "model": "iCUE LINK RX140 MAX RGB",
+  "kind": "fan",
+  "led_count": 8,
+  "leds_note": "par ventilateur; 8 LEDs annonces par Corsair pour la gamme RX MAX RGB (120 et 140mm), confirme sur page RX120",
+  "connector": "proprietaire",
+  "source_url": "https://www.corsair.com/us/en/explorer/diy-builder/fans/corsair-icue-link-rx-max-rx-max-rgb-fans-everything-you-need-to-know/",
+  "confidence": "official"
+ },
+ {
+  "brand": "Razer",
+  "model": "Chroma Light Strip Set - bande 100cm",
+  "kind": "strip",
+  "led_count": 60,
+  "leds_note": "par bande; LEDs 5V 3-pin WS2812b ou equivalent; max 120 LEDs/port, 240 total",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.razer.com/gaming-pc-cooling/Razer-Chroma-Light-Strip-Set/RZ34-04020100-R3UA",
+  "confidence": "official"
+ },
+ {
+  "brand": "Razer",
+  "model": "Chroma Light Strip Set - bande 50cm",
+  "kind": "strip",
+  "led_count": 30,
+  "leds_note": "par bande; le set en contient 2",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.razer.com/gaming-pc-cooling/Razer-Chroma-Light-Strip-Set/RZ34-04020100-R3UA",
+  "confidence": "official"
+ },
+ {
+  "brand": "Razer",
+  "model": "Chroma Light Strip Expansion Kit - 100cm",
+  "kind": "strip",
+  "led_count": 60,
+  "leds_note": "par bande",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.razer.com/gaming-pc-accessories/razer-chroma-light-strip-expansion-kit/RZ34-04020200-R3M1",
+  "confidence": "official"
+ },
+ {
+  "brand": "Razer",
+  "model": "Chroma Light Strip Expansion Kit - 50cm",
+  "kind": "strip",
+  "led_count": 30,
+  "leds_note": "par bande; 2 incluses",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://www.razer.com/gaming-pc-accessories/razer-chroma-light-strip-expansion-kit/RZ34-04020200-R3M1",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "HUE 2 RGB LED Strip 200mm",
+  "kind": "strip",
+  "led_count": 6,
+  "leds_note": "par bande (annonce NZXT); max 40 LEDs / canal",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/blogs/news/see-your-battlestation-in-a-whole-new-light",
+  "confidence": "official"
+ },
+ {
+  "brand": "NZXT",
+  "model": "HUE 2 RGB LED Strip 250mm",
+  "kind": "strip",
+  "led_count": 8,
+  "leds_note": "par bande (annonce NZXT); max 40 LEDs / canal",
+  "connector": "proprietaire",
+  "source_url": "https://nzxt.com/blogs/news/see-your-battlestation-in-a-whole-new-light",
+  "confidence": "official"
+ },
+ {
+  "brand": "ASUS",
+  "model": "ROG Ryujin III 360 ARGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "nombre de LEDs non indique sur la page produit (ventilos ARGB Gen 2 + pompe)",
+  "connector": "inconnu",
+  "source_url": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "ASUS",
+  "model": "ROG Ryujin III 360 ARGB Extreme",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "nombre de LEDs non indique sur la page produit (ventilos ARGB Gen 2 + pompe)",
+  "connector": "inconnu",
+  "source_url": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb-extreme/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "ASUS",
+  "model": "ROG Strix LC II 360 ARGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "nombre de LEDs non indique; 3 ventilos 120mm ARGB, entete 3-pin adressable requis (pas 4-pin RGB)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-strix-lc/rog-strix-lc-ii-360-argb-model/spec/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "ASUS",
+  "model": "ROG Strix LC II 240 ARGB",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "non verifie (meme famille que LC II 360, aucun nombre trouve)",
+  "connector": "argb_5v_3pin",
+  "source_url": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-strix-lc/rog-strix-lc-ii-360-argb-model/spec/",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "MSI",
+  "model": "MAG CoreLiquid C360",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "3 ventilos 120mm ARGB + bloc ARGB; nombre de LEDs non indique",
+  "connector": "inconnu",
+  "source_url": "https://sg.msi.com/Liquid-Cooling/MAG-CORELIQUID-C360/Specification",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "MSI",
+  "model": "MAG CoreLiquid C360 V2",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "nombre de LEDs non indique",
+  "connector": "inconnu",
+  "source_url": "https://us.msi.com/Liquid-Cooling/MAG-CORELIQUID-C360-V2",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Gigabyte",
+  "model": "AORUS WATERFORCE X 360",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "3 ventilos 120mm ARGB + LCD 60x60; nombre de LEDs non indique",
+  "connector": "inconnu",
+  "source_url": "https://www.aorus.com/en-us/components/AORUS-WATERFORCE-X-360/Specification",
+  "confidence": "unknown"
+ },
+ {
+  "brand": "Gigabyte",
+  "model": "AORUS WATERFORCE X II 360",
+  "kind": "cooler",
+  "led_count": null,
+  "leds_note": "3 ventilos 120mm ARGB; aucun nombre de LEDs sur la page specs",
+  "connector": "inconnu",
+  "source_url": "https://www.gigabyte.com/CPU-Cooler/AORUS-WATERFORCE-X-II-360/sp",
+  "confidence": "unknown"
+ }
+]

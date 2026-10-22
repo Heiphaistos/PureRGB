@@ -99,6 +99,7 @@ pub fn analyze(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context) -> Vec<Fi
             format!("Sans lui, ni la carte mère, ni la mémoire, ni la plupart des périphériques ne sont détectés. Utilisez « Démarrer OpenRGB ».{why}")));
     }
     board(inv, devices, ctx, &mut out);
+    board_spec(inv, &mut out);
     memory(inv, devices, ctx, &mut out);
     usb(inv, devices, ctx, &mut out);
     fans(ctx, &mut out);
@@ -131,6 +132,27 @@ fn board(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<F
             out.push(f("Carte mère", Status::Warn, format!("Connecteurs ARGB à 0 LED : {}", empty.join(", ")),
                 "Un ventilateur ou un bandeau ARGB branché dessus reste invisible tant que son nombre de LEDs n'est pas indiqué (Éclairage, zone, nombre de LEDs)."));
         }
+    }
+}
+
+/// Ce que le constructeur documente pour cette carte : connecteurs ARGB/RGB et limite de LEDs par connecteur.
+fn board_spec(inv: &Inventory, out: &mut Vec<Finding>) {
+    use crate::led_catalog as lc;
+    let (m, p) = (inv.board.manufacturer.as_str(), inv.board.product.as_str());
+    let limit = lc::vendor_rule(m).and_then(|r| r.argb_header.as_ref()).map(|h| match (h.max_leds, h.max_power_a) {
+        (Some(n), Some(a)) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB ({a} A)"),
+        (Some(n), None) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB"),
+        _ => "limite de LEDs non publiée par le constructeur".to_string(),
+    });
+    match (lc::board(m, p), limit) {
+        (Some(b), l) => out.push(f("Carte mère", Status::Info, format!("Connecteurs de la carte ({})", b.model),
+            format!("ARGB 5 V : {} ; RGB 12 V : {}{}. Un connecteur ne peut pas détecter ce qui y est branché : choisissez le modèle de ventilateur (Éclairage, zone).",
+                if b.argb_headers.is_empty() { "—".into() } else { b.argb_headers.join(", ") },
+                if b.rgb_headers.is_empty() { "—".into() } else { b.rgb_headers.join(", ") },
+                l.map(|l| format!(" ; {l}")).unwrap_or_default()))),
+        (None, Some(l)) => out.push(f("Carte mère", Status::Info, "Connecteurs ARGB de la carte",
+            format!("Modèle absent du catalogue ; règle du constructeur : {l}."))),
+        (None, None) => {}
     }
 }
 
