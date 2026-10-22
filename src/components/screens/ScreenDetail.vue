@@ -10,7 +10,6 @@ import DesignGallery from "./DesignGallery.vue";
 import MediaLibrary from "./MediaLibrary.vue";
 import ProductPhoto from "../ProductPhoto.vue";
 import type { ProductView } from "../../productPhotos";
-import RotatedPreview from "./RotatedPreview.vue";
 import RotateButtons from "./RotateButtons.vue";
 import ScreenOptions from "./ScreenOptions.vue";
 import "./screens.css";
@@ -114,7 +113,7 @@ onMounted(reload);
     <div class="body">
       <aside class="live">
         <div class="frame">
-          <RotatedPreview v-if="src" :src="src" :rotation="rotation" :width="screen.width" :height="screen.height" />
+          <img v-if="src" :src="src" alt="Aperçu de l'écran" class="pv" draggable="false" />
           <div v-else class="off">{{ live ? "Rendu…" : "Écran éteint" }}</div>
         </div>
         <div class="cap">{{ live?.name ?? "Aucun design affiché" }}</div>
@@ -189,6 +188,12 @@ onMounted(reload);
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-md);
+}
+
+.pv {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .off {

@@ -296,6 +296,7 @@ async function save() {
   <section class="settings">
     <h2>Réglages</h2>
 
+    <div class="cols">
     <div class="card">
       <h3>Disposition</h3>
       <p class="hint">Agencement de l'onglet Éclairage.</p>
@@ -463,6 +464,8 @@ async function save() {
       </div>
     </div>
 
+    </div>
+
     <div class="actions">
       <button class="primary" :disabled="saving" @click="save">
         {{ saving ? "Enregistrement..." : "Enregistrer" }}
@@ -610,7 +613,16 @@ async function save() {
   flex: 1;
   overflow-y: auto;
   padding: 22px 26px;
-  max-width: 720px;
+}
+
+/* Cartes réparties sur 2 à 3 colonnes selon la largeur (au lieu d'une pile étroite). */
+.cols {
+  column-width: 400px;
+  column-gap: 14px;
+}
+
+.cols .card {
+  break-inside: avoid;
 }
 
 .settings h2 {

@@ -146,10 +146,13 @@ async function clear(): Promise<void> {
 .opt {
   padding: 18px 26px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 720px;
+  columns: 380px;
+  column-gap: 14px;
+}
+
+.opt > * {
+  break-inside: avoid;
+  margin-bottom: 14px;
 }
 
 .box {

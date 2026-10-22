@@ -18,7 +18,6 @@ import { blankLayout, cloneLayout, makeWidget } from "../../screens/widgets.ts";
 import BlockPanel from "./BlockPanel.vue";
 import EditorCanvas from "./EditorCanvas.vue";
 import Icon from "./Icon.vue";
-import RotatedPreview from "./RotatedPreview.vue";
 import RotateButtons from "./RotateButtons.vue";
 import WidgetInspector from "./WidgetInspector.vue";
 import WidgetPalette from "./WidgetPalette.vue";
@@ -346,10 +345,6 @@ const Z: [ZMove, string, string][] = [
           @background-down="onBackgroundDown"
           @zoom="setZoom(zoom + $event)"
         />
-        <div v-if="rotation" class="onscreen" :title="`Rendu sur l'écran pivoté de ${rotation}°`">
-          <RotatedPreview v-if="preview.src.value" :src="preview.src.value" :rotation="rotation" :width="screen.width" :height="screen.height" />
-          <span>Sur l'écran · {{ rotation }}°</span>
-        </div>
         <div class="status">
           <span>{{ layout.name }}{{ dirty ? " •" : "" }}</span>
           <span>{{ layout.width }} × {{ layout.height }} px</span>
@@ -433,22 +428,6 @@ const Z: [ZMove, string, string][] = [
 
 .rail .mini {
   padding: 0 6px;
-}
-
-.onscreen {
-  position: absolute;
-  right: 12px;
-  bottom: 38px;
-  width: 120px;
-  padding: 4px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-panel);
-  box-shadow: var(--shadow-md);
-  pointer-events: none;
-  font-size: 10px;
-  color: var(--text-dim);
-  text-align: center;
 }
 
 .center {

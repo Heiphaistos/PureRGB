@@ -1,0 +1,460 @@
+{
+ "version": 1,
+ "name": "Forge · colonnes (1280)",
+ "width": 1280,
+ "height": 480,
+ "background": {
+  "kind": "media",
+  "media_id": "79fb47a7429e0820",
+  "fit": "cover"
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 25.6,
+   "y": 24.0,
+   "w": 307.2,
+   "h": 432.0,
+   "type": "rect",
+   "fill": "#05080fb3",
+   "stroke": "#ffffff2a",
+   "stroke_width": 2,
+   "radius": 24
+  },
+  {
+   "id": "w2",
+   "x": 44.0,
+   "y": 43.2,
+   "w": 54.1,
+   "h": 25.1,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17.764999999999997,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w3",
+   "x": 98.1,
+   "y": 41.1,
+   "w": 81.1,
+   "h": 28.2,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22.990000000000002,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w4",
+   "x": 184.6,
+   "y": 41.1,
+   "w": 81.1,
+   "h": 28.2,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 20.9,
+    "color": "#c7d2fe",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w5",
+   "x": 44.0,
+   "y": 71.4,
+   "w": 270.3,
+   "h": 8,
+   "type": "bar",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.65,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ]
+  },
+  {
+   "id": "w6",
+   "x": 44.0,
+   "y": 254.4,
+   "w": 54.1,
+   "h": 25.1,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17.764999999999997,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w7",
+   "x": 98.1,
+   "y": 252.3,
+   "w": 81.1,
+   "h": 28.2,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 22.990000000000002,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w8",
+   "x": 184.6,
+   "y": 252.3,
+   "w": 81.1,
+   "h": 28.2,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 20.9,
+    "color": "#c7d2fe",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w9",
+   "x": 44.0,
+   "y": 282.6,
+   "w": 270.3,
+   "h": 8,
+   "type": "bar",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.65,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ]
+  },
+  {
+   "id": "w10",
+   "x": 947.2,
+   "y": 24.0,
+   "w": 307.2,
+   "h": 432.0,
+   "type": "rect",
+   "fill": "#05080fb3",
+   "stroke": "#ffffff2a",
+   "stroke_width": 2,
+   "radius": 24
+  },
+  {
+   "id": "w11",
+   "x": 965.6,
+   "y": 43.2,
+   "w": 54.1,
+   "h": 21.1,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 14.96,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w12",
+   "x": 1106.2,
+   "y": 41.4,
+   "w": 81.1,
+   "h": 23.8,
+   "type": "value",
+   "source": "ram.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17.6,
+    "color": "#c7d2fe",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w13",
+   "x": 965.6,
+   "y": 67.0,
+   "w": 270.3,
+   "h": 8,
+   "type": "bar",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.65,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ]
+  },
+  {
+   "id": "w14",
+   "x": 965.6,
+   "y": 184.0,
+   "w": 54.1,
+   "h": 21.1,
+   "type": "text",
+   "text": "SSD 1",
+   "style": {
+    "font": "Rajdhani",
+    "size": 14.96,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w15",
+   "x": 1019.7,
+   "y": 182.2,
+   "w": 81.1,
+   "h": 23.8,
+   "type": "value",
+   "source": "ssd.1.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 19.360000000000003,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w16",
+   "x": 1106.2,
+   "y": 182.2,
+   "w": 81.1,
+   "h": 23.8,
+   "type": "value",
+   "source": "ssd.1.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17.6,
+    "color": "#c7d2fe",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w17",
+   "x": 965.6,
+   "y": 207.8,
+   "w": 270.3,
+   "h": 8,
+   "type": "bar",
+   "source": "ssd.1.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.65,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ]
+  },
+  {
+   "id": "w18",
+   "x": 965.6,
+   "y": 324.8,
+   "w": 54.1,
+   "h": 21.1,
+   "type": "text",
+   "text": "SSD 2",
+   "style": {
+    "font": "Rajdhani",
+    "size": 14.96,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w19",
+   "x": 1019.7,
+   "y": 323.0,
+   "w": 81.1,
+   "h": 23.8,
+   "type": "value",
+   "source": "ssd.2.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 19.360000000000003,
+    "color": "#ffffff",
+    "align": "right",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w20",
+   "x": 1106.2,
+   "y": 323.0,
+   "w": 81.1,
+   "h": 23.8,
+   "type": "value",
+   "source": "ssd.2.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 17.6,
+    "color": "#c7d2fe",
+    "align": "right",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w21",
+   "x": 965.6,
+   "y": 348.6,
+   "w": 270.3,
+   "h": 8,
+   "type": "bar",
+   "source": "ssd.2.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.0,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#34d399"
+    ],
+    [
+     0.65,
+     "#fbbf24"
+    ],
+    [
+     1.0,
+     "#f87171"
+    ]
+   ],
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w22",
+   "x": 422.4,
+   "y": 278.4,
+   "w": 435.2,
+   "h": 182.4,
+   "type": "rect",
+   "fill": "#05080fb3",
+   "stroke": "#ffffff2a",
+   "stroke_width": 2,
+   "radius": 22
+  },
+  {
+   "id": "w23",
+   "x": 435.2,
+   "y": 288.0,
+   "w": 409.6,
+   "h": 105.6,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 66,
+    "color": "#ffffff",
+    "align": "center",
+    "bold": true
+   }
+  },
+  {
+   "id": "w24",
+   "x": 435.2,
+   "y": 398.4,
+   "w": 409.6,
+   "h": 48.0,
+   "type": "value",
+   "source": "date",
+   "format": "%A %d %B %Y",
+   "style": {
+    "font": "Inter",
+    "size": 19.8,
+    "color": "#c7d2fe",
+    "align": "center",
+    "bold": false
+   }
+  }
+ ]
+}

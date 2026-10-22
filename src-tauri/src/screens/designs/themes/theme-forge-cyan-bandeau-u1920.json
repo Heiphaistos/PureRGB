@@ -1,0 +1,436 @@
+{
+ "version": 1,
+ "name": "Forge cyan · bandeau bas",
+ "width": 1920,
+ "height": 462,
+ "background": {
+  "kind": "media",
+  "media_id": "79fb47a7429e0820",
+  "fit": "cover"
+ },
+ "widgets": [
+  {
+   "id": "w1",
+   "x": 38.4,
+   "y": 277.2,
+   "w": 1843.2,
+   "h": 166.3,
+   "type": "rect",
+   "fill": "#02121bb3",
+   "stroke": "#ffffff2a",
+   "stroke_width": 2,
+   "radius": 22
+  },
+  {
+   "id": "w2",
+   "x": 67.2,
+   "y": 18.5,
+   "w": 480.0,
+   "h": 138.6,
+   "type": "value",
+   "source": "time",
+   "format": "%H:%M",
+   "style": {
+    "font": "Rajdhani",
+    "size": 96.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w3",
+   "x": 1420.8,
+   "y": 27.7,
+   "w": 451.2,
+   "h": 92.4,
+   "type": "value",
+   "source": "date",
+   "format": "%A %d %B %Y",
+   "style": {
+    "font": "Inter",
+    "size": 30.0,
+    "color": "#a5f3fc",
+    "align": "right",
+    "bold": false
+   }
+  },
+  {
+   "id": "w4",
+   "x": 76.8,
+   "y": 291.1,
+   "w": 318.0,
+   "h": 33.0,
+   "type": "text",
+   "text": "CPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 24.0,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w5",
+   "x": 76.8,
+   "y": 323.4,
+   "w": 194.3,
+   "h": 51.0,
+   "type": "value",
+   "source": "cpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 48.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w6",
+   "x": 253.4,
+   "y": 332.6,
+   "w": 141.3,
+   "h": 45.0,
+   "type": "value",
+   "source": "cpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 33.0,
+    "color": "#a5f3fc",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w7",
+   "x": 76.8,
+   "y": 411.2,
+   "w": 310.9,
+   "h": 9.0,
+   "type": "bar",
+   "source": "cpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.5,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.65,
+     "#60a5fa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ]
+  },
+  {
+   "id": "w8",
+   "x": 430.1,
+   "y": 291.1,
+   "w": 318.0,
+   "h": 33.0,
+   "type": "text",
+   "text": "GPU",
+   "style": {
+    "font": "Rajdhani",
+    "size": 24.0,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w9",
+   "x": 430.1,
+   "y": 323.4,
+   "w": 194.3,
+   "h": 51.0,
+   "type": "value",
+   "source": "gpu.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 48.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w10",
+   "x": 606.7,
+   "y": 332.6,
+   "w": 141.3,
+   "h": 45.0,
+   "type": "value",
+   "source": "gpu.load",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 33.0,
+    "color": "#a5f3fc",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w11",
+   "x": 430.1,
+   "y": 411.2,
+   "w": 310.9,
+   "h": 9.0,
+   "type": "bar",
+   "source": "gpu.load",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.5,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.65,
+     "#60a5fa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ]
+  },
+  {
+   "id": "w12",
+   "x": 783.4,
+   "y": 291.1,
+   "w": 318.0,
+   "h": 33.0,
+   "type": "text",
+   "text": "RAM",
+   "style": {
+    "font": "Rajdhani",
+    "size": 24.0,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w13",
+   "x": 783.4,
+   "y": 323.4,
+   "w": 318.0,
+   "h": 51.0,
+   "type": "value",
+   "source": "ram.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 48.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w14",
+   "x": 783.4,
+   "y": 411.2,
+   "w": 310.9,
+   "h": 9.0,
+   "type": "bar",
+   "source": "ram.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.5,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.65,
+     "#60a5fa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ]
+  },
+  {
+   "id": "w15",
+   "x": 1136.6,
+   "y": 291.1,
+   "w": 318.0,
+   "h": 33.0,
+   "type": "text",
+   "text": "SSD 1",
+   "style": {
+    "font": "Rajdhani",
+    "size": 24.0,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w16",
+   "x": 1136.6,
+   "y": 323.4,
+   "w": 194.3,
+   "h": 51.0,
+   "type": "value",
+   "source": "ssd.1.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 48.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   }
+  },
+  {
+   "id": "w17",
+   "x": 1313.3,
+   "y": 332.6,
+   "w": 141.3,
+   "h": 45.0,
+   "type": "value",
+   "source": "ssd.1.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 33.0,
+    "color": "#a5f3fc",
+    "align": "right",
+    "bold": true
+   }
+  },
+  {
+   "id": "w18",
+   "x": 1136.6,
+   "y": 411.2,
+   "w": 310.9,
+   "h": 9.0,
+   "type": "bar",
+   "source": "ssd.1.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.5,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.65,
+     "#60a5fa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ]
+  },
+  {
+   "id": "w19",
+   "x": 1489.9,
+   "y": 291.1,
+   "w": 318.0,
+   "h": 33.0,
+   "type": "text",
+   "text": "SSD 2",
+   "style": {
+    "font": "Rajdhani",
+    "size": 24.0,
+    "color": "#c7d2fe",
+    "align": "left",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w20",
+   "x": 1489.9,
+   "y": 323.4,
+   "w": 194.3,
+   "h": 51.0,
+   "type": "value",
+   "source": "ssd.2.temp",
+   "format": "{:.0}°",
+   "style": {
+    "font": "Rajdhani",
+    "size": 48.0,
+    "color": "#ffffff",
+    "align": "left",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w21",
+   "x": 1666.6,
+   "y": 332.6,
+   "w": 141.3,
+   "h": 45.0,
+   "type": "value",
+   "source": "ssd.2.used_pct",
+   "format": "{:.0} %",
+   "style": {
+    "font": "Rajdhani",
+    "size": 33.0,
+    "color": "#a5f3fc",
+    "align": "right",
+    "bold": true
+   },
+   "visible_if": "ssd.2.used_pct"
+  },
+  {
+   "id": "w22",
+   "x": 1489.9,
+   "y": 411.2,
+   "w": 310.9,
+   "h": 9.0,
+   "type": "bar",
+   "source": "ssd.2.used_pct",
+   "min": 0,
+   "max": 100,
+   "vertical": false,
+   "radius": 4.5,
+   "track": "#ffffff2e",
+   "colors": [
+    [
+     0.0,
+     "#22d3ee"
+    ],
+    [
+     0.65,
+     "#60a5fa"
+    ],
+    [
+     1.0,
+     "#f472b6"
+    ]
+   ],
+   "visible_if": "ssd.2.used_pct"
+  }
+ ]
+}
