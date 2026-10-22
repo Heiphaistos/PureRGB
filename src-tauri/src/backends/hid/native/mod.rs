@@ -62,11 +62,13 @@ pub struct Model {
     pub interface: Option<i32>,
     /// Page d'usage HID à ouvrir (ex. 0xFF60), `None` = indifférent.
     pub usage_page: Option<u16>,
+    /// Usage HID à ouvrir au sein de la page (ex. 0x0602), `None` = indifférent.
+    pub usage: Option<u16>,
 }
 
 impl Model {
     pub fn new(name: impl Into<String>, device_type: DeviceType, zones: Vec<ZoneInfo>) -> Model {
-        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None }
+        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None }
     }
 
     pub fn led_count(&self) -> u32 {

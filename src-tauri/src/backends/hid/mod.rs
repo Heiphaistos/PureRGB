@@ -179,7 +179,8 @@ impl Backend for HidBackend {
             match native::probe(key.0, key.1) {
                 Some((_, m)) => {
                     let ok = m.interface.is_none_or(|i| i == info.interface_number())
-                        && m.usage_page.is_none_or(|u| u == info.usage_page());
+                        && m.usage_page.is_none_or(|u| u == info.usage_page())
+                        && m.usage.is_none_or(|u| u == info.usage());
                     if ok {
                         seen.entry(key).or_insert_with(|| info.path().to_owned());
                     }
