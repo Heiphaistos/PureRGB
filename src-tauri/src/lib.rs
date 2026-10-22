@@ -8,6 +8,7 @@ mod job;
 mod netdev;
 mod product_commands;
 mod product_images;
+mod rgb_catalog;
 mod screens;
 mod sensors;
 mod settings;

@@ -8,29 +8,6 @@ use crate::core::{DeviceInfo, DeviceType};
 use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::BTreeMap;
 
-/// Fabricants USB à éclairage : (VID, nom, true = ses périphériques sont presque toujours RGB).
-const RGB_VENDORS: &[(u16, &str, bool)] = &[
-    (0x1B1C, "Corsair", false),
-    (0x1532, "Razer", true),
-    (0x1038, "SteelSeries", true),
-    (0x046D, "Logitech", false),
-    (0x0B05, "ASUS", false),
-    (0x1462, "MSI", false),
-    (0x048D, "Gigabyte / ITE", true),
-    (0x0951, "HyperX / Kingston", false),
-    (0x03F0, "HyperX / HP", false),
-    (0x1E71, "NZXT", true),
-    (0x0CF2, "Lian Li / ENE", true),
-    (0x2516, "Cooler Master", false),
-    (0x264A, "Thermaltake", false),
-    (0x1E7D, "Roccat", true),
-];
-
-/// Ce VID (hexadécimal, ex. « 1b1c ») est-il celui d'un fabricant d'éclairage ?
-pub fn is_rgb_vendor(vid_hex: &str) -> bool {
-    u16::from_str_radix(vid_hex.trim_start_matches("0x"), 16).is_ok_and(|v| RGB_VENDORS.iter().any(|(vid, _, _)| *vid == v))
-}
-
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Board {
     #[serde(default, rename = "Manufacturer")]
@@ -163,25 +140,19 @@ fn memory(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<
 }
 
 fn usb(inv: &Inventory, devices: &[DeviceInfo], out: &mut Vec<Finding>) {
-    let mut by_vendor: BTreeMap<&str, (bool, Vec<&UsbDev>)> = BTreeMap::new();
+    use crate::rgb_catalog::catalog;
+    let cat = catalog();
     for u in &inv.usb {
-        if let Some((_, v, certain)) = RGB_VENDORS.iter().find(|(vid, _, _)| *vid == u.vid) {
-            by_vendor.entry(v).or_insert((*certain, Vec::new())).1.push(u);
-        }
-    }
-    for (vendor, (certain, devs)) in by_vendor {
+        let Some(vendor) = cat.vendor(u.vid) else { continue };
         let key = vendor.split([' ', '/']).next().unwrap_or(vendor).to_lowercase();
-        let driven = devices.iter().filter(|d| d.controllable && format!("{} {}", d.vendor, d.name).to_lowercase().contains(&key)).count();
-        let names = devs.iter().map(|d| d.name.as_str()).collect::<Vec<_>>().join(" · ");
-        let title = format!("{vendor} : {} appareil(s) USB, {driven} pilotable(s)", devs.len());
-        out.push(if driven > 0 {
-            f("USB", Status::Ok, title, names)
-        } else if certain {
-            f("USB", Status::Warn, title, format!("{names} — appareil RGB probable mais non détecté : fermez le logiciel du constructeur, rebranchez-le, \
-                 puis « Redémarrer OpenRGB »."))
-        } else {
-            f("USB", Status::Info, title, format!("{names} — peut être normal (ce fabricant vend aussi des appareils sans éclairage)."))
-        });
+        let driven = devices.iter().any(|d| d.controllable && format!("{} {}", d.vendor, d.name).to_lowercase().contains(&key));
+        match cat.device(u.vid, u.pid) {
+            Some(model) if driven => out.push(f("USB", Status::Ok, format!("{model} pilotable"), format!("{} (USB {:04X}:{:04X})", u.name, u.vid, u.pid))),
+            Some(model) => out.push(f("USB", Status::Warn, format!("{model} reconnu mais non détecté"),
+                format!("USB {:04X}:{:04X} est un contrôleur RGB connu : fermez le logiciel du constructeur, rebranchez-le, puis « Redémarrer OpenRGB ».", u.vid, u.pid))),
+            None => out.push(f("USB", Status::Info, format!("{vendor} : {} (USB {:04X}:{:04X}) hors catalogue", u.name, u.vid, u.pid),
+                "Fabricant RGB connu mais ce modèle précis n'est pas encore pris en charge (ou n'a pas d'éclairage). Signalez-le via le diagnostic matériel.")),
+        }
     }
 }
 
@@ -325,8 +296,8 @@ mod tests {
     const SAMPLE: &str = r#"{"board":{"Manufacturer":"ASUSTeK","Product":"ROG STRIX B650-F"},
         "ram":[{"Manufacturer":"Corsair","PartNumber":"CMH32 ","DeviceLocator":"DIMM_A1"},{"Manufacturer":"Corsair","PartNumber":"CMH32 ","DeviceLocator":"DIMM_B1"}],
         "gpu":{"Name":"NVIDIA GeForce RTX 4080"},
-        "usb":[{"InstanceId":"USB\\VID_1532&PID_0084\\5&1","FriendlyName":"Razer DeathAdder"},
-               {"InstanceId":"USB\\VID_1532&PID_0084&MI_01\\6&2","FriendlyName":""},
+        "usb":[{"InstanceId":"USB\\VID_1532&PID_0043\\5&1","FriendlyName":"Razer DeathAdder"},
+               {"InstanceId":"USB\\VID_1532&PID_0043&MI_01\\6&2","FriendlyName":""},
                {"InstanceId":"USB\\VID_8087&PID_0033\\X","FriendlyName":"Intel BT"}]}"#;
 
     #[test]
@@ -337,7 +308,7 @@ mod tests {
         assert_eq!(inv.gpus, vec!["NVIDIA GeForce RTX 4080"]);
         assert_eq!(inv.usb.len(), 2, "un VID/PID = une entrée, interfaces MI_xx fusionnées");
         assert_eq!(inv.usb[0].name, "Razer DeathAdder");
-        assert_eq!((inv.usb[0].vid, inv.usb[0].pid), (0x1532, 0x0084));
+        assert_eq!((inv.usb[0].vid, inv.usb[0].pid), (0x1532, 0x0043));
         assert!(parse_inventory("{}").unwrap().ram.is_empty());
         assert!(parse_inventory("pas du json").is_err());
     }
@@ -350,7 +321,7 @@ mod tests {
         let by = |c: &str| r.iter().find(|x| x.category == c).unwrap_or_else(|| panic!("constat {c} absent"));
         assert_eq!(by("Mémoire").status, Status::Warn);
         assert!(by("Mémoire").title.contains("PawnIO"));
-        assert_eq!(by("USB").status, Status::Warn, "Razer = RGB quasi certain");
+        assert_eq!(by("USB").status, Status::Warn, "Razer Deathadder Chroma est au catalogue");
         assert_eq!(by("Ventilateurs").status, Status::Info);
         assert!(r.iter().all(|x| !x.title.contains("Intel")), "un fabricant sans RGB n'est pas listé");
     }
@@ -380,12 +351,6 @@ mod tests {
         let inv = collect().expect("inventaire");
         println!("{inv:#?}");
         assert!(!inv.board.product.is_empty() || !inv.gpus.is_empty());
-    }
-
-    #[test]
-    fn rgb_vendor_lookup_accepts_hid_hex_ids() {
-        assert!(is_rgb_vendor("1b1c") && is_rgb_vendor("1532") && is_rgb_vendor("0x1E71"));
-        assert!(!is_rgb_vendor("8087") && !is_rgb_vendor("zzzz"));
     }
 
     #[test]

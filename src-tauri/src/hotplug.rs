@@ -24,7 +24,7 @@ pub fn diff_new_unrecognized(
 pub fn diff_new_rgb(previous: &HashSet<(String, String)>, current: &[RawHidDevice]) -> Vec<RawHidDevice> {
     current
         .iter()
-        .filter(|d| crate::inventory::is_rgb_vendor(&d.vid) && !previous.contains(&(d.vid.clone(), d.pid.clone())))
+        .filter(|d| crate::rgb_catalog::is_rgb_vendor(&d.vid) && !previous.contains(&(d.vid.clone(), d.pid.clone())))
         .cloned()
         .collect()
 }
