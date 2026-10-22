@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.39.0
+
+- Appareil vu par deux pilotes : le pilote qui offre le plus de LEDs pilotables devient le principal (à égalité, le pilote intégré), l'autre reste en repli automatique avec des couleurs ré-échantillonnées. Corrige une perte de fonctions constatée sur une carte MSI Z790 : le pilote intégré n'offre qu'1 LED par connecteur ARGB alors qu'OpenRGB en pilote 60. Une carte affiche « Pilote intégré » ou « Repli OpenRGB ». La ligne « mémoire détectée en lecture seule » disparaît quand OpenRGB pilote cette mémoire.
+- Détection du serveur OpenRGB plus tolérante (délai 1,5 s au lieu de 0,4 s) : un serveur chargé n'est plus déclaré injoignable.
+- Pilotes intégrés (expérimentaux, jamais testés sur du vrai matériel, désactivés par défaut), d'après les notes issues de l'analyse des logiciels constructeur : Razer 82 modèles (claviers BlackWidow V3/V4, Huntsman, Ornata, DeathStalker, Cynosa ; tapis Firefly/Goliathus/Strider ; Base Station, Core X, kits d'éclairage), Logitech G815 / G915 / G915 TKL (couleur par touche) et G512 / G513 / G610, SteelSeries Apex Pro / Pro TKL / 7 / 7 TKL / 5 / 9 TKL / 9 Mini avec la table de 114 touches confirmée, Rival 3 / 5, Aerox 3 / 5 / 9 filaires, tapis QCK, Roccat Kone Pro / Burst Pro / Burst Pro Air.
+- Notes d'analyse ajoutées dans `docs/rgb-protocols/` (Corsair iCUE, Logitech G HUB, Razer Synapse, SteelSeries GG, Roccat Swarm) : les logiciels qui ne téléchargent leur contenu qu'à l'installation n'ont pas pu être lus ; les faits viennent alors de projets tiers, signalés comme tels. Roccat Vulcan / Pyro / Magma attendent un cadre natif à deux interfaces HID.
+
 ## 0.38.0
 
 - Une seule liste d'appareils, un seul pilotage : un appareil vu à la fois par un pilote intégré et par OpenRGB n'apparaît qu'une fois. Le pilote intégré travaille en premier ; après 3 échecs de suite, OpenRGB prend le relais automatiquement (note « repli automatique sur OpenRGB » sur la carte) et le pilote intégré n'écrit plus jamais en même temps, donc aucun conflit. Un nouveau scan redonne sa chance au pilote intégré.
