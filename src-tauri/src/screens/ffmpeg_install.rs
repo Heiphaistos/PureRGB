@@ -208,6 +208,9 @@ mod tests {
         std::fs::write(&exe, b"MZevil!").unwrap(); // contenu changé
         assert!(!check_installed(&exe), "taille changée : re-hash, refusé");
         std::fs::write(&exe, b"MZfake").unwrap();
+        // Même taille qu'à l'installation : sans date de modification différente, le cache de vérification
+        // reconnaîtrait le fichier (les horloges de fichiers ont un grain de plusieurs ms).
+        std::fs::File::options().write(true).open(&exe).unwrap().set_modified(SystemTime::now() + std::time::Duration::from_secs(30)).unwrap();
         std::fs::write(marker_of(&exe), "0".repeat(64)).unwrap();
         assert!(!check_installed(&exe), "marqueur faux : refusé");
         std::fs::remove_file(marker_of(&exe)).unwrap();
