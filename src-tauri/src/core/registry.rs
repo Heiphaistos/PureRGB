@@ -63,7 +63,7 @@ impl DeviceRegistry {
     fn drop_duplicates(&mut self) {
         let key = |d: &DeviceInfo| format!("{}|{:?}", maker(&d.vendor, &d.name), d.device_type);
         let mut natives: HashMap<String, usize> = HashMap::new();
-        for d in self.devices.values().filter(|d| d.backend == "hid" && d.controllable && d.note.contains("natif expérimental")) {
+        for d in self.devices.values().filter(|d| (d.backend == "hid" || d.backend == "smbus") && d.controllable && d.note.contains("natif expérimental")) {
             *natives.entry(key(d)).or_default() += 1;
         }
         let mut ids: Vec<String> = self.devices.values().filter(|d| d.backend == "openrgb").map(|d| d.id.clone()).collect();
@@ -182,6 +182,15 @@ mod dedup_tests {
         let nat = dev("1462:7d93:0", "Micro-Star", "MSI Mystic Light", DeviceType::Motherboard, true, "driver natif expérimental");
         let other = dev("2", "Corsair", "Vengeance", DeviceType::Dram, true, "");
         assert_eq!(scan(vec![orgb, other], vec![nat]), vec!["hid:1462:7d93:0", "openrgb:2"]);
+    }
+
+    #[test]
+    fn native_smbus_dram_replaces_the_openrgb_copy() {
+        let orgb = dev("3", "Corsair", "Corsair Vengeance RGB", DeviceType::Dram, true, "");
+        let nat = dev("58", "Corsair", "Corsair Vengeance RGB DDR5", DeviceType::Dram, true, "driver natif expérimental");
+        let mut r = DeviceRegistry::new(vec![Box::new(Fake("openrgb", vec![orgb])), Box::new(Fake("smbus", vec![nat]))]);
+        let ids: Vec<String> = r.scan_all().into_iter().map(|d| d.id).collect();
+        assert_eq!(ids, vec!["smbus:58"]);
     }
 
     #[test]
