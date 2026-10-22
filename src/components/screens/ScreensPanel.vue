@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
-import { demo, errMsg, screenState } from "../../screens/api.ts";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { demo, errMsg, scanErrors, screenState } from "../../screens/api.ts";
 import { loadScreens, loaded, scan, scanning, screens } from "../../screens/store.ts";
 import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
 import ProductPhoto from "../ProductPhoto.vue";
@@ -13,6 +14,8 @@ const emit = defineEmits<{ toast: [msg: string] }>();
 const selectedId = ref<string | null>(null);
 const states = ref<Record<string, ScreenState>>({});
 const products = ref<Record<string, ProductView | null>>({});
+const reasons = ref<string[]>([]);
+let unlisten: UnlistenFn | undefined;
 
 const selected = computed<ScreenInfo | null>(() => screens.value.find((s) => s.id === selectedId.value) ?? null);
 
@@ -44,6 +47,7 @@ async function loadStates(): Promise<void> {
 async function doScan(withSim = false): Promise<void> {
   try {
     await scan(withSim);
+    await refreshReasons();
     emit("toast", screens.value.length ? `${screens.value.length} écran(s) détecté(s)` : "Aucun écran détecté");
   } catch (e) {
     emit("toast", `Recherche d'écrans : ${errMsg(e)}`);
@@ -57,13 +61,24 @@ function stateLabel(id: string): { text: string; cls: string } {
   return s.running ? { text: "Actif", cls: "ok" } : { text: "Éteint", cls: "" };
 }
 
+async function refreshReasons(): Promise<void> {
+  reasons.value = await scanErrors();
+}
+
 onMounted(async () => {
   try {
     await loadScreens();
+    await refreshReasons();
   } catch (e) {
     emit("toast", `Écrans : ${errMsg(e)}`);
   }
+  // Détection automatique d'un écran branché après coup : la liste se met à jour toute seule.
+  if (!demo.value) {
+    unlisten = await listen("screens-changed", () => void loadScreens().then(refreshReasons));
+  }
 });
+
+onUnmounted(() => unlisten?.());
 
 watch(screens, () => void loadStates(), { immediate: true });
 </script>
@@ -118,6 +133,9 @@ watch(screens, () => void loadStates(), { immediate: true });
           <button class="primary" :disabled="scanning" @click="doScan(false)">Rechercher</button>
           <button :disabled="scanning" @click="doScan(true)">Écran simulé</button>
         </div>
+        <ul v-if="reasons.length" class="sc-err">
+          <li v-for="r in reasons" :key="r">{{ r }}</li>
+        </ul>
         <p class="hint">L'écran simulé permet d'essayer les designs et l'éditeur sans aucun matériel.</p>
       </div>
     </div>

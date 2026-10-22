@@ -50,6 +50,8 @@ pub struct ScreenManager {
     configs: Mutex<ConfigMap>,
     /// Une détection à la fois (elle ouvre les périphériques).
     scanning: Mutex<()>,
+    /// Raisons des échecs de la dernière détection (affichées quand aucun écran n'apparaît).
+    errors: Mutex<Vec<String>>,
 }
 
 fn providers(with_sim: bool) -> Vec<Box<dyn ScreenProvider>> {
@@ -95,6 +97,7 @@ impl ScreenManager {
             runners: Mutex::new(Vec::new()),
             configs: Mutex::new(state::load()),
             scanning: Mutex::new(()),
+            errors: Mutex::new(Vec::new()),
         })
     }
 
@@ -106,12 +109,17 @@ impl ScreenManager {
             r.stop();
         }
         let mut found: Vec<Box<dyn ScreenDriver>> = Vec::new();
+        let mut errors = Vec::new();
         for mut p in providers(with_sim) {
             match p.detect() {
                 Ok(mut d) => found.append(&mut d),
-                Err(e) => log::warn!("détection d'écrans ({}) : {e:#}", p.name()),
+                Err(e) => {
+                    log::warn!("détection d'écrans ({}) : {e:#}", p.name());
+                    errors.push(format!("{} : {e:#}", p.name()));
+                }
             }
         }
+        *self.errors.lock() = errors;
         let mut runners = Vec::new();
         for d in found {
             let cfg = self.configs.lock().get(&d.info().id).cloned().unwrap_or_default().clamped();
@@ -120,6 +128,23 @@ impl ScreenManager {
         let infos = runners.iter().map(|r| r.info.clone()).collect();
         *self.runners.lock() = runners;
         infos
+    }
+
+    pub fn scan_errors(&self) -> Vec<String> {
+        self.errors.lock().clone()
+    }
+
+    /// Écrans du catalogue branchés en USB mais sans pilote actif (détection ratée ou branchement tardif).
+    pub fn plugged_but_idle(&self) -> Vec<String> {
+        let Ok(devices) = nusb::list_devices() else { return Vec::new() };
+        let running: Vec<String> = self.runners.lock().iter().map(|r| r.info.id.clone()).collect();
+        let mut idle: Vec<String> = devices
+            .filter(|d| super::drivers::catalog::find(d.vendor_id(), d.product_id()).is_some())
+            .map(|d| format!("{:04x}:{:04x}", d.vendor_id(), d.product_id()))
+            .filter(|key| !running.iter().any(|id| id.starts_with(key.as_str())))
+            .collect();
+        idle.sort();
+        idle
     }
 
     pub fn list(&self) -> Vec<ScreenInfo> {

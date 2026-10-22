@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.33.0
+
+- Mini-écrans : la détection n'avait lieu qu'une fois au démarrage. Un écran branché mais sans pilote actif (ouverture ratée, branchement tardif, démarrage USB lent) est maintenant ré-essayé automatiquement (au changement d'état, sinon chaque minute) et la liste se met à jour toute seule.
+- Mini-écrans : quand rien n'est détecté, la page affiche la raison exacte de l'échec de chaque famille de pilotes, au lieu d'un conseil générique.
+
 ## 0.32.0
 
 - Nombre de LEDs automatique : un connecteur ARGB de carte mère (ou canal de hub) qui n'annonce aucune LED reçoit 60 LEDs d'office, plus rien à compter ; la valeur reste modifiable à la main (un 0 choisi est respecté). Un connecteur ne peut pas dire ce qui y est branché, donc c'est une taille courante, pas une mesure.

@@ -44,6 +44,10 @@ export async function listScreens(): Promise<ScreenInfo[]> {
 export const scanScreens = (withSimulated = false): Promise<ScreenInfo[]> =>
   demo.value ? mock.screensScan(withSimulated) : invoke<ScreenInfo[]>("screens_scan", { withSimulated });
 
+/** Raisons des échecs de la dernière détection (vide en démo). */
+export const scanErrors = (): Promise<string[]> =>
+  demo.value ? Promise.resolve([]) : invoke<string[]>("screens_errors").catch(() => []);
+
 export const screenState = (id: string): Promise<ScreenState> =>
   demo.value ? mock.screenState(id) : invoke<ScreenState>("screen_state", { id });
 

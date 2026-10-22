@@ -31,6 +31,11 @@ pub fn screens_list(m: Mgr) -> Vec<ScreenInfo> {
 }
 
 #[tauri::command]
+pub fn screens_errors(m: Mgr) -> Vec<String> {
+    m.scan_errors()
+}
+
+#[tauri::command]
 pub async fn screens_scan(m: Mgr<'_>, with_simulated: bool) -> Res<Vec<ScreenInfo>> {
     let mgr = m.inner().clone();
     tauri::async_runtime::spawn_blocking(move || mgr.scan(with_simulated))

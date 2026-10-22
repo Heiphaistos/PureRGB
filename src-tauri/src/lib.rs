@@ -1250,6 +1250,7 @@ pub fn run() {
                         let mut first = true;
                         let mut last_rescan: Option<std::time::Instant> = None;
                         let mut orgb_was_up = false;
+                        let mut screen_try: Option<(Vec<String>, std::time::Instant)> = None;
                         loop {
                             std::thread::sleep(std::time::Duration::from_secs(5));
                             let state = app_handle.state::<AppState>();
@@ -1278,6 +1279,17 @@ pub fn run() {
                                 rescan_and_notify(&app_handle, "OpenRGB démarré tardivement");
                             }
                             orgb_was_up = orgb_up;
+                            // Mini-écran branché mais sans pilote actif : on retente (changement d'état, sinon 1 fois par minute).
+                            let sm = app_handle.state::<std::sync::Arc<screens::manager::ScreenManager>>();
+                            let idle = sm.plugged_but_idle();
+                            if !first && !idle.is_empty() && screen_try.as_ref().map_or(true, |(set, t)| *set != idle || t.elapsed() > std::time::Duration::from_secs(60)) {
+                                screen_try = Some((idle, std::time::Instant::now()));
+                                let n = sm.scan(false).len();
+                                log::info!("écran USB sans pilote actif : nouvelle détection, {n} écran(s)");
+                                if let Err(e) = app_handle.emit("screens-changed", n) {
+                                    log::debug!("émission screens-changed : {e:#}");
+                                }
+                            }
                             if first {
                                 previous = current_keys;
                                 first = false;
@@ -1403,6 +1415,7 @@ pub fn run() {
             usb_capture_upload,
             screens::commands::screens_list,
             screens::commands::screens_scan,
+            screens::commands::screens_errors,
             screens::commands::screen_state,
             screens::commands::screen_set_layout,
             screens::commands::screen_set_options,
