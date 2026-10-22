@@ -5,13 +5,15 @@
 //! (claviers anciens, classe 0x03 / cmd 0x0B : taille de paquet contradictoire entre les deux notes) est refusé à l'ouverture.
 //! Rien n'est écrit en mémoire flash. Effet statique de repli : non implémenté (octets RVB de l'effet 0x01 marqués (R)
 //! dans razer.md, sans recoupement).
+//! Claviers/accessoires de analyse-razer-synapse.md : TID documenté par modèle (pas de sondage), matrice étendue seulement.
+//! Les modèles sans fil / dongle (TID 0x9F relayé, `cmdSteer` 0x80/0xE0 INCONNU) ne sont pas revendiqués.
 //! INCONNU : variante « NewWriteLighting » (compteur 0x80..0x9F à la place du txid, seuil de firmware par modèle) ;
 //! pause inter-paquet par modèle ; cadence maximale.
 
 mod table;
 
 use super::{Family, Hid, Model, NativeRgb};
-use crate::core::{Color, ZoneInfo};
+use crate::core::{Color, DeviceType, ZoneInfo};
 use anyhow::{bail, Context, Result};
 use std::time::Duration;
 
@@ -128,20 +130,32 @@ fn probe(vid: u16, pid: u16) -> Option<Model> {
         return None;
     }
     let e = table::by_pid(pid)?;
-    let mut zone = ZoneInfo::fixed(if e.rows > 1 { "Matrice" } else { "LEDs" }, e.rows as u32 * e.cols as u32);
-    if e.rows > 1 {
-        zone.zone_type = 2;
-    }
-    let mut m = Model::new(e.name, e.device_type.clone(), vec![zone]);
+    let zone_type = if e.rows > 1 { 2 } else { 1 };
+    let zones = if e.zones.is_empty() {
+        vec![(if e.rows > 1 { "Matrice" } else { "LEDs" }, e.rows as u16 * e.cols as u16)]
+    } else {
+        e.zones.to_vec()
+    };
+    let zones = zones
+        .into_iter()
+        .map(|(n, c)| ZoneInfo { zone_type, ..ZoneInfo::fixed(n, c as u32) })
+        .collect();
+    let mut m = Model::new(e.name, e.device_type.clone(), zones);
     m.interface = Some(e.interface);
-    m.usage_page = Some(e.usage_page);
+    m.usage_page = e.usage_page;
     Some(m)
 }
 
 fn open(hid: Box<dyn Hid>, model: &Model) -> Result<Box<dyn NativeRgb>> {
     let e = table::by_name(&model.name).context("modèle Razer inconnu")?;
-    let mut dev = Razer { hid, txid: 0, rows: e.rows, cols: e.cols, keyboard: e.rows > 1 };
-    dev.txid = dev.find_txid()?;
+    let keyboard = e.device_type == DeviceType::Keyboard;
+    let mut dev = Razer { hid, txid: e.tid.unwrap_or(0), rows: e.rows, cols: e.cols, keyboard };
+    if e.tid.is_none() {
+        dev.txid = dev.find_txid()?;
+    }
+    if e.soft_mode {
+        dev.command(2, 0x00, 0x04, &[0x03, 0x00])?;
+    }
     // Détection de la matrice moderne : classe 0x0F cmd 0x82, args 00 ; statut OK = moderne (signalrgb.md 1.3).
     let r = dev.request(dev.txid, 6, 0x0F, 0x82, &[0])?;
     if r[1] != 0x02 {
