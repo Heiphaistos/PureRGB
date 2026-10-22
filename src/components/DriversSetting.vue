@@ -25,7 +25,7 @@ defineProps<{
       <input id="native" type="checkbox" v-model="form.native_drivers_enabled" />
       <label for="native">
         Utiliser les pilotes intégrés (expérimental) : cartes mères ASUS / ASRock / MSI / Gigabyte (USB), hubs Corsair, NZXT,
-        Lian Li et Thermaltake, claviers et souris Razer, Wooting, HyperX, mémoire Corsair. Sans cette case, tout passe par OpenRGB.
+        Lian Li et Thermaltake, Corsair Commander Core, Cooler Master ARGB, claviers Logitech G410/G810/G910, SteelSeries Apex Pro TKL et Aerox 3, souris Razer et Roccat Kone Pro, Wooting, HyperX, mémoire Corsair. Sans cette case, tout passe par OpenRGB.
       </label>
     </div>
     <div class="inline sub">
