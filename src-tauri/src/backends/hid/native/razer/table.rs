@@ -41,6 +41,32 @@ pub const MODELS: &[Entry] = &[
     mouse(0x0096, "Razer Naga X", 2),
     mouse(0x0099, "Razer Basilisk V3", 11),
     mouse(0x00CB, "Razer Basilisk V3 35K", 11),
+    // Souris « razer-modern-mouse » à nombre de LEDs explicite (signalrgb-devices.csv). Dongles sans fil, formes legacy
+    // (0x0053, 0x0046, 0x0044), Hyperflux (0x0068) et LEDs INCONNUES omis ; une souris sans matrice moderne est refusée à l'ouverture.
+    mouse(0x004D, "Razer DeathAdder Essential", 2),
+    mouse(0x005C, "Razer DeathAdder Elite", 3),
+    mouse(0x0059, "Razer Lancehead Tournament Edition", 16),
+    mouse(0x0060, "Razer Lancehead Tournament Edition (0060)", 16),
+    mouse(0x0064, "Razer Basilisk", 2),
+    mouse(0x0065, "Razer Basilisk Essential", 1),
+    mouse(0x0067, "Razer Naga Trinity", 3),
+    mouse(0x0069, "Razer Mamba", 2),
+    mouse(0x006B, "Razer Abyssus Essential", 3),
+    mouse(0x006C, "Razer Mamba Elite", 20),
+    mouse(0x006F, "Razer Lancehead", 3),
+    mouse(0x0070, "Razer Lancehead (0070)", 3),
+    mouse(0x0072, "Razer Mamba (0072)", 2),
+    mouse(0x0073, "Razer Mamba (0073)", 2),
+    mouse(0x0078, "Razer Viper", 1),
+    mouse(0x0084, "Razer DeathAdder V2", 2),
+    mouse(0x0085, "Razer Basilisk V2", 2),
+    mouse(0x008A, "Razer Viper Mini", 1),
+    mouse(0x008C, "Razer DeathAdder V2 Mini", 1),
+    mouse(0x008D, "Razer Naga Left-Handed", 3),
+    mouse(0x0091, "Razer Viper 8KHz", 1),
+    mouse(0x0093, "Razer Naga Classic", 3),
+    mouse(0x00A3, "Razer Cobra", 10),
+    mouse(0x00B9, "Razer Basilisk V3 X HyperSpeed", 1),
 ];
 
 pub fn by_pid(pid: u16) -> Option<&'static Entry> {
