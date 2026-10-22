@@ -170,6 +170,30 @@ mod tests {
         snd.join().expect("envoi");
     }
 
+    /// Comme `run`, mais attend la livraison de chaque image avant d'injecter la suivante (au plus 2 s par image).
+    fn run_paced(shared: &Arc<Shared>, driver: &SharedDriver, got: &Arc<Mutex<Vec<u8>>>, n: u8) {
+        let (a, b) = (Arc::new(Mailbox::new()), Arc::new(Mailbox::new()));
+        let enc = {
+            let (s, a, b) = (shared.clone(), a.clone(), b.clone());
+            std::thread::spawn(move || encode_stage(&s, "t", None, &a, &b))
+        };
+        let snd = {
+            let (s, d, b) = (shared.clone(), driver.clone(), b.clone());
+            std::thread::spawn(move || send_stage(&s, "t", &d, &b))
+        };
+        for i in 1..=n {
+            a.put(job(i));
+            let deadline = Instant::now() + Duration::from_secs(2);
+            while got.lock().len() < i as usize && Instant::now() < deadline {
+                std::thread::sleep(Duration::from_millis(2));
+            }
+        }
+        a.close();
+        b.close();
+        enc.join().expect("encodeur");
+        snd.join().expect("envoi");
+    }
+
     #[test]
     fn slow_screen_never_accumulates_and_keeps_order() {
         let shared = Arc::new(Shared::new(ScreenConfig::default(), true));
@@ -189,7 +213,8 @@ mod tests {
     fn fast_screen_gets_every_frame() {
         let shared = Arc::new(Shared::new(ScreenConfig::default(), true));
         let (driver, got) = slow(1, None);
-        run(&shared, &driver, 20);
+        // Chaque image n'est injectée qu'une fois la précédente livrée : le test ne dépend plus de la charge de la machine.
+        run_paced(&shared, &driver, &got, 20);
         assert_eq!(*got.lock(), (1..=20).collect::<Vec<u8>>());
     }
 

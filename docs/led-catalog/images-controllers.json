@@ -1,0 +1,809 @@
+[
+ {
+  "id": "hub-corsair-lighting-node-pro",
+  "kind": "light",
+  "vendor": "Corsair",
+  "name": "iCUE Lighting Node PRO",
+  "match": {
+   "names": [
+    "lighting node pro"
+   ],
+   "usb": [
+    "1b1c:0c0b"
+   ]
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Custom-Cooling/CL-9011109-WW/Gallery/LightingNode_0004.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/custom-liquid-cooling/cl-9011109-ww/icue-lighting-node-pro-rgb-lighting-controller-cl-9011109-ww"
+  }
+ },
+ {
+  "id": "hub-corsair-lighting-node-core",
+  "kind": "light",
+  "vendor": "Corsair",
+  "name": "iCUE Lighting Node CORE",
+  "match": {
+   "names": [
+    "lighting node core"
+   ],
+   "usb": [
+    "1b1c:0c1a"
+   ]
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Ambient-Lighting/base-lighting-node-core-config/Gallery/Lighting_Node_Core_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/ambient-lights/cl-8930009/icue-lighting-node-core-digital-fan-rgb-lighting-controller-cl-8930009"
+  }
+ },
+ {
+  "id": "hub-corsair-commander-pro",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE Commander PRO",
+  "match": {
+   "names": [
+    "commander pro"
+   ],
+   "usb": [
+    "1b1c:0c10"
+   ]
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Custom-Cooling/CL-9011110-WW/Gallery/Commander_PRO_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/custom-liquid-cooling/cl-9011110-ww/icue-commander-pro-smart-rgb-lighting-and-fan-speed-controller-cl-9011110-ww"
+  }
+ },
+ {
+  "id": "hub-corsair-icue-link-system-hub",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK System Hub",
+  "match": {
+   "names": [
+    "icue link system hub",
+    "link system hub"
+   ],
+   "usb": [
+    "1b1c:0c3f"
+   ]
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/iCUE-CONTROLLERS/icue-link-system-hub/black/iCUE_LINK_System_Hub_3rdGen_Black_Artboard01_AA.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-components-accessories/cl-9011116-ww/icue-link-system-hub-black-cl-9011116-ww"
+  }
+ },
+ {
+  "id": "case-corsair-icue-4000x-rgb",
+  "kind": "other",
+  "vendor": "Corsair",
+  "name": "iCUE 4000X RGB",
+  "match": {
+   "names": [
+    "4000x rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Cases/base-4000x-rgb-config/Gallery/4000X_BLACK_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-cases/cc-9011204-ww/icue-4000x-rgb-tempered-glass-mid-tower-atx-case-black-cc-9011204-ww"
+  }
+ },
+ {
+  "id": "case-corsair-icue-5000x-rgb",
+  "kind": "other",
+  "vendor": "Corsair",
+  "name": "iCUE 5000X RGB",
+  "match": {
+   "names": [
+    "5000x rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Cases/base-5000x/Gallery/5000X_RGB_BLACK_001.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-cases/cc-9011212-ww/icue-5000x-rgb-tempered-glass-mid-tower-atx-pc-smart-case-black-cc-9011212-ww"
+  }
+ },
+ {
+  "id": "case-corsair-icue-7000x-rgb",
+  "kind": "other",
+  "vendor": "Corsair",
+  "name": "iCUE 7000X RGB",
+  "match": {
+   "names": [
+    "7000x rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Cases/CC-9011226-WW/Gallery/7000X_RGB_BLACK_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-cases/cc-9011226-ww/icue-7000x-rgb-tempered-glass-full-tower-atx-pc-case-black-cc-9011226-ww"
+  }
+ },
+ {
+  "id": "case-corsair-icue-link-3500x-rgb",
+  "kind": "other",
+  "vendor": "Corsair",
+  "name": "iCUE LINK 3500X RGB",
+  "match": {
+   "names": [
+    "3500x rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Cases/3500x/3500x-link/Black/gallery/3500X_LINK_BLK_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-cases/cc-9011280-ww/icue-link-3500x-rgb-mid-tower-pc-case-cc-9011280-ww"
+  }
+ },
+ {
+  "id": "case-corsair-3500x-argb",
+  "kind": "other",
+  "vendor": "Corsair",
+  "name": "3500X ARGB",
+  "match": {
+   "names": [
+    "3500x argb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_85%2Ch_608%2Cw_608%2Cf_auto/products/Cases/3500x/3500x-argb/Black/gallery/3500X_ARGB_BLK_01.webp",
+   "source_page": "https://www.corsair.com/ww/en/p/pc-cases/cc-9011278-ww/3500x-argb-mid-tower-pc-case-cc-9011278-ww"
+  }
+ },
+ {
+  "id": "hub-lianli-uni-hub",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI HUB L-Connect 3 Controller",
+  "match": {
+   "names": [
+    "uni hub"
+   ],
+   "usb": [
+    "0cf2:a100",
+    "0cf2:a101",
+    "0cf2:a102",
+    "0cf2:a103",
+    "0cf2:a104",
+    "0cf2:a105"
+   ]
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2021/10/L3_controller_09.jpg",
+   "source_page": "https://lian-li.com/product/uni-hub-sl-controller/"
+  }
+ },
+ {
+  "id": "hub-lianli-edge-hub-v2",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "Edge Hub V2",
+  "match": {
+   "names": [
+    "edge hub"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2026/09/p001-03-scaled.jpg",
+   "source_page": "https://lian-li.com/product/edge-hub-v2/"
+  }
+ },
+ {
+  "id": "hub-lianli-l-wireless-controller",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "L-Wireless Controller",
+  "match": {
+   "names": [
+    "wireless controller"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2024/10/TL_Controller_02a.jpg",
+   "source_page": "https://lian-li.com/product/l-wireless_controller/"
+  }
+ },
+ {
+  "id": "case-lianli-o11-dynamic-razer-edition",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Dynamic Razer Edition",
+  "match": {
+   "names": [
+    "o11 dynamic razer"
+   ],
+   "usb": [
+    "1532:0f13"
+   ]
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2020/11/O11D-Razer_G1.jpg",
+   "source_page": "https://lian-li.com/product/pc-o11-dynamic-razer-edition/"
+  }
+ },
+ {
+  "id": "case-lianli-o11-dynamic-evo",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Dynamic EVO",
+  "match": {
+   "names": [
+    "o11 dynamic evo"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2021/12/evo-600-000.jpg",
+   "source_page": "https://lian-li.com/product/o11-dynamic-evo/"
+  }
+ },
+ {
+  "id": "case-lianli-o11d-evo-rgb",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Dynamic EVO RGB",
+  "match": {
+   "names": [
+    "o11d evo rgb",
+    "o11 dynamic evo rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/12/O11DERGB-000.jpg",
+   "source_page": "https://lian-li.com/product/o11d-evo-rgb/"
+  }
+ },
+ {
+  "id": "case-lianli-o11-dynamic-evo-xl",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Dynamic EVO XL",
+  "match": {
+   "names": [
+    "o11 dynamic evo xl"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/09/O11DEXLX-002.jpg",
+   "source_page": "https://lian-li.com/product/o11-dynamic-evo-xl/"
+  }
+ },
+ {
+  "id": "case-lianli-o11-dynamic-mini-v2",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Dynamic Mini V2",
+  "match": {
+   "names": [
+    "o11 dynamic mini"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2025/07/o11dmini_005-1.jpg",
+   "source_page": "https://lian-li.com/product/o11-dynamic-mini-v2/"
+  }
+ },
+ {
+  "id": "case-lianli-o11-vision",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "O11 Vision",
+  "match": {
+   "names": [
+    "o11 vision"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/11/O11_V_012.jpg",
+   "source_page": "https://lian-li.com/product/o11-vision/"
+  }
+ },
+ {
+  "id": "case-lianli-lancool-207-digital",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "Lancool 207 Digital",
+  "match": {
+   "names": [
+    "lancool 207 digital"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2025/04/207d_001.jpg",
+   "source_page": "https://lian-li.com/product/lancool-207-digital/"
+  }
+ },
+ {
+  "id": "case-lianli-lancool-216",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "Lancool 216",
+  "match": {
+   "names": [
+    "lancool 216"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2022/11/1007_136-b.jpg",
+   "source_page": "https://lian-li.com/product/lancool-216/"
+  }
+ },
+ {
+  "id": "case-lianli-lancool-ii-mesh-rgb",
+  "kind": "other",
+  "vendor": "Lian Li",
+  "name": "Lancool II Mesh RGB",
+  "match": {
+   "names": [
+    "lancool ii mesh rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2020/11/lan2-mesh-rgb-03-1.jpg",
+   "source_page": "https://lian-li.com/product/lancool-ii-mesh-rgb/"
+  }
+ },
+ {
+  "id": "hub-coolermaster-argb-gen2-controller-a1",
+  "kind": "light",
+  "vendor": "Cooler Master",
+  "name": "ARGB Gen 2 Controller A1",
+  "match": {
+   "names": [
+    "argb gen 2 a1",
+    "led controller a1"
+   ],
+   "usb": [
+    "2516:0173",
+    "2516:01c9",
+    "2516:01cb"
+   ]
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw17cee363/Assets/led-controller-a1/large/led-controller-a1-gallery-1.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/led-controller-a1/"
+  }
+ },
+ {
+  "id": "case-coolermaster-masterbox-td500-argb",
+  "kind": "other",
+  "vendor": "Cooler Master",
+  "name": "MasterBox TD500 ARGB",
+  "match": {
+   "names": [
+    "td500 argb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dwd58bf12a/Assets/masterbox-td500-argb/large/td500-argb-gallery-01.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/masterbox-td500-argb/"
+  }
+ },
+ {
+  "id": "case-coolermaster-haf-700",
+  "kind": "other",
+  "vendor": "Cooler Master",
+  "name": "HAF 700",
+  "match": {
+   "names": [
+    "haf 700"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw2ef3ede4/Assets/haf-700/large/haf-700-gallery-1.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/haf-700/"
+  }
+ },
+ {
+  "id": "case-coolermaster-haf-500",
+  "kind": "other",
+  "vendor": "Cooler Master",
+  "name": "HAF 500",
+  "match": {
+   "names": [
+    "haf 500"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw7dc63d46/Assets/haf-500/large/haf500-gallery-1.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/haf-500/"
+  }
+ },
+ {
+  "id": "case-coolermaster-cosmos-c700m",
+  "kind": "other",
+  "vendor": "Cooler Master",
+  "name": "Cosmos C700M",
+  "match": {
+   "names": [
+    "cosmos c700m"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw0a66795c/Assets/cosmos-c700m/large/c700m-black-gallery-1.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/cosmos-c700m/"
+  }
+ },
+ {
+  "id": "case-phanteks-nv7",
+  "kind": "other",
+  "vendor": "Phanteks",
+  "name": "NV7",
+  "match": {
+   "names": [
+    "phanteks nv7"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/03/01_NV7_Black-scaled.webp",
+   "source_page": "https://phanteks.com/product/nv7-black/"
+  }
+ },
+ {
+  "id": "case-phanteks-nv5",
+  "kind": "other",
+  "vendor": "Phanteks",
+  "name": "NV5",
+  "match": {
+   "names": [
+    "phanteks nv5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/03/NV5-B1-scaled.webp",
+   "source_page": "https://phanteks.com/product/nv5-black/"
+  }
+ },
+ {
+  "id": "case-phanteks-evolv-x2",
+  "kind": "other",
+  "vendor": "Phanteks",
+  "name": "Evolv X2",
+  "match": {
+   "names": [
+    "evolv x2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/12/Evolv-X2_Black_11-scaled.webp",
+   "source_page": "https://phanteks.com/product/evolv-x2-black/"
+  }
+ },
+ {
+  "id": "hub-nzxt-control-hub",
+  "kind": "fan",
+  "vendor": "NZXT",
+  "name": "Control Hub",
+  "match": {
+   "names": [
+    "control hub"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://nzxt.com/cdn/shop/files/mfP3SY_711eab1c-353c-4c7c-b02b-1ece6b30e5d0.png?v=1762528216",
+   "source_page": "https://nzxt.com/products/control-hub"
+  }
+ },
+ {
+  "id": "case-nzxt-h5-flow-rgb",
+  "kind": "other",
+  "vendor": "NZXT",
+  "name": "H5 Flow RGB",
+  "match": {
+   "names": [
+    "h5 flow rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://nzxt.com/cdn/shop/files/h5-flow-rgb_white_02_side.png?v=1789351745",
+   "source_page": "https://nzxt.com/products/h5-flow-rgb"
+  }
+ },
+ {
+  "id": "case-nzxt-h6-flow-rgb",
+  "kind": "other",
+  "vendor": "NZXT",
+  "name": "H6 Flow RGB",
+  "match": {
+   "names": [
+    "h6 flow rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://nzxt.com/cdn/shop/files/h6-flow-rgb_white_01_hero.png?v=1789302646",
+   "source_page": "https://nzxt.com/products/h6-flow-rgb"
+  }
+ },
+ {
+  "id": "case-nzxt-h7-flow-rgb",
+  "kind": "other",
+  "vendor": "NZXT",
+  "name": "H7 Flow RGB",
+  "match": {
+   "names": [
+    "h7 flow rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://nzxt.com/cdn/shop/files/h7-flow-rgb_white_01_hero.png?v=1789303126",
+   "source_page": "https://nzxt.com/products/h7-flow-rgb"
+  }
+ },
+ {
+  "id": "case-nzxt-h9-flow-rgb",
+  "kind": "other",
+  "vendor": "NZXT",
+  "name": "H9 Flow RGB",
+  "match": {
+   "names": [
+    "h9 flow rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://nzxt.com/cdn/shop/files/h9-flow-rgb_17_white-build-side.png?v=1789309809",
+   "source_page": "https://nzxt.com/products/h9-flow-rgb"
+  }
+ },
+ {
+  "id": "hub-thermaltake-riing-plus-controller",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Riing Plus RGB Controller",
+  "match": {
+   "names": [
+    "riing plus"
+   ],
+   "usb": [
+    "264a:1fa5",
+    "264a:1fa6",
+    "264a:1fa7",
+    "264a:1fa8",
+    "264a:1fa9",
+    "264a:1faa",
+    "264a:1fab",
+    "264a:1fac",
+    "264a:1fad",
+    "264a:1fae",
+    "264a:1faf",
+    "264a:1fb0",
+    "264a:1fb1",
+    "264a:1fb2",
+    "264a:1fb3",
+    "264a:1fb4",
+    "264a:1fb5"
+   ]
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/CL-O016-PL00BL-A_7f270cb3060c4eb487eeeeccf8a8373c.png?v=1786410548",
+   "source_page": "https://www.thermaltake.com/riing-plus-rgb-controller.html"
+  }
+ },
+ {
+  "id": "hub-thermaltake-riing-quad-controller",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Riing Quad 14 RGB 3 Fan Pack (controller included)",
+  "match": {
+   "names": [
+    "riing quad"
+   ],
+   "usb": [
+    "264a:2260",
+    "264a:2261",
+    "264a:2262",
+    "264a:2263",
+    "264a:2264",
+    "264a:2265",
+    "264a:2266",
+    "264a:2267",
+    "264a:2268",
+    "264a:2269",
+    "264a:226a",
+    "264a:226b",
+    "264a:226c",
+    "264a:226d",
+    "264a:226e",
+    "264a:226f",
+    "264a:2270",
+    "264a:232b"
+   ]
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/riingquad_01a_1_dfec2c95-92a6-427e-9249-552451f6a88e.jpg?v=1786410562",
+   "source_page": "https://www.thermaltake.com/riing-quad-14-rgb-pradiator-fan-tt-premium-edition-3-pack.html"
+  }
+ },
+ {
+  "id": "gpu-asus-rog-astral-rtx-5090",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "ROG Astral GeForce RTX 5090 OC Edition",
+  "match": {
+   "names": [
+    "rog astral rtx 5090",
+    "astral rtx 5090"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/128A96DB-DA90-4C45-A7A7-2A56F9F4F48A",
+   "source_page": "https://rog.asus.com/us/graphics-cards/graphics-cards/rog-astral/rog-astral-rtx5090-o32g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-rog-astral-rtx-5080",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "ROG Astral GeForce RTX 5080 OC Edition",
+  "match": {
+   "names": [
+    "rog astral rtx 5080",
+    "astral rtx 5080"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/D2014DA5-2608-405F-A7AD-BDD8F6CE1F91",
+   "source_page": "https://rog.asus.com/uk/graphics-cards/graphics-cards/rog-astral/rog-astral-rtx5080-o16g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-rog-strix-rtx-5070-ti",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "ROG Strix GeForce RTX 5070 Ti OC Edition",
+  "match": {
+   "names": [
+    "rog strix rtx 5070 ti",
+    "strix rtx 5070 ti"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/8B30EE38-7CCC-4C83-B5A5-EB0AC3320D0D",
+   "source_page": "https://rog.asus.com/nafr-ar/graphics-cards/graphics-cards/rog-strix/rog-strix-rtx5070ti-o16g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-rog-strix-rtx-5070",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "ROG Strix GeForce RTX 5070 OC Edition",
+  "match": {
+   "names": [
+    "rog strix rtx 5070",
+    "strix rtx 5070"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/AD35BA8C-0351-41D9-9F6A-D5808CB15976",
+   "source_page": "https://rog.asus.com/us/graphics-cards/graphics-cards/rog-strix/rog-strix-rtx5070-o12g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-5090",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 5090",
+  "match": {
+   "names": [
+    "tuf gaming rtx 5090",
+    "tuf rtx 5090"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/4aad6290-f858-4712-b9a7-f37b33d5211a/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx5090-o32g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-5080",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 5080",
+  "match": {
+   "names": [
+    "tuf gaming rtx 5080",
+    "tuf rtx 5080"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/7bb494af-8636-46a3-93ee-3cff60d30624/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx5080-o16g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-5070",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 5070",
+  "match": {
+   "names": [
+    "tuf gaming rtx 5070",
+    "tuf rtx 5070"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/3f23e07e-add3-4fa2-8c96-744d2fe56fa8/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx5070-o12g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-4090",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 4090",
+  "match": {
+   "names": [
+    "tuf gaming rtx 4090",
+    "tuf rtx 4090"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/65fd8cf0-ac31-4c16-8e43-4a25379a06a7/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx4090-o24g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-4070-ti",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 4070 Ti",
+  "match": {
+   "names": [
+    "tuf gaming rtx 4070 ti",
+    "tuf rtx 4070 ti"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/d3362bcc-5368-4e1e-a5a8-4bc1806ebf91/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx4070ti-o12g-gaming/"
+  }
+ },
+ {
+  "id": "gpu-asus-tuf-rtx-3080",
+  "kind": "gpu",
+  "vendor": "ASUS",
+  "name": "TUF Gaming GeForce RTX 3080",
+  "match": {
+   "names": [
+    "tuf gaming rtx 3080",
+    "tuf rtx 3080"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/8eaacb94-3c6a-4117-ad4e-215ac47caf51/",
+   "source_page": "https://www.asus.com/us/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx3080-o10g-gaming/"
+  }
+ }
+]

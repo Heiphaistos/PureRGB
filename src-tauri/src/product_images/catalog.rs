@@ -307,4 +307,20 @@ mod tests {
         let one = r#"{"id":"p","kind":"fan","vendor":"V","name":"N","match":{"names":["modele"]}}"#;
         assert!(parse(&format!(r#"{{"version":1,"products":[{one},{one}]}}"#)).is_err(), "doublon");
     }
+
+    #[test]
+    fn shipped_catalog_has_no_ambiguous_pattern_and_finds_known_boards() {
+        let mut seen = std::collections::HashMap::new();
+        for p in products() {
+            for n in &p.matching.names {
+                if let Some(other) = seen.insert(normalize(n), &p.id) {
+                    assert_eq!(other, &p.id, "motif « {n} » partagé par {other} et {}", p.id);
+                }
+            }
+        }
+        let id = |v: &str, n: &str| identify(v, n, &[]).map(|p| p.id.as_str());
+        assert_eq!(id("MSI", "MSI MAG Z790 TOMAHAWK WIFI"), Some("mb-msi-mag-z790-tomahawk-wifi"));
+        assert_eq!(id("Gigabyte", "Z790 AORUS ELITE AX"), Some("mb-gigabyte-z790-aorus-elite-ax"));
+        assert_eq!(id("Marque", "Carte inconnue XYZ-123"), None);
+    }
 }

@@ -1,0 +1,1188 @@
+[
+ {
+  "id": "ram-corsair-vengeance-rgb-pro-ddr4",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Vengeance RGB Pro DDR4",
+  "match": {
+   "names": [
+    "vengeance pro rgb",
+    "vengeance rgb pro"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/CMW16GX4M2C3200C16/Gallery/Vengeance_RGB_Pro_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmw16gx4m2c3200c16/vengeancea-rgb-pro-16gb-2-x-8gb-ddr4-dram-3200mhz-c16-memory-kit-a-black-cmw16gx4m2c3200c16"
+  }
+ },
+ {
+  "id": "ram-corsair-vengeance-rgb-pro-sl-ddr4",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Vengeance RGB Pro SL DDR4",
+  "match": {
+   "names": [
+    "vengeance pro sl",
+    "rgb pro sl"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/CMH16GX4M2E3200C16/Gallery/VENGEANCE_RGB_PRO_SL_BLACK_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmh16gx4m2e3200c16/vengeance-rgb-pro-sl-16gb-2x8gb-ddr4-dram-3200mhz-c16-memory-kit-a-black-cmh16gx4m2e3200c16"
+  }
+ },
+ {
+  "id": "ram-corsair-vengeance-rgb-rs-ddr4",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Vengeance RGB RS DDR4",
+  "match": {
+   "names": [
+    "vengeance rgb rs"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/CMG16GX4M2E3200C16/Gallery/VENGEANCE_RGB_RS_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmg16gx4m2e3200c16/vengeancea-rgb-rs-16gb-2-x-8gb-ddr4-dram-3200mhz-c16-memory-kit-cmg16gx4m2e3200c16"
+  }
+ },
+ {
+  "id": "ram-corsair-vengeance-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Vengeance RGB DDR5",
+  "match": {
+   "names": [
+    "vengeance rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/vengeance-rgb-ddr5-blk-config/Gallery/Vengeance-RGB-DDR5-2UP-BLACK_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmh32gx5m2x6400c38/vengeance-rgb-32gb-2x16gb-ddr5-dram-6400mhz-c38-memory-kit-black-cmh32gx5m2x6400c38"
+  }
+ },
+ {
+  "id": "ram-corsair-dominator-platinum-rgb-ddr4",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Dominator Platinum RGB DDR4",
+  "match": {
+   "names": [
+    "dominator platinum"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/CMT16GX4M2C3000C15/Gallery/DOMINATOR_PLAT_RGB_01.png",
+   "source_page": "https://www.corsair.com/ww/en/p/memory/cmt16gx4m2c3000c15/dominatora-platinum-rgb-16gb-2-x-8gb-ddr4-dram-3000mhz-c15-memory-kit-cmt16gx4m2c3000c15"
+  }
+ },
+ {
+  "id": "ram-corsair-dominator-platinum-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Dominator Platinum RGB DDR5",
+  "match": {
+   "names": [
+    "dominator platinum ddr5",
+    "dominator platinum rgb ddr5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/CMT32GX5M2X6400C38/Gallery/DOMINATOR_RGB_PLATINUM_BLACK_DDR5_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmt32gx5m2x6400c38/dominatora-platinum-rgb-32gb-2x16gb-ddr5-dram-6400mhz-c38-memory-kit-a-black-cmt32gx5m2x6400c38"
+  }
+ },
+ {
+  "id": "ram-corsair-dominator-titanium-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "Corsair",
+  "name": "Dominator Titanium RGB DDR5",
+  "match": {
+   "names": [
+    "dominator titanium"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_600/products/Memory/Dominator%20Titanium/enhanced%20images/black/2UP/DOMINATOR_TITANIUM_RGB_DDR5_BLACK_2UP_Artboard01_AA.png",
+   "source_page": "https://www.corsair.com/us/en/p/memory/cmp64gx5m2b6000c30/dominator-titanium-rgb-2x32gb-ddr5-dram-6000mt-s-cl30-intel-xmp-memory-kit-cmp64gx5m2b6000c30"
+  }
+ },
+ {
+  "id": "ram-gskill-trident-z-rgb-ddr4",
+  "kind": "ram",
+  "vendor": "G.Skill",
+  "name": "Trident Z RGB DDR4",
+  "match": {
+   "names": [
+    "trident z rgb",
+    "trident z neo",
+    "trident z royal"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.gskill.com/_upload/images/156283965910.png",
+   "source_page": "https://www.gskill.com/product/165/166/1562839659/F4-3600C16D-32GTZR-EOL"
+  }
+ },
+ {
+  "id": "ram-gskill-trident-z5-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "G.Skill",
+  "name": "Trident Z5 RGB DDR5",
+  "match": {
+   "names": [
+    "trident z5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.gskill.com/_upload/images/166564476410.png",
+   "source_page": "https://www.gskill.com/product/165/374/1665644764/F5-7600J3646G16GX2-TZ5RK"
+  }
+ },
+ {
+  "id": "ram-gskill-ripjaws-s5-ddr5",
+  "kind": "ram",
+  "vendor": "G.Skill",
+  "name": "Ripjaws S5 DDR5",
+  "match": {
+   "names": [
+    "ripjaws s5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.gskill.com/_upload/images/166850335310.png",
+   "source_page": "https://www.gskill.com/product/165/377/1668503353/F5-6400J3239G16GX2-RS5K"
+  }
+ },
+ {
+  "id": "ram-kingston-fury-beast-rgb-ddr4",
+  "kind": "ram",
+  "vendor": "Kingston",
+  "name": "FURY Beast RGB DDR4",
+  "match": {
+   "names": [
+    "fury beast rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://media.kingston.com/kingston/product/FURY_Beast_RGB_Black_DDR4_1-lg.jpg",
+   "source_page": "https://www.kingston.com/en/memory/gaming/kingston-fury-beast-ddr4-rgb-memory"
+  }
+ },
+ {
+  "id": "ram-kingston-fury-beast-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "Kingston",
+  "name": "FURY Beast RGB DDR5",
+  "match": {
+   "names": [
+    "fury beast ddr5",
+    "fury beast rgb ddr5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://media.kingston.com/kingston/product/FURY_Beast_Black_RGB_DDR5_1-lg.jpg",
+   "source_page": "https://www.kingston.com/en/memory/gaming/kingston-fury-beast-ddr5-rgb-memory"
+  }
+ },
+ {
+  "id": "ram-kingston-fury-renegade-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "Kingston",
+  "name": "FURY Renegade RGB DDR5",
+  "match": {
+   "names": [
+    "fury renegade ddr5",
+    "renegade rgb ddr5"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://media.kingston.com/kingston/product/FURY_Renegade_Silver_Black_RGB_CUDIMM_DDR5_1-lg.jpg",
+   "source_page": "https://www.kingston.com/en/memory/gaming/fury-renegade-ddr5-rgb"
+  }
+ },
+ {
+  "id": "ram-kingston-fury-renegade-rgb-ddr4",
+  "kind": "ram",
+  "vendor": "Kingston",
+  "name": "FURY Renegade RGB DDR4",
+  "match": {
+   "names": [
+    "fury renegade rgb",
+    "fury renegade"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://media.kingston.com/kingston/product/FURY_Renegade_RGB_Black_DDR4_1-lg.jpg",
+   "source_page": "https://www.kingston.com/en/memory/gaming/kingston-fury-renegade-ddr4-rgb-memory"
+  }
+ },
+ {
+  "id": "ram-teamgroup-night-hawk-rgb-ddr4",
+  "kind": "ram",
+  "vendor": "TeamGroup",
+  "name": "T-Force Night Hawk RGB DDR4",
+  "match": {
+   "names": [
+    "night hawk rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://images.teamgroupinc.com/products/memory/u-dimm/ddr4/night-hawk-rgb-gen1/black/dual_01.jpg",
+   "source_page": "https://www.teamgroupinc.com/en/product-detail/memory/T-FORCE/night-hawk-rgb-ddr4-gen1-black/night-hawk-rgb-ddr4-gen1-black-TF1D416G3200HC16CDC01/"
+  }
+ },
+ {
+  "id": "ram-teamgroup-delta-rgb-ddr5",
+  "kind": "ram",
+  "vendor": "TeamGroup",
+  "name": "T-Force Delta RGB DDR5",
+  "match": {
+   "names": [
+    "delta rgb",
+    "delta alpha rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://images.teamgroupinc.com/products/memory/u-dimm/ddr5/delta-rgb/black/03.jpg",
+   "source_page": "https://www.teamgroupinc.com/en/product-detail/memory/T-FORCE/delta-rgb-ddr5-black/delta-rgb-ddr5-black-FF3D532G6000HC30DC01/"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ll120",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LL120 RGB",
+  "match": {
+   "names": [
+    "ll120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9050091-WW/Gallery/LL120_RGB_White_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050091-ww/ll120-rgb-120mm-dual-light-loop-white-rgb-led-pwm-fan-single-pack-co-9050091-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ll140",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LL140 RGB",
+  "match": {
+   "names": [
+    "ll140"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9050073-WW/Gallery/LL140_RGB_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050073-ww/ll140-rgb-140mm-dual-light-loop-rgb-led-pwm-fan-single-pack-co-9050073-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ql120",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE QL120 RGB",
+  "match": {
+   "names": [
+    "ql120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9050097-WW/Gallery/QL120_RGB_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050097-ww/icue-ql120-rgb-120mm-pwm-single-fan-co-9050097-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ql140",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE QL140 RGB",
+  "match": {
+   "names": [
+    "ql140"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9050099-WW/Gallery/QL140_RGB_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050099-ww/icue-ql140-rgb-140mm-pwm-single-fan-co-9050099-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-sp120-rgb-elite",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE SP120 RGB Elite",
+  "match": {
+   "names": [
+    "sp120 rgb elite",
+    "sp120 elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/base-sp-elite-config/Gallery/MIC_SP120_RGB_ELITE_SINGLE_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050108-ww/icue-sp120-rgb-elite-performance-120mm-pwm-fan-a-single-pack-co-9050108-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ml120-rgb-elite",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE ML120 RGB Elite",
+  "match": {
+   "names": [
+    "ml120 rgb elite",
+    "ml120 elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9050113-WW/Gallery/ML120_RGB_ELITE_BLACK_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9050113-ww/icue-ml120-rgb-elite-premium-120mm-pwm-magnetic-levitation-fan-triple-fan-kit-with-icue-lighting-node-core-co-9050113-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-qx120-rgb",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK QX120 RGB",
+  "match": {
+   "names": [
+    "qx120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/CO-9051001-WW/gallery/QX120_RGB_RENDER_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051001-ww/icue-link-qx120-rgb-120mm-pwm-pc-fan-expansion-kit-co-9051001-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-rx120-rgb",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK RX120 RGB",
+  "match": {
+   "names": [
+    "rx120 rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/rx-series/CO-9051017-WW/Gallery/RX120_RGB_BLACK_RENDER_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051017-ww/icue-link-rx120-rgb-120mm-pwm-single-fan-expansion-co-9051017-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-rx120-max-rgb",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK RX120 MAX RGB",
+  "match": {
+   "names": [
+    "rx120 max"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_600/products/Fans/base-rx-max-rgb-series-config/gallery/black/120/xpac/icue_link_rx120_max_rgb_blk_xpac_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/case-fans/co-9051033-ww/icue-link-rx120-max-rgb-120mm-pwm-thick-fan-expansion-black-co-9051033-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-titan-360-rx-rgb",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK TITAN 360 RX RGB",
+  "match": {
+   "names": [
+    "titan 360 rx",
+    "titan rx"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/titan-rx-rgb/Gallery/CW-9061018-WW/CW-9061018-WW_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061018-ww/icue-link-titan-360-rx-rgb-aio-liquid-cpu-cooler-cw-9061018-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-h100i-rgb",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK H100i RGB",
+  "match": {
+   "names": [
+    "link h100i"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/CW-9061001-WW/iCUE_LINK_H100i_RGB_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061001-ww/icue-link-h100i-rgb-aio-liquid-cpu-cooler-cw-9061001-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-link-h150i-lcd",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LINK H150i LCD",
+  "match": {
+   "names": [
+    "link h150i"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets.corsair.com/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/icue-link-lcd-aio/CW-9061008/iCUE_LINK_H150i_LCD_BLK_01.webp",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9061008-ww/icue-link-h150i-lcd-liquid-cpu-cooler-cw-9061008-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-h100i-elite-capellix",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE H100i Elite Capellix",
+  "match": {
+   "names": [
+    "h100i elite capellix"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/base-icue-elite-cooler-config/Gallery/H100i_ELITE_CAPELLIX_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060046-ww/icue-h100i-elite-capellix-liquid-cpu-cooler-cw-9060046-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-h150i-elite-capellix",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE H150i Elite Capellix",
+  "match": {
+   "names": [
+    "h150i elite capellix"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/base-icue-elite-cooler-config/Gallery/H150i_ELITE_CAPELLIX_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060048-ww/icue-h150i-elite-capellix-liquid-cpu-cooler-cw-9060048-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-h100i-rgb-elite",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE H100i RGB Elite",
+  "match": {
+   "names": [
+    "h100i rgb elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/base-rgb-elite-coolers-config/Gallery/H100i_RGB_ELITE_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060058-ww/icue-h100i-rgb-elite-liquid-cpu-cooler-cw-9060058-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-h150i-rgb-elite",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE H150i RGB Elite",
+  "match": {
+   "names": [
+    "h150i rgb elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Liquid-Cooling/base-rgb-elite-coolers-config/Gallery/H150i_RGB_ELITE_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/cpu-coolers/cw-9060060-ww/icue-h150i-rgb-elite-liquid-cpu-cooler-cw-9060060-ww"
+  }
+ },
+ {
+  "id": "fan-corsair-icue-ls100",
+  "kind": "fan",
+  "vendor": "Corsair",
+  "name": "iCUE LS100 Smart Lighting Strip",
+  "match": {
+   "names": [
+    "ls100"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_600/products/Ambient-Lighting/CD-9010001-NA/Gallery/LS100_01.png",
+   "source_page": "https://www.corsair.com/us/en/p/ambient-lights/cd-9010001-na/icue-ls100-smart-lighting-strip-starter-kit-cd-9010001-na"
+  }
+ },
+ {
+  "id": "fan-lianli-sl",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN SL120",
+  "match": {
+   "names": [
+    "uni fan sl120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2020/08/Cooling.index_.unifanSL.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-sl/"
+  }
+ },
+ {
+  "id": "fan-lianli-slv2",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN SL120 V2",
+  "match": {
+   "names": [
+    "sl120 v2",
+    "sl v2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2022/11/DSC4843.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-sl-v2/"
+  }
+ },
+ {
+  "id": "fan-lianli-slv2-rev",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN SL120 V2 Reverse Blade",
+  "match": {
+   "names": [
+    "sl120 v2 reverse",
+    "sl v2 reverse"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/08/slv2rev_00_c.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-sl-v2-reverse-blade/"
+  }
+ },
+ {
+  "id": "fan-lianli-sl-inf",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN SL-Infinity 120",
+  "match": {
+   "names": [
+    "sl infinity"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2022/06/uni_fan_inf-photo-04.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-sl-infinity/"
+  }
+ },
+ {
+  "id": "fan-lianli-al-v2",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN AL120 V2",
+  "match": {
+   "names": [
+    "al120 v2",
+    "al v2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/03/al_v2-00.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-al-v2/"
+  }
+ },
+ {
+  "id": "fan-lianli-tl",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN TL120",
+  "match": {
+   "names": [
+    "tl120",
+    "uni fan tl"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/12/DSC6835_c.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-tl/"
+  }
+ },
+ {
+  "id": "fan-lianli-tl-lcd",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "UNI FAN TL LCD",
+  "match": {
+   "names": [
+    "tl lcd"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/12/14RTLLCD1W-03_c.jpg",
+   "source_page": "https://lian-li.com/product/uni-fan-tl-lcd/"
+  }
+ },
+ {
+  "id": "fan-lianli-gal-trinity",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "Galahad II Trinity Performance",
+  "match": {
+   "names": [
+    "galahad ii trinity"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/06/360gal_t_p_w.jpg",
+   "source_page": "https://lian-li.com/product/galahad-ii-trinity-performance/"
+  }
+ },
+ {
+  "id": "fan-lianli-gal-lcd",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "Galahad II LCD",
+  "match": {
+   "names": [
+    "galahad ii lcd"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2023/11/gl2tlw_016.jpg",
+   "source_page": "https://lian-li.com/product/galahad-ii-lcd/"
+  }
+ },
+ {
+  "id": "fan-lianli-strimer",
+  "kind": "fan",
+  "vendor": "Lian Li",
+  "name": "Strimer Plus V2",
+  "match": {
+   "names": [
+    "strimer plus"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://lian-li.com/wp-content/uploads/2022/04/sp_V2_m-000.jpg",
+   "source_page": "https://lian-li.com/product/strimer-plus-v2/"
+  }
+ },
+ {
+  "id": "fan-thermaltake-riing-quad-14",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Riing Quad 14 RGB",
+  "match": {
+   "names": [
+    "riing quad 14"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/riingquad_01a_1_dfec2c95-92a6-427e-9249-552451f6a88e.jpg?v=1786410562",
+   "source_page": "https://www.thermaltake.com/riing-quad-14-rgb-pradiator-fan-tt-premium-edition-3-pack.html"
+  }
+ },
+ {
+  "id": "fan-thermaltake-toughfan-12",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Toughfan 12 RGB",
+  "match": {
+   "names": [
+    "toughfan 12"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/cl-f135-pl12sw-a_01_66efbbb8-3089-480d-b84a-79ff4b5d210b.jpg?v=1786410635",
+   "source_page": "https://www.thermaltake.com/toughfan-12-rgb-high-static-pressure-radiator-fan-3-fan-pack.html"
+  }
+ },
+ {
+  "id": "fan-thermaltake-pure-12-argb",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Pure 12 ARGB Sync",
+  "match": {
+   "names": [
+    "pure 12 argb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/pure_12_argb_sync_radiator_fan_tt_premium_edition_fe8c87b0-be92-458c-96c6-d908ad3d84b9.jpg?v=1786342035",
+   "source_page": "https://www.thermaltake.com/pure-12-argb-sync-radiator-fan-tt-premium-edition-3-fan-pack.html"
+  }
+ },
+ {
+  "id": "fan-thermaltake-floe-ultra-360",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "Floe Ultra 360 RGB",
+  "match": {
+   "names": [
+    "floe ultra"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/cl-w350-pl12sw-a_01_d0d2f2ca-6e0a-4b3d-bd11-08650bc640b3.jpg?v=1786612952",
+   "source_page": "https://www.thermaltake.com/floe-ultra-360-rgb-all-in-one-liquid-cooler.html"
+  }
+ },
+ {
+  "id": "fan-thermaltake-swafan-ex12-argb",
+  "kind": "fan",
+  "vendor": "Thermaltake",
+  "name": "SWAFAN EX12 ARGB Sync",
+  "match": {
+   "names": [
+    "swafan ex12"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://thermaltake.com/cdn/shop/files/swafan_ex12_argb_1_2a00ea45-d17a-4476-bfc0-0fa62d366b2e.jpg?v=1786410687",
+   "source_page": "https://www.thermaltake.com/swafan-ex12-argb-sync-pc-cooling-fan-tt-premium-edition-3-fan-pack.html"
+  }
+ },
+ {
+  "id": "fan-coolermaster-sickleflow-120-argb-reverse",
+  "kind": "fan",
+  "vendor": "Cooler Master",
+  "name": "SickleFlow 120 ARGB Reverse Edition",
+  "match": {
+   "names": [
+    "sickleflow 120 argb reverse"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw08f78669/Assets/sickleflow-120-argb-reverse-edition/large/sickleflow-120-argb-reverse-edition-gallery-1.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/sickleflow-120-argb-reverse-edition.html"
+  }
+ },
+ {
+  "id": "fan-coolermaster-sickleflow-edge-120-argb",
+  "kind": "fan",
+  "vendor": "Cooler Master",
+  "name": "SickleFlow Edge 120 ARGB",
+  "match": {
+   "names": [
+    "sickleflow edge"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwd393e86d/Assets/sickleflow-edge-120-argb/large/sickleflow-edge-120-argb-gallery-01.png",
+   "source_page": "https://www.coolermaster.com/en-global/products/sickleflow-edge-120-argb.html"
+  }
+ },
+ {
+  "id": "fan-bequiet-light-wings-120-pwm",
+  "kind": "fan",
+  "vendor": "be quiet!",
+  "name": "Light Wings 120mm PWM high-speed",
+  "match": {
+   "names": [
+    "light wings 120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.bequiet.com/admin/ImageServer.php?ID=1e6b4a39212%40be-quiet.net&omitPreview=true&width=1200",
+   "source_page": "https://www.bequiet.com/en/casefans/3454"
+  }
+ },
+ {
+  "id": "fan-bequiet-light-wings-lx-120",
+  "kind": "fan",
+  "vendor": "be quiet!",
+  "name": "Light Wings LX 120mm",
+  "match": {
+   "names": [
+    "light wings lx"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.bequiet.com/admin/ImageServer.php?ID=4bc97a57933%40be-quiet.net&omitPreview=true&width=1200",
+   "source_page": "https://www.bequiet.com/en/casefans/5307"
+  }
+ },
+ {
+  "id": "fan-bequiet-light-loop-360",
+  "kind": "fan",
+  "vendor": "be quiet!",
+  "name": "Light Loop 360mm",
+  "match": {
+   "names": [
+    "light loop"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.bequiet.com/admin/ImageServer.php?ID=1e123a55598%40be-quiet.net&omitPreview=true&width=1200",
+   "source_page": "https://www.bequiet.com/en/watercooler/5184"
+  }
+ },
+ {
+  "id": "fan-arctic-p12-pwm-pst-argb",
+  "kind": "fan",
+  "vendor": "Arctic",
+  "name": "P12 PWM PST A-RGB",
+  "match": {
+   "names": [
+    "p12 pwm pst"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.arctic.de/media/51/a3/b8/1674565774/P12_PWM_PST_ARGB_0dB_G00_pst-icon.png",
+   "source_page": "https://www.arctic.de/en/P12-PWM-PST-A-RGB"
+  }
+ },
+ {
+  "id": "fan-arctic-p14-pwm-pst-argb",
+  "kind": "fan",
+  "vendor": "Arctic",
+  "name": "P14 PWM PST A-RGB",
+  "match": {
+   "names": [
+    "p14 pwm pst"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.arctic.de/media/10/00/82/1674566307/P14_PWM_PST_ARGB_0dB_G00_pst-icon.png",
+   "source_page": "https://www.arctic.de/en/P14-PWM-PST-A-RGB/ACFAN00239A"
+  }
+ },
+ {
+  "id": "fan-arctic-p12-pro-argb",
+  "kind": "fan",
+  "vendor": "Arctic",
+  "name": "P12 Pro A-RGB",
+  "match": {
+   "names": [
+    "p12 pro"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.arctic.de/media/a2/cd/82/1750770613/P12_Pro_ARGB_black_rainbow_g00_%281%29.png",
+   "source_page": "https://www.arctic.de/en/P12-Pro-A-RGB/ACFAN00309A"
+  }
+ },
+ {
+  "id": "fan-arctic-bionix-p12-argb",
+  "kind": "fan",
+  "vendor": "Arctic",
+  "name": "BioniX P12 A-RGB",
+  "match": {
+   "names": [
+    "bionix p12"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.arctic.de/media/c9/3a/8f/1786429501/BioniX_P12_ARGB_black_01.png",
+   "source_page": "https://www.arctic.de/en/BioniX-P12-A-RGB/ACFAN00335A"
+  }
+ },
+ {
+  "id": "fan-deepcool-fc120",
+  "kind": "fan",
+  "vendor": "DeepCool",
+  "name": "FC120",
+  "match": {
+   "names": [
+    "fc120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.deepcool.com/public/ProductFile/DEEPCOOL/Cooling/Fans/FC120/Gallery/1440X850/01.jpg",
+   "source_page": "https://www.deepcool.com/products/Cooling/fans/FC120-Daisy-Chain-Performance-ARGB-Fan/2021/13581.shtml"
+  }
+ },
+ {
+  "id": "fan-phanteks-d30-120-drgb",
+  "kind": "fan",
+  "vendor": "Phanteks",
+  "name": "D30-120 D-RGB",
+  "match": {
+   "names": [
+    "d30 120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/02/02_PH-F120D30_DRGB_PWM_BK01_Regular-scaled.webp",
+   "source_page": "https://phanteks.com/product/d30-120-black/"
+  }
+ },
+ {
+  "id": "fan-phanteks-t30-120-drgb",
+  "kind": "fan",
+  "vendor": "Phanteks",
+  "name": "T30-120 D-RGB",
+  "match": {
+   "names": [
+    "t30 120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/02/PH-F120T30_BG-2.webp",
+   "source_page": "https://phanteks.com/product/t30-120/"
+  }
+ },
+ {
+  "id": "fan-phanteks-m25-gen2-120-drgb",
+  "kind": "fan",
+  "vendor": "Phanteks",
+  "name": "M25 Gen2 120 D-RGB",
+  "match": {
+   "names": [
+    "m25 gen2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/12/M25G2_D-RGB_120_Black_Reverse_01-scaled.webp",
+   "source_page": "https://phanteks.com/product/m25g2-120-black-d-rgb/"
+  }
+ },
+ {
+  "id": "fan-phanteks-neon-drgb-strip",
+  "kind": "fan",
+  "vendor": "Phanteks",
+  "name": "Neon D-RGB LED Strip",
+  "match": {
+   "names": [
+    "neon d rgb",
+    "neon drgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://phanteks.com/wp-content/uploads/2024/05/Neon_DRGBSTRIP_Combo_Black_03-scaled.webp",
+   "source_page": "https://phanteks.com/product/neon-drgb-black/"
+  }
+ },
+ {
+  "id": "fan-noctua-nf-a12x25-pwm",
+  "kind": "fan",
+  "vendor": "Noctua",
+  "name": "NF-A12x25 PWM",
+  "match": {
+   "names": [
+    "nf a12x25"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://cdn.noctua.at/media/nf_a12x25_1.jpg",
+   "source_page": "https://noctua.at/en/nf-a12x25-pwm"
+  }
+ },
+ {
+  "id": "fan-montech-ax120-pwm",
+  "kind": "fan",
+  "vendor": "Montech",
+  "name": "AX120 PWM",
+  "match": {
+   "names": [
+    "ax120"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.montechpc.com/images/375264?stamp=1734673335",
+   "source_page": "https://www.montechpc.com/ax120-pwm"
+  }
+ },
+ {
+  "id": "fan-montech-rx120-pwm",
+  "kind": "fan",
+  "vendor": "Montech",
+  "name": "RX120 PWM",
+  "match": {
+   "names": [
+    "rx120 pwm"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.montechpc.com/images/375352?stamp=1734676288",
+   "source_page": "https://www.montechpc.com/rx120-pwm"
+  }
+ },
+ {
+  "id": "fan-montech-hyperflow-argb-360",
+  "kind": "fan",
+  "vendor": "Montech",
+  "name": "HyperFlow ARGB 360",
+  "match": {
+   "names": [
+    "hyperflow"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.montechpc.com/images/372399?stamp=1734329739",
+   "source_page": "https://www.montechpc.com/hyperflow-argb-360"
+  }
+ },
+ {
+  "id": "fan-darkflash-dr12-pwm-argb",
+  "kind": "fan",
+  "vendor": "Darkflash",
+  "name": "DR12 PWM ARGB",
+  "match": {
+   "names": [
+    "dr12"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://darkflash-image-cloud.s3.us-west-2.amazonaws.com/cdn/product/cover/000000000000195/202403040014660.png",
+   "source_page": "https://www.darkflash.com/product/dr12pwmargb"
+  }
+ },
+ {
+  "id": "fan-enermax-tb-rgb-ad",
+  "kind": "fan",
+  "vendor": "Enermax",
+  "name": "T.B. RGB AD.",
+  "match": {
+   "names": [
+    "t b rgb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://www.enermax.com/archive/products/item/Fan/TB_RGB_AD/TB_RGB_AD_002.jpg",
+   "source_page": "https://www.enermax.com/en/products/t.b.-rgb-adv"
+  }
+ },
+ {
+  "id": "fan-razer-chroma-light-strip-set",
+  "kind": "fan",
+  "vendor": "Razer",
+  "name": "Chroma Light Strip Set",
+  "match": {
+   "names": [
+    "chroma light strip set"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets3.razerzone.com/nSOg9gr-dQ8HWsIiNBEPKGQXSZw=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh0b%2Fhb6%2F9243056635934%2Flight-strip-set-500x500.png",
+   "source_page": "https://www.razer.com/gaming-pc-cooling/Razer-Chroma-Light-Strip-Set/RZ34-04020100-R3UA"
+  }
+ },
+ {
+  "id": "fan-razer-chroma-light-strip-expansion",
+  "kind": "fan",
+  "vendor": "Razer",
+  "name": "Chroma Light Strip Expansion Kit",
+  "match": {
+   "names": [
+    "chroma light strip expansion"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://assets3.razerzone.com/8okx6eCH9KB45UTYj8cspuybTXY=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh5b%2Fh21%2F9243075280926%2Fexpansion-kit-light-strip-v2-500x500.png",
+   "source_page": "https://www.razer.com/gaming-pc-accessories/razer-chroma-light-strip-expansion-kit/RZ34-04020200-R3M1"
+  }
+ },
+ {
+  "id": "fan-asus-rog-ryujin-iii-360-argb",
+  "kind": "fan",
+  "vendor": "ASUS",
+  "name": "ROG Ryujin III 360 ARGB",
+  "match": {
+   "names": [
+    "ryujin iii 360 argb"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/C0D81AF2-05F4-44F1-B62F-538EC0FEC7F8",
+   "source_page": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb/"
+  }
+ },
+ {
+  "id": "fan-asus-rog-ryujin-iii-360-extreme",
+  "kind": "fan",
+  "vendor": "ASUS",
+  "name": "ROG Ryujin III 360 ARGB Extreme",
+  "match": {
+   "names": [
+    "ryujin iii 360 argb extreme",
+    "ryujin iii extreme"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/A1D6D78A-00BE-4F89-A360-2790312CDDAD",
+   "source_page": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb-extreme/"
+  }
+ },
+ {
+  "id": "fan-asus-rog-strix-lc-ii-360-argb",
+  "kind": "fan",
+  "vendor": "ASUS",
+  "name": "ROG Strix LC II 360 ARGB",
+  "match": {
+   "names": [
+    "strix lc ii"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/1AD99AC9-8AF9-4D3F-939A-5A2A96AFD38F",
+   "source_page": "https://rog.asus.com/cooling/cpu-liquid-coolers/rog-strix-lc/rog-strix-lc-ii-360-argb-model/spec/"
+  }
+ }
+]

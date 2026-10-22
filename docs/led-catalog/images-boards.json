@@ -1,0 +1,1546 @@
+[
+ {
+  "id": "mb-msi-mag-z790-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG Z790 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag z790 tomahawk wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1664265391459c76c55d481a806150407f1b07a6bb.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-Z790-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-z790-tomahawk-max-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG Z790 TOMAHAWK MAX WIFI",
+  "match": {
+   "names": [
+    "mag z790 tomahawk max wifi",
+    "ms 7e25"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1695191447f9c20f124b9cc7a6032a67a1b032efde.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-Z790-TOMAHAWK-MAX-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b760-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B760 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag b760 tomahawk wifi",
+    "ms 7d96"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1672736676dea7397b0c279e18d4b9ff67bba7f4ec.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B760-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-z790-carbon-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG Z790 CARBON WIFI",
+  "match": {
+   "names": [
+    "mpg z790 carbon wifi",
+    "ms 7d89"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_167869173124aa2ef905beedae3bf8f55d739b5d8c.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-Z790-CARBON-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-z790-edge-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG Z790 EDGE WIFI",
+  "match": {
+   "names": [
+    "mpg z790 edge wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1677814473e17ae75ec10664890a67d66bf20e72fe.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-Z790-EDGE-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-pro-b760m-a-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO B760M-A WIFI",
+  "match": {
+   "names": [
+    "pro b760m-a wifi",
+    "ms 7d99"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://asset.msi.com/resize/image/global/product/product_1673941155a7e51bf1c06a947f4973f92c654b6651.png62405b38c58fe0f07fcef2367d8a9ba1/400.png",
+   "source_page": "https://www.msi.com/Motherboard/PRO-B760M-A-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-pro-h610m-e",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO H610M-E",
+  "match": {
+   "names": [
+    "pro h610m-e",
+    "ms 7d48"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1684309980c7ce93ff67875d32d290bbfb04abbd71.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-H610M-E"
+  }
+ },
+ {
+  "id": "mb-msi-mag-z890-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG Z890 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag z890 tomahawk wifi",
+    "ms 7e32"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1728466599887e5893d463035af3a2d2fde81c9fb4.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-Z890-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-z890-carbon-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG Z890 CARBON WIFI",
+  "match": {
+   "names": [
+    "mpg z890 carbon wifi",
+    "ms 7e17"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_172845220960631f5fd558bf6201e0010405a8bf5b.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-Z890-CARBON-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b860-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B860 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag b860 tomahawk wifi",
+    "ms 7e39"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://asset.msi.com/resize/image/global/product/product_1736159970e3185c1ac43ff83992fbc20eca986119.png62405b38c58fe0f07fcef2367d8a9ba1/400.png",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B860-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b650-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B650 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag b650 tomahawk wifi",
+    "ms 7d75"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_166478620721bbeb5fac5e7800fc1614cf6e023720.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B650-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-x670e-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG X670E TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag x670e tomahawk wifi",
+    "ms 7e12"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_16768630562ddd8ba94359cc21b079eb57b31e7645.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-X670E-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-x670e-carbon-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG X670E CARBON WIFI",
+  "match": {
+   "names": [
+    "mpg x670e carbon wifi",
+    "ms 7d70"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_167990468763e7b50ecf07fffa3ca6e8d107778084.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-X670E-CARBON-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-pro-b650-s-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO B650-S WIFI",
+  "match": {
+   "names": [
+    "pro b650-s wifi",
+    "ms 7e26"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1689239681a35f351c118a7f7d4ee403ac83972d05.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-B650-S-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-pro-b650m-p",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO B650M-P",
+  "match": {
+   "names": [
+    "pro b650m-p",
+    "ms 7e27"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1681972292ffa5ed5f1689bc9337f57dcde12e2c4b.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-B650M-P"
+  }
+ },
+ {
+  "id": "mb-msi-pro-a620m-e",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO A620M-E",
+  "match": {
+   "names": [
+    "pro a620m-e",
+    "ms 7e28"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_16802496771cb609cd50e7cfdcdf57d050ff5a1ab3.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-A620M-E"
+  }
+ },
+ {
+  "id": "mb-msi-pro-x670-p-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO X670-P WIFI",
+  "match": {
+   "names": [
+    "pro x670-p wifi",
+    "ms 7d67"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1659680192eb1b8a46130390008afb508982ba787a.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-X670-P-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b650m-mortar-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B650M MORTAR WIFI",
+  "match": {
+   "names": [
+    "mag b650m mortar wifi",
+    "ms 7d76"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1664786100a9659f7edbe77972f26916ac5675fd77.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B650M-MORTAR-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-b650m-gaming-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "B650M GAMING WIFI",
+  "match": {
+   "names": [
+    "b650m gaming wifi",
+    "ms 7e30"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1703657640de16f70575a616ca6404a936be984d89.webp",
+   "source_page": "https://www.msi.com/Motherboard/B650M-GAMING-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-x870-tomahawk-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG X870 TOMAHAWK WIFI",
+  "match": {
+   "names": [
+    "mag x870 tomahawk wifi",
+    "ms 7e51"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_17272571494104d1769a5ad46350c6066d96b9889d.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-X870-TOMAHAWK-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b850-tomahawk-max-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B850 TOMAHAWK MAX WIFI",
+  "match": {
+   "names": [
+    "mag b850 tomahawk max wifi",
+    "ms 7e62"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_1736159754f30751ff77a834ba28009a222071b3d3.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B850-TOMAHAWK-MAX-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b550-tomahawk",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B550 TOMAHAWK",
+  "match": {
+   "names": [
+    "mag b550 tomahawk"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_160938336626fdb6ca106517e76e29ed491af5e8c7.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B550-TOMAHAWK"
+  }
+ },
+ {
+  "id": "mb-msi-mag-b550-tomahawk-max-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MAG B550 TOMAHAWK MAX WIFI",
+  "match": {
+   "names": [
+    "mag b550 tomahawk max wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_16492305295c5ae4988ebb6356fcbaa215ee5ec04b.webp",
+   "source_page": "https://www.msi.com/Motherboard/MAG-B550-TOMAHAWK-MAX-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-b550-gaming-plus",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG B550 GAMING PLUS",
+  "match": {
+   "names": [
+    "mpg b550 gaming plus",
+    "ms 7c56"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_16093853844ee7866a719db5745fa37a680e9dd834.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-B550-GAMING-PLUS"
+  }
+ },
+ {
+  "id": "mb-msi-pro-b550m-p-gen3",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "PRO B550M-P GEN3",
+  "match": {
+   "names": [
+    "pro b550m-p gen3",
+    "ms 7d95"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_165033037919a22398eae6d1dd67759810ff4118f8.webp",
+   "source_page": "https://www.msi.com/Motherboard/PRO-B550M-P-GEN3"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-x570-gaming-plus",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG X570 GAMING PLUS",
+  "match": {
+   "names": [
+    "mpg x570 gaming plus",
+    "ms 7c37"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_10_20190527093853_5ceb3fad643f4.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-X570-GAMING-PLUS"
+  }
+ },
+ {
+  "id": "mb-msi-mpg-x570-gaming-edge-wifi",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "MPG X570 GAMING EDGE WIFI",
+  "match": {
+   "names": [
+    "mpg x570 gaming edge wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_3_20190527092824_5ceb3d3885f21.webp",
+   "source_page": "https://www.msi.com/Motherboard/MPG-X570-GAMING-EDGE-WIFI"
+  }
+ },
+ {
+  "id": "mb-msi-b450-tomahawk-max-ii",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "B450 TOMAHAWK MAX II",
+  "match": {
+   "names": [
+    "b450 tomahawk max ii",
+    "ms 7c02"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_7_20200923154001_5f6afbd1125e2.webp",
+   "source_page": "https://www.msi.com/Motherboard/B450-TOMAHAWK-MAX-II"
+  }
+ },
+ {
+  "id": "mb-msi-b450-gaming-plus-max",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "B450 GAMING PLUS MAX",
+  "match": {
+   "names": [
+    "b450 gaming plus max",
+    "ms 7b86"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_3_20190716132640_5d2d601054421.webp",
+   "source_page": "https://www.msi.com/Motherboard/B450-GAMING-PLUS-MAX"
+  }
+ },
+ {
+  "id": "mb-msi-b450m-pro-vdh-max",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "B450M PRO-VDH MAX",
+  "match": {
+   "names": [
+    "b450m pro-vdh max"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_6_20190708134634_5d22d8bac2965.webp",
+   "source_page": "https://www.msi.com/Motherboard/B450M-PRO-VDH-MAX"
+  }
+ },
+ {
+  "id": "mb-msi-x470-gaming-plus",
+  "kind": "motherboard",
+  "vendor": "MSI",
+  "name": "X470 GAMING PLUS",
+  "match": {
+   "names": [
+    "x470 gaming plus"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://storage-asset.msi.com/global/picture/product/product_10_20180412144314_5acf0002d7ff0.webp",
+   "source_page": "https://www.msi.com/Motherboard/X470-GAMING-PLUS"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-z790-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING Z790-PLUS WIFI",
+  "match": {
+   "names": [
+    "tuf gaming z790-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/391f8852-89ee-4429-bf08-48b3be125099/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-z790-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-z790-p-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME Z790-P WIFI",
+  "match": {
+   "names": [
+    "prime z790-p wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/37bbb2b4-b916-4170-9644-ff2aa0e0a253/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-z790-p-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-rog-strix-z790-e-gaming-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "ROG STRIX Z790-E GAMING WIFI",
+  "match": {
+   "names": [
+    "rog strix z790-e gaming wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/A14B0E0C-2EF6-4A28-9E30-089DCE5BF278",
+   "source_page": "https://rog.asus.com/motherboards/rog-strix/rog-strix-z790-e-gaming-wifi-model/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b760m-plus-wifi-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B760M-PLUS WIFI D4",
+  "match": {
+   "names": [
+    "tuf gaming b760m-plus wifi d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/dd0c089c-f1c5-45e6-9bcb-b64899e44aff/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b760m-plus-wifi-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b760m-a",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B760M-A",
+  "match": {
+   "names": [
+    "prime b760m-a"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/43eaace9-b4ac-454c-b66d-696886f12dac/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b760m-a/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-h610m-e-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME H610M-E D4",
+  "match": {
+   "names": [
+    "prime h610m-e d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/9457bb86-f547-4ee6-8648-cba3963376b6/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-h610m-e-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b660m-a-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B660M-A D4",
+  "match": {
+   "names": [
+    "prime b660m-a d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/8d9e3b62-76b3-4755-825c-f940eb1adeb6/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b660m-a-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b660m-k-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B660M-K D4",
+  "match": {
+   "names": [
+    "prime b660m-k d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/aa0fcf7a-8c9b-4b87-8054-801b804e0d8a/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b660m-k-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-z890-p-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME Z890-P WIFI",
+  "match": {
+   "names": [
+    "prime z890-p wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/755af9c8-c0ab-4640-9fe1-44545958537a/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-z890-p-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b860-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B860-PLUS WIFI",
+  "match": {
+   "names": [
+    "tuf gaming b860-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/83aad58f-b7fe-4790-8e1a-b8e2805f5c77/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b860-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-rog-strix-x670e-e-gaming-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "ROG STRIX X670E-E GAMING WIFI",
+  "match": {
+   "names": [
+    "rog strix x670e-e gaming wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/BADFA920-702B-451B-9592-8279ACD6857B",
+   "source_page": "https://rog.asus.com/motherboards/rog-strix/rog-strix-x670e-e-gaming-wifi-model/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b650-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B650-PLUS WIFI",
+  "match": {
+   "names": [
+    "tuf gaming b650-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/d52e1dd0-6b0b-4c62-a625-01c5e41a8b07/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b650-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b650m-a",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B650M-A",
+  "match": {
+   "names": [
+    "prime b650m-a"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/42c8c461-4494-4dda-8173-bae37a643073/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b650m-a/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-a620m-a",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME A620M-A",
+  "match": {
+   "names": [
+    "prime a620m-a"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/d00d67ce-a8a9-4b73-9bb5-a75d4dc33ffa/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-a620m-a/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b850-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B850-PLUS WIFI",
+  "match": {
+   "names": [
+    "tuf gaming b850-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/4fa02c46-d242-4d73-a8e6-aebb298a1b09/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b850-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b450-plus-ii",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B450-PLUS II",
+  "match": {
+   "names": [
+    "tuf gaming b450-plus ii"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/d800afe0-a268-41fc-bc4d-365a7daeb69c/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b450-plus-ii/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-x570-p",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME X570-P",
+  "match": {
+   "names": [
+    "prime x570-p"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/08413d73-0bc2-4ec4-9b0e-1631143c38f9/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-x570-p/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-z790-a-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME Z790-A WIFI",
+  "match": {
+   "names": [
+    "prime z790-a wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/5bc8ad71-902a-4879-9ab4-9e93f784ef45/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-z790-a-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b760-plus-wifi-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B760-PLUS WIFI D4",
+  "match": {
+   "names": [
+    "tuf gaming b760-plus wifi d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/7863d737-c623-4cbc-8f67-f492f6e26ad1/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b760-plus-wifi-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b650-plus",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B650-PLUS",
+  "match": {
+   "names": [
+    "prime b650-plus"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/baad4e8f-02fa-4ab0-9939-125095a16c3a/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b650-plus/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b550m-plus-wifi-ii",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B550M-PLUS WIFI II",
+  "match": {
+   "names": [
+    "tuf gaming b550m-plus wifi ii"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/22bd771c-1a57-439b-97d2-ef75363fe11a/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b550m-plus-wifi-ii/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b760m-k-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B760M-K D4",
+  "match": {
+   "names": [
+    "prime b760m-k d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/59b1f230-39da-495a-9a57-4d35fa1562b4/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b760m-k-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-x670-p-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME X670-P WIFI",
+  "match": {
+   "names": [
+    "prime x670-p wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/51c4150a-fa3c-4a4d-aa6a-6cf3e66b9811/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-x670-p-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-b650m-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING B650M-PLUS WIFI",
+  "match": {
+   "names": [
+    "tuf gaming b650m-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/58e593d1-b3f8-46e8-9639-e9bb563d1360/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b650m-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-tuf-gaming-z690-plus-wifi-d4",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "TUF GAMING Z690-PLUS WIFI D4",
+  "match": {
+   "names": [
+    "tuf gaming z690-plus wifi d4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/0a06b8c8-c3b4-4afc-ab05-5dc43fe761cb/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-z690-plus-wifi-d4/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-x870-p-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME X870-P WIFI",
+  "match": {
+   "names": [
+    "prime x870-p wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/64c2d66b-18b4-4df7-90ac-3e67a4255f8e/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-x870-p-wifi/"
+  }
+ },
+ {
+  "id": "mb-asus-prime-b850-plus-wifi",
+  "kind": "motherboard",
+  "vendor": "ASUS",
+  "name": "PRIME B850-PLUS WIFI",
+  "match": {
+   "names": [
+    "prime b850-plus wifi"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://dlcdnwebimgs.asus.com/gain/8dc45671-bc2a-45c7-abcb-abb65088f819/",
+   "source_page": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b850-plus-wifi/"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z790-aorus-elite-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z790 AORUS ELITE AX",
+  "match": {
+   "names": [
+    "z790 aorus elite ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/0c6899b3e79329e5c8236fda4441fe0e/ProductRemoveBg/32578",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z790-AORUS-ELITE-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z790-aorus-master",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z790 AORUS MASTER",
+  "match": {
+   "names": [
+    "z790 aorus master"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/41cf56e130d08318786d9a60ee596850/ProductRemoveBg/32068",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z790-AORUS-MASTER-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z790-gaming-x-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z790 GAMING X AX",
+  "match": {
+   "names": [
+    "z790 gaming x ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/de5e3c449c553f39bf566d7747538824/ProductRemoveBg/32326",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z790-GAMING-X-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z790-ud-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z790 UD AX",
+  "match": {
+   "names": [
+    "z790 ud ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/1e64b3bd892c4262fe89440150c5ab58/ProductRemoveBg/32208",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z790-UD-AX"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b760m-aorus-elite-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B760M AORUS ELITE AX",
+  "match": {
+   "names": [
+    "b760m aorus elite ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/206d49f97609095ca23e1b522396bf1d/ProductRemoveBg/33366",
+   "source_page": "https://www.gigabyte.com/Motherboard/B760M-AORUS-ELITE-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b760m-aorus-elite",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B760M AORUS ELITE",
+  "match": {
+   "names": [
+    "b760m aorus elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/50f0b9a5568717f4f4ce8ab91d15f1f4/ProductRemoveBg/33348",
+   "source_page": "https://www.gigabyte.com/Motherboard/B760M-AORUS-ELITE-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b760-gaming-x-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B760 GAMING X AX",
+  "match": {
+   "names": [
+    "b760 gaming x ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/5b993eb1f4fa3978a5e15061d9d71a67/ProductRemoveBg/33300",
+   "source_page": "https://www.gigabyte.com/Motherboard/B760-GAMING-X-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b760m-gaming-x-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B760M GAMING X AX",
+  "match": {
+   "names": [
+    "b760m gaming x ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/b1f3f93ba0acc51713c6cdec8c7389c1/ProductRemoveBg/33879",
+   "source_page": "https://www.gigabyte.com/Motherboard/B760M-GAMING-X-AX"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b760m-ds3h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B760M DS3H",
+  "match": {
+   "names": [
+    "b760m ds3h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/74a19f09cebd58831e913703ba3e065c/ProductRemoveBg/33481",
+   "source_page": "https://www.gigabyte.com/Motherboard/B760M-DS3H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-h610m-s2h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "H610M S2H",
+  "match": {
+   "names": [
+    "h610m s2h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/ded3aa28032ef5adb249125e85beb5ab/ProductRemoveBg/34303",
+   "source_page": "https://www.gigabyte.com/Motherboard/H610M-S2H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-h610m-h-v2",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "H610M H V2",
+  "match": {
+   "names": [
+    "h610m h v2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/44457c2aa3dfcbd1f213f72f6a12636d/ProductRemoveBg/38670",
+   "source_page": "https://www.gigabyte.com/Motherboard/H610M-H-V2-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z690-aorus-elite-ax-ddr4",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z690 AORUS ELITE AX DDR4",
+  "match": {
+   "names": [
+    "z690 aorus elite ax ddr4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/bdfe52db54500a818886bd90f0cb99c3/ProductRemoveBg/30070",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z690-AORUS-ELITE-AX-DDR4-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z690-gaming-x-ddr4",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z690 GAMING X DDR4",
+  "match": {
+   "names": [
+    "z690 gaming x ddr4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/3eeff2e3b3d276a8fa413aedf9f5d996/ProductRemoveBg/29915",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z690-GAMING-X-DDR4-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b660m-ds3h-ddr4",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B660M DS3H DDR4",
+  "match": {
+   "names": [
+    "b660m ds3h ddr4"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/4a4d59ed83404034feafbbf340b5c862/ProductRemoveBg/30352",
+   "source_page": "https://www.gigabyte.com/Motherboard/B660M-DS3H-DDR4-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-z890m-aorus-elite-wifi7",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "Z890M AORUS ELITE WIFI7",
+  "match": {
+   "names": [
+    "z890m aorus elite wifi7"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/5d5087d9aec71404cb9ce4678b51735a/ProductRemoveBg/42080",
+   "source_page": "https://www.gigabyte.com/Motherboard/Z890M-AORUS-ELITE-WIFI7"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b860m-gaming-x-wifi6e",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B860M GAMING X WIFI6E",
+  "match": {
+   "names": [
+    "b860m gaming x wifi6e"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/afb43604e1345784f36ca66fdae46bcc/ProductRemoveBg/43229",
+   "source_page": "https://www.gigabyte.com/Motherboard/B860M-GAMING-X-WIFI6E-rev-1x"
+  }
+ },
+ {
+  "id": "mb-gigabyte-x870-aorus-elite-wifi7-ice",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "X870 AORUS ELITE WIFI7 ICE",
+  "match": {
+   "names": [
+    "x870 aorus elite wifi7 ice"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/8d6356d096b192087d8f251709338596/ProductRemoveBg/42051",
+   "source_page": "https://www.gigabyte.com/Motherboard/X870-AORUS-ELITE-WIFI7-ICE"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b850m-aorus-elite-wifi6e",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B850M AORUS ELITE WIFI6E",
+  "match": {
+   "names": [
+    "b850m aorus elite wifi6e"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/5f2c269937491bff7dbd58b9bdd12c3e/ProductRemoveBg/44611",
+   "source_page": "https://www.gigabyte.com/Motherboard/B850M-AORUS-ELITE-WIFI6E"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650-aorus-elite-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650 AORUS ELITE AX",
+  "match": {
+   "names": [
+    "b650 aorus elite ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/db171cf121e076c5ac63c879c3820676/ProductRemoveBg/32102",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650-AORUS-ELITE-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650m-aorus-elite-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650M AORUS ELITE AX",
+  "match": {
+   "names": [
+    "b650m aorus elite ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/823738252050626b84ab756539a4c3d4/ProductRemoveBg/32158",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650M-AORUS-ELITE-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650-gaming-x-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650 GAMING X AX",
+  "match": {
+   "names": [
+    "b650 gaming x ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/f02023e98f8355570c91126ed967316b/ProductRemoveBg/32245",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650-GAMING-X-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650m-ds3h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650M DS3H",
+  "match": {
+   "names": [
+    "b650m ds3h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/31ccb6aac436d23323567d67446c95b0/ProductRemoveBg/36808",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650M-DS3H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650m-gaming-x-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650M GAMING X AX",
+  "match": {
+   "names": [
+    "b650m gaming x ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/c6857a7a42b49618a4d0549fe26c1523/ProductRemoveBg/32298",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650M-GAMING-X-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b650-eagle-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B650 EAGLE AX",
+  "match": {
+   "names": [
+    "b650 eagle ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/51a6a25e6a196a7ab7099b888bbe47ae/ProductRemoveBg/38814",
+   "source_page": "https://www.gigabyte.com/Motherboard/B650-EAGLE-AX"
+  }
+ },
+ {
+  "id": "mb-gigabyte-x670-aorus-elite-ax",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "X670 AORUS ELITE AX",
+  "match": {
+   "names": [
+    "x670 aorus elite ax"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/6ebd6fdfe0941b3d2f26037b2f78828b/ProductRemoveBg/31804",
+   "source_page": "https://www.gigabyte.com/Motherboard/X670-AORUS-ELITE-AX-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-a620m-gaming-x",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "A620M GAMING X",
+  "match": {
+   "names": [
+    "a620m gaming x"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/38a9262bd823573947a793f6e897f3cb/ProductRemoveBg/34673",
+   "source_page": "https://www.gigabyte.com/Motherboard/A620M-GAMING-X-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-a620m-s2h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "A620M S2H",
+  "match": {
+   "names": [
+    "a620m s2h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/78ef4d629cbd49a5eb52d8b780714082/ProductRemoveBg/35133",
+   "source_page": "https://www.gigabyte.com/Motherboard/A620M-S2H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b550-aorus-elite-v2",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B550 AORUS ELITE V2",
+  "match": {
+   "names": [
+    "b550 aorus elite v2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/7e4d790279f6985e11f18b0fdbbc2fcd/ProductRemoveBg/25741",
+   "source_page": "https://www.gigabyte.com/Motherboard/B550-AORUS-ELITE-V2"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b550m-aorus-elite",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B550M AORUS ELITE",
+  "match": {
+   "names": [
+    "b550m aorus elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/91a4df8b5a5ec566b2e502aa50e7ede9/ProductRemoveBg/25359",
+   "source_page": "https://www.gigabyte.com/Motherboard/B550M-AORUS-ELITE-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b550-gaming-x-v2",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B550 GAMING X V2",
+  "match": {
+   "names": [
+    "b550 gaming x v2"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/bc62789e807bf16e3eb8eb82fa742451/ProductRemoveBg/25726",
+   "source_page": "https://www.gigabyte.com/Motherboard/B550-GAMING-X-V2-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b550m-ds3h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B550M DS3H",
+  "match": {
+   "names": [
+    "b550m ds3h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/f71d1908a477e0c6e66135c54dbd255f/ProductRemoveBg/25219",
+   "source_page": "https://www.gigabyte.com/Motherboard/B550M-DS3H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-a520m-s2h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "A520M S2H",
+  "match": {
+   "names": [
+    "a520m s2h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/eb71800b81676a3c6d21605bcad1a4bd/ProductRemoveBg/25827",
+   "source_page": "https://www.gigabyte.com/Motherboard/A520M-S2H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-x570-aorus-elite",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "X570 AORUS ELITE",
+  "match": {
+   "names": [
+    "x570 aorus elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/cc871240c03566b6dcf4c3096a5378f5/ProductRemoveBg/22419",
+   "source_page": "https://www.gigabyte.com/Motherboard/X570-AORUS-ELITE-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b550-aorus-pro-ac",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B550 AORUS PRO AC",
+  "match": {
+   "names": [
+    "b550 aorus pro ac"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/1335df781de53c357f57ad8219f41946/ProductRemoveBg/25261",
+   "source_page": "https://www.gigabyte.com/Motherboard/B550-AORUS-PRO-AC-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b450-aorus-elite",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B450 AORUS ELITE",
+  "match": {
+   "names": [
+    "b450 aorus elite"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/2710c8e6d8b7f0c7d6ccdb9a688685ff/ProductRemoveBg/21214",
+   "source_page": "https://www.gigabyte.com/Motherboard/B450-AORUS-ELITE-rev-1x"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b450m-ds3h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B450M DS3H",
+  "match": {
+   "names": [
+    "b450m ds3h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/fac1d2c440025e69e2731780e6feb98b/ProductRemoveBg/21100",
+   "source_page": "https://www.gigabyte.com/Motherboard/B450M-DS3H-rev-10"
+  }
+ },
+ {
+  "id": "mb-gigabyte-b450m-s2h",
+  "kind": "motherboard",
+  "vendor": "Gigabyte",
+  "name": "B450M S2H",
+  "match": {
+   "names": [
+    "b450m s2h"
+   ],
+   "usb": []
+  },
+  "image": {
+   "url": "https://static.gigabyte.com/StaticFile/Image/Global/c17b5fa544e3fea44aac470d11381195/ProductRemoveBg/21635",
+   "source_page": "https://www.gigabyte.com/Motherboard/B450M-S2H-rev-10"
+  }
+ }
+]
