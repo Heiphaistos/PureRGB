@@ -8,6 +8,7 @@
 pub mod corsair_node;
 pub mod known;
 pub mod known_remote;
+pub mod native;
 pub mod nzxt_hue2;
 
 use crate::backends::Backend;
@@ -42,11 +43,14 @@ const NZXT_HUE2_LEDS_PER_CHANNEL: u32 = 40;
 struct Entry {
     path: std::ffi::CString,
     driver: Option<NativeDriver>,
+    /// Famille native de `native/` (prioritaire sur `driver`).
+    native: Option<(&'static native::Family, native::Model)>,
 }
 
 enum DriverInstance {
     Corsair(CorsairLightingNode),
     Nzxt(NzxtHue2),
+    Native(Box<dyn native::NativeRgb>),
 }
 
 pub struct HidBackend {
@@ -71,6 +75,11 @@ impl HidBackend {
         if !enabled {
             // Fermer immédiatement tous les handles pour rendre la main
             // aux logiciels constructeur.
+            for d in self.open_drivers.values_mut() {
+                if let DriverInstance::Native(n) = d {
+                    n.release();
+                }
+            }
             self.open_drivers.clear();
         }
     }
@@ -104,9 +113,8 @@ impl HidBackend {
                 recognized: known::find_known(vid, pid).is_some()
                     || known::find_vendor(vid).is_some()
                     || known_remote::is_known_remote(vid, pid),
-                has_native_driver: known::find_known(vid, pid)
-                    .and_then(|k| k.native_driver)
-                    .is_some(),
+                has_native_driver: known::find_known(vid, pid).and_then(|k| k.native_driver).is_some()
+                    || native::probe(vid, pid).is_some(),
             })
             .collect();
         out.sort_by(|a, b| (a.recognized, &a.vid, &a.pid).cmp(&(b.recognized, &b.vid, &b.pid)));
@@ -128,10 +136,16 @@ impl HidBackend {
                 .entries
                 .get(local_id)
                 .with_context(|| format!("appareil HID inconnu: {local_id}"))?;
+            let api = self.api.as_ref().context("hidapi non initialisé")?;
+            if let Some((family, model)) = &entry.native {
+                let device = api.open_path(&entry.path).context("ouverture HID refusée (logiciel constructeur actif ?)")?;
+                let dev = (family.open)(Box::new(device), model)?;
+                self.open_drivers.insert(local_id.to_string(), DriverInstance::Native(dev));
+                return Ok(self.open_drivers.get_mut(local_id).unwrap());
+            }
             let driver_kind = entry
                 .driver
                 .context("aucun driver natif pour cet appareil (utiliser OpenRGB)")?;
-            let api = self.api.as_ref().context("hidapi non initialisé")?;
             let device = api
                 .open_path(&entry.path)
                 .context("ouverture HID refusée (logiciel constructeur actif ?)")?;
@@ -158,14 +172,22 @@ impl Backend for HidBackend {
 
         // Dédoublonnage par (vid, pid, serial) : Windows expose une entrée
         // par interface HID du même périphérique physique.
+        // Pour une famille native, on garde l'interface demandée par le modèle (interface / page d'usage HID).
         let mut seen: HashMap<(u16, u16, String), std::ffi::CString> = HashMap::new();
         for info in api.device_list() {
-            let key = (
-                info.vendor_id(),
-                info.product_id(),
-                info.serial_number().unwrap_or("").to_string(),
-            );
-            seen.entry(key).or_insert_with(|| info.path().to_owned());
+            let key = (info.vendor_id(), info.product_id(), info.serial_number().unwrap_or("").to_string());
+            match native::probe(key.0, key.1) {
+                Some((_, m)) => {
+                    let ok = m.interface.is_none_or(|i| i == info.interface_number())
+                        && m.usage_page.is_none_or(|u| u == info.usage_page());
+                    if ok {
+                        seen.entry(key).or_insert_with(|| info.path().to_owned());
+                    }
+                }
+                None => {
+                    seen.entry(key).or_insert_with(|| info.path().to_owned());
+                }
+            }
         }
 
         self.entries.clear();
@@ -174,7 +196,10 @@ impl Backend for HidBackend {
         let mut counters: HashMap<(u16, u16), u32> = HashMap::new();
 
         for ((vid, pid, _serial), path) in seen {
-            let (name, dtype, driver) = if let Some(k) = known::find_known(vid, pid) {
+            let nat = native::probe(vid, pid);
+            let (name, dtype, driver) = if let Some((_, m)) = &nat {
+                (m.name.clone(), m.device_type, None)
+            } else if let Some(k) = known::find_known(vid, pid) {
                 (k.name.to_string(), k.device_type, k.native_driver)
             } else if let Some((_, vendor_name, dtype)) = known::find_vendor(vid) {
                 (format!("Appareil {vendor_name}"), *dtype, None)
@@ -186,7 +211,21 @@ impl Backend for HidBackend {
             let local_id = format!("{vid:04x}:{pid:04x}:{n}");
             *n += 1;
 
-            let (zones, led_count, fan_channels, controllable, note) = match driver {
+            let (zones, led_count, fan_channels, controllable, note) = if let Some((_, m)) = &nat {
+                (
+                    m.zones.clone(),
+                    m.led_count(),
+                    (0..m.fans)
+                        .map(|i| FanChannel { index: i, name: format!("Ventilateur {}", i + 1), duty_percent: None, rpm: None })
+                        .collect(),
+                    native_enabled,
+                    if native_enabled {
+                        "driver natif expérimental".to_string()
+                    } else {
+                        "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
+                    },
+                )
+            } else { match driver {
                 Some(NativeDriver::CorsairLightingNode) => (
                     vec![
                         ZoneInfo::fixed("Canal 1", CORSAIR_NODE_LEDS_PER_CHANNEL),
@@ -232,9 +271,9 @@ impl Backend for HidBackend {
                      ou matériel non supporté"
                         .to_string(),
                 ),
-            };
+            } };
 
-            self.entries.insert(local_id.clone(), Entry { path, driver });
+            self.entries.insert(local_id.clone(), Entry { path, driver, native: nat });
 
             devices.push(DeviceInfo {
                 id: local_id,
@@ -263,6 +302,7 @@ impl Backend for HidBackend {
         }
         let driver = self.open_driver(local_id)?;
         match driver {
+            DriverInstance::Native(d) => d.set_colors(colors),
             DriverInstance::Corsair(d) => {
                 let per = CORSAIR_NODE_LEDS_PER_CHANNEL as usize;
                 for ch in 0..2u8 {
@@ -297,6 +337,7 @@ impl Backend for HidBackend {
         let driver = self.open_driver(local_id)?;
         match driver {
             DriverInstance::Nzxt(d) => d.set_fan_duty(channel, percent),
+            DriverInstance::Native(d) => d.set_fan_duty(channel, percent),
             _ => bail!("contrôle ventilateur non supporté sur cet appareil"),
         }
     }

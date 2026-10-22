@@ -38,8 +38,8 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x1E71, pid: 0x1715, name: "NZXT Kraken M22", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x2007, name: "NZXT Kraken X53/X63/X73", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x3008, name: "NZXT Kraken Z53/Z63/Z73", device_type: DeviceType::Aio, native_driver: None },
-    KnownDevice { vid: 0x1E71, pid: 0x300C, name: "NZXT Kraken 2023", device_type: DeviceType::Aio, native_driver: None },
-    KnownDevice { vid: 0x1E71, pid: 0x300E, name: "NZXT Kraken 2023 Elite", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x300C, name: "NZXT Kraken 2023 Elite", device_type: DeviceType::Aio, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x300E, name: "NZXT Kraken 2023", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x2009, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
     KnownDevice { vid: 0x1E71, pid: 0x200E, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
     KnownDevice { vid: 0x1E71, pid: 0x2019, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
@@ -59,7 +59,8 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x048D, pid: 0x5711, name: "Gigabyte RGB Fusion (ITE 5711)", device_type: DeviceType::Motherboard, native_driver: None },
     // ---- Lian Li (0x0CF2) ----
     KnownDevice { vid: 0x0CF2, pid: 0x7750, name: "Lian Li Uni Hub SL", device_type: DeviceType::Hub, native_driver: None },
-    KnownDevice { vid: 0x0CF2, pid: 0xA100, name: "Lian Li Uni Hub AL", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x0CF2, pid: 0xA100, name: "Lian Li Uni Hub SL", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x0CF2, pid: 0xA101, name: "Lian Li Uni Hub AL", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x0CF2, pid: 0xA102, name: "Lian Li Uni Hub SL Infinity", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x0CF2, pid: 0xA103, name: "Lian Li Uni Hub SL v2", device_type: DeviceType::Hub, native_driver: None },
     // ---- Thermaltake (0x264A) ----
