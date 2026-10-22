@@ -42,6 +42,19 @@ pub fn scan(bus: &mut dyn SmbusBus) -> Vec<Found> {
     found
 }
 
+/// Sondage de signature SEUL (lectures uniquement, aucune écriture même documentée) : adresses où une barrette Corsair
+/// de la famille moderne répond. Sert tant que l'écriture sur la mémoire n'est pas explicitement autorisée.
+pub fn scan_signatures(bus: &mut dyn SmbusBus) -> Vec<u8> {
+    let mut found = Vec::new();
+    for addr in candidates().filter(|a| is_candidate_addr(*a)) {
+        if matches!(probe_signature(bus, addr), Ok(true)) {
+            found.push(addr);
+        }
+        bus.pause(10);
+    }
+    found
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,6 +110,14 @@ mod tests {
             bus.mem.insert((0x5A, 0x44), r44);
             assert_eq!(scan(&mut bus).len(), 1, "{r43:#x}/{r44:#x}");
         }
+    }
+
+    #[test]
+    fn signature_scan_is_read_only_even_when_a_dimm_answers() {
+        let mut bus = MockBus::default();
+        bus.add_dimm(0x58, 0x0900, 4, 0x84);
+        assert_eq!(scan_signatures(&mut bus), vec![0x58]);
+        assert!(bus.writes().is_empty());
     }
 
     #[test]

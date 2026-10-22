@@ -231,6 +231,7 @@ const form = reactive({
   openrgb_port: 6742,
   auto_start_openrgb: true,
   native_drivers_enabled: false,
+  smbus_writes_enabled: false,
   fps: 30,
   start_minimized: false,
   auto_manage_conflicts: true,
@@ -248,6 +249,7 @@ watch(
     form.openrgb_port = s.openrgb_port;
     form.auto_start_openrgb = s.auto_start_openrgb;
     form.native_drivers_enabled = s.native_drivers_enabled;
+    form.smbus_writes_enabled = s.smbus_writes_enabled;
     form.fps = s.fps;
     form.start_minimized = s.start_minimized;
     form.auto_manage_conflicts = s.auto_manage_conflicts;
@@ -276,6 +278,7 @@ async function save() {
       openrgbPort: form.openrgb_port,
       autoStartOpenrgb: form.auto_start_openrgb,
       nativeDriversEnabled: form.native_drivers_enabled,
+      smbusWritesEnabled: form.smbus_writes_enabled,
       fps: form.fps,
       startMinimized: form.start_minimized,
       autoManageConflicts: form.auto_manage_conflicts,
@@ -390,6 +393,10 @@ async function save() {
       <div class="inline">
         <input id="native" type="checkbox" v-model="form.native_drivers_enabled" />
         <label for="native">Activer les drivers natifs</label>
+      </div>
+      <div class="inline">
+        <input id="smbusw" type="checkbox" v-model="form.smbus_writes_enabled" :disabled="!form.native_drivers_enabled" />
+        <label for="smbusw">Autoriser l'écriture sur la mémoire RAM (bus SMBus). Sans cela, la mémoire est seulement détectée en lecture.</label>
       </div>
     </div>
 

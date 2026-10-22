@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.37.0
+
+- Sécurité du matériel : l'écriture sur la mémoire RAM (bus SMBus) devient un réglage à part, désactivé par défaut (« Autoriser l'écriture sur la mémoire RAM », sous Drivers natifs). Sans lui, « Drivers natifs » ne fait que DÉTECTER les barrettes en lecture seule (aucune écriture, pas même les sélecteurs d'identité) et les affiche « détectée, non pilotable ». Testé : zéro écriture sur le bus, et refus de toute couleur.
+
 ## 0.36.0
 
 - Photos de produits : le catalogue passe de 133 à 330 produits (95 cartes mères MSI/Gigabyte/ASUS, mémoires Corsair/G.Skill/Kingston/TeamGroup, ventilateurs, hubs et contrôleurs, boîtiers, cartes graphiques). Photos prises sur le site du constructeur, redimensionnées et vérifiées ; chaque produit renvoie vers sa page. Non couverts : cartes ASRock (site bloqué aux robots) et quelques marques sans image exploitable. `tools/led-catalog/merge_images.py` régénère le catalogue.

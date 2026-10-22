@@ -130,6 +130,7 @@ export interface Settings {
   openrgb_port: number;
   auto_start_openrgb: boolean;
   native_drivers_enabled: boolean;
+  smbus_writes_enabled: boolean;
   fps: number;
   start_minimized: boolean;
   effects: Record<string, EffectConfig>;

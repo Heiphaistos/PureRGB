@@ -902,6 +902,7 @@ fn update_settings(
     openrgb_port: u16,
     auto_start_openrgb: bool,
     native_drivers_enabled: bool,
+    smbus_writes_enabled: bool,
     fps: u32,
     start_minimized: bool,
     auto_manage_conflicts: bool,
@@ -929,6 +930,7 @@ fn update_settings(
             } else if b.name() == "smbus" {
                 if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
                     sm.set_native_enabled(native_drivers_enabled);
+                    sm.set_writes_enabled(smbus_writes_enabled);
                 }
             }
         }
@@ -940,6 +942,7 @@ fn update_settings(
     s.openrgb_port = openrgb_port;
     s.auto_start_openrgb = auto_start_openrgb;
     s.native_drivers_enabled = native_drivers_enabled;
+    s.smbus_writes_enabled = smbus_writes_enabled;
     s.fps = fps;
     s.start_minimized = start_minimized;
     s.auto_manage_conflicts = auto_manage_conflicts;
@@ -1061,7 +1064,7 @@ pub fn run() {
             saved.openrgb_port,
         )),
         Box::new(HidBackend::new(saved.native_drivers_enabled)),
-        Box::new(SmbusBackend::new(saved.native_drivers_enabled)),
+        Box::new(SmbusBackend::new(saved.native_drivers_enabled, saved.smbus_writes_enabled)),
         Box::new(LiquidctlBackend::new()),
         Box::new(MoboFanBackend::new(sensors.clone())),
     ];

@@ -15,6 +15,9 @@ pub struct Settings {
     /// Lance automatiquement l'OpenRGB embarqué si aucun serveur ne répond.
     pub auto_start_openrgb: bool,
     pub native_drivers_enabled: bool,
+    /// Autorise l'écriture sur la mémoire (bus SMBus) : sans cela, détection en lecture seule.
+    #[serde(default)]
+    pub smbus_writes_enabled: bool,
     pub fps: u32,
     pub start_minimized: bool,
     /// Effets par appareil, restaurés au démarrage.
@@ -68,6 +71,7 @@ impl Default for Settings {
             openrgb_port: 6742,
             auto_start_openrgb: true,
             native_drivers_enabled: false,
+            smbus_writes_enabled: false,
             fps: 30,
             start_minimized: false,
             effects: HashMap::new(),
