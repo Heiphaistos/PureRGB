@@ -51,6 +51,8 @@ pub struct ExtraDiag {
     pub findings: Vec<inventory::Finding>,
     pub devices: Vec<DeviceLite>,
     pub conflicts_active: Vec<String>,
+    /// Processus de logiciels d'écran / RGB constructeur en cours d'exécution (nom + PID) : suspects d'un « accès refusé ».
+    pub suspect_processes: Vec<String>,
     pub screens: ScreensDiag,
     pub native_drivers_enabled: bool,
     pub inventory_error: Option<String>,
@@ -143,6 +145,7 @@ pub fn collect(state: &AppState, screens: &ScreenManager) -> ExtraDiag {
             })
             .collect(),
         conflicts_active: ctx.active_conflicts,
+        suspect_processes: conflicts::running_screen_software(),
         screens: ScreensDiag {
             detected: screens.list().iter().map(|s| format!("{} {} ({})", s.vendor, s.model, s.id)).collect(),
             scan_errors: screens.scan_errors().iter().map(|e| scrub(e)).collect(),
