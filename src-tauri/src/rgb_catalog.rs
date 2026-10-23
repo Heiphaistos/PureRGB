@@ -39,6 +39,7 @@ impl Catalog {
         self.devices.get(&(vid, pid)).map(String::as_str)
     }
 
+    #[cfg(test)]
     pub fn len(&self) -> usize {
         self.devices.len()
     }

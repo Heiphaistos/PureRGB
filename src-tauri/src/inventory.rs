@@ -139,10 +139,13 @@ fn board(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<F
 fn board_spec(inv: &Inventory, out: &mut Vec<Finding>) {
     use crate::led_catalog as lc;
     let (m, p) = (inv.board.manufacturer.as_str(), inv.board.product.as_str());
-    let limit = lc::vendor_rule(m).and_then(|r| r.argb_header.as_ref()).map(|h| match (h.max_leds, h.max_power_a) {
-        (Some(n), Some(a)) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB ({a} A)"),
-        (Some(n), None) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB"),
-        _ => "limite de LEDs non publiée par le constructeur".to_string(),
+    let limit = lc::vendor_rule(m).and_then(|r| r.argb_header.as_ref()).map(|h| {
+        let volt = h.voltage.as_deref().map(|v| format!("{v}, ")).unwrap_or_default();
+        match (h.max_leds, h.max_power_a) {
+            (Some(n), Some(a)) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB ({volt}{a} A)"),
+            (Some(n), None) => format!("limite documentée par le constructeur : {n} LEDs par connecteur ARGB ({})", volt.trim_end_matches(", ")),
+            _ => "limite de LEDs non publiée par le constructeur".to_string(),
+        }
     });
     match (lc::board(m, p), limit) {
         (Some(b), l) => out.push(f("Carte mère", Status::Info, format!("Connecteurs de la carte ({})", b.model),

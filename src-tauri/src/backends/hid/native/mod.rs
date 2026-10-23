@@ -175,6 +175,7 @@ pub fn split_by_zone(colors: &[Color], zones: &[ZoneInfo]) -> Vec<Vec<Color>> {
         .collect()
 }
 
+#[cfg(test)]
 type Log = std::sync::Arc<parking_lot::Mutex<Vec<Vec<u8>>>>;
 
 /// Faux périphérique HID : enregistre les trames envoyées et rejoue des réponses préparées.

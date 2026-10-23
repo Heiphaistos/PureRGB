@@ -10,7 +10,6 @@ pub struct Header {
     pub voltage: Option<String>,
     pub max_leds: Option<u32>,
     pub max_power_a: Option<f32>,
-    pub note: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]

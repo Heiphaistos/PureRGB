@@ -232,7 +232,7 @@ impl Backend for HidBackend {
             let local_id = format!("{vid:04x}:{pid:04x}:{n}");
             *n += 1;
 
-            let (zones, led_count, fan_channels, controllable, note) = if let Some((_, m)) = &nat {
+            let (zones, led_count, fan_channels, controllable, note) = if let Some((fam, m)) = &nat {
                 (
                     m.zones.clone(),
                     m.led_count(),
@@ -241,7 +241,7 @@ impl Backend for HidBackend {
                         .collect(),
                     native_enabled,
                     if native_enabled {
-                        "driver natif expérimental".to_string()
+                        format!("driver natif expérimental (famille {}, d'après {})", fam.id, fam.doc)
                     } else {
                         "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
                     },
