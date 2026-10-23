@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.40.2
+
+- Correctif de la version 0.40.1 dont la construction automatique a échoué : un test de chronométrage de l'envoi vers un écran lent était trop serré pour les machines chargées (marge élargie, la détection d'un retard cumulé reste valable). Aucun changement pour les utilisateurs par rapport à 0.40.1.
+
 ## 0.40.1
 
 - Télémétrie (si activée) : le rapport liste maintenant les logiciels constructeur en cours d'exécution qui peuvent verrouiller un écran ou un appareil (TRCC, L-Connect, iCUE…), pour trouver ce qui bloque l'écran Thermalright.

@@ -205,7 +205,7 @@ mod tests {
         assert!(got.len() >= 4, "trop peu d'images : {got:?}");
         assert!(got.windows(2).all(|w| w[0] < w[1]), "ordre non conservé : {got:?}");
         assert_eq!(got.last(), Some(&30), "la dernière image doit arriver (on jette les anciennes)");
-        assert!(t.elapsed() < Duration::from_millis(900), "l'envoi a pris du retard cumulé : {:?}", t.elapsed());
+        assert!(t.elapsed() < Duration::from_millis(1400), "l'envoi a pris du retard cumulé : {:?}", t.elapsed());
         assert!(shared.perf.snapshot(Instant::now()).dropped >= 10, "les abandons doivent être comptés");
     }
 
