@@ -8,7 +8,7 @@ use super::designs::DesignStore;
 use super::layout::{Background, Layout, WidgetKind};
 use super::media::{MediaStore, EXTS, MAX_FILE_BYTES};
 use super::video::VIDEO_EXTS;
-use anyhow::{bail, ensure, Context, Result};
+use anyhow::{ensure, Context, Result};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::io::{Read, Write};

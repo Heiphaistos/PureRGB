@@ -365,7 +365,7 @@ mod tests {
         let mut bad = solid(480, 480, [0, 0, 0, 255]);
         bad.rgba.pop();
         assert!(s.push_frame(&bad).is_err());
-        let (mut t, _) = MockTransport::new(vec![ack(0x0C)]);
+        let (t, _) = MockTransport::new(vec![ack(0x0C)]);
         let mut s = LianLiHidScreen::connect(t, "x".into(), 0x7391).unwrap();
         s.transport.short_write = Some(10);
         let e = s.push_frame(&solid(480, 480, [9, 9, 9, 255])).unwrap_err().to_string();

@@ -1,4 +1,5 @@
 mod backends;
+mod commands;
 mod conflicts;
 mod core;
 mod engine;
@@ -23,24 +24,24 @@ mod usbcapture;
 use crate::backends::hid::HidBackend;
 use crate::backends::liquidctl::LiquidctlBackend;
 use crate::backends::mobo::MoboFanBackend;
-use crate::backends::openrgb::manager::{OpenRgbManager, OpenRgbStatus};
+use crate::backends::openrgb::manager::OpenRgbManager;
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::backends::smbus::SmbusBackend;
 use crate::backends::Backend;
 use crate::core::registry::{DeviceRegistry, SharedRegistry};
-use crate::core::DeviceInfo;
-use crate::engine::curves::{CurveConfig, CurveEngine};
-use crate::engine::effects::EffectConfig;
+use crate::engine::curves::CurveEngine;
 use crate::engine::EffectsEngine;
-use crate::sensors::{Sensor, SensorHub};
+use crate::sensors::SensorHub;
 use crate::settings::Settings;
 use parking_lot::Mutex;
-use serde::Serialize;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
-use tauri::{Emitter, Manager, State};
+use tauri::{Emitter, Manager};
+use commands::devices::scan_with_zone_sizes;
+use commands::diagnostics::{diagnostics_json, rescan_after_plug, rescan_and_notify};
+pub(crate) use commands::diagnostics::HardwareDiagnostics;
 
-struct AppState {
+pub(crate) struct AppState {
     registry: SharedRegistry,
     engine: EffectsEngine,
     settings: std::sync::Arc<Mutex<Settings>>,
@@ -54,919 +55,65 @@ struct AppState {
     active_capture: Mutex<Option<usbcapture::CaptureSession>>,
 }
 
-#[derive(Serialize)]
-struct BackendStatus {
-    name: String,
-    available: bool,
-}
 
-#[derive(Serialize)]
-struct ConflictReport {
-    conflicts: Vec<conflicts::ConflictingSoftware>,
-    openrgb_running: bool,
-    guarded_families: std::collections::HashSet<String>,
-}
 
-/// Nombre de LEDs appliqué à un connecteur ARGB dont le contrôleur n'annonce aucune LED : un connecteur ne
-/// peut pas dire ce qui y est branché, on prend une taille courante plutôt que d'exiger un comptage
-/// (les LEDs en trop n'existent pas, aucun effet néfaste ; modifiable à la main).
-const AUTO_ARGB_LEDS: u32 = 60;
 
-/// Taille voulue pour une zone : choix enregistré (même 0), sinon `AUTO_ARGB_LEDS` si la zone est vide et redimensionnable.
-fn wanted_zone_size(sizes: &std::collections::HashMap<String, u32>, key: &str, z: &crate::core::ZoneInfo) -> Option<u32> {
-    sizes.get(key).copied().or_else(|| (z.led_count == 0 && z.resizable()).then_some(AUTO_ARGB_LEDS))
-}
 
-/// Ré-applique les tailles de zones ARGB sauvegardées (clé nom appareil +
-/// nom zone : stable entre les redémarrages, contrairement à l'index).
-/// Retourne true si au moins un resize a été envoyé (=> re-scan nécessaire).
-fn apply_saved_zone_sizes(
-    reg: &mut crate::core::registry::DeviceRegistry,
-    sizes: &std::collections::HashMap<String, u32>,
-) -> bool {
-    let devices = reg.device_list();
-    let mut resized = false;
-    for d in devices.iter().filter(|d| d.backend == "openrgb") {
-        let Some(local) = d.id.strip_prefix("openrgb:") else {
-            continue;
-        };
-        for (z_idx, z) in d.zones.iter().enumerate() {
-            let key = format!("{}|{}", d.name, z.name);
-            let Some(wanted) = wanted_zone_size(sizes, &key, z) else {
-                continue;
-            };
-            if wanted == z.led_count || !z.resizable() {
-                continue;
-            }
-            let clamped = wanted.clamp(z.leds_min, z.leds_max);
-            for b in reg.backends_mut() {
-                if b.name() == "openrgb" {
-                    if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
-                        match orgb.resize_zone(local, z_idx as u32, clamped) {
-                            Ok(()) => resized = true,
-                            Err(e) => log::warn!("resize zone {key}: {e:#}"),
-                        }
-                    }
-                }
-            }
-        }
-    }
-    resized
-}
 
-/// Scan complet + ré-application des tailles de zones sauvegardées.
-fn scan_with_zone_sizes(
-    reg: &mut crate::core::registry::DeviceRegistry,
-    sizes: &std::collections::HashMap<String, u32>,
-) -> Vec<DeviceInfo> {
-    let devices = reg.scan_all();
-    if apply_saved_zone_sizes(reg, sizes) {
-        return reg.scan_all();
-    }
-    devices
-}
 
-#[tauri::command]
-fn scan_devices(state: State<AppState>) -> Vec<DeviceInfo> {
-    let sizes = state.settings.lock().zone_sizes.clone();
-    let devices = scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
-    // Le matériel a pu être réinitialisé : forcer la ré-application des effets.
-    state.engine.invalidate();
-    devices
-}
 
-/// Redimensionne une zone ARGB (nombre de LEDs branchées sur un connecteur
-/// carte mère ou un canal de hub) et persiste le choix.
-#[tauri::command(async)]
-fn resize_zone(
-    state: State<AppState>,
-    device_id: String,
-    zone: u32,
-    new_size: u32,
-) -> Result<(), String> {
-    let (backend, local) = device_id
-        .split_once(':')
-        .ok_or_else(|| format!("id invalide: {device_id}"))?;
-    if backend != "openrgb" {
-        return Err("zones redimensionnables uniquement via OpenRGB".into());
-    }
-    let local = local.to_string();
-    let key = {
-        let reg = state.registry.lock();
-        let d = reg
-            .get(&device_id)
-            .ok_or_else(|| format!("appareil inconnu: {device_id}"))?;
-        let z = d
-            .zones
-            .get(zone as usize)
-            .ok_or_else(|| format!("zone {zone} inconnue"))?;
-        if !z.resizable() {
-            return Err(format!("la zone « {} » n'est pas redimensionnable", z.name));
-        }
-        if new_size < z.leds_min || new_size > z.leds_max {
-            return Err(format!(
-                "taille hors bornes ({}-{})",
-                z.leds_min, z.leds_max
-            ));
-        }
-        format!("{}|{}", d.name, z.name)
-    };
-    {
-        let mut reg = state.registry.lock();
-        let mut done = false;
-        for b in reg.backends_mut() {
-            if b.name() == "openrgb" {
-                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
-                    orgb.resize_zone(&local, zone, new_size)
-                        .map_err(|e| format!("{e:#}"))?;
-                    done = true;
-                }
-            }
-        }
-        if !done {
-            return Err("backend openrgb indisponible".into());
-        }
-        reg.scan_all();
-    }
-    state.engine.invalidate();
-    let mut s = state.settings.lock();
-    s.zone_sizes.insert(key, new_size);
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-#[tauri::command]
-fn list_devices(state: State<AppState>) -> Vec<DeviceInfo> {
-    state.registry.lock().device_list()
-}
 
-#[tauri::command]
-fn backend_status(state: State<AppState>) -> Vec<BackendStatus> {
-    state
-        .registry
-        .lock()
-        .backend_status()
-        .into_iter()
-        .map(|(name, available)| BackendStatus { name, available })
-        .collect()
-}
 
-/// Applique un effet logiciel. `zone: None` = appareil entier (remplace les
-/// effets de zone) ; `Some(i)` = uniquement la zone i (superposée au global).
-#[tauri::command]
-fn apply_effect(
-    state: State<AppState>,
-    device_id: String,
-    config: EffectConfig,
-    zone: Option<u32>,
-) -> Result<(), String> {
-    let (led_count, zone_bounds) = {
-        let reg = state.registry.lock();
-        let d = reg
-            .get(&device_id)
-            .ok_or_else(|| format!("appareil inconnu: {device_id}"))?;
-        let bounds = zone.map(|z| {
-            let offset: u32 = d.zones.iter().take(z as usize).map(|zi| zi.led_count).sum();
-            let len = d.zones.get(z as usize).map(|zi| zi.led_count).unwrap_or(0);
-            (offset, len)
-        });
-        (d.led_count, bounds)
-    };
-    let mut s = state.settings.lock();
-    match (zone, zone_bounds) {
-        (Some(z), Some((offset, len))) => {
-            if len == 0 {
-                return Err(format!("zone {z} inconnue ou vide"));
-            }
-            state
-                .engine
-                .set_zone_effect(device_id.clone(), z, config.clone(), offset, len, led_count);
-            s.effects.insert(format!("{device_id}#z{z}"), config);
-        }
-        _ => {
-            if led_count == 0 {
-                return Err("appareil sans LED pilotable — RGB non disponible".into());
-            }
-            state
-                .engine
-                .set_effect(device_id.clone(), config.clone(), led_count);
-            // Effet global : purge les zones sauvegardées de cet appareil.
-            s.effects.retain(|k, _| !k.starts_with(&format!("{device_id}#z")));
-            s.effects.insert(device_id.clone(), config);
-        }
-    }
-    // Reprendre la main sur un éventuel mode matériel.
-    s.hw_modes.remove(&device_id);
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-/// Applique un mode matériel natif OpenRGB (le firmware anime tout seul).
-#[tauri::command]
-fn set_hardware_mode(
-    state: State<AppState>,
-    device_id: String,
-    mode_index: u32,
-    speed: Option<u32>,
-    direction: Option<u32>,
-    colors: Option<Vec<crate::core::Color>>,
-) -> Result<(), String> {
-    let (backend, local) = device_id
-        .split_once(':')
-        .ok_or_else(|| format!("id invalide: {device_id}"))?;
-    if backend != "openrgb" {
-        return Err("modes matériels disponibles uniquement via OpenRGB".into());
-    }
-    let local = local.to_string();
-    {
-        let mut reg = state.registry.lock();
-        let mut done = false;
-        for b in reg.backends_mut() {
-            if b.name() == "openrgb" {
-                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
-                    orgb.set_mode(&local, mode_index, speed, direction, colors.clone())
-                        .map_err(|e| format!("{e:#}"))?;
-                    done = true;
-                }
-            }
-        }
-        if !done {
-            return Err("backend openrgb indisponible".into());
-        }
-    }
-    // Le firmware pilote : retirer les effets logiciels de cet appareil.
-    state.engine.remove_effect(&device_id);
-    let mut s = state.settings.lock();
-    s.effects
-        .retain(|k, _| k != &device_id && !k.starts_with(&format!("{device_id}#z")));
-    s.hw_modes.insert(
-        device_id,
-        settings::SavedHwMode {
-            mode_index,
-            speed,
-            direction,
-            colors,
-        },
-    );
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-/// Active/désactive le lancement au démarrage de Windows via une tâche
-/// planifiée niveau Highest (pas de prompt UAC à chaque boot).
-#[tauri::command(async)]
-fn set_autostart(state: State<AppState>, enabled: bool) -> Result<(), String> {
-    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-    // Tâche HIGHEST = admin sans UAC : refusée si l'exe est remplaçable par
-    // un processus non élevé (hors %ProgramFiles%).
-    if enabled && !crate::trust::is_trusted(&exe) {
-        return Err("Démarrage automatique indisponible : installez PureRGB avec             l'installeur (dossier Program Files). Cette copie est dans un dossier             modifiable sans droits administrateur.".into());
-    }
-    let run = |args: &[&str]| -> Result<std::process::Output, String> {
-        let mut cmd = std::process::Command::new("schtasks.exe");
-        cmd.args(args);
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            cmd.creation_flags(0x0800_0000);
-        }
-        cmd.output().map_err(|e| e.to_string())
-    };
-    if enabled {
-        let tr = format!("\"{}\"", exe.display());
-        let out = run(&[
-            "/Create", "/TN", "PureRGB Autostart", "/TR", &tr, "/SC", "ONLOGON",
-            "/RL", "HIGHEST", "/F",
-        ])?;
-        if !out.status.success() {
-            return Err(format!(
-                "schtasks: {}",
-                String::from_utf8_lossy(&out.stderr).trim()
-            ));
-        }
-    } else {
-        let _ = run(&["/Delete", "/TN", "PureRGB Autostart", "/F"]);
-    }
-    let mut s = state.settings.lock();
-    s.autostart = enabled;
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-/// L'application tourne en administrateur : un chemin venu de la WebView ne
-/// doit ni lire ni écrire hors du dossier de l'utilisateur. Seuls les `.json`
-/// sous `home` sont acceptés, après résolution des liens (le dossier home est
-/// canonicalisé lui aussi, sinon le préfixe `\\?\` de `canonicalize` fait
-/// échouer toute comparaison).
-fn confine_profile_path(path: &str, home: &std::path::Path) -> Result<std::path::PathBuf, String> {
-    let p = std::path::Path::new(path);
-    let is_json = p.extension().and_then(|e| e.to_str()).is_some_and(|e| e.eq_ignore_ascii_case("json"));
-    if !p.is_absolute() || !is_json {
-        return Err("chemin de profil refusé (fichier .json attendu)".into());
-    }
-    let home = home.canonicalize().map_err(|e| format!("dossier utilisateur : {e}"))?;
-    let name = p.file_name().ok_or("chemin de profil refusé")?;
-    let parent = p
-        .parent()
-        .ok_or("chemin de profil refusé")?
-        .canonicalize()
-        .map_err(|e| format!("dossier du profil : {e}"))?;
-    let target = if p.exists() {
-        p.canonicalize().map_err(|e| e.to_string())?
-    } else {
-        parent.join(name)
-    };
-    if !target.starts_with(&home) {
-        return Err("chemin de profil refusé : hors du dossier utilisateur".into());
-    }
-    Ok(target)
-}
 
-fn user_home() -> Result<std::path::PathBuf, String> {
-    std::env::var_os("USERPROFILE")
-        .or_else(|| std::env::var_os("HOME"))
-        .map(std::path::PathBuf::from)
-        .ok_or_else(|| "dossier utilisateur introuvable".to_string())
-}
 
-/// Exporte la configuration complète (effets, courbes, modes, réglages).
-#[tauri::command]
-fn profile_export(state: State<AppState>, path: String) -> Result<(), String> {
-    let path = confine_profile_path(&path, &user_home()?)?;
-    let s = state.settings.lock();
-    let json = serde_json::to_string_pretty(&*s).map_err(|e| e.to_string())?;
-    std::fs::write(&path, json).map_err(|e| e.to_string())
-}
 
-/// Importe un profil et l'applique immédiatement.
-#[tauri::command(async)]
-fn profile_import(state: State<AppState>, path: String) -> Result<(), String> {
-    let path = confine_profile_path(&path, &user_home()?)?;
-    let text = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
-    let imported: Settings = serde_json::from_str(&text).map_err(|e| format!("profil invalide: {e}"))?;
-    {
-        let mut s = state.settings.lock();
-        *s = imported.clone();
-        settings::save(&s).map_err(|e| e.to_string())?;
-    }
-    state.engine.set_fps(imported.fps);
-    state.curve_engine.set_curves(imported.curves.clone());
-    restore_saved_state(&state.registry, &state.engine, &imported);
-    Ok(())
-}
 
-#[tauri::command]
-fn apply_effect_all(state: State<AppState>, config: EffectConfig) -> Result<u32, String> {
-    let devices = state.registry.lock().device_list();
-    let mut applied = 0u32;
-    let mut s = state.settings.lock();
-    for d in devices.iter().filter(|d| d.controllable && d.led_count > 0) {
-        state
-            .engine
-            .set_effect(d.id.clone(), config.clone(), d.led_count);
-        s.effects.insert(d.id.clone(), config.clone());
-        applied += 1;
-    }
-    settings::save(&s).map_err(|e| e.to_string())?;
-    Ok(applied)
-}
 
-#[tauri::command]
-fn set_fan_duty(
-    state: State<AppState>,
-    device_id: String,
-    channel: u8,
-    percent: u8,
-) -> Result<(), String> {
-    state
-        .registry
-        .lock()
-        .set_fan_duty(&device_id, channel, percent)
-        .map_err(|e| format!("{e:#}"))
-}
 
-#[tauri::command]
-fn openrgb_status(state: State<AppState>) -> OpenRgbStatus {
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    state.openrgb_mgr.status(&host, port)
-}
 
-/// Lance (ou installe puis lance) l'OpenRGB embarqué. Bloquant : exécuté
-/// hors du thread principal par Tauri (commande async côté JS).
-#[tauri::command(async)]
-fn openrgb_start(state: State<AppState>) -> Result<bool, String> {
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    let launched = state
-        .openrgb_mgr
-        .ensure_running(&host, port)
-        .map_err(|e| format!("{e:#}"))?;
-    // Serveur prêt : re-scanner pour récupérer les contrôleurs.
-    let sizes = state.settings.lock().zone_sizes.clone();
-    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
-    Ok(launched)
-}
 
-#[tauri::command]
-fn openrgb_stop(state: State<AppState>) {
-    state.openrgb_mgr.stop();
-}
 
-/// Redémarre l'OpenRGB géré (après arrêt d'un logiciel en conflit, les
-/// contrôleurs libérés ne sont vus qu'après une nouvelle détection).
-#[tauri::command(async)]
-fn openrgb_restart(state: State<AppState>) -> Result<bool, String> {
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    state.openrgb_mgr.stop();
-    let launched = state
-        .openrgb_mgr
-        .ensure_running(&host, port)
-        .map_err(|e| format!("{e:#}"))?;
-    let sizes = state.settings.lock().zone_sizes.clone();
-    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
-    state.engine.invalidate();
-    Ok(launched)
-}
 
-/// Synchronise les appareils réseau vers OpenRGB.json puis relance le
-/// serveur géré pour re-détecter (les détecteurs réseau ne lisent la config
-/// qu'au démarrage).
-fn netdev_sync_and_reload(state: &State<AppState>) -> Result<(), String> {
-    let (devices, host, port) = {
-        let s = state.settings.lock();
-        (s.network_devices.clone(), s.openrgb_host.clone(), s.openrgb_port)
-    };
-    let path = netdev::openrgb_config_path().map_err(|e| e.to_string())?;
-    netdev::sync_openrgb_config(&devices, &path).map_err(|e| format!("{e:#}"))?;
-    let status = state.openrgb_mgr.status(&host, port);
-    if status.managed {
-        state.openrgb_mgr.stop();
-        state
-            .openrgb_mgr
-            .ensure_running(&host, port)
-            .map_err(|e| format!("{e:#}"))?;
-    }
-    let sizes = state.settings.lock().zone_sizes.clone();
-    scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
-    state.engine.invalidate();
-    Ok(())
-}
 
-#[tauri::command]
-fn netdev_list(state: State<AppState>) -> Vec<netdev::NetworkDevice> {
-    state.settings.lock().network_devices.clone()
-}
 
-/// Ajoute un appareil réseau, écrit la config OpenRGB et relance le serveur.
-#[tauri::command(async)]
-fn netdev_add(state: State<AppState>, device: netdev::NetworkDevice) -> Result<(), String> {
-    device.validate().map_err(|e| e.to_string())?;
-    {
-        let mut s = state.settings.lock();
-        // Doublon exact (même kind + même IP) : remplacer au lieu d'empiler.
-        s.network_devices.retain(|d| {
-            !(d.ip() == device.ip()
-                && std::mem::discriminant(d) == std::mem::discriminant(&device))
-        });
-        s.network_devices.push(device);
-        settings::save(&s).map_err(|e| e.to_string())?;
-    }
-    netdev_sync_and_reload(&state)
-}
 
-#[tauri::command(async)]
-fn netdev_remove(state: State<AppState>, index: usize) -> Result<(), String> {
-    {
-        let mut s = state.settings.lock();
-        if index >= s.network_devices.len() {
-            return Err("index invalide".into());
-        }
-        s.network_devices.remove(index);
-        settings::save(&s).map_err(|e| e.to_string())?;
-    }
-    netdev_sync_and_reload(&state)
-}
 
-#[derive(Serialize)]
-struct HardwareDiagnostics {
-    liquidctl: crate::backends::liquidctl::LiquidctlDiag,
-    sensord: crate::sensors::SensorDiag,
-    openrgb: OpenRgbStatus,
-    hid_raw: Vec<crate::backends::hid::RawHidDevice>,
-    /// Diagnostics étendus (télémétrie et diagnostic complet) ; absent des appels légers.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    extra: Option<diag_extra::ExtraDiag>,
-}
 
-/// Diagnostic complet : capture les erreurs réelles de chaque sous-système
-/// (liquidctl, sensord, OpenRGB, énumération HID brute) au lieu de les
-/// avaler dans les logs serveur — pour comprendre pourquoi un binaire "ne
-/// se charge pas" sur une machine donnée sans accès à la console.
-/// Extrait pour être réutilisable par le thread `hw-init` (envoi auto au
-/// démarrage) ET par les commandes Tauri (diagnostic manuel, envoi manuel).
-fn compute_hardware_diagnostics(
-    registry: &SharedRegistry,
-    sensors: &SensorHub,
-    openrgb_mgr: &OpenRgbManager,
-    openrgb_host: &str,
-    openrgb_port: u16,
-) -> HardwareDiagnostics {
-    let liquidctl = {
-        let mut reg = registry.lock();
-        reg.backends_mut()
-            .iter_mut()
-            .find(|b| b.name() == "liquidctl")
-            .and_then(|b| b.as_any_mut().downcast_mut::<LiquidctlBackend>())
-            .map(|lc| lc.diagnose())
-            .unwrap_or(crate::backends::liquidctl::LiquidctlDiag {
-                exe_path: None,
-                version: Err("backend liquidctl absent du registre".into()),
-                list: Err("—".into()),
-                initialize: Err("—".into()),
-                status: Err("—".into()),
-            })
-    };
-    let hid_raw = {
-        let mut reg = registry.lock();
-        reg.backends_mut()
-            .iter_mut()
-            .find(|b| b.name() == "hid")
-            .and_then(|b| b.as_any_mut().downcast_mut::<HidBackend>())
-            .and_then(|hid| hid.list_raw().ok())
-            .unwrap_or_default()
-    };
-    HardwareDiagnostics {
-        liquidctl,
-        sensord: sensors.diag(),
-        openrgb: openrgb_mgr.status(openrgb_host, openrgb_port),
-        hid_raw,
-        extra: None,
-    }
-}
 
-#[derive(Serialize)]
-struct CaptureFileInfo {
-    path: String,
-    hub: u32,
-    size_bytes: u64,
-}
 
-#[tauri::command(async)]
-fn usb_capture_ready() -> bool {
-    usbcapture::usbpcap_ready()
-}
 
-#[tauri::command(async)]
-fn usb_capture_install() -> Result<(), String> {
-    usbcapture::usbpcap_install().map_err(|e| format!("{e:#}"))
-}
 
-#[tauri::command(async)]
-fn usb_capture_start(state: State<AppState>) -> Result<(), String> {
-    let mut active = state.active_capture.lock();
-    if active.is_some() {
-        return Err("Une capture est déjà en cours".into());
-    }
-    let session = usbcapture::start_capture().map_err(|e| format!("{e:#}"))?;
-    *active = Some(session);
-    Ok(())
-}
 
-#[tauri::command(async)]
-fn usb_capture_stop(state: State<AppState>) -> Result<Vec<CaptureFileInfo>, String> {
-    let session = {
-        let mut active = state.active_capture.lock();
-        active.take()
-    };
-    let Some(session) = session else {
-        return Err("Aucune capture en cours".into());
-    };
-    let files = usbcapture::stop_capture(session);
-    Ok(files
-        .into_iter()
-        .map(|f| CaptureFileInfo {
-            path: f.path.display().to_string(),
-            hub: f.hub,
-            size_bytes: f.size_bytes,
-        })
-        .collect())
-}
 
-#[tauri::command(async)]
-fn usb_capture_upload(vid: String, pid: String, device_name: String, path: String) -> Result<(), String> {
-    usbcapture::upload_capture(std::path::Path::new(&path), &vid, &pid, &device_name)
-        .map_err(|e| format!("{e:#}"))
-}
 
-#[tauri::command(async)]
-fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostics {
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port)
-}
 
-/// Un périphérique RGB vient d'être branché : on laisse USB finir son énumération, on relance l'OpenRGB
-/// géré par PureRGB (il ne détecte qu'au démarrage) puis on re-scanne et on prévient l'interface.
-fn rescan_after_plug(app: &tauri::AppHandle, plugged: &[crate::backends::hid::RawHidDevice]) {
-    std::thread::sleep(std::time::Duration::from_secs(3));
-    let state = app.state::<AppState>();
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    if state.openrgb_mgr.status(&host, port).managed {
-        state.openrgb_mgr.stop();
-        if let Err(e) = state.openrgb_mgr.ensure_running(&host, port) {
-            log::warn!("redémarrage OpenRGB après branchement : {e:#}");
-        }
-    }
-    rescan_and_notify(app, &format!("branchement RGB ({} nouveau(x))", plugged.len()));
-}
 
-/// Re-scan complet puis prévient l'interface (événement `devices-changed`).
-fn rescan_and_notify(app: &tauri::AppHandle, why: &str) {
-    let state = app.state::<AppState>();
-    let sizes = state.settings.lock().zone_sizes.clone();
-    let devices = scan_with_zone_sizes(&mut state.registry.lock(), &sizes);
-    state.engine.invalidate();
-    log::info!("{why} : {} appareil(s) après re-détection", devices.len());
-    if let Err(e) = app.emit("devices-changed", devices.len()) {
-        log::debug!("émission devices-changed : {e:#}");
-    }
-}
 
-/// Test de compatibilité : vérifications en lecture seule de chaque composant détecté.
-#[tauri::command(async)]
-fn selftest_scan(state: State<AppState>) -> Vec<selftest::Item> {
-    selftest::scan(&state)
-}
 
-/// Essai d'écriture minimal sur UN appareil (couleur très faible puis extinction), après confirmation explicite.
-#[tauri::command(async)]
-fn selftest_apply(state: State<AppState>, id: String, confirmed: bool) -> Result<selftest::TestResult, String> {
-    selftest::apply(&state, &id, confirmed)
-}
 
-/// Inventaire du PC (WMI) comparé au matériel pilotable : explique les écarts (driver SMBus, logiciel en conflit…).
-#[tauri::command(async)]
-fn rgb_inventory(state: State<AppState>) -> Result<Vec<inventory::Finding>, String> {
-    let inv = inventory::collect()?;
-    let ctx = diag_extra::inventory_context(&state);
-    let devices = state.registry.lock().device_list();
-    Ok(inventory::analyze(&inv, &devices, &ctx))
-}
 
-/// Commande manuelle du bouton "Envoyer maintenant" — ignore le hash de
-/// déduplication, envoie toujours si l'opt-in est actif. Point d'application
-/// réel de l'opt-in pour cette commande : `telemetry::send_report_now` ne
-/// vérifie rien lui-même (par design, c'est l'appel qui vaut consentement),
-/// donc c'est ici que le refus doit avoir lieu si l'utilisateur a désactivé
-/// la télémétrie entre-temps (l'UI masque le bouton, mais `invoke()` reste
-/// appelable directement, p. ex. depuis les devtools).
-#[tauri::command(async)]
-fn send_telemetry_report(app: tauri::AppHandle) -> Result<(), String> {
-    if !app.state::<AppState>().settings.lock().telemetry_opt_in {
-        return Err("Télémétrie désactivée dans les réglages".into());
-    }
-    let json = diagnostics_json(&app).map_err(|e| e.to_string())?;
-    telemetry::send_report_now(&json, env!("CARGO_PKG_VERSION")).map_err(|e| format!("{e:#}"))
-}
 
-/// JSON du diagnostic complet, réduit (journal, appareils) sous la limite de 64 Ko du serveur de télémétrie.
-fn diagnostics_json(app: &tauri::AppHandle) -> serde_json::Result<String> {
-    const LIMIT: usize = 60_000;
-    let mut diag = full_diagnostics(app);
-    let mut json = serde_json::to_string(&diag)?;
-    for step in 0..3 {
-        if json.len() <= LIMIT {
-            break;
-        }
-        if let Some(x) = diag.extra.as_mut() {
-            match step {
-                0 => x.log_tail.truncate(10),
-                1 => x.devices.truncate(30),
-                _ => x.findings.clear(),
-            }
-        }
-        json = serde_json::to_string(&diag)?;
-    }
-    Ok(json)
-}
 
-/// Diagnostic complet prêt à envoyer : base + extras, chemins réduits au nom de fichier.
-fn full_diagnostics(app: &tauri::AppHandle) -> HardwareDiagnostics {
-    let state = app.state::<AppState>();
-    let (host, port) = {
-        let s = state.settings.lock();
-        (s.openrgb_host.clone(), s.openrgb_port)
-    };
-    let mut diag = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
-    diag.extra = Some(diag_extra::collect(&state, &app.state::<std::sync::Arc<screens::manager::ScreenManager>>()));
-    telemetry::redact_paths_for_telemetry(&mut diag);
-    diag
-}
 
-/// Étape 1 de l'appairage Hue : récupère la MAC du pont. L'utilisateur doit
-/// ensuite appuyer sur le bouton du pont — OpenRGB crée le username au
-/// redémarrage suivant.
-#[tauri::command(async)]
-fn hue_pair(ip: String) -> Result<String, String> {
-    netdev::hue_fetch_mac(&ip).map_err(|e| format!("{e:#}"))
-}
 
-/// Appairage Nanoleaf : récupère l'auth_token (appareil en mode appairage).
-#[tauri::command(async)]
-fn nanoleaf_pair(ip: String, port: u16) -> Result<String, String> {
-    netdev::nanoleaf_request_token(&ip, port).map_err(|e| format!("{e:#}"))
-}
 
-/// Installe le driver PawnIO (SMBus : RAM, carte mère). Admin requis.
-#[tauri::command(async)]
-fn pawnio_install() -> Result<(), String> {
-    OpenRgbManager::pawnio_install().map_err(|e| format!("{e:#}"))
-}
 
-/// Énumère processus ET services : passe par PowerShell, donc async.
-#[tauri::command(async)]
-fn check_conflicts(state: State<AppState>) -> ConflictReport {
-    let (conflicts, openrgb_running) = conflicts::scan();
-    ConflictReport {
-        conflicts,
-        openrgb_running,
-        guarded_families: state.settings.lock().guarded_families.clone(),
-    }
-}
 
-/// Stoppe une famille de logiciels en conflit (services + processus).
-/// `disable` : désactive aussi le démarrage automatique des services
-/// (mode d'origine sauvegardé pour `conflict_restore`).
-#[tauri::command(async)]
-fn conflict_stop(state: State<AppState>, family: String, disable: bool) -> Result<(), String> {
-    let modes = conflicts::stop_family(&family, disable).map_err(|e| format!("{e:#}"))?;
-    if !modes.is_empty() {
-        let mut s = state.settings.lock();
-        s.disabled_services.extend(modes);
-        settings::save(&s).map_err(|e| e.to_string())?;
-    }
-    Ok(())
-}
 
-/// Dernier relevé capteurs (sensord). Vide si le sidecar est absent.
-#[tauri::command]
-fn get_sensors(state: State<AppState>) -> Vec<Sensor> {
-    state.sensors.snapshot()
-}
 
-/// Définit ou supprime (config=None) la courbe d'un canal ventilateur.
-#[tauri::command]
-fn set_curve(
-    state: State<AppState>,
-    device_id: String,
-    channel: u8,
-    config: Option<CurveConfig>,
-) -> Result<(), String> {
-    let key = format!("{device_id}|{channel}");
-    let mut s = state.settings.lock();
-    match config {
-        Some(cfg) => {
-            cfg.validate()?;
-            s.curves.insert(key, cfg);
-        }
-        None => {
-            s.curves.remove(&key);
-        }
-    }
-    state.curve_engine.set_curves(s.curves.clone());
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-/// Commande écran LCD (Kraken Z / 2023 via liquidctl).
-/// kind: liquid | static | gif | brightness | orientation. arg: chemin ou valeur.
-#[tauri::command(async)]
-fn lcd_apply(
-    state: State<AppState>,
-    device_id: String,
-    kind: String,
-    arg: Option<String>,
-) -> Result<(), String> {
-    let (backend, local) = device_id
-        .split_once(':')
-        .ok_or_else(|| format!("id invalide: {device_id}"))?;
-    if backend != "liquidctl" {
-        return Err("LCD disponible uniquement via liquidctl".into());
-    }
-    let local = local.to_string();
-    let mut reg = state.registry.lock();
-    for b in reg.backends_mut() {
-        if b.name() == "liquidctl" {
-            if let Some(lc) = b.as_any_mut().downcast_mut::<LiquidctlBackend>() {
-                return lc
-                    .lcd_apply(&local, &kind, arg.as_deref())
-                    .map_err(|e| format!("{e:#}"));
-            }
-        }
-    }
-    Err("backend liquidctl indisponible".into())
-}
 
-/// Réactive une famille : StartupType restauré + services relancés.
-#[tauri::command(async)]
-fn conflict_restore(state: State<AppState>, family: String) -> Result<(), String> {
-    let saved = state.settings.lock().disabled_services.clone();
-    let restored = conflicts::restore_family(&family, &saved).map_err(|e| format!("{e:#}"))?;
-    let mut s = state.settings.lock();
-    for name in restored {
-        s.disabled_services.remove(&name);
-    }
-    // Réactiver = incohérent avec la garde active : la retirer.
-    s.guarded_families.remove(&family);
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-/// Active/désactive la garde continue d'une famille (re-tue le processus en
-/// boucle tant que l'app tourne) — pour les logiciels qui se relancent
-/// malgré service désactivé + tâche planifiée neutralisée.
-#[tauri::command(async)]
-fn conflict_guard_set(state: State<AppState>, family: String, enabled: bool) -> Result<(), String> {
-    let mut s = state.settings.lock();
-    if enabled {
-        s.guarded_families.insert(family);
-    } else {
-        s.guarded_families.remove(&family);
-    }
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
-#[tauri::command]
-fn get_settings(state: State<AppState>) -> Settings {
-    state.settings.lock().clone()
-}
 
-#[tauri::command]
-fn update_settings(
-    state: State<AppState>,
-    openrgb_host: String,
-    openrgb_port: u16,
-    auto_start_openrgb: bool,
-    native_drivers_enabled: bool,
-    smbus_writes_enabled: bool,
-    fps: u32,
-    start_minimized: bool,
-    auto_manage_conflicts: bool,
-    telemetry_opt_in: bool,
-    auto_update_check: bool,
-) -> Result<(), String> {
-    // Validation input : host non vide, fps borné.
-    let host = openrgb_host.trim().to_string();
-    if host.is_empty() || host.len() > 253 {
-        return Err("hôte OpenRGB invalide".into());
-    }
-    let fps = fps.clamp(5, 144);
-
-    {
-        let mut reg = state.registry.lock();
-        for b in reg.backends_mut() {
-            if b.name() == "openrgb" {
-                if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
-                    orgb.set_endpoint(host.clone(), openrgb_port);
-                }
-            } else if b.name() == "hid" {
-                if let Some(hid) = b.as_any_mut().downcast_mut::<HidBackend>() {
-                    hid.set_native_enabled(native_drivers_enabled);
-                }
-            } else if b.name() == "smbus" {
-                if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
-                    sm.set_native_enabled(native_drivers_enabled);
-                    sm.set_writes_enabled(smbus_writes_enabled);
-                }
-            }
-        }
-    }
-    state.engine.set_fps(fps);
-
-    let mut s = state.settings.lock();
-    s.openrgb_host = host;
-    s.openrgb_port = openrgb_port;
-    s.auto_start_openrgb = auto_start_openrgb;
-    s.native_drivers_enabled = native_drivers_enabled;
-    s.smbus_writes_enabled = smbus_writes_enabled;
-    s.fps = fps;
-    s.start_minimized = start_minimized;
-    s.auto_manage_conflicts = auto_manage_conflicts;
-    s.telemetry_opt_in = telemetry_opt_in;
-    s.auto_update_check = auto_update_check;
-    settings::save(&s).map_err(|e| e.to_string())
-}
 
 /// Restaure effets (globaux + zones) et modes matériels sauvegardés.
 /// Suppose un scan déjà fait (device_list non vide).
-fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEngine, saved: &Settings) {
+pub(crate) fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEngine, saved: &Settings) {
     let devices = registry.lock().device_list();
     for d in &devices {
         if let Some(cfg) = saved.effects.get(&d.id) {
@@ -1433,50 +580,50 @@ pub fn run() {
             }
         })
         .invoke_handler(tauri::generate_handler![
-            scan_devices,
-            list_devices,
-            backend_status,
-            apply_effect,
-            apply_effect_all,
-            set_fan_duty,
-            check_conflicts,
-            conflict_stop,
-            conflict_restore,
-            get_sensors,
-            set_curve,
-            lcd_apply,
-            set_hardware_mode,
-            set_autostart,
-            profile_export,
-            profile_import,
-            openrgb_status,
-            openrgb_start,
-            openrgb_stop,
-            openrgb_restart,
-            pawnio_install,
-            get_settings,
-            update_settings,
+            commands::devices::scan_devices,
+            commands::devices::list_devices,
+            commands::devices::backend_status,
+            commands::devices::apply_effect,
+            commands::devices::apply_effect_all,
+            commands::devices::set_fan_duty,
+            commands::conflicts_cmds::check_conflicts,
+            commands::conflicts_cmds::conflict_stop,
+            commands::conflicts_cmds::conflict_restore,
+            commands::hardware::get_sensors,
+            commands::hardware::set_curve,
+            commands::hardware::lcd_apply,
+            commands::devices::set_hardware_mode,
+            commands::profiles::set_autostart,
+            commands::profiles::profile_export,
+            commands::profiles::profile_import,
+            commands::openrgb_cmds::openrgb_status,
+            commands::openrgb_cmds::openrgb_start,
+            commands::openrgb_cmds::openrgb_stop,
+            commands::openrgb_cmds::openrgb_restart,
+            commands::openrgb_cmds::pawnio_install,
+            commands::profiles::get_settings,
+            commands::profiles::update_settings,
             product_commands::product_lookup,
             product_commands::product_image,
             product_commands::product_open_source,
             product_commands::set_product_photos,
-            resize_zone,
-            netdev_list,
-            netdev_add,
-            netdev_remove,
-            hue_pair,
-            nanoleaf_pair,
-            conflict_guard_set,
-            hardware_diagnostics,
-            rgb_inventory,
-            selftest_scan,
-            selftest_apply,
-            send_telemetry_report,
-            usb_capture_ready,
-            usb_capture_install,
-            usb_capture_start,
-            usb_capture_stop,
-            usb_capture_upload,
+            commands::devices::resize_zone,
+            commands::openrgb_cmds::netdev_list,
+            commands::openrgb_cmds::netdev_add,
+            commands::openrgb_cmds::netdev_remove,
+            commands::openrgb_cmds::hue_pair,
+            commands::openrgb_cmds::nanoleaf_pair,
+            commands::conflicts_cmds::conflict_guard_set,
+            commands::diagnostics::hardware_diagnostics,
+            commands::diagnostics::rgb_inventory,
+            commands::diagnostics::selftest_scan,
+            commands::diagnostics::selftest_apply,
+            commands::diagnostics::send_telemetry_report,
+            commands::diagnostics::usb_capture_ready,
+            commands::diagnostics::usb_capture_install,
+            commands::diagnostics::usb_capture_start,
+            commands::diagnostics::usb_capture_stop,
+            commands::diagnostics::usb_capture_upload,
             screens::commands::screens_list,
             screens::commands::screens_scan,
             screens::commands::screens_errors,
@@ -1507,51 +654,4 @@ pub fn run() {
         .expect("erreur au lancement de PureRGB");
 }
 
-#[cfg(test)]
-mod zone_size_tests {
-    use super::wanted_zone_size;
-    use crate::core::ZoneInfo;
-    use std::collections::HashMap;
 
-    fn argb(count: u32) -> ZoneInfo {
-        ZoneInfo { name: "JRAINBOW1".into(), led_count: count, zone_type: 1, leds_min: 0, leds_max: 240 }
-    }
-
-    #[test]
-    fn empty_argb_header_gets_an_automatic_size() {
-        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &argb(0)), Some(60));
-    }
-
-    #[test]
-    fn saved_size_wins_even_zero_and_sized_or_fixed_zones_are_left_alone() {
-        let saved: HashMap<String, u32> = [("k".to_string(), 0)].into();
-        assert_eq!(wanted_zone_size(&saved, "k", &argb(0)), Some(0));
-        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &argb(24)), None);
-        assert_eq!(wanted_zone_size(&HashMap::new(), "k", &ZoneInfo::fixed("Carte", 0)), None);
-    }
-}
-
-#[cfg(test)]
-mod profile_path_tests {
-    use super::confine_profile_path;
-
-    #[test]
-    fn profile_path_must_be_a_json_inside_home() {
-        let base = std::env::temp_dir().join(format!("purergb-prof-{}", std::process::id()));
-        let home = base.join("home");
-        let outside = base.join("outside");
-        std::fs::create_dir_all(&home).unwrap();
-        std::fs::create_dir_all(&outside).unwrap();
-        let ok = confine_profile_path(&home.join("p.json").to_string_lossy(), &home);
-        let other_dir = confine_profile_path(&outside.join("p.json").to_string_lossy(), &home);
-        let not_json = confine_profile_path(&home.join("p.exe").to_string_lossy(), &home);
-        let traversal = confine_profile_path(&home.join("..").join("outside").join("p.json").to_string_lossy(), &home);
-        let relative = confine_profile_path("p.json", &home);
-        std::fs::remove_dir_all(&base).ok();
-        assert!(ok.is_ok(), "{ok:?}");
-        assert!(other_dir.is_err());
-        assert!(not_json.is_err());
-        assert!(traversal.is_err());
-        assert!(relative.is_err());
-    }
-}
