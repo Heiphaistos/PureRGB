@@ -1,4 +1,5 @@
-//! Famille « roccat » (VID 0x1E7D) : souris Kone Pro filaire (0x2C88), Burst Pro (0x2DE1), Burst Pro Air (0x2CA6).
+//! Famille « roccat » (VID 0x1E7D) : souris Kone Pro filaire (0x2C88), Burst Pro (0x2DE1), Burst Pro Air (0x2CA6) ici ;
+//! claviers Vulcan 100/120 Aimo et Magma/Magma Mini dans `keyboard.rs` (deux collections HID).
 //! Sources : docs/rgb-protocols/roccat-turtlebeach.md (§ Kone Pro), docs/rgb-protocols/analyse-roccat-swarm.md (§ 4, source O
 //! = OpenRGB, NON confirmée par les binaires officiels : tout est à valider sur matériel).
 //!
@@ -6,12 +7,7 @@
 //! - Burst Pro Air : pas de prise de contrôle séparée ; feature de 30 octets `06 01 4C 06 14` + 4 x (n° 1..4, 0xFF, R, G, B).
 //!
 //! Non revendiqués :
-//! - Claviers Vulcan 100 / 120 / TKL / Pro / II, Pyro, Magma (Roccat et Turtle Beach 0x10F5) : la note décrit le protocole complet
-//!   (paquets `A1 <n°> <longueur>`, prise de contrôle `0E 05 01 00 00` / `15 00 01`, firmware lu au feature 0x09/0x0F pour l'ordre des
-//!   octets de longueur) mais il exige DEUX collections HID (ctrl = feature, led = écriture 65 octets, interfaces différentes). Le cadre
-//!   natif n'ouvre qu'UNE collection par périphérique (`Family::open` reçoit un seul `Hid`) : envoyer les features sur la collection led
-//!   serait une supposition. Refusé tant que le cadre ne fournit pas les deux poignées. Correspondance LED -> touche : non transcrite.
-//!   Vulcan 121 et Kain 100/120/200 : PID INCONNU.
+//! - Claviers non revendiqués : Vulcan Pro/TKL/II, Pyro, TB Vulcan II (voir `keyboard.rs`), Vulcan 121 et Kain 100/120/200 : PID INCONNU.
 //! - Burst Core (0x2DE6) : interface HID non indiquée dans la note. Kone Pro Air (0x2C8E, 0x2C92) : champs `[4]`, valeurs de luminosité en
 //!   direct et requêtes préalables non élucidés. Kone Aimo (0x2E27, 0x2E2C) : interface ambiguë (0 ou 1) et valeur de l'index LED non précisée.
 //!   Kone XP (0x2C8B) : passe par un profil de 0xAE octets (écriture de config, exclue). Kova, Sense, Horde, Elo, KP7 : contrôleurs non lus.
@@ -19,6 +15,8 @@
 //! INCONNU : noms/emplacements des LEDs ; valeur exacte du champ `<direct>` (supposé 1 = direct, 0 = rendre la main, par analogie
 //! avec le champ `<on>` des claviers de la note) ; effets matériels non utilisés ; Burst Pro Air : retour au mode matériel (la trame de
 //! mode `06 01 4C 06 06 <mode> <vitesse> <luminosité> 0F` n'a pas de valeurs documentées pour « reprendre le mode précédent »), `release` ne fait rien.
+
+mod keyboard;
 
 use super::{Family, Hid, Model, NativeRgb};
 use crate::core::{Color, DeviceType, ZoneInfo};
@@ -62,6 +60,9 @@ fn probe(vid: u16, pid: u16) -> Option<Model> {
     if vid != VID {
         return None;
     }
+    if let Some(m) = keyboard::probe(pid) {
+        return Some(m);
+    }
     let (kind, name, interface, usage_page) = kind_of(pid)?;
     let zones = (1..=kind.leds())
         .map(|i| {
@@ -89,6 +90,9 @@ impl Mouse {
 }
 
 fn open(hid: Box<dyn Hid>, model: &Model) -> Result<Box<dyn NativeRgb>> {
+    if model.aux.is_some() {
+        return keyboard::open(hid, model);
+    }
     // Le modèle vient de `probe` : la variante se déduit du nombre de LEDs.
     let kind = if model.led_count() as usize == Kind::FourLed.leds() { Kind::FourLed } else { Kind::TwoLed };
     let dev = Mouse { hid, kind };
@@ -146,7 +150,7 @@ mod tests {
 
     #[test]
     fn probe_claims_only_documented_mice() {
-        for pid in [0x2C8E, 0x2C92, 0x2DE6, 0x2E27, 0x2E2C, 0x2C8B, 0x2F4E, 0x307A, 0x3098, 0x314C, 0x3124, 0x2CEE] {
+        for pid in [0x2C8E, 0x2C92, 0x2DE6, 0x2E27, 0x2E2C, 0x2C8B, 0x2F4E, 0x314C, 0x2CEE] {
             assert!(probe(VID, pid).is_none(), "{pid:04x}");
         }
         assert!(probe(0x10F5, 0x501B).is_none());
