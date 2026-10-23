@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.41.0
+
+- Nouveaux pilotes intégrés (expérimentaux, jamais validés sur du vrai matériel, désactivés par défaut), d'après les notes d'analyse : souris Logitech filaires G203, G303, G403, G Pro / G Pro Hero (mode direct sans écriture en mémoire flash) et G203 Lightsync, une seule zone pilotée ; SteelSeries Rival 600 (six LED latérales).
+- Refusés faute de trames établies dans les notes (aucun protocole deviné) : Rival 100/300, Rival 600 molette et logo, casques Arctis / Siberia, casques et souris Logitech sans fil.
+
 ## 0.40.2
 
 - Correctif de la version 0.40.1 dont la construction automatique a échoué : un test de chronométrage de l'envoi vers un écran lent était trop serré pour les machines chargées (marge élargie, la détection d'un retard cumulé reste valable). Aucun changement pour les utilisateurs par rapport à 0.40.1.
