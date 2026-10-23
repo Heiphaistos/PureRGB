@@ -1,4 +1,4 @@
-//! Famille « steelseries » : claviers Apex, souris Rival 3 / Rival 5 / Aerox 3-5-9 filaires, tapis QCK.
+//! Famille « steelseries » : claviers Apex, souris Rival 3 / Rival 5 / Rival 600 / Aerox 3-5-9 filaires, tapis QCK.
 //! Sources : docs/rgb-protocols/steelseries.md et docs/rgb-protocols/analyse-steelseries-gg.md (table des touches : `layout.bin`
 //! du logiciel officiel ; trames : source tierce, à valider sur matériel).
 //!
@@ -9,9 +9,16 @@
 //! - Apex sans fil (1630 / 1632 / 1644 / 1646) : longueur du rapport direct non confirmée, transport sans fil non décrit ;
 //! - Aerox / Rival sans fil 2,4 GHz (dongles 1838, 1878, 1858, 1852, 185C, 1860, Rival 3 Wireless 1830) : le OU 0x40 est
 //!   décrit mais pas la taille ni le contenu de l'accusé de lecture ;
-//! - Rival 600 (longueur 7 octets avec ou sans identifiant de rapport, zone de la molette), Rival 650 (séquence de quatre
-//!   écritures, zones partielles), Rival 700 (identifiants de zone non donnés) ; zone « Reactive » des Aerox (octet [2] de la
-//!   commande 0x26 non donné) ;
+//! - Rival 600 : seules les 6 LED latérales sont pilotées (identifiants 0x02..0x07 donnés) ; molette / logo : correspondance
+//!   INCONNUE, refusés. Le préfixe d'identifiant de rapport 0 est celui indiqué par la note (« report id 0 préfixé ») : 8 octets
+//!   écrits, à valider sur matériel ;
+//! - Rival 650 (séquence de quatre écritures, zones partielles), Rival 700 (identifiants de zone non donnés) ; zone « Reactive »
+//!   des Aerox (octet [2] de la commande 0x26 non donné) ;
+//! - Rival 100 / 300 (PID 1702, 170C, 1814, 1816, 1729 / 1710, 1714, 1394, 1716, 171A, 1392, 1718) : la note donne `05 00 R G B`
+//!   et `08 <zone+1> R G B` sans dire quelle trame va à quelle famille, ni la longueur du rapport, le préfixe d'identifiant ni
+//!   le nombre de zones : refusés ;
+//! - casques Arctis 5 (1250, 12AA), Arctis Nova 3 (12EC), Siberia 350 (1229) : octets de remplissage (« .. »), identifiants de
+//!   zone, transport et seconde trame d'init non donnés, rapport de 521 octets incomplet : refusés ;
 //! - table des touches des Apex 9 / Pro TKL : pas de `layout.bin`, la table des 114 codes confirmée pour les autres Apex est
 //!   réutilisée (le nombre de touches envoyé tient dans 513 octets) ; 0xFB (Apex Pro 2024 seulement) non utilisé.
 //!
@@ -40,6 +47,8 @@ enum Kind {
     Aerox65,
     /// Aerox « sans fil » en mode filaire : 64 octets, zone en octet 3.
     Aerox64,
+    /// Rival 600 : écriture de 8 octets (id 0 + 7) par LED latérale, masque `1 << id`.
+    Rival600,
     /// Tapis QCK : rapport feature de 525 octets puis validation de 65.
     Qck,
 }
@@ -53,6 +62,9 @@ struct Entry {
     interface: i32,
     usage_page: Option<u16>,
 }
+
+/// Identifiants de LED du Rival 600, dans l'ordre des zones exposées (gauche haut/milieu/bas, droite haut/milieu/bas).
+const RIVAL600_IDS: [u8; 6] = [0x02, 0x04, 0x06, 0x03, 0x05, 0x07];
 
 const AEROX_ZONES: &[&str] = &["Avant", "Milieu", "Arrière"];
 
@@ -91,6 +103,15 @@ fn entries() -> Vec<Entry> {
             zones: &["Molette", "Corps G1", "Corps D1", "Corps G2", "Corps D2", "Corps G3", "Corps D3", "Corps G4", "Corps D4", "Logo"],
             interface: 0,
             usage_page: Some(0xFFC0),
+        },
+        Entry {
+            pids: &[0x1724, 0x172E],
+            name: "SteelSeries Rival 600",
+            device_type: DeviceType::Mouse,
+            kind: Kind::Rival600,
+            zones: &["Gauche haut", "Gauche milieu", "Gauche bas", "Droite haut", "Droite milieu", "Droite bas"],
+            interface: 0,
+            usage_page: None,
         },
         aerox(&[0x1836], "SteelSeries Aerox 3", Kind::Aerox65),
         aerox(&[0x1850], "SteelSeries Aerox 5", Kind::Aerox65),
@@ -213,6 +234,12 @@ impl NativeRgb for SteelSeries {
                 }
                 self.hid.send_feature_report(&f)
             }
+            Kind::Rival600 => {
+                for (id, c) in RIVAL600_IDS.iter().zip(colors) {
+                    self.write(&[0x00, 0x1C, 0x27, 0x00, 1 << id, c.r, c.g, c.b])?;
+                }
+                Ok(())
+            }
             Kind::Rival3 => {
                 for (z, c) in colors.iter().enumerate() {
                     self.write(&[0x00, 0x05, 0x00, z as u8 + 1, c.r, c.g, c.b, BRIGHTNESS_MAX])?;
@@ -275,7 +302,7 @@ mod tests {
 
     #[test]
     fn probe_claims_only_documented_pids() {
-        let want: [(u16, &str, u32, i32); 12] = [
+        let want: [(u16, &str, u32, i32); 14] = [
             (0x1610, "SteelSeries Apex Pro", 114, 1),
             (0x1612, "SteelSeries Apex 7", 114, 1),
             (0x1618, "SteelSeries Apex 7 TKL", 114, 1),
@@ -287,6 +314,8 @@ mod tests {
             (0x1824, "SteelSeries Rival 3", 4, 3),
             (0x184C, "SteelSeries Rival 3", 4, 3),
             (0x183C, "SteelSeries Rival 5", 10, 0),
+            (0x1724, "SteelSeries Rival 600", 6, 0),
+            (0x172E, "SteelSeries Rival 600", 6, 0),
             (0x150A, "SteelSeries QCK Prism", 2, 0),
         ];
         for (pid, name, leds, itf) in want {
@@ -303,7 +332,8 @@ mod tests {
         // Refusés : génération / longueur / accusé sans fil / zones INCONNUS, ou hors périmètre (casques).
         let refused = [
             0x1614, 0x1630, 0x1632, 0x1644, 0x1646, 0x1640, 0x1650, 0x1652, 0x161E, 0x1648, 0x161A, 0x1622, 0x0616, 0x1838, 0x1878, 0x1858, 0x1852,
-            0x185C, 0x1860, 0x1830, 0x1724, 0x172E, 0x172B, 0x1726, 0x1700, 0x1730, 0x183E, 0x1890, 0x12EC, 0x1250,
+            0x185C, 0x1860, 0x1830, 0x172B, 0x1726, 0x1700, 0x1730, 0x183E, 0x1890, 0x12EC, 0x1250, 0x12AA, 0x1229,
+            0x1702, 0x170C, 0x1814, 0x1816, 0x1729, 0x1710, 0x1714, 0x1394, 0x1716, 0x171A, 0x1392, 0x1718,
         ];
         for pid in refused {
             assert!(probe(VID, pid).is_none(), "{pid:04x}");
@@ -439,6 +469,32 @@ mod tests {
     }
 
     #[test]
+    fn rival600_one_8_byte_write_per_side_led_mask_is_1_shl_id() {
+        for pid in [0x1724, 0x172E] {
+            let (mut d, sent, feats) = driver(pid);
+            assert!(sent.lock().is_empty(), "aucune init");
+            let c: Vec<Color> = (0..6u8).map(|i| rgb(i * 3 + 1, i * 3 + 2, i * 3 + 3)).collect();
+            d.set_colors(&c).expect("set");
+            let s = sent.lock();
+            let masks = [0x04u8, 0x10, 0x40, 0x08, 0x20, 0x80];
+            assert_eq!(s.len(), 6);
+            for (i, m) in masks.iter().enumerate() {
+                let i3 = i as u8 * 3;
+                assert_eq!(s[i], vec![0x00, 0x1C, 0x27, 0x00, *m, i3 + 1, i3 + 2, i3 + 3], "{pid:04x} zone {i}");
+            }
+            assert!(feats.lock().is_empty());
+        }
+    }
+
+    #[test]
+    fn rival600_rejects_seventh_zone_and_release_sends_nothing() {
+        let (mut d, sent, feats) = driver(0x1724);
+        assert!(d.set_colors(&[Color::BLACK; 7]).is_err());
+        d.release();
+        assert!(sent.lock().is_empty() && feats.lock().is_empty());
+    }
+
+    #[test]
     fn aerox_65_one_packet_per_zone_with_mask_and_offset() {
         for pid in [0x1836, 0x1850] {
             let (mut d, sent, feats) = driver(pid);
@@ -517,7 +573,7 @@ mod tests {
 
     #[test]
     fn no_save_command_is_ever_sent() {
-        for pid in [0x1610, 0x1628, 0x1634, 0x1824, 0x183C, 0x1836, 0x1850, 0x185A, 0x150A] {
+        for pid in [0x1610, 0x1628, 0x1634, 0x1824, 0x183C, 0x1836, 0x1850, 0x185A, 0x150A, 0x1724] {
             let (mut d, sent, feats) = driver(pid);
             let max = probe(VID, pid).map_or(0, |m| m.led_count() as usize);
             d.set_colors(&vec![rgb(1, 1, 1); max]).expect("set");
