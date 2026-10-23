@@ -33,6 +33,43 @@ pub trait Hid: Send {
     fn get_feature_report(&self, buf: &mut [u8]) -> Result<usize>;
     /// Lecture d'un rapport d'entrée, 0 si le délai expire.
     fn read_timeout(&self, buf: &mut [u8], timeout_ms: i32) -> Result<usize>;
+    /// Seconde collection HID du même appareil (voir `Model::aux`), pour les protocoles qui séparent contrôle et LEDs.
+    fn aux(&self) -> Option<&dyn Hid> {
+        None
+    }
+}
+
+/// Une interface principale (`Hid`) accompagnée de sa seconde collection : les écritures du pilote vont à la première,
+/// `aux()` donne la seconde.
+pub struct PairedHid {
+    pub main: Box<dyn Hid>,
+    pub second: Box<dyn Hid>,
+}
+
+impl Hid for PairedHid {
+    fn write(&self, data: &[u8]) -> Result<usize> {
+        self.main.write(data)
+    }
+    fn send_feature_report(&self, data: &[u8]) -> Result<()> {
+        self.main.send_feature_report(data)
+    }
+    fn get_feature_report(&self, buf: &mut [u8]) -> Result<usize> {
+        self.main.get_feature_report(buf)
+    }
+    fn read_timeout(&self, buf: &mut [u8], timeout_ms: i32) -> Result<usize> {
+        self.main.read_timeout(buf, timeout_ms)
+    }
+    fn aux(&self) -> Option<&dyn Hid> {
+        Some(self.second.as_ref())
+    }
+}
+
+/// Sélection d'une collection HID (None = indifférent).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct HidSelect {
+    pub interface: Option<i32>,
+    pub usage_page: Option<u16>,
+    pub usage: Option<u16>,
 }
 
 impl Hid for hidapi::HidDevice {
@@ -64,11 +101,14 @@ pub struct Model {
     pub usage_page: Option<u16>,
     /// Usage HID à ouvrir au sein de la page (ex. 0x0602), `None` = indifférent.
     pub usage: Option<u16>,
+    /// Seconde collection HID à ouvrir en plus (protocoles à deux interfaces : contrôle + LEDs) ; le pilote
+    /// la reçoit par `Hid::aux()`. `None` = une seule collection.
+    pub aux: Option<HidSelect>,
 }
 
 impl Model {
     pub fn new(name: impl Into<String>, device_type: DeviceType, zones: Vec<ZoneInfo>) -> Model {
-        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None }
+        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None, aux: None }
     }
 
     pub fn led_count(&self) -> u32 {
@@ -143,6 +183,7 @@ pub struct MockHid {
     sent: Log,
     features: Log,
     replies: std::sync::Arc<parking_lot::Mutex<std::collections::VecDeque<Vec<u8>>>>,
+    second: Option<Box<MockHid>>,
 }
 
 #[cfg(test)]
@@ -151,8 +192,14 @@ impl MockHid {
     pub fn new(replies: Vec<Vec<u8>>) -> (MockHid, Log, Log) {
         let sent: Log = Default::default();
         let features: Log = Default::default();
-        let mock = MockHid { sent: sent.clone(), features: features.clone(), replies: std::sync::Arc::new(parking_lot::Mutex::new(replies.into())) };
+        let mock = MockHid { sent: sent.clone(), features: features.clone(), replies: std::sync::Arc::new(parking_lot::Mutex::new(replies.into())), second: None };
         (mock, sent, features)
+    }
+
+    /// Ajoute une seconde collection simulée (renvoyée par `aux()`).
+    pub fn with_aux(mut self, second: MockHid) -> MockHid {
+        self.second = Some(Box::new(second));
+        self
     }
 
     fn next_reply(&self, buf: &mut [u8]) -> usize {
@@ -183,11 +230,27 @@ impl Hid for MockHid {
     fn read_timeout(&self, buf: &mut [u8], _timeout_ms: i32) -> Result<usize> {
         Ok(self.next_reply(buf))
     }
+    fn aux(&self) -> Option<&dyn Hid> {
+        self.second.as_deref().map(|m| m as &dyn Hid)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_second_collection_is_reachable_and_independent() {
+        let (aux, aux_sent, _) = MockHid::new(vec![]);
+        let (main, main_sent, _) = MockHid::new(vec![]);
+        let hid = main.with_aux(aux);
+        hid.write(&[1, 2]).unwrap();
+        hid.aux().expect("seconde collection").write(&[9, 9, 9]).unwrap();
+        assert_eq!(main_sent.lock().as_slice(), [vec![1, 2]]);
+        assert_eq!(aux_sent.lock().as_slice(), [vec![9, 9, 9]]);
+        let (plain, _, _) = MockHid::new(vec![]);
+        assert!(plain.aux().is_none(), "sans seconde collection, aux() vaut None");
+    }
 
     #[test]
     fn split_by_zone_pads_missing_leds_with_black() {

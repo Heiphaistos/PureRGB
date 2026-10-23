@@ -42,6 +42,8 @@ const NZXT_HUE2_LEDS_PER_CHANNEL: u32 = 40;
 
 struct Entry {
     path: std::ffi::CString,
+    /// Chemin de la seconde collection HID (modèles à deux interfaces, voir `Model::aux`).
+    aux_path: Option<std::ffi::CString>,
     driver: Option<NativeDriver>,
     /// Famille native de `native/` (prioritaire sur `driver`).
     native: Option<(&'static native::Family, native::Model)>,
@@ -139,7 +141,15 @@ impl HidBackend {
             let api = self.api.as_ref().context("hidapi non initialisé")?;
             if let Some((family, model)) = &entry.native {
                 let device = api.open_path(&entry.path).context("ouverture HID refusée (logiciel constructeur actif ?)")?;
-                let dev = (family.open)(Box::new(device), model)?;
+                let handle: Box<dyn native::Hid> = match (&model.aux, &entry.aux_path) {
+                    (Some(_), Some(path)) => {
+                        let second = api.open_path(path).context("ouverture de la seconde interface HID refusée")?;
+                        Box::new(native::PairedHid { main: Box::new(device), second: Box::new(second) })
+                    }
+                    (Some(_), None) => bail!("seconde interface HID de l'appareil introuvable"),
+                    (None, _) => Box::new(device),
+                };
+                let dev = (family.open)(handle, model)?;
                 self.open_drivers.insert(local_id.to_string(), DriverInstance::Native(dev));
                 return Ok(self.open_drivers.get_mut(local_id).unwrap());
             }
@@ -174,6 +184,8 @@ impl Backend for HidBackend {
         // par interface HID du même périphérique physique.
         // Pour une famille native, on garde l'interface demandée par le modèle (interface / page d'usage HID).
         let mut seen: HashMap<(u16, u16, String), std::ffi::CString> = HashMap::new();
+        // Seconde collection des modèles à deux interfaces (contrôle + LEDs).
+        let mut aux_seen: HashMap<(u16, u16, String), std::ffi::CString> = HashMap::new();
         for info in api.device_list() {
             let key = (info.vendor_id(), info.product_id(), info.serial_number().unwrap_or("").to_string());
             match native::probe(key.0, key.1) {
@@ -182,7 +194,15 @@ impl Backend for HidBackend {
                         && m.usage_page.is_none_or(|u| u == info.usage_page())
                         && m.usage.is_none_or(|u| u == info.usage());
                     if ok {
-                        seen.entry(key).or_insert_with(|| info.path().to_owned());
+                        seen.entry(key.clone()).or_insert_with(|| info.path().to_owned());
+                    }
+                    if let Some(a) = m.aux {
+                        let second = a.interface.is_none_or(|i| i == info.interface_number())
+                            && a.usage_page.is_none_or(|u| u == info.usage_page())
+                            && a.usage.is_none_or(|u| u == info.usage());
+                        if second {
+                            aux_seen.entry(key).or_insert_with(|| info.path().to_owned());
+                        }
                     }
                 }
                 None => {
@@ -274,7 +294,8 @@ impl Backend for HidBackend {
                 ),
             } };
 
-            self.entries.insert(local_id.clone(), Entry { path, driver, native: nat });
+            let aux_path = aux_seen.get(&(vid, pid, _serial.clone())).cloned();
+            self.entries.insert(local_id.clone(), Entry { path, aux_path, driver, native: nat });
 
             devices.push(DeviceInfo {
                 id: local_id,
