@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.42.0
+
+- Éditeur d'écran : nouveau panneau « Couleurs du design » (aucun widget sélectionné). Changer une couleur la change partout dans le design (rectangles, jauges, barres, texte, fond), ce qui permet de recolorer les thèmes intégrés (par exemple les rectangles roses).
+
 ## 0.41.0
 
 - Nouveaux pilotes intégrés (expérimentaux, jamais validés sur du vrai matériel, désactivés par défaut), d'après les notes d'analyse : souris Logitech filaires G203, G303, G403, G Pro / G Pro Hero (mode direct sans écriture en mémoire flash) et G203 Lightsync, une seule zone pilotée ; SteelSeries Rival 600 (six LED latérales).
