@@ -34,8 +34,8 @@ const MODE_STATIC: u8 = 0x0A;
 const COLOR_FIXED: u8 = 0x10;
 const SPEED: u8 = 0x02;
 const BRIGHTNESS: u8 = 0xFF;
-/// Sous-ports par canal Gen 2 (masques 01..10).
-const SUBPORTS: usize = 5;
+/// Sous-ports pilotés par canal Gen 2 : un seul (masque 01), comme les 60 LED par canal d'OpenRGB ; INCONNU : le nombre réel de sous-ports chaînés (masques 01..10 documentés).
+const SUBPORTS: usize = 1;
 
 fn probe(vid: u16, pid: u16) -> Option<Model> {
     if vid != VID {
@@ -239,10 +239,10 @@ mod tests {
         assert_eq!(global_probe(VID, 0x1011).map(|(f, _)| f.id), Some("coolermaster"));
         for pid in [0x0173, 0x01C9] {
             let m = probe(VID, pid).expect("gen2");
-            assert_eq!((m.interface, m.usage_page, m.zones.len(), m.led_count()), (Some(0), None, 15, 900));
+            assert_eq!((m.interface, m.usage_page, m.zones.len(), m.led_count()), (Some(0), None, 3, 180));
             assert_eq!(global_probe(VID, pid).map(|(f, _)| f.id), Some("coolermaster"));
         }
-        assert_eq!(probe(VID, 0x01CB).expect("mini").zones.len(), 5);
+        assert_eq!(probe(VID, 0x01CB).expect("mini").zones.len(), 1);
     }
 
     #[test]
@@ -352,8 +352,8 @@ mod tests {
         let (mut dev, sent) = open_dev(0x0173);
         dev.set_colors(&ramp(60)).expect("set"); // zone 0 = canal 1 / sous-port 1
         let s = sent.lock();
-        // les 14 autres zones sont noires mais envoyées une fois (état initial inconnu)
-        assert_eq!(s.len(), 1 + 15 * 3);
+        // les 2 autres canaux sont noirs mais envoyés une fois (état initial inconnu)
+        assert_eq!(s.len(), 1 + 3 * 3);
         let (f1, f2, f3) = (&s[1], &s[2], &s[3]);
         assert_eq!(f1[..9], [0x00, 0x00, 0x09, 0x01, 0x01, 0x3C, 0, 100, 200]); // LED 0 dès l'octet 6
         assert_eq!(f1[60..62], [18, 118]); // début de la LED 18
@@ -371,7 +371,7 @@ mod tests {
         dev.set_colors(&[]).expect("set");
         let s = sent.lock();
         let heads: Vec<[u8; 2]> = s[1..].chunks(3).map(|f| [f[0][3], f[0][4]]).collect();
-        let expect: Vec<[u8; 2]> = [0x01u8, 0x02, 0x04].iter().flat_map(|&c| [0x01u8, 0x02, 0x04, 0x08, 0x10].map(|sp| [c, sp])).collect();
+        let expect: Vec<[u8; 2]> = [0x01u8, 0x02, 0x04].iter().map(|&c| [c, 0x01]).collect();
         assert_eq!(heads, expect);
         assert!(s[1..].chunks(3).all(|f| f[0][5] == 0x3C && f[1][1] == 0x01 && f[2][1] == 0x82));
     }
@@ -381,10 +381,10 @@ mod tests {
         let (mut dev, sent) = open_dev(0x01CB);
         let c = ramp(60);
         dev.set_colors(&c).expect("set");
-        assert_eq!(sent.lock().len(), 1 + 5 * 3);
+        assert_eq!(sent.lock().len(), 1 + 3);
         assert_eq!(sent.lock()[1][3..5], [0x01, 0x01]);
         dev.set_colors(&c).expect("set");
-        assert_eq!(sent.lock().len(), 1 + 5 * 3);
+        assert_eq!(sent.lock().len(), 1 + 3);
     }
 
     #[test]
