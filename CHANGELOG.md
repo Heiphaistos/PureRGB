@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.40.1
+
+- Télémétrie (si activée) : le rapport liste maintenant les logiciels constructeur en cours d'exécution qui peuvent verrouiller un écran ou un appareil (TRCC, L-Connect, iCUE…), pour trouver ce qui bloque l'écran Thermalright.
+- Nettoyage interne : avertissements du compilateur supprimés, identifiant du pilote intégré repris dans les notes d'appareil.
+
 ## 0.40.0
 
 - Cadre des pilotes intégrés : un modèle peut demander une seconde collection HID du même appareil (`Model::aux`, `Hid::aux`), pour les protocoles qui séparent contrôle et LEDs.
