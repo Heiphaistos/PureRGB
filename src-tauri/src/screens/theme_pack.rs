@@ -182,7 +182,7 @@ pub fn import(path: &Path, designs: &DesignStore, media: &MediaStore, limits: Li
     let mut total: u64 = 0;
     for i in 0..zip.len() {
         let mut e = zip.by_index(i).context("archive illisible")?;
-        let name = e.name().to_string();
+        let name = e.name().unwrap_or_default().to_string();
         let size = e.size();
         ensure!(!e.is_dir() && !e.is_symlink(), "entrée interdite dans l'archive : {name}");
         total = total.saturating_add(size);

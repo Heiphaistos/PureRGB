@@ -41,7 +41,7 @@ nusb = "0.1"
 des = "=0.8.1"
 # Archives .purergb-theme (screens/theme_pack.rs) : zip 4.6.1 est déjà dans Cargo.lock (tiré par tauri-plugin-updater),
 # thèmes : stockés sans recompression ; `deflate-flate2` (flate2 déjà dans Cargo.lock) sert à lire le zip ffmpeg (screens/ffmpeg_install.rs)
-zip = { version = "4.6.1", default-features = false, features = ["deflate-flate2"] }
+zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
 
 [target.'cfg(windows)'.dependencies]
 # Chargement dynamique de PawnIOLib.dll (backends/smbus/pawnio.rs) ; 0.7.4 est déjà dans Cargo.lock
