@@ -2,7 +2,7 @@
 
 Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/11 : cartes mères, RAM, GPU, claviers, souris, bandes LED, hubs, AIO / watercooling.
 
-![Version](https://img.shields.io/badge/version-0.39.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
+![Version](https://img.shields.io/badge/version-0.40.0-orange) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)
 
 ## Fonctionnalités
 
@@ -22,9 +22,14 @@ Contrôle unifié de l'éclairage RGB/ARGB et de la ventilation sous Windows 10/
 - **Effets par zone** : cibler une zone précise (barre ARGB, anneau, dessus/dessous…) avec superposition sur l'effet global.
 - **Profils** : export/import JSON de la configuration complète (effets, zones, modes matériels, courbes, réglages).
 - **Démarrage avec Windows** : tâche planifiée niveau élevé, sans fenêtre UAC à chaque boot.
-- **Drivers natifs expérimentaux** (USB direct, sans OpenRGB) :
-  - Corsair Lighting Node Pro / Core (LED)
-  - NZXT HUE 2, Smart Device V2, RGB & Fan Controller (LED + **ventilateurs PWM**)
+- **Une seule liste d'appareils, un seul pilotage** : un appareil vu à la fois par un pilote intégré et par OpenRGB n'apparaît qu'une fois. PureRGB choisit le pilote qui pilote le plus de LEDs ; l'autre reste en repli automatique (3 échecs de suite : bascule sans conflit, un seul écrit à la fois).
+- **Test de compatibilité et de sécurité** (Réglages) : revue en lecture seule de chaque composant, puis essai d'écriture minimal (2 écritures) à la demande, appareil par appareil. La mémoire reste en lecture seule tant que l'écriture RAM n'est pas autorisée.
+- **Pilotes intégrés expérimentaux** (USB direct, sans OpenRGB, désactivés par défaut, jamais validés sur tous les matériels) :
+  - Cartes mères MSI Mystic Light, ASUS Aura, ASRock Polychrome, Gigabyte RGB Fusion (USB)
+  - Corsair Lighting Node / Commander Pro / Commander Core ; NZXT HUE 2, Smart Device V2, RGB & Fan Controller (LED + **ventilateurs PWM**)
+  - Lian Li Uni Hub (SL, AL, SL-Infinity, V2 : LED + vitesse), Thermaltake Riing Plus, Cooler Master ARGB Gen 1 / Gen 2
+  - Razer (82 modèles : claviers, souris, tapis, accessoires), Logitech G410 à G915, SteelSeries Apex / Rival / Aerox / QCK, Roccat Vulcan / Magma / Kone Pro / Burst Pro, Wooting, HyperX
+  - Mémoire Corsair Vengeance / Dominator par le bus SMBus (lecture seule par défaut)
 - **Détection automatique** du matériel RGB connu (Corsair, NZXT, ASUS, MSI, Gigabyte, Razer, Logitech, SteelSeries, HyperX, Lian Li, Thermaltake, Cooler Master, DeepCool, EVGA)
 - **9 effets** : fixe, respiration, arc-en-ciel (cycle/vague), vague bicolore, comète, clignotement, dégradé, éteint — couleur(s), vitesse, luminosité, sens
 - **Contrôle ventilateurs** : vitesse fixe par canal (plancher 20 % anti-arrêt pompe)
@@ -56,7 +61,7 @@ Publication : le secret CI `TAURI_SIGNING_PRIVATE_KEY` (clé minisign privée) s
 1. Lancer PureRGB — OpenRGB embarqué démarre tout seul (ou cliquer « Démarrer OpenRGB » dans le bandeau)
 2. **Scanner** → choisir un appareil, un effet, **Appliquer**
 
-Optionnel : **Drivers natifs** dans Réglages pour piloter Corsair Node / NZXT HUE2 en USB direct sans OpenRGB (fermer iCUE/CAM d'abord).
+Optionnel : **Pilotes intégrés** dans Réglages (Appareils et pilotes) pour piloter en USB direct sans OpenRGB (fermer iCUE/CAM d'abord) ; lancer ensuite le **Test de compatibilité et de sécurité**.
 
 ## Anti-conflit — comment ça marche
 

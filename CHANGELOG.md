@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.40.0
+
+- Cadre des pilotes intégrés : un modèle peut demander une seconde collection HID du même appareil (`Model::aux`, `Hid::aux`), pour les protocoles qui séparent contrôle et LEDs.
+- Nouveaux pilotes intégrés (expérimentaux, jamais validés sur du vrai matériel, désactivés par défaut), d'après les notes issues de l'analyse des logiciels constructeur : Cooler Master ARGB Gen 2 A1 (PID 0173, 01C9, 01CB : 3 canaux de 60 LEDs, mode temps réel) et ARGB Gen 1 en mode direct par LED ; Lian Li Uni Hub SL / AL / SL-Infinity / SL V2 / AL V2 / Redragon (couleurs R,B,G, LEDs par ventilateur corrigées, vitesse en pourcentage avec plancher à 10 %) ; claviers Roccat Vulcan 100 / 120 Aimo et Magma / Magma Mini (deux interfaces HID, refus propre si la seconde est absente).
+- Qualité : `lib.rs` (1557 lignes) découpé en six modules de commandes (`src-tauri/src/commands/`), sans changement de comportement ; README mis à jour (liste unifiée, test de sécurité, pilotes intégrés).
+- Notes d'analyse ajoutées dans `docs/rgb-protocols/` : Cooler Master MasterPlus+, NZXT CAM, Lian Li L-Connect 3.
+
 ## 0.39.0
 
 - Appareil vu par deux pilotes : le pilote qui offre le plus de LEDs pilotables devient le principal (à égalité, le pilote intégré), l'autre reste en repli automatique avec des couleurs ré-échantillonnées. Corrige une perte de fonctions constatée sur une carte MSI Z790 : le pilote intégré n'offre qu'1 LED par connecteur ARGB alors qu'OpenRGB en pilote 60. Une carte affiche « Pilote intégré » ou « Repli OpenRGB ». La ligne « mémoire détectée en lecture seule » disparaît quand OpenRGB pilote cette mémoire.
