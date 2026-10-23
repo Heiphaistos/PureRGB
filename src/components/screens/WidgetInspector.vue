@@ -8,6 +8,7 @@ import MediaPicker from "./MediaPicker.vue";
 import InspectorFields from "./InspectorFields.vue";
 import NumField from "./NumField.vue";
 import TextField from "./TextField.vue";
+import { replaceColor, usedColors } from "../../screens/recolor.ts";
 import "./screens.css";
 
 const props = defineProps<{ layout: Layout; selected: Widget[]; values: LiveValues; media: MediaItem[] }>();
@@ -16,6 +17,8 @@ const emit = defineEmits<{ commit: [key: string | null] }>();
 const single = computed<Widget | null>(() => (props.selected.length === 1 ? props.selected[0] : null));
 const images = computed(() => props.media.filter((m) => m.kind !== "font"));
 const commit = (): void => emit("commit", null);
+const colors = computed(() => usedColors(props.layout).slice(0, 16));
+const recolor = (from: string, to: string): void => replaceColor(props.layout, from, to);
 
 const BG_KINDS: { v: Background["kind"]; l: string }[] = [
   { v: "solid", l: "Couleur unie" },
@@ -95,6 +98,18 @@ function setBgKind(kind: Background["kind"]): void {
           <MediaPicker v-model="layout.background.media_id" v-model:fit="layout.background.fit" :media="images" @commit="commit" />
         </template>
       </div>
+      <h4>Couleurs du design</h4>
+      <div class="grp">
+        <ColorField
+          v-for="(c, i) in colors"
+          :key="i"
+          :label="c"
+          :model-value="c"
+          @update:model-value="(v: string) => recolor(c, v)"
+          @commit="commit"
+        />
+      </div>
+      <p class="hint">Changer une couleur ici la change partout dans le design (rectangles, jauges, barres, texte).</p>
       <p class="hint">Cliquez sur un widget du canevas ou ajoutez-en un depuis la palette.</p>
     </template>
   </aside>
