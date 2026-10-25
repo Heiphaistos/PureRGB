@@ -8,11 +8,16 @@
 //! - Ventilateurs : `62 01 <1<<canal> 00 00 00`, consigne à l'octet `3+canal`, bornée à 20..=100 % (borne de l'interface CAM, note §5.1).
 //! - Nombre de LED par accessoire : table OpenRGB seule (note §9.2) ; un ID absent de cette table = canal ignoré (rien n'est écrit).
 //!
-//! NON utilisés (persistance INCONNUE ou source unique) : effets matériels `28 03` / `2A 04`, mode « wings », firmware, `60 02/03`
-//! (flux de statut : le trait n'a pas de lecture de statut). Kraken X3/Z3, 2012/2021 (« 2023 RGB Controller », protocole voisin),
-//! 200C, 2016, 2023, 2029, 3016 : non revendiqués.
-//! Repli : aucun retour au mode matériel n'est documenté ; `release` ne touche pas aux LED et remet à 100 % les seuls ventilateurs
-//! que PureRGB a réglés (refroidissement maximal, jamais en dessous du minimum).
+//! - Statut ventilateurs (docs/rgb-protocols/nzxt.md, « Statut ventilos ») : `60 02 01 E8 <iv> 01 E8 <iv>` + `60 03` démarrent le rapport,
+//!   puis `67 02` : mode du canal à l'octet `16+c` (0 absent, 1 DC, 2 PWM), duty % à l'octet `40+c`.
+//!
+//! NON utilisés (persistance INCONNUE ou source unique) : effets matériels `28 03` / `2A 04`, mode « wings », firmware.
+//! Kraken X3/Z3, 2012/2021 (« 2023 RGB Controller », protocole voisin), 200C, 2016, 2023, 2029, 3016 : non revendiqués.
+//!
+//! Règle ventilateurs (exigence de l'utilisateur) : PureRGB ne touche à AUCUN ventilateur tant que l'utilisateur n'a rien réglé (ouverture,
+//! scan, énumération : zéro écriture de vitesse). À la PREMIÈRE consigne utilisateur, le statut `67 02` est lu une fois pour capturer le duty
+//! courant de chaque canal ; `release_fans` ré-écrit cette valeur capturée sur les seuls canaux réglés. Si le statut n'a pas pu être lu (ou
+//! canal absent), `release_fans` n'écrit RIEN : jamais de valeur devinée, jamais 100 %.
 
 use super::{split_by_zone, Family, Hid, Model, NativeRgb};
 use crate::core::{Color, DeviceType, ZoneInfo};
@@ -32,6 +37,8 @@ const MAX_READS: usize = 12;
 const MIN_FRAME_GAP: Duration = Duration::from_millis(20);
 const FAN_MIN: u8 = 20;
 const FAN_MAX: u8 = 100;
+const STATUS_MODE: usize = 16;
+const STATUS_DUTY: usize = 40;
 
 /// (PID, nom, type, canaux LED, ventilateurs).
 const MODELS: [(u16, &str, DeviceType, usize, u8); 16] = [
@@ -107,6 +114,10 @@ struct Hue2 {
     leds: Vec<Option<usize>>,
     fans: u8,
     duty: Vec<Option<u8>>,
+    /// Duty de chaque canal avant la prise de contrôle (lu sur `67 02`) ; `None` = inconnu -> rien à restaurer.
+    captured: Vec<Option<u8>>,
+    /// Le statut a été lu (ou tenté) : une seule capture, avant la toute première consigne.
+    capture_done: bool,
     last_frame: Option<Instant>,
 }
 
@@ -136,10 +147,33 @@ impl Hue2 {
         p[3 + channel as usize] = duty;
         self.send(&p)
     }
+
+    /// Lit une fois le duty courant de chaque ventilateur (`67 02`). Échec ou délai : rien n'est capturé, donc rien ne sera restauré.
+    fn capture_fans(&mut self) {
+        self.capture_done = true;
+        let start: [&[u8]; 2] = [&[0x60, 0x02, 0x01, 0xE8, 0x01, 0x01, 0xE8, 0x01], &[0x60, 0x03]];
+        if start.iter().any(|p| self.send(p).is_err()) {
+            return;
+        }
+        let mut buf = [0u8; 64];
+        for _ in 0..MAX_READS {
+            let Ok(n) = self.hid.read_timeout(&mut buf, READ_TIMEOUT_MS) else { return };
+            if n == buf.len() && buf[0] == 0x67 && buf[1] == 0x02 {
+                for c in 0..self.fans as usize {
+                    let (mode, duty) = (buf[STATUS_MODE + c], buf[STATUS_DUTY + c]);
+                    self.captured[c] = (mode != 0 && duty <= 100).then_some(duty);
+                }
+                return;
+            }
+            if n == 0 {
+                return;
+            }
+        }
+    }
 }
 
 fn open(hid: Box<dyn Hid>, model: &Model) -> Result<Box<dyn NativeRgb>> {
-    let dev = Hue2 { hid, zones: model.zones.clone(), leds: vec![], fans: model.fans, duty: vec![None; model.fans as usize], last_frame: None };
+    let dev = Hue2 { hid, zones: model.zones.clone(), leds: vec![], fans: model.fans, duty: vec![None; model.fans as usize], captured: vec![None; model.fans as usize], capture_done: false, last_frame: None };
     dev.send(&[0x20, 0x03])?;
     let mut buf = [0u8; 64];
     for _ in 0..MAX_READS {
@@ -177,6 +211,9 @@ impl NativeRgb for Hue2 {
             bail!("NZXT : ventilateur {channel} inexistant (0..{})", self.fans.saturating_sub(1));
         }
         let duty = percent.clamp(FAN_MIN, FAN_MAX);
+        if !self.capture_done {
+            self.capture_fans();
+        }
         if self.duty[channel as usize] == Some(duty) {
             return Ok(());
         }
@@ -186,11 +223,26 @@ impl NativeRgb for Hue2 {
     }
 
     fn release(&mut self) {
-        for c in 0..self.fans {
-            if self.duty[c as usize].is_some() {
+        self.release_fans();
+    }
+
+    fn fans_taken(&self) -> bool {
+        self.duty.iter().any(Option::is_some)
+    }
+
+    fn release_fans(&mut self) {
+        for c in 0..self.fans as usize {
+            // Seuls les canaux réglés par l'utilisateur ET dont l'état d'origine a été lu sont ré-écrits.
+            let (Some(cur), Some(orig)) = (self.duty[c], self.captured[c]) else {
+                self.duty[c] = None;
+                continue;
+            };
+            let orig = orig.clamp(FAN_MIN, FAN_MAX);
+            if cur != orig {
                 // Échec ignoré : l'appareil est peut-être déjà débranché ; rien d'autre à tenter.
-                let _ = self.write_fan(c, FAN_MAX);
+                let _ = self.write_fan(c as u8, orig);
             }
+            self.duty[c] = None;
         }
     }
 }
@@ -333,25 +385,91 @@ mod tests {
         assert_eq!(masks, vec![0x01, 0x02, 0x04, 0x08, 0x10, 0x20]);
     }
 
+    /// Rapport de statut `67 02` fabriqué : (mode, duty) par canal.
+    fn status(fans: &[(u8, u8)]) -> Vec<u8> {
+        let mut r = vec![0u8; 64];
+        r[0] = 0x67;
+        r[1] = 0x02;
+        for (c, (m, d)) in fans.iter().enumerate() {
+            r[16 + c] = *m;
+            r[40 + c] = *d;
+        }
+        r
+    }
+
     #[test]
-    fn fan_frames_bounds_and_release() {
-        let (d, sent) = dev(0x2006, vec![reply(2, &[])]);
+    fn open_scan_colors_and_release_without_user_setting_write_no_fan_speed() {
+        let (d, sent) = dev(0x2006, vec![reply(2, &[[0x0B, 0, 0, 0, 0, 0], [0x0B, 0, 0, 0, 0, 0]])]);
+        let mut d = d.unwrap();
+        assert!(!d.fans_taken());
+        d.set_colors(&[Color::new(5, 5, 5); 20]).unwrap();
+        d.release_fans();
+        d.release();
+        assert!(sent.lock().iter().all(|f| f[1] != 0x62 && f[1] != 0x60), "aucune trame de vitesse ni de statut");
+    }
+
+    #[test]
+    fn fan_frames_bounds_and_restore_of_captured_duty() {
+        // Statut d'origine : canal 1 à 40 % (PWM), canal 2 à 65 % (DC), canal 3 absent.
+        let (d, sent) = dev(0x2006, vec![reply(2, &[]), status(&[(2, 40), (1, 65), (0, 0)])]);
         let mut d = d.unwrap();
         d.set_fan_duty(0, 50).unwrap();
+        {
+            let s = sent.lock();
+            // Statut lu une fois, AVANT la 1re consigne.
+            assert_eq!(s[1], frame(&[0x60, 0x02, 0x01, 0xE8, 0x01, 0x01, 0xE8, 0x01]));
+            assert_eq!(s[2], frame(&[0x60, 0x03]));
+        }
         d.set_fan_duty(2, 100).unwrap();
         d.set_fan_duty(1, 0).unwrap(); // sous le minimum : relevé à 20 %
         d.set_fan_duty(1, 5).unwrap(); // même consigne après relèvement : rien d'écrit
         d.set_fan_duty(0, 250).unwrap(); // au-dessus : 100 %
         assert!(d.set_fan_duty(3, 50).is_err());
+        assert!(d.fans_taken());
+        let n = sent.lock().len();
         d.release();
         let s = sent.lock();
-        assert_eq!(s[1], frame(&[0x62, 0x01, 0x01, 0x32, 0x00, 0x00]));
-        assert_eq!(s[2], frame(&[0x62, 0x01, 0x04, 0x00, 0x00, 0x64]));
-        assert_eq!(s[3], frame(&[0x62, 0x01, 0x02, 0x00, 0x14, 0x00]));
-        assert_eq!(s[4], frame(&[0x62, 0x01, 0x01, 0x64, 0x00, 0x00]));
-        // release : les 3 ventilateurs réglés repartent à 100 %.
-        assert_eq!(s.len(), 5 + 3);
-        assert_eq!(s[5], frame(&[0x62, 0x01, 0x01, 0x64, 0x00, 0x00]));
+        assert_eq!(s[3], frame(&[0x62, 0x01, 0x01, 0x32, 0x00, 0x00]));
+        assert_eq!(s[4], frame(&[0x62, 0x01, 0x04, 0x00, 0x00, 0x64]));
+        assert_eq!(s[5], frame(&[0x62, 0x01, 0x02, 0x00, 0x14, 0x00]));
+        assert_eq!(s[6], frame(&[0x62, 0x01, 0x01, 0x64, 0x00, 0x00]));
+        // Restauration : canal 1 -> 40 %, canal 2 -> 65 % ; canal 3 (absent à l'origine) : rien d'écrit.
+        assert_eq!(s.len(), n + 2);
+        assert_eq!(s[n], frame(&[0x62, 0x01, 0x01, 0x28, 0x00, 0x00]));
+        assert_eq!(s[n + 1], frame(&[0x62, 0x01, 0x02, 0x00, 0x41, 0x00]));
+    }
+
+    #[test]
+    fn release_writes_nothing_when_the_original_state_is_unreadable_and_never_100_percent() {
+        // Pas de réponse `67 02` : rien de capturé -> la restauration n'écrit rien (surtout pas 100 %).
+        let (d, sent) = dev(0x2006, vec![reply(2, &[])]);
+        let mut d = d.unwrap();
+        d.set_fan_duty(0, 30).unwrap();
+        let n = sent.lock().len();
+        d.release();
+        d.release_fans();
+        assert_eq!(sent.lock().len(), n);
+        // Statut tronqué (63 o) : ignoré aussi.
+        let mut short = status(&[(2, 40)]);
+        short.pop();
+        let (d, sent) = dev(0x2006, vec![reply(2, &[]), short]);
+        let mut d = d.unwrap();
+        d.set_fan_duty(0, 30).unwrap();
+        let n = sent.lock().len();
+        d.release();
+        assert_eq!(sent.lock().len(), n);
+    }
+
+    #[test]
+    fn release_skips_a_channel_already_back_at_its_original_duty_and_is_idempotent() {
+        let (d, sent) = dev(0x2006, vec![reply(2, &[]), status(&[(2, 50)])]);
+        let mut d = d.unwrap();
+        d.set_fan_duty(0, 50).unwrap();
+        let n = sent.lock().len();
+        d.release();
+        d.release();
+        assert_eq!(sent.lock().len(), n);
+        assert!(!d.fans_taken());
     }
 
     #[test]

@@ -182,6 +182,14 @@ impl NativeRgb for UniHub {
     }
 
     fn release(&mut self) {
+        self.release_fans();
+    }
+
+    fn fans_taken(&self) -> bool {
+        self.manual
+    }
+
+    fn release_fans(&mut self) {
         if self.manual {
             for g in 0..GROUPS as u8 {
                 // Meilleur effort : la fermeture ne doit jamais échouer.
@@ -372,5 +380,21 @@ mod tests {
         d.release();
         let f = feats.lock();
         assert_eq!(f.as_slice(), [vec![0xE0, 0x10, 0x31, 0x11], vec![0xE0, 0x10, 0x31, 0x22], vec![0xE0, 0x10, 0x31, 0x44], vec![0xE0, 0x10, 0x31, 0x88]]);
+    }
+
+    #[test]
+    fn open_colors_and_release_without_a_user_duty_write_no_fan_command() {
+        let (mut d, sent, feats) = dev(0xA100);
+        assert!(!d.fans_taken());
+        d.release_fans();
+        d.release();
+        assert!(sent.lock().is_empty() && feats.lock().is_empty());
+        d.set_fan_duty(0, 30).unwrap();
+        assert!(d.fans_taken());
+        d.release_fans();
+        assert!(!d.fans_taken(), "rendu une fois, plus rien à rendre");
+        let n = feats.lock().len();
+        d.release();
+        assert_eq!(feats.lock().len(), n, "idempotent");
     }
 }

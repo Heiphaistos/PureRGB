@@ -133,6 +133,25 @@ pub trait NativeRgb: Send {
 
     /// Remise en état d'origine à la fermeture (mode matériel / BIOS), si le protocole le permet.
     fn release(&mut self) {}
+
+    /// true si PureRGB a pris la main sur au moins un ventilateur de cet appareil (réglage manuel de l'utilisateur).
+    fn fans_taken(&self) -> bool {
+        false
+    }
+
+    /// Rend les ventilateurs pris par `set_fan_duty` (synchro carte mère, ou valeur capturée avant la prise de contrôle).
+    /// RÈGLE : n'écrit RIEN si l'utilisateur n'a rien réglé, et jamais une valeur devinée (surtout pas 100 %).
+    /// Les appareils dont l'état n'est pas lisible gardent l'implémentation vide : ils conservent le dernier réglage.
+    fn release_fans(&mut self) {}
+}
+
+/// Ce qui arrive aux ventilateurs d'un appareil natif à la fermeture (affiché dans la note de l'appareil).
+pub fn fan_restore_hint(family_id: &str) -> &'static str {
+    match family_id {
+        "lianli_uni" => "ventilateurs rendus à la synchro carte mère à la fermeture",
+        "nzxt_hue2" => "ventilateurs restaurés à leur valeur d'avant le réglage (lue sur l'appareil)",
+        _ => "ventilateurs : ce matériel garde le dernier réglage appliqué (état non lisible, rien n'est restauré)",
+    }
 }
 
 /// Une famille de protocole.

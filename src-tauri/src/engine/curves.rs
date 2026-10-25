@@ -59,6 +59,7 @@ impl CurveConfig {
 pub type CurveMap = HashMap<String, CurveConfig>;
 
 pub struct CurveEngine {
+    registry: SharedRegistry,
     curves: Arc<Mutex<CurveMap>>,
     last_duty: Mutex<HashMap<String, u8>>,
     running: AtomicBool,
@@ -71,6 +72,7 @@ impl CurveEngine {
         initial: CurveMap,
     ) -> Arc<Self> {
         let engine = Arc::new(CurveEngine {
+            registry: registry.clone(),
             curves: Arc::new(Mutex::new(initial)),
             last_duty: Mutex::new(HashMap::new()),
             running: AtomicBool::new(true),
@@ -89,8 +91,25 @@ impl CurveEngine {
     }
 
     pub fn set_curves(&self, curves: CurveMap) {
+        // Un canal dont la courbe disparaît (supprimée ou désactivée) est rendu : sans cela il resterait figé
+        // à la dernière consigne de la courbe (jusqu'à 100 %) sans plus personne pour le piloter.
+        let dropped: Vec<String> = self
+            .last_duty
+            .lock()
+            .keys()
+            .filter(|k| !curves.get(*k).is_some_and(|c| c.enabled))
+            .cloned()
+            .collect();
         *self.curves.lock() = curves;
         self.last_duty.lock().clear(); // forcer la ré-application
+        let mut reg = self.registry.lock();
+        for key in dropped {
+            if let Some((id, chan)) = key.rsplit_once('|') {
+                if let Ok(chan) = chan.parse::<u8>() {
+                    reg.release_fan(id, chan);
+                }
+            }
+        }
     }
 
     pub fn shutdown(&self) {
@@ -121,5 +140,81 @@ impl CurveEngine {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::backends::Backend;
+    use crate::core::registry::DeviceRegistry;
+    use crate::core::{Color, DeviceInfo};
+
+    /// Faux backend « mobo » : journalise les canaux rendus.
+    struct Fake(Arc<Mutex<Vec<(String, u8)>>>);
+
+    impl Backend for Fake {
+        fn name(&self) -> &'static str {
+            "mobo"
+        }
+        fn scan(&mut self) -> anyhow::Result<Vec<DeviceInfo>> {
+            Ok(Vec::new())
+        }
+        fn set_colors(&mut self, _: &str, _: &[Color]) -> anyhow::Result<()> {
+            Ok(())
+        }
+        fn release_fan(&mut self, local_id: &str, channel: u8) {
+            self.0.lock().push((local_id.to_string(), channel));
+        }
+        fn is_available(&self) -> bool {
+            true
+        }
+        fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+            self
+        }
+    }
+
+    fn curve(enabled: bool) -> CurveConfig {
+        CurveConfig {
+            sensor_id: "t".into(),
+            points: vec![CurvePoint { temp: 30.0, duty: 30 }, CurvePoint { temp: 80.0, duty: 100 }],
+            enabled,
+        }
+    }
+
+    #[test]
+    fn a_channel_whose_curve_is_removed_or_disabled_is_handed_back_and_others_are_not() {
+        let released = Arc::new(Mutex::new(Vec::new()));
+        let registry = DeviceRegistry::shared(vec![Box::new(Fake(released.clone()))]);
+        let engine = CurveEngine::start(registry, SensorHub::new(), CurveMap::new());
+        engine.shutdown();
+        // Trois canaux pilotés par une courbe (au moins une écriture réussie chacun).
+        for k in ["mobo:0|0", "mobo:0|1", "mobo:0|2"] {
+            engine.last_duty.lock().insert(k.into(), 100);
+        }
+        // Courbe du canal 0 supprimée, canal 1 désactivée, canal 2 inchangée.
+        let mut next = CurveMap::new();
+        next.insert("mobo:0|1".into(), curve(false));
+        next.insert("mobo:0|2".into(), curve(true));
+        engine.set_curves(next);
+        let mut got = released.lock().clone();
+        got.sort();
+        assert_eq!(got, vec![("0".to_string(), 0), ("0".to_string(), 1)]);
+        // Rien n'est rendu quand aucune courbe n'avait écrit.
+        released.lock().clear();
+        engine.set_curves(CurveMap::new());
+        assert!(released.lock().is_empty());
+    }
+
+    #[test]
+    fn a_curve_that_never_wrote_releases_nothing() {
+        let released = Arc::new(Mutex::new(Vec::new()));
+        let registry = DeviceRegistry::shared(vec![Box::new(Fake(released.clone()))]);
+        let mut initial = CurveMap::new();
+        initial.insert("mobo:0|0".into(), curve(true));
+        let engine = CurveEngine::start(registry, SensorHub::new(), initial);
+        engine.shutdown();
+        engine.set_curves(CurveMap::new());
+        assert!(released.lock().is_empty());
     }
 }

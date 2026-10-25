@@ -214,7 +214,12 @@ onUnmounted(() => clearInterval(timer));
           </div>
         </div>
       </div>
-      <p class="note">Minimum 20 % en manuel pour éviter l'arrêt d'une pompe AIO.</p>
+      <p class="note">
+        Minimum 20 % en manuel pour éviter l'arrêt d'une pompe AIO. PureRGB ne touche à un ventilateur que si vous appliquez
+        un réglage ou activez une courbe. À la fermeture : cartes mères rendues au BIOS, Lian Li rendus à la synchro carte mère,
+        NZXT restaurés à leur valeur d'avant ; les autres matériels (Thermaltake, Corsair Commander, liquidctl) gardent le dernier
+        réglage appliqué.
+      </p>
     </div>
   </section>
 </template>

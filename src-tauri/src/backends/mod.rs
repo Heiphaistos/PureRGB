@@ -23,6 +23,9 @@ pub trait Backend: Send {
         anyhow::bail!("contrôle ventilateur non supporté par ce backend")
     }
 
+    /// Rend un canal que PureRGB pilotait (courbe supprimée/désactivée). Par défaut : rien (le matériel garde sa consigne).
+    fn release_fan(&mut self, _local_id: &str, _channel: u8) {}
+
     /// true si le backend est opérationnel (ex: OpenRGB connecté).
     fn is_available(&self) -> bool;
 

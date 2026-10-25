@@ -170,6 +170,8 @@ fn cleanup_before_exit(app: &tauri::AppHandle) {
         for b in reg.backends_mut() {
             if let Some(m) = b.as_any_mut().downcast_mut::<MoboFanBackend>() {
                 m.release_all();
+            } else if let Some(h) = b.as_any_mut().downcast_mut::<HidBackend>() {
+                h.release_fans_all(); // hubs natifs : synchro carte mère / valeur d'avant ; rien si non réglés
             }
         }
     }

@@ -141,4 +141,14 @@ mod tests {
         assert_eq!(&s[2][1..8], &[0x32, 0x52, 0x02, 0x18, 8, 9, 7]);
         assert!(s.iter().all(|f| f.len() == REPORT));
     }
+
+    #[test]
+    fn open_and_release_never_write_a_fan_speed() {
+        let (mut d, sent) = dev();
+        assert!(!d.fans_taken());
+        d.release_fans();
+        d.release();
+        let s = sent.lock();
+        assert_eq!(s.as_slice(), [frame(&[0xFE, 0x33])], "seule la trame d'init part ; état non lisible -> rien restauré");
+    }
 }

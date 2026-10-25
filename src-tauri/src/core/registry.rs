@@ -194,6 +194,18 @@ impl DeviceRegistry {
         backend.set_fan_duty(&local, channel, percent.min(100))
     }
 
+    /// Rend un canal que PureRGB pilotait (courbe retirée). Sans effet si le backend ne sait pas le rendre.
+    pub fn release_fan(&mut self, id: &str, channel: u8) {
+        let Ok((bname, local)) = self.split_id(id) else { return };
+        if crate::gamemode::backend_suspended(bname) {
+            return;
+        }
+        let (bname, local) = (bname.to_string(), local.to_string());
+        if let Some(b) = self.backends.iter_mut().find(|b| b.name() == bname) {
+            b.release_fan(&local, channel);
+        }
+    }
+
     pub fn backend_status(&self) -> Vec<(String, bool)> {
         self.backends
             .iter()

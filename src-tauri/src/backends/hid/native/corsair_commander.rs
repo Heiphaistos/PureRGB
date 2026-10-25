@@ -131,4 +131,13 @@ mod tests {
         assert!(d.set_colors(&[Color::BLACK]).is_err());
         assert!(d.set_colors(&[]).is_ok());
     }
+
+    #[test]
+    fn open_and_release_never_write_a_fan_speed() {
+        let (d, sent) = dev(vec![vec![1u8; 16]]);
+        let mut d = d.unwrap();
+        d.release_fans();
+        d.release();
+        assert_eq!(sent.lock().as_slice(), [frame(&[CMD_FIRMWARE])], "seule la lecture firmware part");
+    }
 }

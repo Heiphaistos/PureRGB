@@ -6,12 +6,16 @@ use crate::backends::Backend;
 use crate::core::{Color, DeviceInfo, DeviceType, FanChannel};
 use crate::sensors::{Sensor, SensorHub};
 use anyhow::{bail, Context, Result};
+use std::collections::HashSet;
 use std::sync::Arc;
 
 pub struct MoboFanBackend {
     hub: Arc<SensorHub>,
     /// index canal → (id capteur Control, nom affiché).
     channels: Vec<(String, String)>,
+    /// Canaux écrits par PureRGB depuis le dernier retour au BIOS : seuls ceux-là sont rendus (LHM mémorise l'état
+    /// d'origine à la première écriture logicielle et le restaure sur `reset`).
+    touched: HashSet<String>,
 }
 
 impl MoboFanBackend {
@@ -19,13 +23,14 @@ impl MoboFanBackend {
         MoboFanBackend {
             hub,
             channels: Vec::new(),
+            touched: HashSet::new(),
         }
     }
 
-    /// Rend la main au BIOS sur tous les canaux pilotés (appel au quit).
-    pub fn release_all(&self) {
-        for (id, _) in &self.channels {
-            let _ = self.hub.reset_control(id);
+    /// Rend la main au BIOS sur les canaux que PureRGB a réglés (appel au quit / mode jeu) ; les autres ne sont pas touchés.
+    pub fn release_all(&mut self) {
+        for id in self.touched.drain() {
+            let _ = self.hub.reset_control(&id);
         }
     }
 
@@ -97,7 +102,18 @@ impl Backend for MoboFanBackend {
             .channels
             .get(channel as usize)
             .with_context(|| format!("canal carte mère {channel} inconnu"))?;
-        self.hub.set_control(id, percent)
+        let id = id.clone();
+        self.hub.set_control(&id, percent)?;
+        self.touched.insert(id);
+        Ok(())
+    }
+
+    fn release_fan(&mut self, _local_id: &str, channel: u8) {
+        if let Some((id, _)) = self.channels.get(channel as usize) {
+            if self.touched.remove(id) {
+                let _ = self.hub.reset_control(id);
+            }
+        }
     }
 
     fn is_available(&self) -> bool {
@@ -154,5 +170,45 @@ mod tests {
         let gpu = sensor("/nvidiagpu/0/control/0", "NVIDIA GeForce RTX", "GPU Fan", "Control", 60.0, true);
         assert!(mobo.id.starts_with("/lpc/"));
         assert!(!gpu.id.starts_with("/lpc/"));
+    }
+
+    fn backend() -> MoboFanBackend {
+        let mut b = MoboFanBackend::new(SensorHub::new());
+        b.channels = vec![("/lpc/a/control/0".into(), "Fan #1".into()), ("/lpc/a/control/1".into(), "Fan #2".into())];
+        b
+    }
+
+    fn sent(b: &MoboFanBackend) -> Vec<(String, String)> {
+        b.hub.sent.lock().iter().map(|v| (v["cmd"].as_str().unwrap_or("").to_string(), v["id"].as_str().unwrap_or("").to_string())).collect()
+    }
+
+    #[test]
+    fn untouched_channels_are_never_written_nor_reset() {
+        let mut b = backend();
+        b.release_all();
+        b.release_fan("0", 0);
+        assert!(sent(&b).is_empty(), "aucune commande vers sensord sans réglage de l'utilisateur");
+    }
+
+    #[test]
+    fn only_the_channel_set_by_the_user_is_handed_back_to_the_bios_once() {
+        let mut b = backend();
+        b.set_fan_duty("0", 1, 60).unwrap();
+        b.release_all();
+        b.release_all();
+        let s = sent(&b);
+        assert_eq!(s, vec![("set".to_string(), "/lpc/a/control/1".to_string()), ("reset".to_string(), "/lpc/a/control/1".to_string())]);
+        assert_eq!(b.hub.sent.lock()[0]["value"], 60);
+    }
+
+    #[test]
+    fn release_fan_hands_back_one_channel_only() {
+        let mut b = backend();
+        b.set_fan_duty("0", 0, 40).unwrap();
+        b.set_fan_duty("0", 1, 50).unwrap();
+        b.release_fan("0", 0);
+        b.release_all();
+        let resets: Vec<String> = sent(&b).into_iter().filter(|(c, _)| c == "reset").map(|(_, id)| id).collect();
+        assert_eq!(resets, vec!["/lpc/a/control/0".to_string(), "/lpc/a/control/1".to_string()]);
     }
 }

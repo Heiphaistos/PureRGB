@@ -59,6 +59,8 @@ pub struct HidBackend {
     native_enabled: bool,
     entries: HashMap<String, Entry>,
     open_drivers: HashMap<String, DriverInstance>,
+    /// Pilotes écartés par un re-scan alors qu'ils tiennent encore des ventilateurs : gardés pour les rendre à la fermeture.
+    retired: Vec<Box<dyn native::NativeRgb>>,
     /// Tailles de zones choisies par l'utilisateur (clé « appareil|zone »), appliquées aux zones redimensionnables.
     zone_sizes: HashMap<String, u32>,
 }
@@ -79,6 +81,7 @@ impl HidBackend {
             native_enabled,
             entries: HashMap::new(),
             open_drivers: HashMap::new(),
+            retired: Vec::new(),
             zone_sizes: HashMap::new(),
         }
     }
@@ -93,6 +96,30 @@ impl HidBackend {
         self.zone_sizes.insert(key, size);
     }
 
+    /// Rend les ventilateurs pris par PureRGB (fermeture de l'app). N'écrit rien pour un appareil non réglé.
+    pub fn release_fans_all(&mut self) {
+        for d in self.open_drivers.values_mut() {
+            if let DriverInstance::Native(n) = d {
+                n.release_fans();
+            }
+        }
+        for n in &mut self.retired {
+            n.release_fans();
+        }
+        self.retired.clear();
+    }
+
+    /// Vide les pilotes ouverts ; ceux qui tiennent des ventilateurs sont gardés pour la restauration finale.
+    fn retire_drivers(&mut self) {
+        for (_, d) in self.open_drivers.drain() {
+            if let DriverInstance::Native(n) = d {
+                if n.fans_taken() {
+                    self.retired.push(n);
+                }
+            }
+        }
+    }
+
     pub fn set_native_enabled(&mut self, enabled: bool) {
         self.native_enabled = enabled;
         if !enabled {
@@ -104,6 +131,10 @@ impl HidBackend {
                 }
             }
             self.open_drivers.clear();
+            for n in &mut self.retired {
+                n.release();
+            }
+            self.retired.clear();
         }
     }
 
@@ -257,7 +288,7 @@ impl Backend for HidBackend {
         }
 
         self.entries.clear();
-        self.open_drivers.clear();
+        self.retire_drivers();
         let mut devices = Vec::new();
         let mut counters: HashMap<(u16, u16), u32> = HashMap::new();
 
@@ -293,7 +324,8 @@ impl Backend for HidBackend {
                         .collect(),
                     native_enabled,
                     if native_enabled {
-                        format!("driver natif expérimental (famille {}, d'après {})", fam.id, fam.doc)
+                        let hint = if m.fans > 0 { format!(" ; {}", native::fan_restore_hint(fam.id)) } else { String::new() };
+                        format!("driver natif expérimental (famille {}, d'après {}){hint}", fam.id, fam.doc)
                     } else {
                         "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
                     },

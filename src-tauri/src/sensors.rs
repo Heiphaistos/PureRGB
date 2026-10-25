@@ -50,6 +50,9 @@ pub struct SensorHub {
     child: Mutex<Option<Child>>,
     stdin: Mutex<Option<std::process::ChildStdin>>,
     resource_dir: Mutex<Option<PathBuf>>,
+    /// Tests : commandes qui auraient été envoyées à sensord (pas de processus).
+    #[cfg(test)]
+    pub(crate) sent: Mutex<Vec<serde_json::Value>>,
 }
 
 impl SensorHub {
@@ -170,6 +173,17 @@ impl SensorHub {
 
     /// Envoie une commande JSON à sensord (une ligne).
     fn send(&self, payload: &serde_json::Value) -> Result<()> {
+        #[cfg(test)]
+        {
+            self.sent.lock().push(payload.clone());
+            return Ok(());
+        }
+        #[cfg(not(test))]
+        self.send_to_child(payload)
+    }
+
+    #[cfg(not(test))]
+    fn send_to_child(&self, payload: &serde_json::Value) -> Result<()> {
         use std::io::Write;
         let mut guard = self.stdin.lock();
         let stdin = guard.as_mut().context("sensord non démarré")?;

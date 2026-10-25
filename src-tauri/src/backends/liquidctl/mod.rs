@@ -70,13 +70,39 @@ struct Entry {
     description: String,
     channels: Vec<Channel>,
     has_lcd: bool,
+    /// liquidctl écrirait des consignes sur les canaux que l'utilisateur n'a pas réglés (voir `writes_speeds_on_init`) :
+    /// le réglage manuel est refusé pour ne jamais forcer un ventilateur ou une pompe.
+    speed_locked: bool,
+}
+
+/// Pilotes liquidctl dont `initialize` (ou chaque `set`) réécrit TOUS les canaux ventilateur/pompe, ceux non réglés
+/// retombant à 100 % (documenté dans le code de liquidctl : « Unconfigured fan channels may default to 100% duty »),
+/// ou change le mode de pompe, ou réinitialise les profils :
+/// Hydro Platinum / Pro XT (hydro_platinum.py), Hydro Pro (asetek_pro.py), H110i GT (coolit.py), Kraken X2 / M22 (kraken2.py,
+/// profils remis à zéro), Asetek 690LC « legacy » (asetek.py), MSI CoreLiquid (msi.py), Lian Li Uni (lianli_uni.py, synchro PWM).
+fn writes_speeds_on_init(description: &str) -> bool {
+    let d = description.to_lowercase();
+    (d.contains("hydro h") && (d.contains("platinum") || d.contains(" pro")))
+        || ["h110i gt", "kraken x (x42", "kraken m22", "assuming nzxt kraken x", "coreliquid", "lian li uni"]
+            .iter()
+            .any(|k| d.contains(k))
+}
+
+/// Asetek 690LC legacy : `status` lui-même réécrit pompe et ventilateur (à 100 % par défaut) -> jamais appelé.
+fn writes_speeds_on_status(description: &str) -> bool {
+    description.to_lowercase().contains("assuming nzxt kraken x")
+}
+
+fn device_key(bus: &str, address: &str) -> String {
+    format!("{bus}|{address}")
 }
 
 pub struct LiquidctlBackend {
     exe: Option<PathBuf>,
     resource_dir: Option<PathBuf>,
     entries: Vec<Entry>,
-    initialized: bool,
+    /// Appareils (`bus|adresse`) déjà initialisés cette session.
+    initialized: std::collections::HashSet<String>,
     last_install_failure: Option<(std::time::Instant, String)>,
 }
 
@@ -86,7 +112,7 @@ impl LiquidctlBackend {
             exe: None,
             resource_dir: None,
             entries: Vec::new(),
-            initialized: false,
+            initialized: Default::default(),
             last_install_failure: None,
         }
     }
@@ -226,16 +252,16 @@ impl LiquidctlBackend {
         };
         let version = Self::run_diag(&exe, &["--version"]);
         let list = Self::run_diag(&exe, &["list", "--json"]);
-        let initialize = if self.initialized {
-            Ok("déjà initialisé cette session".to_string())
-        } else {
-            let r = Self::run_diag(&exe, &["initialize", "all"]);
-            if r.is_ok() {
-                self.initialized = true;
-            }
-            r
+        let listed: Vec<ListedDevice> = list.as_deref().ok().and_then(|l| serde_json::from_str(l.trim()).ok()).unwrap_or_default();
+        let initialize = match self.init_safe(&listed) {
+            (done, 0) => Ok(format!("{done} appareil(s) initialisé(s)")),
+            (done, skipped) => Ok(format!("{done} initialisé(s), {skipped} laissé(s) intact(s) : leur initialisation écrirait des vitesses")),
         };
-        let status = Self::run_diag(&exe, &["status", "--json"]);
+        let status = if listed.iter().any(|d| writes_speeds_on_status(&d.description)) {
+            Ok("non lu : le statut de cet appareil réécrit pompe et ventilateur".to_string())
+        } else {
+            Self::run_diag(&exe, &["status", "--json"])
+        };
         LiquidctlDiag {
             exe_path: Some(exe.display().to_string()),
             version,
@@ -243,6 +269,48 @@ impl LiquidctlBackend {
             initialize,
             status,
         }
+    }
+
+    /// `initialize` appareil par appareil, jamais `initialize all` : les pilotes qui écrivent des vitesses sont laissés intacts.
+    /// Rend (initialisés maintenant, laissés intacts).
+    fn init_safe(&mut self, listed: &[ListedDevice]) -> (usize, usize) {
+        let (mut done, mut skipped) = (0, 0);
+        for d in listed {
+            let (Some(bus), Some(address)) = (&d.bus, &d.address) else { continue };
+            if writes_speeds_on_init(&d.description) {
+                skipped += 1;
+                continue;
+            }
+            let key = device_key(bus, address);
+            if self.initialized.contains(&key) {
+                continue;
+            }
+            match self.run(&["--bus", bus.as_str(), "--address", address.as_str(), "initialize"]) {
+                Ok(_) => done += 1,
+                Err(e) => log::warn!("liquidctl initialize {}: {e:#}", d.description),
+            }
+            self.initialized.insert(key); // une seule tentative par session, même en échec
+        }
+        (done, skipped)
+    }
+
+    /// Statut de chaque appareil. Un appareil dont le statut écrit des vitesses est sauté (aucun canal, lecture seule vide).
+    fn read_statuses(&self, listed: &[ListedDevice]) -> Result<Vec<DeviceStatus>> {
+        if !listed.iter().any(|d| writes_speeds_on_status(&d.description)) {
+            return serde_json::from_str(self.run(&["status", "--json"])?.trim()).context("parse liquidctl status");
+        }
+        let mut all = Vec::new();
+        for d in listed.iter().filter(|d| !writes_speeds_on_status(&d.description)) {
+            let (Some(bus), Some(address)) = (&d.bus, &d.address) else { continue };
+            match self.run(&["--bus", bus.as_str(), "--address", address.as_str(), "status", "--json"]) {
+                Ok(out) => match serde_json::from_str::<Vec<DeviceStatus>>(out.trim()) {
+                    Ok(mut v) => all.append(&mut v),
+                    Err(e) => log::warn!("parse statut {}: {e}", d.description),
+                },
+                Err(e) => log::warn!("statut {}: {e:#}", d.description),
+            }
+        }
+        Ok(all)
     }
 
     fn device_args<'a>(entry: &'a Entry) -> [&'a str; 4] {
@@ -354,18 +422,12 @@ impl Backend for LiquidctlBackend {
             return Ok(Vec::new());
         }
 
-        // initialize all : requis après boot pour la plupart des appareils
-        // (active le rapport de status). Une seule fois par session.
-        if !self.initialized {
-            if let Err(e) = self.run(&["initialize", "all"]) {
-                log::warn!("liquidctl initialize: {e:#}");
-            }
-            self.initialized = true;
-        }
+        // initialize appareil par appareil (requis après boot pour la plupart : active le rapport de status), une fois par
+        // session, SAUF les pilotes qui écriraient des vitesses (voir `writes_speeds_on_init`) : rien n'est écrit tant que
+        // l'utilisateur n'a rien réglé.
+        self.init_safe(&listed);
 
-        let statuses: Vec<DeviceStatus> =
-            serde_json::from_str(self.run(&["status", "--json"])?.trim())
-                .context("parse liquidctl status")?;
+        let statuses = self.read_statuses(&listed)?;
 
         let mut devices = Vec::new();
         for d in &listed {
@@ -398,6 +460,7 @@ impl Backend for LiquidctlBackend {
                 DeviceType::Hub
             };
 
+            let speed_locked = writes_speeds_on_init(&d.description);
             let idx = self.entries.len();
             self.entries.push(Entry {
                 bus: bus.clone(),
@@ -405,6 +468,7 @@ impl Backend for LiquidctlBackend {
                 description: d.description.clone(),
                 channels: channels.clone(),
                 has_lcd,
+                speed_locked,
             });
 
             devices.push(DeviceInfo {
@@ -425,14 +489,18 @@ impl Backend for LiquidctlBackend {
                         rpm: c.rpm,
                     })
                     .collect(),
-                controllable: !channels.is_empty(),
+                controllable: !channels.is_empty() && !speed_locked,
                 has_lcd,
                 modes: Vec::new(),
                 active_mode: -1,
-                note: if has_lcd {
-                    "ventilateurs/pompe + écran LCD via liquidctl — RGB via OpenRGB".into()
+                note: if speed_locked {
+                    "ventilateurs/pompe en lecture seule : liquidctl réécrit tous les canaux (non réglés = 100 %) à chaque consigne, \
+                     PureRGB ne les touche donc pas — RGB via OpenRGB"
+                        .into()
+                } else if has_lcd {
+                    "ventilateurs/pompe + écran LCD via liquidctl (garde le dernier réglage appliqué, rien n'est restauré) — RGB via OpenRGB".into()
                 } else {
-                    "ventilateurs/pompe via liquidctl — RGB via OpenRGB".into()
+                    "ventilateurs/pompe via liquidctl (garde le dernier réglage appliqué, rien n'est restauré) — RGB via OpenRGB".into()
                 },
             });
         }
@@ -446,6 +514,9 @@ impl Backend for LiquidctlBackend {
     fn set_fan_duty(&mut self, local_id: &str, channel: u8, percent: u8) -> Result<()> {
         let idx = self.entry_index(local_id)?;
         let entry = self.entries[idx].clone();
+        if entry.speed_locked {
+            bail!("{} : réglage manuel désactivé, liquidctl forcerait à 100 % les canaux non réglés", entry.description);
+        }
         let ch = entry
             .channels
             .get(channel as usize)
@@ -465,5 +536,62 @@ impl Backend for LiquidctlBackend {
 
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn listed(desc: &str, n: u8) -> ListedDevice {
+        ListedDevice { description: desc.into(), bus: Some("hid".into()), address: Some(format!("addr{n}")) }
+    }
+
+    #[test]
+    fn drivers_that_force_speeds_are_recognised_and_benign_ones_are_not() {
+        for d in [
+            "Corsair Hydro H100i Platinum",
+            "Corsair Hydro H115i Pro XT",
+            "Corsair Hydro H150i Pro",
+            "Corsair H110i GT",
+            "NZXT Kraken X (X42, X52, X62 or X72)",
+            "NZXT Kraken M22",
+            "Asetek 690LC (assuming NZXT Kraken X)",
+            "MSI MPG Coreliquid K360",
+            "Lian Li Uni SL",
+        ] {
+            assert!(writes_speeds_on_init(d), "{d}");
+        }
+        for d in ["NZXT Kraken X (X53, X63 or X73)", "NZXT Kraken Z (Z53, Z63 or Z73)", "Corsair Hydro H100i v2", "Corsair H115i RGB Platinum", "NZXT Smart Device V2", "Corsair Commander Pro"] {
+            assert!(!writes_speeds_on_init(d), "{d}");
+        }
+        assert!(writes_speeds_on_status("Asetek 690LC (assuming NZXT Kraken X)"));
+        assert!(!writes_speeds_on_status("Corsair Hydro H100i Platinum"));
+    }
+
+    #[test]
+    fn speed_locked_device_refuses_manual_duty_without_running_liquidctl() {
+        let mut b = LiquidctlBackend::new();
+        b.entries.push(Entry {
+            bus: "hid".into(),
+            address: "a".into(),
+            description: "Corsair Hydro H100i Platinum".into(),
+            channels: vec![Channel { lc_name: "fan1".into(), display: "Fan 1".into(), rpm: None }],
+            has_lcd: false,
+            speed_locked: true,
+        });
+        let e = b.set_fan_duty("0", 0, 50).unwrap_err().to_string();
+        assert!(e.contains("100 %"), "{e}");
+    }
+
+    #[test]
+    fn init_safe_never_initializes_a_speed_writing_driver_and_never_uses_initialize_all() {
+        // Sans liquidctl.exe, `run` échoue : on vérifie seulement quels appareils sont tentés (clé marquée) ou sautés.
+        let mut b = LiquidctlBackend::new();
+        let list = [listed("Corsair Hydro H100i Platinum", 1), listed("NZXT Smart Device V2", 2), listed("Asetek 690LC (assuming NZXT Kraken X)", 3)];
+        let (done, skipped) = b.init_safe(&list);
+        assert_eq!((done, skipped), (0, 2), "2 sautés, le Smart Device tenté (échec faute d'exe)");
+        assert_eq!(b.initialized.len(), 1);
+        assert!(b.initialized.contains("hid|addr2"));
     }
 }
