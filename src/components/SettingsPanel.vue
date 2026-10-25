@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
+import CommunityFeedback from "./CommunityFeedback.vue";
+import FeedbackButton from "./FeedbackButton.vue";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { reactive, ref, watch } from "vue";
 import type { CaptureFileInfo, HardwareDiagnostics, Settings } from "../types";
@@ -514,10 +516,12 @@ async function save() {
             </td>
             <td>
               <button v-if="!d.recognized" @click="openCaptureWarning(d)">Capturer le protocole USB</button>
+              <FeedbackButton :vid="d.vid" :pid="d.pid" :manufacturer="d.manufacturer" :product="d.product" />
             </td>
           </tr>
         </table>
         <p v-if="hidRows().length === 0" class="hint">Aucun appareil dans ce filtre.</p>
+        <CommunityFeedback />
 
         <div v-if="captureStep !== 'idle'" class="capture-modal">
           <div class="capture-modal-inner">

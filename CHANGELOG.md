@@ -1,9 +1,13 @@
 # Journal des modifications
 
-## 0.44.0 (en préparation)
+## 0.44.0
 
 - Mode jeu (activé par défaut, réglable dans Réglages > Général) : quand un jeu protégé par un anti-cheat est détecté (liste versionnée `src-tauri/data/gamemode_anticheat.json` : EasyAntiCheat, BattlEye, Vanguard, FACEIT, EA Javelin, GameGuard, Call of Duty, plus vos propres exécutables), PureRGB arrête l'OpenRGB qu'il a lancé, sensord (capteurs, ventilateurs carte mère rendus au BIOS), l'accès SMBus/RAM (poignée PawnIO fermée), l'envoi aux mini-écrans USB et les pilotes HID natifs (option « garder l'éclairage USB »). Bandeau et notification en français ; reprise automatique 10 s après la fermeture du jeu. Le pilote PawnIO n'est jamais déchargé ni désinstallé.
 - Réglages : texte d'honnêteté (le mode jeu réduit le risque sans garantir l'absence de bannissement, seule la fermeture de PureRGB le supprime) et bouton « Quitter PureRGB proprement ».
+- Catalogue communautaire : bouton « Signaler / confirmer » sur chaque périphérique USB du diagnostic et dans le panneau d'un appareil. L'utilisateur choisit « Ça marche », « Marche en partie » ou « Ça ne marche pas » et peut ajouter une note de 280 caractères au plus. Un aperçu affiche le contenu EXACT envoyé (VID:PID, noms USB, famille de pilote, version de l'app, résultat, note) et l'envoi exige une case de consentement cochée à chaque fois. Ni nom d'utilisateur, ni chemin, ni numéro de série, ni IP, ni capture USB.
+- Nouvel écran « Retours de la communauté » (Réglages, diagnostic) : comptes anonymes par appareil (« confirmé fonctionnel par N utilisateurs »), en lecture seule, mis en cache pour fonctionner hors-ligne. Les réponses aberrantes du serveur sont ignorées.
+- Serveur de télémétrie : routes POST/GET `/device-feedback` (schéma strict, limitation de débit par IP hachée, un vote par IP hachée + appareil + version, table `device_feedback`).
+
 ## 0.43.0
 
 - OpenRGB : un OpenRGB.exe résiduel de NOTRE installation (sous %ProgramFiles%\PureRGB) qui tient le port du serveur sans répondre au protocole est maintenant terminé puis relancé. Un OpenRGB de l'utilisateur ou tout autre programme n'est jamais touché. Le diagnostic nomme le processus qui tient le port et son ancienneté.

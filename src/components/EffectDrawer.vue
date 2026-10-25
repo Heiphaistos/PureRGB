@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Color, DeviceInfo, EffectConfig } from "../types";
 import EffectPanel from "./EffectPanel.vue";
+import FeedbackButton from "./FeedbackButton.vue";
+import { usbIdOf } from "../communityFeedback";
 
 const props = defineProps<{
   open: boolean;
@@ -25,6 +27,7 @@ const emit = defineEmits<{
 }>();
 
 const panelRef = ref<HTMLElement | null>(null);
+const usb = computed(() => (props.device ? usbIdOf(props.device.id) : null));
 
 function onKey(e: KeyboardEvent) {
   if (e.key === "Escape" && props.open) emit("close");
@@ -79,6 +82,9 @@ function onRefresh() {
         @toast="onToast"
         @refresh="onRefresh"
       />
+      <div v-if="device && usb" class="drawer-feedback">
+        <FeedbackButton :vid="usb.vid" :pid="usb.pid" :manufacturer="device.vendor" :product="device.name" />
+      </div>
     </aside>
   </Transition>
 </template>
@@ -90,6 +96,11 @@ function onRefresh() {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
   z-index: 40;
+}
+
+.drawer-feedback {
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
 }
 
 .effect-drawer {
