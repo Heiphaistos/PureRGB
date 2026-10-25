@@ -136,7 +136,8 @@ impl HidBackend {
                 product,
                 recognized: known::find_known(vid, pid).is_some()
                     || known::find_vendor(vid).is_some()
-                    || known_remote::is_known_remote(vid, pid),
+                    || known_remote::is_known_remote(vid, pid)
+                    || crate::rgb_catalog::known_without_rgb(vid, pid).is_some(),
                 has_native_driver: known::find_known(vid, pid).and_then(|k| k.native_driver).is_some()
                     || native::probe(vid, pid).is_some(),
             })
