@@ -1,5 +1,6 @@
 //! Commandes des appareils : scan, tailles de zones, effets, modes matériels, ventilateurs.
 
+use crate::backends::hid::HidBackend;
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::core::DeviceInfo;
 use crate::engine::effects::EffectConfig;
@@ -61,11 +62,21 @@ pub(crate) fn apply_saved_zone_sizes(
     resized
 }
 
+/// Transmet les tailles de zones enregistrées au backend HID natif (appliquées pendant son scan).
+fn set_hid_zone_sizes(reg: &mut crate::core::registry::DeviceRegistry, sizes: &std::collections::HashMap<String, u32>) {
+    for b in reg.backends_mut() {
+        if let Some(hid) = b.as_any_mut().downcast_mut::<HidBackend>() {
+            hid.set_zone_sizes(sizes.clone());
+        }
+    }
+}
+
 /// Scan complet + ré-application des tailles de zones sauvegardées.
 pub(crate) fn scan_with_zone_sizes(
     reg: &mut crate::core::registry::DeviceRegistry,
     sizes: &std::collections::HashMap<String, u32>,
 ) -> Vec<DeviceInfo> {
+    set_hid_zone_sizes(reg, sizes);
     let devices = reg.scan_all();
     if apply_saved_zone_sizes(reg, sizes) {
         return reg.scan_all();
@@ -94,8 +105,8 @@ pub(crate) fn resize_zone(
     let (backend, local) = device_id
         .split_once(':')
         .ok_or_else(|| format!("id invalide: {device_id}"))?;
-    if backend != "openrgb" {
-        return Err("zones redimensionnables uniquement via OpenRGB".into());
+    if backend != "openrgb" && backend != "hid" {
+        return Err("zones redimensionnables uniquement via OpenRGB ou un driver natif".into());
     }
     let local = local.to_string();
     let key = {
@@ -122,7 +133,12 @@ pub(crate) fn resize_zone(
         let mut reg = state.registry.lock();
         let mut done = false;
         for b in reg.backends_mut() {
-            if b.name() == "openrgb" {
+            if backend == "hid" {
+                if let Some(hid) = b.as_any_mut().downcast_mut::<HidBackend>() {
+                    hid.set_zone_size(key.clone(), new_size);
+                    done = true;
+                }
+            } else if b.name() == "openrgb" {
                 if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
                     orgb.resize_zone(&local, zone, new_size)
                         .map_err(|e| format!("{e:#}"))?;
@@ -131,7 +147,7 @@ pub(crate) fn resize_zone(
             }
         }
         if !done {
-            return Err("backend openrgb indisponible".into());
+            return Err("backend indisponible".into());
         }
         reg.scan_all();
     }

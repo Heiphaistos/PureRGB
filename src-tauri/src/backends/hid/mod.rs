@@ -60,6 +60,17 @@ pub struct HidBackend {
     native_enabled: bool,
     entries: HashMap<String, Entry>,
     open_drivers: HashMap<String, DriverInstance>,
+    /// Tailles de zones choisies par l'utilisateur (clé « appareil|zone »), appliquées aux zones redimensionnables.
+    zone_sizes: HashMap<String, u32>,
+}
+
+/// Applique les tailles enregistrées aux zones redimensionnables du modèle (bornées par leurs limites).
+fn apply_zone_sizes(model: &mut native::Model, sizes: &HashMap<String, u32>) {
+    for z in model.zones.iter_mut().filter(|z| z.resizable()) {
+        if let Some(n) = sizes.get(&format!("{}|{}", model.name, z.name)) {
+            z.led_count = (*n).clamp(z.leds_min, z.leds_max);
+        }
+    }
 }
 
 impl HidBackend {
@@ -69,7 +80,18 @@ impl HidBackend {
             native_enabled,
             entries: HashMap::new(),
             open_drivers: HashMap::new(),
+            zone_sizes: HashMap::new(),
         }
+    }
+
+    /// Remplace les tailles de zones enregistrées (prises en compte au prochain scan).
+    pub fn set_zone_sizes(&mut self, sizes: HashMap<String, u32>) {
+        self.zone_sizes = sizes;
+    }
+
+    /// Mémorise la taille d'une zone ; l'appelant relance un scan.
+    pub fn set_zone_size(&mut self, key: String, size: u32) {
+        self.zone_sizes.insert(key, size);
     }
 
     pub fn set_native_enabled(&mut self, enabled: bool) {
@@ -217,7 +239,10 @@ impl Backend for HidBackend {
         let mut counters: HashMap<(u16, u16), u32> = HashMap::new();
 
         for ((vid, pid, _serial), path) in seen {
-            let nat = native::probe(vid, pid);
+            let mut nat = native::probe(vid, pid);
+            if let Some((_, m)) = nat.as_mut() {
+                apply_zone_sizes(m, &self.zone_sizes);
+            }
             let (name, dtype, driver) = if let Some((_, m)) = &nat {
                 (m.name.clone(), m.device_type, None)
             } else if let Some(k) = known::find_known(vid, pid) {
@@ -370,5 +395,26 @@ impl Backend for HidBackend {
 
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
         self
+    }
+}
+
+#[cfg(test)]
+mod size_tests {
+    use super::*;
+
+    #[test]
+    fn saved_sizes_apply_only_to_resizable_zones_within_bounds() {
+        let (_, mut m) = native::probe(0x1462, 0x7D93).unwrap();
+        let sizes: HashMap<String, u32> = [
+            (format!("{}|JRAINBOW 1", m.name), 40),
+            (format!("{}|JRAINBOW 2", m.name), 9999),
+            (format!("{}|JRGB 1", m.name), 12),
+        ]
+        .into();
+        apply_zone_sizes(&mut m, &sizes);
+        let n = |name: &str| m.zones.iter().find(|z| z.name == name).unwrap().led_count;
+        assert_eq!(n("JRAINBOW 1"), 40);
+        assert_eq!(n("JRAINBOW 2"), 75);
+        assert_eq!(n("JRGB 1"), 1);
     }
 }

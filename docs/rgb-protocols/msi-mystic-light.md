@@ -89,6 +89,13 @@ puis nouvel état) comme le fait MSI Center ; `save_data` = 1 pour persister dan
   (JARGB1=0, JARGB2=1, JARGB3=2, JAF=0, JPIPE1=0) ; `nb_leds` par défaut 240. Redimensionner une zone = renvoyer le tableau de config [V].
 - 720 octets de couleur = 240 LED max par rapport.
 
+## Implémentation PureRGB : nombre de LEDs par connecteur ARGB (limite du mode « par zone »)
+
+- Le driver natif (`msi_mystic.rs`) n'implémente que le mode par zone (paquet 185, effet statique) : **une seule couleur par connecteur**. Le rapport 0x53 (LED à LED) n'est PAS implémenté (table `board_config` par PID absente, offsets d'en-tête non validés).
+- JPIPE 1/2, JRAINBOW 1/2 et JCORSAIR sont exposés avec un nombre de LEDs réglable par l'utilisateur (1 à 75, limite constructeur du catalogue), enregistré dans les réglages (`zone_sizes`, clé « MSI Mystic Light (carte mère)|JRAINBOW 1 »). Ce réglage ne change PAS les octets envoyés : il dimensionne seulement le tampon d'effet.
+- Comme la trame ne porte qu'une couleur par connecteur, la couleur de la 1re LED du tampon est appliquée à tout le connecteur, hub et ventilateurs chaînés compris. Un dégradé ou un arc-en-ciel spatial sur le ruban est donc impossible dans ce mode ; seul un effet qui varie dans le temps s'y voit.
+- `cycle_or_led_num` (octet après `ZoneData` des JRAINBOW) n'est jamais écrit : sa sémantique hors mode direct n'est pas confirmée (INCONNU).
+
 ## Connecteurs : RGB 12 V vs ARGB 5 V
 
 - **JRGB1/JRGB2** (12 V 4 broches) : une seule couleur par connecteur (une `ZoneData`), 8 bits/canal côté USB ; effets matériels uniquement [V].
