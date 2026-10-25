@@ -203,3 +203,26 @@ Effets : `0x00` spectrum cycle, `0x01/0x02/0x03` breathing max/mid/min, **`0x04`
 - Prime, Sensei Ten, Rival Pro, Aerox 3 Gen2 : (G) PID seulement ; trames `INCONNU`.
 - Aucun pilote noyau SteelSeries nécessaire en écriture HID ; `driver/` d'installation (non exécuté) sert à GG (Sonar, audio virtuel).
 - Conflit possible avec le service GG qui tient les interfaces 0xFFC0 des sans fil (cf. `steelseries.md`).
+
+## 9. Complément 2026-10-25 : casques Arctis (éclairage), source tierce uniquement
+
+GG n'a pas été réanalysé pour les casques. Source lue : OpenRGB commit local `bbc77470`, `Controllers/SteelSeriesController/SteelSeriesArctis5Controller/SteelSeriesArctis5Controller.cpp` et `SteelSeriesArctisNova3Controller/SteelSeriesArctisNova3Controller.cpp`, `SteelSeriesDevices.h` l.69-72 (GPL : documentation seulement). Niveau : tierce source unique, **non confirmé dans GG** ; testé sur matériel par l'auteur d'après les en-têtes.
+
+### 9.1 Arctis 5 (PID 1250 et 12AA, interface 5), rapport de **37 o**, ID `06`
+Une couleur par zone (zone 0 = gauche, 1 = droite ; une LED par zone) = **6 écritures** consécutives (aucune lecture) :
+1. `06 81 43 01 22` puis 2. `06 81 43 01 23` (préparation, deux paquets)
+3. `06 8A 42 00 20 41 00 R G B FF 32 C8 C8` (octets : [1]=8A [2]=42 [3]=00 [4]=20 [5]=41 [6]=00 [7..9]=RVB [10]=FF [11]=32 [12]=C8 [13]=C8)
+4. `06 8A 42 00 20 41 08 <zone> 01`
+5. `06 8A 42 00 20 60 <zone>`
+6. `06 8A 42 00 20 05` (application)
+Sémantique des octets 0x81/0x43, FF/32/C8/C8 : INCONNU. Cadence : INCONNU. **Persistance : INCONNUE** (le paquet 6 « apply » pourrait écrire en mémoire ; non établi).
+
+### 9.2 Arctis Nova 3 (PID 12EC, interface 4, page 0xFFC0 usage 1), ID `06`
+- Paquet d'effet de **521 o** : `[0]=06 [1]=AA [2]=01 (zone 0, gauche) | 00 (zone 1)`, puis (octets en hexadécimal) `[0D][0E]`=vitesse, `[15]=55 [17]=96`, `[25]`=mode (`02` direct, `03` respiration et dégradés orange/bleu, `07` arc-en-ciel), couleurs aux offsets 0x26+ ou 0x29 / 0x2D selon le mode.
+  - **Direct** : `[0D]=98 [0E]=3A [15]=55 [17]=96 [1D]=01 [25]=02 [2D..2F]=RVB [30]=FF`.
+  - **Respiration** : `[25]=03`, `[29..2B]=RVB`, `[30]=7F`, `[31..33]=RVB`, `[34]=7F`, vitesse en `[0D][0E]`.
+  - **Arc-en-ciel / orange / bleu glacé** : `[25]=07` (arc-en-ciel) ou `03`, 31 ou 15 octets de points de dégradé recopiés à partir de `[26]` (tables dans la source).
+  - Vitesses 1..10 (octets `[0D][0E]`) : 1=`30 75`, 2=`2E 68`, 3=`2C 5B`, 4=`20 4E`, 5=`1E 41`, 6=`1C 34`, 7=`1A 27`, 8=`0E 1A`, 9=`0C 0D`, 10=`94 02`.
+- Puis **sélection** (64 o) `06 A5 <02 si zone 0, 01 si zone 1> <0A actif | 00 éteint>` et **application** (64 o) `06 <09 si zone 0, A3 si zone 1>`.
+- Cadence/relecture : INCONNU. Les modes de OpenRGB portent le drapeau « sauvegarde manuelle » : leur `DeviceSaveMode` n'envoie **que** la même trame d'application `06 09` / `06 A3`. Or ces mêmes trames sont déjà envoyées après chaque effet, donc **on ne peut pas dire si l'application écrit en mémoire persistante** : DANGER potentiel, INCONNU. À traiter comme une écriture flash tant que non prouvé : ne pas la boucler (une application par changement d'effet, jamais en animation).
+- Pas de mode temps réel par image établi pour les casques : INCONNU. Autres casques (Arctis 7/9/Pro/Nova 5/7/Pro/Elite) : toujours INCONNU.

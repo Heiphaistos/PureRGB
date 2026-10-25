@@ -185,3 +185,30 @@ CAM construit ses requêtes dans `index.node` via une couche de sérialisation t
 
 ## 11. Nettoyage
 Installeur, extraits, projet Ghidra et scripts supprimés de `D:\Projet\Analyses\rgb\nzxt\` (seule cette note est conservée).
+
+## 9. Complément 2026-10-25 : recoupement avec une seconde source indépendante (OpenRGB)
+
+CAM n'a pas été réanalysé (les constructeurs de trames restent INCONNUS dans `index.node`, voir §8). Seconde source lue : OpenRGB, commit local `bbc77470`, `D:\Projet\Analyses\rgb\_src\OpenRGB\Controllers\NZXTHue2Controller\{NZXTHue2Controller.cpp, NZXTHue2ControllerDetect.cpp}` et `NZXTKrakenController\NZXTKrakenController.cpp` (GPL : lu comme documentation, rien copié). Niveau : RECOUPÉ (deux implémentations tierces indépendantes, liquidctl + OpenRGB ; pas lu dans CAM).
+
+### 9.1 Trames RECOUPÉES (rapports de 64 o, ID 0, complétés de zéros)
+| Fonction | Trame | Source OpenRGB |
+|---|---|---|
+| Vitesse ventilo (V2, RGB & Fan) | `62 01 <1<<port> 00 00 00` avec le pourcentage à l'octet `3+port` ; réponse relue | `NZXTHue2Controller.cpp` l.120-129 |
+| Énumération accessoires | écrire `20 03`, relire jusqu'à `21 03` (10 essais, 1 s) ; 6 octets par canal à partir de l'octet `0x0F + 6*canal` | l.145-172 |
+| Statut ventilos | relire jusqu'à `67 02` ; RPM u16 LE à `24 + 2*i`, mode/duty à `40 + i` | l.307-318 |
+| Firmware | écrire `10 01`, relire `11 01` ; version = octets `0x11,0x12,0x13` | l.245-258 |
+| Couleur directe | `22 10|group <1<<canal> 00` + RVB en ordre **G,R,B** (20 LED par paquet), puis validation `22 A0 <1<<canal> 00 01 00 00 28 00 00 80 00 32 00 00 01` | l.29-76 et 345-381 |
+| Effet matériel (Hue 2) | `28 03 <1<<canal> 28 <mode> <vitesse> 01 <sens> <nb couleurs> 00 <couleurs>` | l.100-135 |
+| Effet matériel (Kraken X3, Elite) | `2A 04 <1<<canal> <1<<canal> <mode> <vitesse 2 o> <couleurs…> … [0x37]=sens(02) [0x38]=nb couleurs [0x39]=modificateur [0x3A]=08 [0x3B]=03` | l.213-227 |
+| Kraken gén. 3 / M22 (170E, 1715) | lecture : liquide = octet1 + octet2/10, ventilo RPM BE octets 3-4, pompe octets 5-6, firmware octets 0x0B..0x0E ; LED `02 4C <canal|mouvement<<3|sens<<4> <mode> <vitesse|taille<<3|cis<<5> <9 couleurs RVB>` | `NZXTKrakenController.cpp` l.92-106, 165-203 |
+
+Ordre des couleurs : le Hue2 est en **G,R,B**, le Kraken gén. 3 en **R,G,B** dans OpenRGB (l.24-26) : lève en partie l'INCONNU de `nzxt.md` pour le Kraken gén. 3 (une seule source, à confirmer sur matériel).
+
+### 9.2 Identifiants d'accessoires supplémentaires (OpenRGB, nombre de LED)
+`0x15` F120 RGB Duo 20 · `0x16` F140 RGB Duo 20 · `0x17/0x18/0x19` F120/F140/F120-boîtier Core 8 · `0x1C` F280 Core 16 · `0x1D` F360 Core 24 · `0x1E` **anneau Kraken Elite 24** · `0x1F` F420 24 · `0x04/0x05/0x06` bandes Hue 2 10/8/6 · `0x08` Cable Comb 14 · `0x09/0x0A` Underglow 15/10 · `0x13/0x14` F120/F140 RGB 18 · `0x10` anneau Kraken X 8 · `0x11` logo 1 (`NZXTHue2Controller.cpp` l.176-285). Cela comble l'INCONNU « anneau des Kraken Elite » pour le nombre de LED (24) mais pas pour le protocole d'écran/anneau propre.
+
+### 9.3 PID identifiés (levant des INCONNU du §3)
+2005 = « Motherboard Device » · 200B = « Motherboard Device 2 » · 201B = « B650E Motherboard » (contrôleur 6 canaux) · 2022 = « RGB & Fan Controller 2024 » (6 canaux) · 2012 et 2021 = « RGB Controller » (`NZXTHue2ControllerDetect.cpp` l.18-39 et 110-119). Restent INCONNUS : 200C, 2016, 2023, 2029, 3016.
+
+### 9.4 Dangers
+Aucun octet « écriture en mémoire persistante » n'a été identifié dans CAM ni dans les deux sources. Les effets matériels (`28 03`, `2A 04`) font tourner l'effet dans le contrôleur : leur persistance après coupure d'alimentation est INCONNUE (ne pas supposer qu'ils s'effacent). Ne jamais envoyer de mise à jour de firmware (`firmware-update.exe` de CAM). Vitesse : respecter les bornes du §5 (20 % minimum ; Kraken gén. 3 pompe >= 60 %, ventilo >= 25 %).

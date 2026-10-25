@@ -275,3 +275,7 @@ Tests d'octets possibles sans matériel :
 ## 10. Nettoyage
 
 Installeur et extraits de `D:\Projet\Analyses\rgb\logitech\` supprimés ; clones tiers `D:\Projet\Analyses\rgb\_src\` et `openrgb-src\` laissés en place (ils appartiennent à d'autres analyses).
+
+## 7. Complément 2026-10-25 : récepteurs LIGHTSPEED
+
+Aucune nouvelle analyse de G HUB n'a été faite dans ce passage (pas de téléchargement). L'état du §5 reste : séquence de découverte des récepteurs (`10 FF 80 02 02 00 00`, notifications de connexion, mutex partagé, un seul appareil par récepteur Lightspeed) recoupée avec OpenRGB et Solaar, non confirmée dans G HUB ; pas d'octet inconnu nouveau levé. Danger inchangé : ne jamais écrire de registre de jumelage/appairage du récepteur (déconnecte l'appareil) ; aucune écriture de profil sur mémoire embarquée n'est recommandée tant que la feature de profil embarqué n'est pas lue.
