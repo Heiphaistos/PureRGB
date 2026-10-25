@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.43.0 (en préparation)
+
+- Manettes : toutes les manettes vues en HID (dont celles en XInput) sont listées avec le type « Manette », même sans RGB, avec la raison (Xbox, Nintendo, autres). La Flydigi Vader 4 (qui emprunte l'ID Xbox 360 045E:028E) est reconnue par sa chaîne produit, sans confondre les vraies manettes Xbox ; son éclairage n'est pas pris en charge pour l'instant (aucun protocole public fiable, voir docs/rgb-protocols/flydigi.md).
+- Nouveaux pilotes intégrés (expérimentaux, jamais validés sur du vrai matériel, désactivés par défaut) : Sony DualSense / DualSense Edge (barre lumineuse + 5 LED de joueur) et DualShock 4 (barre lumineuse), USB et Bluetooth (CRC32), couleur directe sans réglage persistant, d'après le driver Linux hid-playstation (voir docs/rgb-protocols/manettes.md). Les palettes et effets existants s'appliquent.
+
 ## 0.42.0
 
 - Éditeur d'écran : nouveau panneau « Couleurs du design » (aucun widget sélectionné). Changer une couleur la change partout dans le design (rectangles, jauges, barres, texte, fond), ce qui permet de recolorer les thèmes intégrés (par exemple les rectangles roses).

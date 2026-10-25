@@ -6,6 +6,7 @@
 //! couleur est réellement appliquée — iCUE/CAM gardent sinon l'accès exclusif.
 
 pub mod corsair_node;
+pub mod gamepads;
 pub mod known;
 pub mod known_remote;
 pub mod native;
@@ -47,6 +48,8 @@ struct Entry {
     driver: Option<NativeDriver>,
     /// Famille native de `native/` (prioritaire sur `driver`).
     native: Option<(&'static native::Family, native::Model)>,
+    /// Appareil joint en Bluetooth (bus vu par hidapi).
+    bluetooth: bool,
 }
 
 enum DriverInstance {
@@ -149,7 +152,9 @@ impl HidBackend {
                     (Some(_), None) => bail!("seconde interface HID de l'appareil introuvable"),
                     (None, _) => Box::new(device),
                 };
-                let dev = (family.open)(handle, model)?;
+                let mut model = model.clone();
+                model.bluetooth = entry.bluetooth;
+                let dev = (family.open)(handle, &model)?;
                 self.open_drivers.insert(local_id.to_string(), DriverInstance::Native(dev));
                 return Ok(self.open_drivers.get_mut(local_id).unwrap());
             }
@@ -171,6 +176,19 @@ impl HidBackend {
     }
 }
 
+/// Fabricant affiché : table de VID, sinon celui de la manette, sinon le premier mot du nom (« Sony DualSense » -> Sony),
+/// pour que le registre reconnaisse le même appareil vu par OpenRGB.
+fn vendor_of(vid: u16, name: &str, pad_vendor: Option<&str>, native: bool) -> String {
+    if let Some((_, v, _)) = known::find_vendor(vid) {
+        return v.to_string();
+    }
+    match pad_vendor {
+        Some(v) => v.to_string(),
+        None if native => name.split_whitespace().next().unwrap_or_default().to_string(),
+        None => String::new(),
+    }
+}
+
 impl Backend for HidBackend {
     fn name(&self) -> &'static str {
         "hid"
@@ -186,8 +204,17 @@ impl Backend for HidBackend {
         let mut seen: HashMap<(u16, u16, String), std::ffi::CString> = HashMap::new();
         // Seconde collection des modèles à deux interfaces (contrôle + LEDs).
         let mut aux_seen: HashMap<(u16, u16, String), std::ffi::CString> = HashMap::new();
+        // Manettes vues (collection Joystick/Gamepad) : (VID, PID, série) -> chaîne produit ; et appareils joints en Bluetooth.
+        let mut pads: HashMap<(u16, u16, String), String> = HashMap::new();
+        let mut bluetooth: std::collections::HashSet<(u16, u16, String)> = Default::default();
         for info in api.device_list() {
             let key = (info.vendor_id(), info.product_id(), info.serial_number().unwrap_or("").to_string());
+            if gamepads::is_pad_collection(info.usage_page(), info.usage()) {
+                pads.entry(key.clone()).or_insert_with(|| info.product_string().unwrap_or("").to_string());
+            }
+            if matches!(info.bus_type(), hidapi::BusType::Bluetooth) {
+                bluetooth.insert(key.clone());
+            }
             match native::probe(key.0, key.1) {
                 Some((_, m)) => {
                     let ok = m.interface.is_none_or(|i| i == info.interface_number())
@@ -218,12 +245,16 @@ impl Backend for HidBackend {
 
         for ((vid, pid, _serial), path) in seen {
             let nat = native::probe(vid, pid);
+            let native_model = nat.is_some();
+            let pad = pads.get(&(vid, pid, _serial.clone())).map(|p| gamepads::classify(vid, pid, p));
             let (name, dtype, driver) = if let Some((_, m)) = &nat {
                 (m.name.clone(), m.device_type, None)
             } else if let Some(k) = known::find_known(vid, pid) {
                 (k.name.to_string(), k.device_type, k.native_driver)
             } else if let Some((_, vendor_name, dtype)) = known::find_vendor(vid) {
                 (format!("Appareil {vendor_name}"), *dtype, None)
+            } else if let Some(p) = &pad {
+                (p.name.clone(), DeviceType::Gamepad, None)
             } else {
                 continue; // matériel sans rapport avec le RGB/refroidissement
             };
@@ -282,6 +313,13 @@ impl Backend for HidBackend {
                         "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
                     },
                 ),
+                None if pad.is_some() && known::find_known(vid, pid).is_none() => (
+                    Vec::new(),
+                    0,
+                    Vec::new(),
+                    false,
+                    pad.as_ref().map(|p| p.note.to_string()).unwrap_or_default(),
+                ),
                 None => (
                     Vec::new(),
                     0,
@@ -295,13 +333,14 @@ impl Backend for HidBackend {
             } };
 
             let aux_path = aux_seen.get(&(vid, pid, _serial.clone())).cloned();
-            self.entries.insert(local_id.clone(), Entry { path, aux_path, driver, native: nat });
+            let bt = bluetooth.contains(&(vid, pid, _serial.clone()));
+            self.entries.insert(local_id.clone(), Entry { path, aux_path, driver, native: nat, bluetooth: bt });
 
             devices.push(DeviceInfo {
                 id: local_id,
-                name,
-                vendor: known::find_vendor(vid).map(|(_, v, _)| v.to_string()).unwrap_or_default(),
+                vendor: vendor_of(vid, &name, pad.as_ref().map(|p| p.vendor), native_model),
                 backend: String::new(),
+                name,
                 device_type: if dtype == DeviceType::Unknown { DeviceType::Accessory } else { dtype },
                 zones,
                 led_count,
