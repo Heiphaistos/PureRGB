@@ -182,6 +182,11 @@ fn usb(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Fin
     use crate::rgb_catalog::catalog;
     let cat = catalog();
     for u in &inv.usb {
+        if let Some(name) = crate::rgb_catalog::known_without_rgb(u.vid, u.pid) {
+            out.push(f("USB", Status::Info, format!("{name} (USB {:04X}:{:04X}) : sans éclairage RGB", u.vid, u.pid),
+                "Cet appareil n'a pas d'éclairage : rien à piloter, aucune action requise."));
+            continue;
+        }
         let Some(vendor) = cat.vendor(u.vid) else { continue };
         let key = vendor.split([' ', '/']).next().unwrap_or(vendor).to_lowercase();
         let driven = devices.iter().any(|d| d.controllable && format!("{} {}", d.vendor, d.name).to_lowercase().contains(&key));
@@ -413,6 +418,19 @@ mod tests {
         let inv = collect().expect("inventaire");
         println!("{inv:#?}");
         assert!(!inv.board.product.is_empty() || !inv.gpus.is_empty());
+    }
+
+    #[test]
+    fn headsets_without_rgb_are_never_reported_as_unsupported() {
+        let mut inv = Inventory::default();
+        for pid in [0x0ABA, 0x0AF7] {
+            inv.usb.push(UsbDev { vid: 0x046D, pid, name: "PRO X".into() });
+        }
+        let r = analyze(&inv, &[], &Context::default());
+        let usb: Vec<_> = r.iter().filter(|x| x.category == "USB").collect();
+        assert_eq!(usb.len(), 2);
+        assert!(usb.iter().all(|x| x.status == Status::Info && x.title.contains("sans éclairage RGB")));
+        assert!(!r.iter().any(|x| x.title.contains("hors catalogue") || x.detail.contains("Signalez")));
     }
 
     #[test]

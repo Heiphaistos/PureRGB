@@ -58,6 +58,18 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
     hex(vid_hex).is_some_and(|v| catalog().vendor(v).is_some())
 }
 
+/// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
+/// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
+const NO_RGB: [(u16, u16, &str); 2] = [
+    (0x046D, 0x0ABA, "Casque Logitech PRO X"),
+    (0x046D, 0x0AF7, "Casque Logitech PRO X"),
+];
+
+/// Nom du périphérique s'il est connu pour ne PAS avoir d'éclairage RGB.
+pub fn known_without_rgb(vid: u16, pid: u16) -> Option<&'static str> {
+    NO_RGB.iter().find(|(v, p, _)| *v == vid && *p == pid).map(|(_, _, n)| *n)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -83,5 +95,12 @@ mod tests {
     fn hex_ids_with_prefix_and_case() {
         assert!(is_rgb_vendor("0x1B1C") && is_rgb_vendor("1532"));
         assert!(!is_rgb_vendor("zzzz") && !is_rgb_vendor("0000"));
+    }
+
+    #[test]
+    fn known_without_rgb_list_is_exact() {
+        assert!(known_without_rgb(0x046D, 0x0ABA).is_some() && known_without_rgb(0x046D, 0x0AF7).is_some());
+        assert!(known_without_rgb(0x046D, 0xC08B).is_none());
+        assert!(known_without_rgb(0x1EA7, 0x0064).is_none(), "Sharkoon : aucune source, reste hors catalogue");
     }
 }

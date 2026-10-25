@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 0.43.0 (en préparation)
+
+- OpenRGB : un OpenRGB.exe résiduel de NOTRE installation (sous %ProgramFiles%\PureRGB) qui tient le port du serveur sans répondre au protocole est maintenant terminé puis relancé. Un OpenRGB de l'utilisateur ou tout autre programme n'est jamais touché. Le diagnostic nomme le processus qui tient le port et son ancienneté.
+- Carte mère MSI (Mystic Light) : le nombre de LEDs de chaque connecteur ARGB (JPIPE 1/2, JRAINBOW 1/2, JCORSAIR) est réglable (1 à 75), enregistré dans les réglages et réappliqué au démarrage. Limite du protocole par zone : une seule couleur par connecteur (la 1re LED), appliquée à tout le connecteur, hub inclus ; pas de dégradé spatial. Les zones des autres drivers natifs redimensionnables (ASUS, Gigabyte, ASRock, Thermaltake) deviennent réglables aussi.
+- Écrans USB : l'erreur « Accès refusé » indique maintenant les pilotes/services Windows liés au périphérique (WinUSB, usbccgp, HidUsb, pilote tiers) et ce qu'il faut en faire ; le texte part aussi dans la télémétrie `screens.scan_errors`.
+- Diagnostic : les casques Logitech PRO X (046d:0aba, 046d:0af7), sans éclairage, ne sont plus signalés « hors catalogue, signalez-le » ni « non reconnu ».
+
+
 ## 0.42.0
 
 - Éditeur d'écran : nouveau panneau « Couleurs du design » (aucun widget sélectionné). Changer une couleur la change partout dans le design (rectangles, jauges, barres, texte, fond), ce qui permet de recolorer les thèmes intégrés (par exemple les rectangles roses).

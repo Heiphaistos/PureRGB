@@ -9,7 +9,8 @@
 //! tout le reste (vitesse, luminosité, flags de synchro) est conservé. `save_data` (octet 184) reste TOUJOURS à 0 :
 //! jamais d'écriture en flash. Deux rapports consécutifs par mise à jour (ancien état, puis nouvel état), comme le fait MSI Center.
 //! INCONNU : table `board_config` par PID (nombre de LEDs embarquées, connecteurs présents) absente de la note, donc le mode
-//! direct LED à LED (rapport 0x53) n'est PAS implémenté ; les 8 zones sont exposées sans savoir lesquelles existent
+//! direct LED à LED (rapport 0x53) n'est PAS implémenté : une seule couleur par connecteur, le nombre de LEDs réglable des
+//! connecteurs ARGB (1 à 75) ne fait que dimensionner le tampon d'effet, la 1re LED donne la couleur de zone (voir la doc) ; les 8 zones sont exposées sans savoir lesquelles existent
 //! sur la carte (les zones absentes reçoivent la couleur mais leur effet est INCONNU). `release()` ne fait rien.
 
 use super::{split_by_zone, Family, Hid, Model, NativeRgb};
@@ -33,6 +34,18 @@ const ZONES: [(&str, usize); 8] = [
     ("JRGB 2", 174),
 ];
 
+/// Connecteurs ARGB 5 V : nombre de LEDs réglable par l'utilisateur (1 à 75, limite constructeur du catalogue).
+const ARGB_ZONES: [&str; 5] = ["JPIPE 1", "JPIPE 2", "JRAINBOW 1", "JRAINBOW 2", "JCORSAIR"];
+const ARGB_MAX_LEDS: u32 = 75;
+
+fn zone_info(name: &str) -> ZoneInfo {
+    if ARGB_ZONES.contains(&name) {
+        ZoneInfo { name: name.into(), led_count: 1, zone_type: 1, leds_min: 1, leds_max: ARGB_MAX_LEDS }
+    } else {
+        ZoneInfo::fixed(name, 1)
+    }
+}
+
 fn is_supported_pid(pid: u16) -> bool {
     matches!(pid,
         0x7B12 | 0x7B16 | 0x7B50 | 0x7B92 | 0x7B93 | 0x7C02
@@ -47,7 +60,7 @@ fn probe(vid: u16, pid: u16) -> Option<Model> {
     if vid != 0x1462 || !is_supported_pid(pid) {
         return None;
     }
-    let zones = ZONES.iter().map(|(n, _)| ZoneInfo::fixed(*n, 1)).collect();
+    let zones = ZONES.iter().map(|(n, _)| zone_info(n)).collect();
     let mut m = Model::new("MSI Mystic Light (carte mère)", DeviceType::Motherboard, zones);
     m.usage_page = Some(0x0001);
     Some(m)
@@ -65,7 +78,9 @@ impl NativeRgb for Mystic {
         let parts = split_by_zone(colors, &self.zones);
         let mut next = self.state;
         for ((_, off), part) in ZONES.iter().zip(&parts) {
-            let c = part[0];
+            // Protocole « par zone » : UNE couleur par connecteur (hub inclus). Avec N LEDs réglées, seule la 1re
+            // sert de couleur de zone ; le matériel l'applique à tout le connecteur.
+            let c = part.first().copied().unwrap_or(Color::BLACK);
             next[*off..*off + 4].copy_from_slice(&[EFFECT_STATIC, c.r, c.g, c.b]);
         }
         if next == self.state {
@@ -169,5 +184,35 @@ mod tests {
         d.set_colors(&colors).unwrap();
         d.set_colors(&colors).unwrap();
         assert_eq!(features.lock().len(), 2);
+    }
+
+    #[test]
+    fn argb_connectors_are_resizable_up_to_75_others_fixed() {
+        let m = probe(0x1462, 0x7D93).unwrap();
+        for z in &m.zones {
+            if ["JPIPE 1", "JPIPE 2", "JRAINBOW 1", "JRAINBOW 2", "JCORSAIR"].contains(&z.name.as_str()) {
+                assert_eq!((z.leds_min, z.leds_max, z.led_count), (1, 75, 1), "{}", z.name);
+            } else {
+                assert!(!z.resizable(), "{}", z.name);
+            }
+        }
+    }
+
+    #[test]
+    fn resized_connector_sends_one_zone_colour_and_same_frame_layout() {
+        let (mock, _, features) = MockHid::new(vec![state185()]);
+        let mut m = probe(0x1462, 0x7D93).unwrap();
+        let rb1 = m.zones.iter().position(|z| z.name == "JRAINBOW 1").unwrap();
+        m.zones[rb1].led_count = 3;
+        let mut d = open(Box::new(mock), &m).unwrap();
+        // 7 zones à 1 LED + JRAINBOW 1 à 3 LEDs (rouge, vert, bleu) = 10 couleurs.
+        let mut colors = vec![Color::new(9, 9, 9); 10];
+        colors[3..6].copy_from_slice(&[Color::new(255, 0, 0), Color::new(0, 255, 0), Color::new(0, 0, 255)]);
+        d.set_colors(&colors).unwrap();
+        let f = features.lock();
+        assert_eq!(f[1].len(), 185);
+        assert_eq!(&f[1][31..35], &[1, 255, 0, 0]); // 1re LED = couleur de zone, pas de trame par LED
+        assert_eq!(&f[1][42..46], &[1, 9, 9, 9]); // zone suivante non décalée
+        assert_eq!(f[1][184], 0);
     }
 }

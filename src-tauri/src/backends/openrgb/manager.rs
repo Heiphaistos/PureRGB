@@ -11,6 +11,7 @@
 //! Si introuvable : téléchargement de la version épinglée (URL en liste
 //! blanche), vérifiée par SHA-256 avant extraction.
 
+use super::stale;
 use crate::trust;
 use anyhow::{bail, Context, Result};
 use parking_lot::Mutex;
@@ -84,6 +85,17 @@ impl OpenRgbManager {
             last_error: Mutex::new(None),
             resource_dir: Mutex::new(None),
         }
+    }
+
+    /// Dossiers de NOS copies d'OpenRGB (seules celles-ci peuvent être terminées).
+    fn our_dirs(&self) -> Vec<PathBuf> {
+        let mut v: Vec<PathBuf> = trust::managed_dir("openrgb").into_iter().collect();
+        if let Some(res) = self.resource_dir.lock().clone() {
+            v.push(res.join("resources").join("openrgb"));
+            v.push(res.join("openrgb"));
+        }
+        v.retain(|d| trust::is_trusted(d));
+        v
     }
 
     pub fn set_resource_dir(&self, dir: PathBuf) {
@@ -326,10 +338,24 @@ impl OpenRgbManager {
             if speaks_openrgb(host, port) {
                 return Ok(false); // déjà servi, rien à lancer
             }
-            let who = port_owner(port).map(|(pid, name)| format!(" par « {name} » (PID {pid})")).unwrap_or_default();
-            return Err(anyhow::Error::new(PortTaken(format!(
-                "Le port {port} est déjà utilisé{who} et ce n'est pas un serveur OpenRGB."
-            ))));
+        }
+        if matches!(host, "127.0.0.1" | "localhost" | "::1") {
+            let owner = stale::port_owner(port);
+            match stale::decide(owner.as_ref(), &self.our_dirs()) {
+                stale::PortAction::Launch => {}
+                stale::PortAction::KillStale(pid) => {
+                    log::warn!("OpenRGB résiduel (PID {pid}) tient le port {port} sans répondre : arrêt");
+                    if !stale::kill_and_wait(pid, port) {
+                        bail!("OpenRGB résiduel (PID {pid}) impossible à arrêter : fermez-le depuis le Gestionnaire des tâches.");
+                    }
+                }
+                stale::PortAction::Foreign => {
+                    let who = owner.as_ref().map(|o| format!(" par {}", stale::describe(o))).unwrap_or_default();
+                    return Err(anyhow::Error::new(PortTaken(format!(
+                        "Le port {port} est déjà utilisé{who} et ce n'est pas un serveur OpenRGB."
+                    ))));
+                }
+            }
         }
         // Fichiers de notre copie manquants (antivirus, suppression) : on la réinstalle (SHA-256 vérifié).
         let exe = match self.locate() {
@@ -406,21 +432,6 @@ fn speaks_openrgb(host: &str, port: u16) -> bool {
     s.write_all(&req).is_ok() && s.read_exact(&mut head).is_ok() && &head == super::protocol::MAGIC
 }
 
-/// Programme qui écoute sur ce port TCP (PID, nom), d'après `netstat`.
-fn port_owner(port: u16) -> Option<(u32, String)> {
-    let out = Command::new("netstat.exe").args(["-ano", "-p", "TCP"]).creation_flags_no_window().output().ok()?;
-    let suffix = format!(":{port}");
-    let pid = String::from_utf8_lossy(&out.stdout).lines().filter(|l| l.contains("LISTENING")).find_map(|l| {
-        let cols: Vec<&str> = l.split_whitespace().collect();
-        if cols.get(1)?.ends_with(&suffix) { cols.last()?.parse::<u32>().ok() } else { None }
-    })?;
-    let sys = sysinfo::System::new_with_specifics(
-        sysinfo::RefreshKind::nothing().with_processes(sysinfo::ProcessRefreshKind::nothing()),
-    );
-    let name = sys.process(sysinfo::Pid::from_u32(pid)).map(|p| p.name().to_string_lossy().into_owned());
-    Some((pid, name.unwrap_or_else(|| "inconnu".into())))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -475,8 +486,8 @@ fn diagnose(port: u16, own_pid: u32) -> String {
     for c in active.iter().filter(|c| c.active) {
         hints.push(format!("{} est actif et peut verrouiller les appareils", c.name));
     }
-    if let Some((pid, name)) = port_owner(port) {
-        hints.push(format!("le port {port} est déjà utilisé par « {name} » (PID {pid})"));
+    if let Some(o) = stale::port_owner(port) {
+        hints.push(format!("le port {port} est tenu par {}", stale::describe(&o)));
     }
     if hints.is_empty() {
         "Aucun conflit repéré : antivirus qui bloque OpenRGB.exe, ou pilote manquant ? (voir purergb.log dans le dossier PureRGB de APPDATA)".into()

@@ -3,6 +3,7 @@
 
 pub mod manager;
 pub mod protocol;
+mod stale;
 
 use crate::backends::Backend;
 use crate::core::{Color, DeviceInfo, ModeInfo};
