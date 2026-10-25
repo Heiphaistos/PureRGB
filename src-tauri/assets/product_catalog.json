@@ -10622,21 +10622,6 @@
       }
     },
     {
-      "id": "corsair-katar-pro-wireless",
-      "kind": "mouse",
-      "vendor": "Corsair",
-      "name": "Corsair Katar Pro Wireless",
-      "match": {
-        "names": [
-          "katar pro wireless"
-        ]
-      },
-      "image": {
-        "url": "https://res.cloudinary.com/corsair-pwa/image/upload/c_scale%2Cq_auto%2Cw_800/products/Gaming-Mice/base-katar-pro-wireless-config/Gallery/KATAR_PRO_WIRELESS_01.png",
-        "source_page": "https://www.corsair.com/us/en/p/gaming-mouse/ch-931c011-na/katar-pro-wireless-gaming-mouse-ch-931c011-na"
-      }
-    },
-    {
       "id": "corsair-katar-pro-xt",
       "kind": "mouse",
       "vendor": "Corsair",
@@ -15161,6 +15146,3810 @@
       "image": {
         "url": "https://assets.corsair.com/image/upload/c_pad%2Cq_auto%2Ch_1024%2Cw_1024%2Cf_auto/products/Accessories-Parts/CL-9011114-WW/Gallery/LC100_STARTER_KIT_01.webp",
         "source_page": "https://www.corsair.com/us/en/p/custom-liquid-cooling/cl-9011114-ww/x"
+      }
+    },
+    {
+      "id": "noctua-nh-d15",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15",
+      "match": {
+        "names": [
+          "nh d15"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d15_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15"
+      }
+    },
+    {
+      "id": "noctua-nh-d15-chromax-black",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15 chromax.black",
+      "match": {
+        "names": [
+          "nh d15 chromax black"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d15_chromax_black_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15-chromax-black"
+      }
+    },
+    {
+      "id": "noctua-nh-d15-g2",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15 G2",
+      "match": {
+        "names": [
+          "nh d15 g2"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d15_g2_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15-g2"
+      }
+    },
+    {
+      "id": "noctua-nh-d15-g2-chromax-black",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15 G2 chromax.black",
+      "match": {
+        "names": [
+          "nh d15 g2 chromax black"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d15_g2_chromax_black_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15-g2-chromax-black"
+      }
+    },
+    {
+      "id": "noctua-nh-u12a",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U12A",
+      "match": {
+        "names": [
+          "nh u12a"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_u12a_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u12a"
+      }
+    },
+    {
+      "id": "noctua-nh-u12a-chromax-black",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U12A chromax.black",
+      "match": {
+        "names": [
+          "nh u12a chromax black"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_u12a_chromax_black_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u12a-chromax-black"
+      }
+    },
+    {
+      "id": "noctua-nh-u12s",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U12S",
+      "match": {
+        "names": [
+          "nh u12s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_u12s_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u12s"
+      }
+    },
+    {
+      "id": "noctua-nh-u12s-chromax-black",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U12S chromax.black",
+      "match": {
+        "names": [
+          "nh u12s chromax black"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_u12s_chromax_black_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u12s-chromax-black"
+      }
+    },
+    {
+      "id": "noctua-nh-u14s",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U14S",
+      "match": {
+        "names": [
+          "nh u14s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_u14s_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u14s"
+      }
+    },
+    {
+      "id": "noctua-nh-d12l",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D12L",
+      "match": {
+        "names": [
+          "nh d12l"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d12l_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d12l"
+      }
+    },
+    {
+      "id": "noctua-nh-l12s",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-L12S",
+      "match": {
+        "names": [
+          "nh l12s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_l12s_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-l12s"
+      }
+    },
+    {
+      "id": "noctua-nh-l9i",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-L9i",
+      "match": {
+        "names": [
+          "nh l9i"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_l9i_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-l9i"
+      }
+    },
+    {
+      "id": "noctua-nh-l9x65",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-L9x65",
+      "match": {
+        "names": [
+          "nh l9x65"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_l9x65_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-l9x65"
+      }
+    },
+    {
+      "id": "noctua-nh-u9s",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U9S",
+      "match": {
+        "names": [
+          "nh u9s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_u9s_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u9s"
+      }
+    },
+    {
+      "id": "noctua-nh-d9l",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D9L",
+      "match": {
+        "names": [
+          "nh d9l"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_d9l_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d9l"
+      }
+    },
+    {
+      "id": "noctua-nh-u12s-redux",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-U12S redux",
+      "match": {
+        "names": [
+          "nh u12s redux"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_u12s_redux_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-u12s-redux"
+      }
+    },
+    {
+      "id": "noctua-nh-d15s",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15S",
+      "match": {
+        "names": [
+          "nh d15s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nh_d15s_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15s"
+      }
+    },
+    {
+      "id": "noctua-nh-d15s-chromax-black",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-D15S chromax.black",
+      "match": {
+        "names": [
+          "nh d15s chromax black"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_d15s_chromax_black_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-d15s-chromax-black"
+      }
+    },
+    {
+      "id": "noctua-nh-l9a-am5",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-L9a-AM5",
+      "match": {
+        "names": [
+          "nh l9a am5"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_l9a_am5_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-l9a-am5"
+      }
+    },
+    {
+      "id": "noctua-nh-p1",
+      "kind": "cooler",
+      "vendor": "Noctua",
+      "name": "NH-P1",
+      "match": {
+        "names": [
+          "nh p1"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nh_p1_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nh-p1"
+      }
+    },
+    {
+      "id": "noctua-nf-a12x25-g2-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A12x25 G2 PWM",
+      "match": {
+        "names": [
+          "nf a12x25 g2"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nf_a12x25_g2_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a12x25-g2-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a14x25-g2-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A14x25 G2 PWM",
+      "match": {
+        "names": [
+          "nf a14x25 g2"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nf_a14x25_g2_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a14x25-g2-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a14-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A14 PWM",
+      "match": {
+        "names": [
+          "nf a14"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nf_a14_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a14-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-p12-redux-1700-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-P12 redux-1700 PWM",
+      "match": {
+        "names": [
+          "nf p12 redux 1700"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nf_p12_redux_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-p12-redux-1700-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-f12-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-F12 PWM",
+      "match": {
+        "names": [
+          "nf f12"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nf_f12_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-f12-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-s12a-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-S12A PWM",
+      "match": {
+        "names": [
+          "nf s12a"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nf_s12a_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-s12a-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a9-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A9 PWM",
+      "match": {
+        "names": [
+          "nf a9"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nf_a9_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a9-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a15-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A15 PWM",
+      "match": {
+        "names": [
+          "nf a15"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nf_a15_pwm_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a15-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a20-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A20 PWM",
+      "match": {
+        "names": [
+          "nf a20"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/noctua_nf_a20_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a20-pwm"
+      }
+    },
+    {
+      "id": "noctua-nf-a8-pwm",
+      "kind": "fan",
+      "vendor": "Noctua",
+      "name": "NF-A8 PWM",
+      "match": {
+        "names": [
+          "nf a8"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.noctua.at/media/nf_a8_1.jpg",
+        "source_page": "https://www.noctua.at/en/products/nf-a8-pwm"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-6",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock 6",
+      "match": {
+        "names": [
+          "dark rock 6"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=5aa59a70493%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/7325"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-pro-6",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock Pro 6",
+      "match": {
+        "names": [
+          "dark rock pro 6"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=404baa70615%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/7322"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-elite",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock Elite",
+      "match": {
+        "names": [
+          "dark rock elite"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=e7c36a50426%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/4468"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-pro-5",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock Pro 5",
+      "match": {
+        "names": [
+          "dark rock pro 5"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=d8427a50425%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/4466"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-5",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock 5",
+      "match": {
+        "names": [
+          "dark rock 5"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=161d9a53586%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/5110"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-tf-2",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock TF 2",
+      "match": {
+        "names": [
+          "dark rock tf 2"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=61d84a38722%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/3351"
+      }
+    },
+    {
+      "id": "bequiet-dark-rock-slim",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Dark Rock Slim",
+      "match": {
+        "names": [
+          "dark rock slim"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=01765a23630%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/1659"
+      }
+    },
+    {
+      "id": "bequiet-shadow-rock-tf-2",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Shadow Rock TF 2",
+      "match": {
+        "names": [
+          "shadow rock tf 2"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=1888fa10549%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/1074"
+      }
+    },
+    {
+      "id": "bequiet-shadow-rock-lp",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Shadow Rock LP",
+      "match": {
+        "names": [
+          "shadow rock lp"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=cae25a9485%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/570"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-pro-3",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock Pro 3",
+      "match": {
+        "names": [
+          "pure rock pro 3"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=3193ba60956%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/5599"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-pro-3-lx",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock Pro 3 LX",
+      "match": {
+        "names": [
+          "pure rock pro 3 lx"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=a710aa60954%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/5601"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-3",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock 3",
+      "match": {
+        "names": [
+          "pure rock 3"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=1d3daa60885%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/5591"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-3-lx",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock 3 LX",
+      "match": {
+        "names": [
+          "pure rock 3 lx"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=cd7dda60888%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/5592"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-slim-3",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock Slim 3",
+      "match": {
+        "names": [
+          "pure rock slim 3"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=aad52a68177%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/6120"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-slim-2",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock Slim 2",
+      "match": {
+        "names": [
+          "pure rock slim 2"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=daadea36920%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/2248"
+      }
+    },
+    {
+      "id": "bequiet-pure-rock-lp",
+      "kind": "cooler",
+      "vendor": "be quiet!",
+      "name": "Pure Rock LP",
+      "match": {
+        "names": [
+          "pure rock lp"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=f1749a44753%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/cpucooler/3992"
+      }
+    },
+    {
+      "id": "bequiet-silent-loop-3-420",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Silent Loop 3 420mm",
+      "match": {
+        "names": [
+          "silent loop 3 420mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=125bba60166%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5397"
+      }
+    },
+    {
+      "id": "bequiet-silent-loop-3-360",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Silent Loop 3 360mm",
+      "match": {
+        "names": [
+          "silent loop 3 360mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=b467da60167%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5398"
+      }
+    },
+    {
+      "id": "bequiet-silent-loop-3-240",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Silent Loop 3 240mm",
+      "match": {
+        "names": [
+          "silent loop 3 240mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=212a9a60168%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5399"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-360",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop 360mm",
+      "match": {
+        "names": [
+          "light loop 360mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=1e123a55598%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5184"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-240",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop 240mm",
+      "match": {
+        "names": [
+          "light loop 240mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=78577a55596%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5183"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-360-white",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop 360mm White",
+      "match": {
+        "names": [
+          "light loop 360mm white"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=7696da55597%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5186"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-240-white",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop 240mm White",
+      "match": {
+        "names": [
+          "light loop 240mm white"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=03175a55599%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/5185"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-io-lcd-360",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop IO LCD 360mm",
+      "match": {
+        "names": [
+          "light loop io lcd 360mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=cf25fa70322%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6735"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-io-lcd-360-white",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop IO LCD 360mm White",
+      "match": {
+        "names": [
+          "light loop io lcd 360mm white"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=6aec2a70321%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6736"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-io-lcd-240",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop IO LCD 240mm",
+      "match": {
+        "names": [
+          "light loop io lcd 240mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=bde80a70324%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6737"
+      }
+    },
+    {
+      "id": "bequiet-light-loop-io-lcd-240-white",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Light Loop IO LCD 240mm White",
+      "match": {
+        "names": [
+          "light loop io lcd 240mm white"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=d4be1a70323%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6738"
+      }
+    },
+    {
+      "id": "bequiet-pure-loop-3-360",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Pure Loop 3 360mm",
+      "match": {
+        "names": [
+          "pure loop 3 360mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=4555aa65843%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6139"
+      }
+    },
+    {
+      "id": "bequiet-pure-loop-3-280",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Pure Loop 3 280mm",
+      "match": {
+        "names": [
+          "pure loop 3 280mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=99d43a65842%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6138"
+      }
+    },
+    {
+      "id": "bequiet-pure-loop-3-240",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Pure Loop 3 240mm",
+      "match": {
+        "names": [
+          "pure loop 3 240mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=455c6a65844%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6137"
+      }
+    },
+    {
+      "id": "bequiet-pure-loop-3-lx-360",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Pure Loop 3 LX 360mm",
+      "match": {
+        "names": [
+          "pure loop 3 lx 360mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=83804a65846%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6141"
+      }
+    },
+    {
+      "id": "bequiet-pure-loop-3-lx-240",
+      "kind": "aio",
+      "vendor": "be quiet!",
+      "name": "Pure Loop 3 LX 240mm",
+      "match": {
+        "names": [
+          "pure loop 3 lx 240mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=f8a0ea65845%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/watercooler/6140"
+      }
+    },
+    {
+      "id": "case-bequiet-dark-base-pro-901",
+      "kind": "other",
+      "vendor": "be quiet!",
+      "name": "Dark Base Pro 901",
+      "match": {
+        "names": [
+          "dark base pro 901",
+          "be quiet dark base pro 901"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=ac179a47440%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/case/4425"
+      }
+    },
+    {
+      "id": "case-bequiet-light-base-900-fx",
+      "kind": "other",
+      "vendor": "be quiet!",
+      "name": "Light Base 900 FX",
+      "match": {
+        "names": [
+          "light base 900 fx",
+          "be quiet light base 900 fx"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=5aadea57821%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/case/5290"
+      }
+    },
+    {
+      "id": "case-bequiet-silent-base-802",
+      "kind": "other",
+      "vendor": "be quiet!",
+      "name": "Silent Base 802",
+      "match": {
+        "names": [
+          "silent base 802",
+          "be quiet silent base 802"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=885dba60127%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/case/silent-base-802/4363"
+      }
+    },
+    {
+      "id": "case-bequiet-pure-base-600",
+      "kind": "other",
+      "vendor": "be quiet!",
+      "name": "Pure Base 600",
+      "match": {
+        "names": [
+          "pure base 600",
+          "be quiet pure base 600"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=ce2dfa60125%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/case/pure-base-600/4368"
+      }
+    },
+    {
+      "id": "case-bequiet-pure-base-501",
+      "kind": "other",
+      "vendor": "be quiet!",
+      "name": "Pure Base 501",
+      "match": {
+        "names": [
+          "pure base 501",
+          "be quiet pure base 501"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=eb55ca59063%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/case/pure-base-501/5317"
+      }
+    },
+    {
+      "id": "fan-bequiet-silent-wings-pro-4-140",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Silent Wings Pro 4 140mm PWM",
+      "match": {
+        "names": [
+          "silent wings pro 4 140mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=43722a43154%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/3706"
+      }
+    },
+    {
+      "id": "fan-bequiet-silent-wings-pro-4-120",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Silent Wings Pro 4 120mm PWM",
+      "match": {
+        "names": [
+          "silent wings pro 4 120mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=99f93a43153%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/3705"
+      }
+    },
+    {
+      "id": "fan-bequiet-silent-wings-4-140",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Silent Wings 4 140mm PWM",
+      "match": {
+        "names": [
+          "silent wings 4 140mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=a7f09a42876%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/3703"
+      }
+    },
+    {
+      "id": "fan-bequiet-silent-wings-4-120",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Silent Wings 4 120mm PWM",
+      "match": {
+        "names": [
+          "silent wings 4 120mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=c090ea42875%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/3700"
+      }
+    },
+    {
+      "id": "fan-bequiet-light-wings-140",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Light Wings 140mm PWM",
+      "match": {
+        "names": [
+          "light wings 140mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=ee69fa39335%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/3451"
+      }
+    },
+    {
+      "id": "fan-bequiet-light-wings-lx-140",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Light Wings LX 140mm PWM",
+      "match": {
+        "names": [
+          "light wings lx 140mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=71ff9a57938%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/5306"
+      }
+    },
+    {
+      "id": "fan-bequiet-light-wings-lx-120",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Light Wings LX 120mm PWM",
+      "match": {
+        "names": [
+          "light wings lx 120mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=4bc97a57933%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/5308"
+      }
+    },
+    {
+      "id": "fan-bequiet-shadow-wings-2-140",
+      "kind": "fan",
+      "vendor": "be quiet!",
+      "name": "Shadow Wings 2 140mm PWM",
+      "match": {
+        "names": [
+          "shadow wings 2 140mm"
+        ]
+      },
+      "image": {
+        "url": "https://www.bequiet.com/admin/ImageServer.php?ID=82a8aa28076%40be-quiet.net&omitPreview=true&width=1200",
+        "source_page": "https://www.bequiet.com/en/casefans/1625"
+      }
+    },
+    {
+      "id": "mb-msi-meg-z890-ace",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG Z890 ACE",
+      "match": {
+        "names": [
+          "meg z890 ace"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_174900842572c062e540ccc332ae9a05d6887c827d.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-Z890-ACE"
+      }
+    },
+    {
+      "id": "mb-msi-meg-z890-godlike",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG Z890 GODLIKE",
+      "match": {
+        "names": [
+          "meg z890 godlike"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_173259028760dadbf9fcd79ccc0dd70e9e4d511825.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-Z890-GODLIKE"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-z890-edge-ti-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG Z890 EDGE TI WIFI",
+      "match": {
+        "names": [
+          "mpg z890 edge ti wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17284609791d98d73a82d9c2754b18aad72ca98d59.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-Z890-EDGE-TI-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-pro-z890-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO Z890-P WIFI",
+      "match": {
+        "names": [
+          "pro z890 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17283793206e34fe8ee6f6920a7209938427697db8.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-Z890-P-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-meg-x870e-godlike",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG X870E GODLIKE",
+      "match": {
+        "names": [
+          "meg x870e godlike"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1731051450ac5edc06ffed1827829d47a08abe8258.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-X870E-GODLIKE"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-x870e-carbon-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG X870E CARBON WIFI",
+      "match": {
+        "names": [
+          "mpg x870e carbon wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1749001928e6424b09510f96180adeb2c88cab561b.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-X870E-CARBON-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-x870e-edge-ti-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG X870E EDGE TI WIFI",
+      "match": {
+        "names": [
+          "mpg x870e edge ti wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1733293104afe226a5d2034eadbb73e22149df3b59.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-X870E-EDGE-TI-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mag-x870e-tomahawk-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MAG X870E TOMAHAWK WIFI",
+      "match": {
+        "names": [
+          "mag x870e tomahawk wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_173553972848aa1ffa3b4923f7ff28db8e9e812a88.webp",
+        "source_page": "https://www.msi.com/Motherboard/MAG-X870E-TOMAHAWK-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-pro-x870-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO X870-P WIFI",
+      "match": {
+        "names": [
+          "pro x870 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17272362843053c6db98164de5c87546aa1a336d82.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-X870-P-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-x870e-carbon-max-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG X870E CARBON MAX WIFI",
+      "match": {
+        "names": [
+          "mpg x870e carbon max wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1768809134caad48bd76105a03432347e0273643ed.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-X870E-CARBON-MAX-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mag-x870e-tomahawk-max-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MAG X870E TOMAHAWK MAX WIFI",
+      "match": {
+        "names": [
+          "mag x870e tomahawk max wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1762223530076ad7d2dcdf5e12a7f67f2660c0c4a3.webp",
+        "source_page": "https://www.msi.com/Motherboard/MAG-X870E-TOMAHAWK-MAX-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-b850-edge-ti-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG B850 EDGE TI WIFI",
+      "match": {
+        "names": [
+          "mpg b850 edge ti wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1736157587226794950e6de352aa8b594663100100.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-B850-EDGE-TI-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-pro-b850-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO B850-P WIFI",
+      "match": {
+        "names": [
+          "pro b850 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17361561345933b002a110f866543c1a23ae90a9b7.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-B850-P-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-b650-carbon-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG B650 CARBON WIFI",
+      "match": {
+        "names": [
+          "mpg b650 carbon wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1678440646870ef90dda70134f08540b789e9e74ec.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-B650-CARBON-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-b650-edge-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG B650 EDGE WIFI",
+      "match": {
+        "names": [
+          "mpg b650 edge wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1664784601f7f8f68f62d22605159c9a8f9f68db9d.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-B650-EDGE-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-pro-b650-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO B650-P WIFI",
+      "match": {
+        "names": [
+          "pro b650 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1664781998a2d5322825fd21fcbd7062e1ddea470c.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-B650-P-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-meg-x670e-ace",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG X670E ACE",
+      "match": {
+        "names": [
+          "meg x670e ace"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16596682205f9bff38a307a009b098f69bb8136bdc.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-X670E-ACE"
+      }
+    },
+    {
+      "id": "mb-msi-mag-b760m-mortar-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MAG B760M MORTAR WIFI",
+      "match": {
+        "names": [
+          "mag b760m mortar wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1672736954fe275e3d90ca17c19b50045069ef8182.webp",
+        "source_page": "https://www.msi.com/Motherboard/MAG-B760M-MORTAR-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-pro-b760-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO B760-P WIFI",
+      "match": {
+        "names": [
+          "pro b760 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1673344165e1a4cb83c994a623dd26e6d0c5491c13.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-B760-P-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-b760i-edge-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG B760I EDGE WIFI",
+      "match": {
+        "names": [
+          "mpg b760i edge wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1675930094954bf1a22f7c9b3c6c0cc4c169fb0ece.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-B760I-EDGE-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-mpg-z790-edge-ti-max-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MPG Z790 EDGE TI MAX WIFI",
+      "match": {
+        "names": [
+          "mpg z790 edge ti max wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16951784511ed3402bbe392107daa46b793b1e71c8.webp",
+        "source_page": "https://www.msi.com/Motherboard/MPG-Z790-EDGE-TI-MAX-WIFI"
+      }
+    },
+    {
+      "id": "mb-msi-meg-z790-ace",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG Z790 ACE",
+      "match": {
+        "names": [
+          "meg z790 ace"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1664265426b58c85ffde0d086b9638d57435a380f6.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-Z790-ACE"
+      }
+    },
+    {
+      "id": "mb-msi-meg-z790-godlike",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "MEG Z790 GODLIKE",
+      "match": {
+        "names": [
+          "meg z790 godlike"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16853249127d7b80eb36e329f3240d40534a4a9f45.webp",
+        "source_page": "https://www.msi.com/Motherboard/MEG-Z790-GODLIKE"
+      }
+    },
+    {
+      "id": "mb-msi-pro-z790-p-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "PRO Z790-P WIFI",
+      "match": {
+        "names": [
+          "pro z790 p wifi"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1664263772a2cec962091de0506daa831a99ff110d.webp",
+        "source_page": "https://www.msi.com/Motherboard/PRO-Z790-P-WIFI"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5090-32g-suprim-soc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5090 32G SUPRIM SOC",
+      "match": {
+        "names": [
+          "msi rtx 5090 suprim",
+          "rtx 5090 suprim"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1737516023f895424b0d960e1866828dbda06123ef.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5090-32G-SUPRIM-SOC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5090-32g-gaming-trio-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5090 32G GAMING TRIO OC",
+      "match": {
+        "names": [
+          "msi rtx 5090 gaming trio",
+          "rtx 5090 gaming trio"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1737081391df0edd81daeead5bd52c24e71abeae13.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5090-32G-GAMING-TRIO-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5090-32g-vanguard-soc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5090 32G VANGUARD SOC",
+      "match": {
+        "names": [
+          "msi rtx 5090 vanguard",
+          "rtx 5090 vanguard"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1737437813d66adfb6f83cc1142228694088fe9c9c.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5090-32G-VANGUARD-SOC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5080-16g-suprim-soc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5080 16G SUPRIM SOC",
+      "match": {
+        "names": [
+          "msi rtx 5080 suprim",
+          "rtx 5080 suprim"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17375159392049cb1de4f70b7c8d6cb1be5cb45679.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5080-16G-SUPRIM-SOC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5080-16g-gaming-trio-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC",
+      "match": {
+        "names": [
+          "msi rtx 5080 gaming trio",
+          "rtx 5080 gaming trio"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_173710004234f04a0f44dd01f025e8bee23592ca90.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5080-16G-GAMING-TRIO-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5080-16g-vanguard-soc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5080 16G VANGUARD SOC",
+      "match": {
+        "names": [
+          "msi rtx 5080 vanguard",
+          "rtx 5080 vanguard"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1737364968f92da35373ff0ee23b435925074bfcfa.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5080-16G-VANGUARD-SOC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5070-ti-16g-gaming-trio-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5070 Ti 16G GAMING TRIO OC",
+      "match": {
+        "names": [
+          "msi rtx 5070 ti gaming trio",
+          "rtx 5070 ti gaming trio"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1738567494b5a1a4c58600a87f33be548bb80e081d.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5070-Ti-16G-GAMING-TRIO-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5070-ti-16g-ventus-3x-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5070 Ti 16G VENTUS 3X OC",
+      "match": {
+        "names": [
+          "msi rtx 5070 ti ventus 3x",
+          "rtx 5070 ti ventus 3x"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17375373017f070971309d34e5db4a0cbeed1e55b1.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5070-Ti-16G-VENTUS-3X-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5070-12g-gaming-trio-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5070 12G GAMING TRIO OC",
+      "match": {
+        "names": [
+          "msi rtx 5070 gaming trio",
+          "rtx 5070 gaming trio"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1738649526e86a50585ee31273e268bbb486c9a59c.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5070-12G-GAMING-TRIO-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5070-12g-ventus-3x-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5070 12G VENTUS 3X OC",
+      "match": {
+        "names": [
+          "msi rtx 5070 ventus 3x",
+          "rtx 5070 ventus 3x"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_173761291547d8b531eb2b3a1f1bf53b14cc6ff999.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5070-12G-VENTUS-3X-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5060-ti-16g-gaming-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5060 Ti 16G GAMING OC",
+      "match": {
+        "names": [
+          "msi rtx 5060 ti 16g gaming",
+          "rtx 5060 ti 16g gaming"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1744697624283950bf56db092606f9203fa9b978f8.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5060-Ti-16G-GAMING-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5060-ti-8g-gaming-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5060 Ti 8G GAMING OC",
+      "match": {
+        "names": [
+          "msi rtx 5060 ti 8g gaming",
+          "rtx 5060 ti 8g gaming"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1744697766c5c115b4f5fd7151513b1dc4f8a217e7.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5060-Ti-8G-GAMING-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-5060-8g-ventus-2x-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 5060 8G VENTUS 2X OC",
+      "match": {
+        "names": [
+          "msi rtx 5060 ventus 2x",
+          "rtx 5060 ventus 2x"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17452877802adc1ee82075afaeea7d2a2dcf366cb9.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-5060-8G-VENTUS-2X-OC"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-4080-super-16g-gaming-x-slim",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 4080 SUPER 16G GAMING X SLIM",
+      "match": {
+        "names": [
+          "msi rtx 4080 super gaming x slim",
+          "rtx 4080 super gaming x slim"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17047017992412b3cf6a0f603661cbab5fb5a7f44a.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-4080-SUPER-16G-GAMING-X-SLIM"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-4070-ti-super-16g-gaming-x-slim",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 4070 Ti SUPER 16G GAMING X SLIM",
+      "match": {
+        "names": [
+          "msi rtx 4070 ti super gaming x slim",
+          "rtx 4070 ti super gaming x slim"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17046991811c9eb5d51a82095c16a47e5200365e92.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-4070-Ti-SUPER-16G-GAMING-X-SLIM"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-4070-super-12g-gaming-x-slim",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 4070 SUPER 12G GAMING X SLIM",
+      "match": {
+        "names": [
+          "msi rtx 4070 super gaming x slim",
+          "rtx 4070 super gaming x slim"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1704703822984da48f4e57873dd8ba9f899f1df6ac.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-4070-SUPER-12G-GAMING-X-SLIM"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-4060-gaming-x-8g",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 4060 GAMING X 8G",
+      "match": {
+        "names": [
+          "msi rtx 4060 gaming x",
+          "rtx 4060 gaming x"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1689818386ac068f120cf48b695864a745ea4fe414.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-4060-GAMING-X-8G"
+      }
+    },
+    {
+      "id": "gpu-msi-geforce-rtx-3060-ventus-2x-12g-oc",
+      "kind": "gpu",
+      "vendor": "MSI",
+      "name": "MSI GeForce RTX 3060 VENTUS 2X 12G OC",
+      "match": {
+        "names": [
+          "msi rtx 3060 ventus 2x",
+          "rtx 3060 ventus 2x"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1610443907b48feb29b4a49834f4b19e35c5511db6.webp",
+        "source_page": "https://www.msi.com/Graphics-Card/GeForce-RTX-3060-VENTUS-2X-12G-OC"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-e360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID E360",
+      "match": {
+        "names": [
+          "mag coreliquid e360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1728877407d19f561dc151c3461e3e6648bfca8aca.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-E360"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-e240",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID E240",
+      "match": {
+        "names": [
+          "mag coreliquid e240"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1728877372ce6eb1f21cb307299e23b461a2f3688c.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-E240"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-c360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID C360",
+      "match": {
+        "names": [
+          "mag coreliquid c360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17289594998ba5ec842c9b0043d10c244836269870.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-C360"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-c240",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID C240",
+      "match": {
+        "names": [
+          "mag coreliquid c240"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1728959400a1c90d8b6276d3047bd468fc191d2fba.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-C240"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-a13-360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID A13 360",
+      "match": {
+        "names": [
+          "mag coreliquid a13 360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1729216483ac8b88253abd27a0879ce5609951a631.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-A13-360"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-a15-360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID A15 360",
+      "match": {
+        "names": [
+          "mag coreliquid a15 360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17351813065941ae4a1c7aeda0e6b4ead04f1f48dc.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-A15-360"
+      }
+    },
+    {
+      "id": "aio-msi-mpg-coreliquid-k360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MPG CORELIQUID K360",
+      "match": {
+        "names": [
+          "mpg coreliquid k360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1614849181e6f6e9847583ccc1d9a4e6e5fdc51418.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MPG-CORELIQUID-K360"
+      }
+    },
+    {
+      "id": "aio-msi-mpg-coreliquid-k360-v2",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MPG CORELIQUID K360 V2",
+      "match": {
+        "names": [
+          "mpg coreliquid k360 v2"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17289693708bfb39b374b50981685d29285d7aad45.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MPG-CORELIQUID-K360-V2"
+      }
+    },
+    {
+      "id": "aio-msi-mpg-coreliquid-d360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MPG CORELIQUID D360",
+      "match": {
+        "names": [
+          "mpg coreliquid d360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1728877275998d5e7338c43ac175293a09167fc823.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MPG-CORELIQUID-D360"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-m360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID M360",
+      "match": {
+        "names": [
+          "mag coreliquid m360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_17289619140ef5a30f99f36781453b4237be9c65f5.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-M360"
+      }
+    },
+    {
+      "id": "aio-msi-mag-coreliquid-i360",
+      "kind": "aio",
+      "vendor": "MSI",
+      "name": "MAG CORELIQUID I360",
+      "match": {
+        "names": [
+          "mag coreliquid i360"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1728961596a95c2caa139d66ec8e47c2642885c7b9.webp",
+        "source_page": "https://www.msi.com/Liquid-Cooling/MAG-CORELIQUID-I360"
+      }
+    },
+    {
+      "id": "kb-msi-vigor-gk71-sonic",
+      "kind": "keyboard",
+      "vendor": "MSI",
+      "name": "MSI Vigor GK71 Sonic",
+      "match": {
+        "names": [
+          "msi vigor gk71 sonic"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16415411303a4f3ad1ddc39e1b18dd3904a62e4767.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/VIGOR-GK71-SONIC"
+      }
+    },
+    {
+      "id": "kb-msi-vigor-gk30",
+      "kind": "keyboard",
+      "vendor": "MSI",
+      "name": "MSI Vigor GK30",
+      "match": {
+        "names": [
+          "msi vigor gk30"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_9_20190709142918_5d24343eb0dfb.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/VIGOR-GK30"
+      }
+    },
+    {
+      "id": "kb-msi-vigor-gk50-low-profile",
+      "kind": "keyboard",
+      "vendor": "MSI",
+      "name": "MSI Vigor GK50 Low Profile",
+      "match": {
+        "names": [
+          "msi vigor gk50 low profile"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_6_20200430100743_5eaa32ef1cce7.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/VIGOR-GK50-LOW-PROFILE"
+      }
+    },
+    {
+      "id": "mouse-msi-clutch-gm41-lightweight-wireless",
+      "kind": "mouse",
+      "vendor": "MSI",
+      "name": "MSI Clutch GM41 Lightweight Wireless",
+      "match": {
+        "names": [
+          "msi clutch gm41 lightweight wireless"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16395479495c041e7489c8720a4f06697a0b47fb43.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/CLUTCH-GM41-LIGHTWEIGHT-WIRELESS"
+      }
+    },
+    {
+      "id": "mouse-msi-clutch-gm51-lightweight-wireless",
+      "kind": "mouse",
+      "vendor": "MSI",
+      "name": "MSI Clutch GM51 Lightweight Wireless",
+      "match": {
+        "names": [
+          "msi clutch gm51 lightweight wireless"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_16793770278c2cb7c40f7dd9ab1c2e0168c14d6773.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/CLUTCH-GM51-LIGHTWEIGHT-WIRELESS"
+      }
+    },
+    {
+      "id": "mouse-msi-clutch-gm31-lightweight",
+      "kind": "mouse",
+      "vendor": "MSI",
+      "name": "MSI Clutch GM31 Lightweight",
+      "match": {
+        "names": [
+          "msi clutch gm31 lightweight"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/product/product_1658821557c7f9ed629e8161d702cd1bca820e15ac.webp",
+        "source_page": "https://www.msi.com/Gaming-Gear/CLUTCH-GM31-LIGHTWEIGHT"
+      }
+    },
+    {
+      "id": "case-hyte-y40",
+      "kind": "other",
+      "vendor": "HYTE",
+      "name": "HYTE Y40",
+      "match": {
+        "names": [
+          "hyte y40"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/deec8190af07a67b86b7fc309c204cad86310fc6-3480x2460.jpg?w=640&q=80&fit=clip&auto=format",
+        "source_page": "https://hyte.com/store/y40/cs-hyte-y40-bw"
+      }
+    },
+    {
+      "id": "case-hyte-y60",
+      "kind": "other",
+      "vendor": "HYTE",
+      "name": "HYTE Y60",
+      "match": {
+        "names": [
+          "hyte y60"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/391fba567900b3161dee8d62328746d16d087a81-3480x2460.jpg?w=640&q=80&fit=clip&auto=format",
+        "source_page": "https://hyte.com/store/y60/cs-hyte-y60-bw"
+      }
+    },
+    {
+      "id": "case-hyte-y70",
+      "kind": "other",
+      "vendor": "HYTE",
+      "name": "HYTE Y70",
+      "match": {
+        "names": [
+          "hyte y70"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/30e7adc363259c2d742256c73cc0437096924938-3480x2460.jpg?w=640&q=80&fit=clip&auto=format",
+        "source_page": "https://hyte.com/store/y70/cs-hyte-y70-bw"
+      }
+    },
+    {
+      "id": "case-hyte-x50",
+      "kind": "other",
+      "vendor": "HYTE",
+      "name": "HYTE X50",
+      "match": {
+        "names": [
+          "hyte x50"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/2a7e66995e2eb1697932777b14c1c73e57064a86-3480x2460.jpg?w=640&q=80&fit=clip&auto=format",
+        "source_page": "https://hyte.com/store/x50/cs-hyte-x50g-ww"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk50-s2",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK50 S2",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk50 s2"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/SKILLER_SGK50_S2_Black/DE/SKILLER_SGK50_S2_DE_black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/SGK50S2"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk50-s3",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK50 S3",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk50 s3"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/SKILLER_SGK50_S3_Black/SKILLER_SGK50_S3_black_DE_01b.jpg",
+        "source_page": "https://en.sharkoon.com/product/SGK50S3"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk50-s4",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK50 S4",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk50 s4"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/gallery/Gaming/Keyboards/SKILLER_SGK50_S4/SKILLER_SGK50_S4_Black/SGK50_S4_Black_DE_01b.jpg",
+        "source_page": "https://en.sharkoon.com/product/SGK50S4"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk50-s4-gen2",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK50 S4 Gen2",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk50 s4 gen2"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/SKILLER_SGK50_S4_Gen2_Black/SGK50_S4_Gen2_black_de_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/SGK50S4Gen2"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk36w",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK36W",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk36w"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/SKILLER_SGK36W/SKILLER_SGK36W_DE_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/SGK36W"
+      }
+    },
+    {
+      "id": "kb-sharkoon-skiller-sgk20",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGK20",
+      "match": {
+        "names": [
+          "sharkoon skiller sgk20"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/SKILLER_SGK20/SKILLER_SGK20_DE_01_with_button.jpg",
+        "source_page": "https://en.sharkoon.com/product/SKILLERSGK20"
+      }
+    },
+    {
+      "id": "kb-sharkoon-purewriter-w100",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "PureWriter W100",
+      "match": {
+        "names": [
+          "sharkoon purewriter w100"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/PureWriter_W100/PureWriter_W100_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/PWW100"
+      }
+    },
+    {
+      "id": "kb-sharkoon-purewriter-w65",
+      "kind": "keyboard",
+      "vendor": "Sharkoon",
+      "name": "PureWriter W65",
+      "match": {
+        "names": [
+          "sharkoon purewriter w65"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Keyboard/PureWriter_W65_Black/DE/PureWriter_W65_DE_01b.jpg",
+        "source_page": "https://en.sharkoon.com/product/PureWriterW65Black"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-fireglider-one",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Fireglider One",
+      "match": {
+        "names": [
+          "sharkoon fireglider one"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/FIREGLIDER_One/FIREGLIDER_One_Black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/45273"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-skiller-sgm70w",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGM70W",
+      "match": {
+        "names": [
+          "sharkoon skiller sgm70w"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SKILLER_SGM70W/SKILLER_SGM70W_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/44337"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-skiller-sgm25w",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGM25W",
+      "match": {
+        "names": [
+          "sharkoon skiller sgm25w"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SKILLER_SGM25W/Black/SGM25W_Black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/44221"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-skiller-sgm30w",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGM30W",
+      "match": {
+        "names": [
+          "sharkoon skiller sgm30w"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SKILLER_SGM30W/SKILLER_SGM30W_Black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/44061"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-skiller-sgm50w",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGM50W",
+      "match": {
+        "names": [
+          "sharkoon skiller sgm50w"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SKILLER_SGM50W/Black/SKILLER_SGM50W_Black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/40230"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-skiller-sgm35",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Skiller SGM35",
+      "match": {
+        "names": [
+          "sharkoon skiller sgm35"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SKILLER_SGM35/Black/SKILLER_SGM35_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/40216"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-shark-force-3",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Shark Force 3",
+      "match": {
+        "names": [
+          "sharkoon shark force 3"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/ProductPictures/Mouse/SHARK_Force_3/SHARK_Force_3_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/40254"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-shark-force-ii",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Shark Force II",
+      "match": {
+        "names": [
+          "sharkoon shark force ii"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/gallery/Gaming/Mouse/SHARK_Force_II/Black/Shark_Force_II_Black_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/ShForceII"
+      }
+    },
+    {
+      "id": "mouse-sharkoon-light2-200",
+      "kind": "mouse",
+      "vendor": "Sharkoon",
+      "name": "Light2 200",
+      "match": {
+        "names": [
+          "sharkoon light2 200"
+        ]
+      },
+      "image": {
+        "url": "https://en.sharkoon.com/ImgSrv/180/180/thumb/gallery/Gaming/Mouse/Light2/Light2%20200/Light2_200_01.jpg",
+        "source_page": "https://en.sharkoon.com/product/29013"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z890-aorus-master",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z890 AORUS MASTER",
+      "match": {
+        "names": [
+          "z890 aorus master"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/e7fdbd75dac4a8871d2455462f96b052/ProductRemoveBg/42045",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z890-AORUS-MASTER"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z890-aorus-elite-wifi7",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z890 AORUS ELITE WIFI7",
+      "match": {
+        "names": [
+          "z890 aorus elite wifi7"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/9bd932624b1a074aee0397c9ded72e69/ProductRemoveBg/42074",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z890-AORUS-ELITE-WIFI7"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z890-aorus-pro-ice",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z890 AORUS PRO ICE",
+      "match": {
+        "names": [
+          "z890 aorus pro ice"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/5a31cb13ea25d5b536da2832690c80d7/ProductRemoveBg/42061",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z890-AORUS-PRO-ICE"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z890-aorus-xtreme-ai-top",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z890 AORUS XTREME AI TOP",
+      "match": {
+        "names": [
+          "z890 aorus xtreme ai top"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/3f2116ba218944df870ccff09f8d2ccf/ProductRemoveBg/42072",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z890-AORUS-XTREME-AI-TOP"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z890-aorus-elite-x-ice",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z890 AORUS ELITE X ICE",
+      "match": {
+        "names": [
+          "z890 aorus elite x ice"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/ab628f314b73be6300345a2afbbe403d/ProductRemoveBg/42068",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z890-AORUS-ELITE-X-ICE"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870e-aorus-master",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870E AORUS MASTER",
+      "match": {
+        "names": [
+          "x870e aorus master"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/6742038c90b90dbde85a56e33c573323/ProductRemoveBg/44015",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870E-AORUS-MASTER"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870e-aorus-pro",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870E AORUS PRO",
+      "match": {
+        "names": [
+          "x870e aorus pro"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/3a6d2381cf19d449e07026bfddecad89/ProductRemoveBg/42057",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870E-AORUS-PRO"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870e-aorus-elite-wifi7",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870E AORUS ELITE WIFI7",
+      "match": {
+        "names": [
+          "x870e aorus elite wifi7"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/daa3f359312352f3a7343ae309ba6dfb/ProductRemoveBg/42055",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870E-AORUS-ELITE-WIFI7"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870e-aorus-pro-ice",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870E AORUS PRO ICE",
+      "match": {
+        "names": [
+          "x870e aorus pro ice"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/47b9b19f8a7e1a0e77d75b9f7a5ed9be/ProductRemoveBg/42059",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870E-AORUS-PRO-ICE"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870-aorus-elite-wifi7",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870 AORUS ELITE WIFI7",
+      "match": {
+        "names": [
+          "x870 aorus elite wifi7"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/e7990410d05341c23edea622a05fa58d/ProductRemoveBg/42383",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870-AORUS-ELITE-WIFI7"
+      }
+    },
+    {
+      "id": "mb-gigabyte-b850-aorus-elite-wifi7",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "B850 AORUS ELITE WIFI7",
+      "match": {
+        "names": [
+          "b850 aorus elite wifi7"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/c2ae7ebc94e1b2b4f216b503ca093a6d/ProductRemoveBg/44577",
+        "source_page": "https://www.gigabyte.com/Motherboard/B850-AORUS-ELITE-WIFI7"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x870e-aorus-xtreme-ai-top",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X870E AORUS XTREME AI TOP",
+      "match": {
+        "names": [
+          "x870e aorus xtreme ai top"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/81923b806b623314e7bd94c186247f9b/ProductRemoveBg/42053",
+        "source_page": "https://www.gigabyte.com/Motherboard/X870E-AORUS-XTREME-AI-TOP"
+      }
+    },
+    {
+      "id": "mb-gigabyte-b650-aorus-elite-ax-v2",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "B650 AORUS ELITE AX V2",
+      "match": {
+        "names": [
+          "b650 aorus elite ax v2"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/e13889073f039a3e4e5df18ff4e31a60/ProductRemoveBg/36985",
+        "source_page": "https://www.gigabyte.com/Motherboard/B650-AORUS-ELITE-AX-V2"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z790-aorus-pro-x",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z790 AORUS PRO X",
+      "match": {
+        "names": [
+          "z790 aorus pro x"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/1128a2f0592004b6a4937014dcf7e6be/ProductRemoveBg/36667",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z790-AORUS-PRO-X"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z790-aorus-tachyon-x",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z790 AORUS TACHYON X",
+      "match": {
+        "names": [
+          "z790 aorus tachyon x"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/4b220222081e3d558bb0d021a39d0afb/ProductRemoveBg/38456",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z790-AORUS-TACHYON-X"
+      }
+    },
+    {
+      "id": "mb-gigabyte-z790-aorus-elite-x-wifi7",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "Z790 AORUS ELITE X WIFI7",
+      "match": {
+        "names": [
+          "z790 aorus elite x wifi7"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/21d9a483a8e6899fa2767ef8c7727711/ProductRemoveBg/36673",
+        "source_page": "https://www.gigabyte.com/Motherboard/Z790-AORUS-ELITE-X-WIFI7"
+      }
+    },
+    {
+      "id": "mb-gigabyte-b850m-aorus-elite-wifi6e-ice",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "B850M AORUS ELITE WIFI6E ICE",
+      "match": {
+        "names": [
+          "b850m aorus elite wifi6e ice"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/c8603dc5896c8076f587a149458c3920/ProductRemoveBg/45492",
+        "source_page": "https://www.gigabyte.com/Motherboard/B850M-AORUS-ELITE-WIFI6E-ICE"
+      }
+    },
+    {
+      "id": "mb-gigabyte-b850-aorus-elite-wifi7-ice",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "B850 AORUS ELITE WIFI7 ICE",
+      "match": {
+        "names": [
+          "b850 aorus elite wifi7 ice"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/63ae9d7a5604a73e5855c9bdc6c908a6/ProductRemoveBg/44591",
+        "source_page": "https://www.gigabyte.com/Motherboard/B850-AORUS-ELITE-WIFI7-ICE"
+      }
+    },
+    {
+      "id": "mb-gigabyte-x670e-aorus-pro-x",
+      "kind": "motherboard",
+      "vendor": "Gigabyte",
+      "name": "X670E AORUS PRO X",
+      "match": {
+        "names": [
+          "x670e aorus pro x"
+        ]
+      },
+      "image": {
+        "url": "https://static.gigabyte.com/StaticFile/Image/Global/186033122610e9eb60e55d527a8dcc46/ProductRemoveBg/38157",
+        "source_page": "https://www.gigabyte.com/Motherboard/X670E-AORUS-PRO-X"
+      }
+    },
+    {
+      "id": "pad-flydigi-vader-5-pro",
+      "kind": "other",
+      "vendor": "Flydigi",
+      "name": "Flydigi Vader 5 Pro",
+      "match": {
+        "names": [
+          "vader 5 pro"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0634/4245/2649/files/0-1.jpg",
+        "source_page": "https://shops.flydigi.com/products/vader5pro"
+      }
+    },
+    {
+      "id": "pad-flydigi-vader-5s",
+      "kind": "other",
+      "vendor": "Flydigi",
+      "name": "Flydigi Vader 5S",
+      "match": {
+        "names": [
+          "vader 5s"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0634/4245/2649/files/20260127-180542.jpg",
+        "source_page": "https://shops.flydigi.com/products/vader5s"
+      }
+    },
+    {
+      "id": "kb-wooting-80he-plus",
+      "kind": "keyboard",
+      "vendor": "Wooting",
+      "name": "Wooting 80HE Plus",
+      "match": {
+        "names": [
+          "wooting 80he plus"
+        ]
+      },
+      "image": {
+        "url": "https://wooting-website.ams3.cdn.digitaloceanspaces.com/products/keyboards/80HE-plus/prebuilt-images/80he-plus-og.webp",
+        "source_page": "https://wooting.io/wooting-80he-plus"
+      }
+    },
+    {
+      "id": "kb-wooting-60he-v2",
+      "kind": "keyboard",
+      "vendor": "Wooting",
+      "name": "Wooting 60HE v2",
+      "match": {
+        "names": [
+          "wooting 60he v2"
+        ]
+      },
+      "image": {
+        "url": "https://wooting-website.ams3.cdn.digitaloceanspaces.com/products/keyboards/60HEv2/60he-v2-og.webp",
+        "source_page": "https://wooting.io/wooting-60he-v2"
+      }
+    },
+    {
+      "id": "kb-wooting-two-he",
+      "kind": "keyboard",
+      "vendor": "Wooting",
+      "name": "Wooting Two HE",
+      "match": {
+        "names": [
+          "wooting two he"
+        ]
+      },
+      "image": {
+        "url": "https://wooting-website.ams3.cdn.digitaloceanspaces.com/products/keyboards/W2HE/W2HE_OG.webp",
+        "source_page": "https://wooting.io/wooting-two-he"
+      }
+    },
+    {
+      "id": "kb-wooting-60he",
+      "kind": "keyboard",
+      "vendor": "Wooting",
+      "name": "Wooting 60HE",
+      "match": {
+        "names": [
+          "wooting 60he"
+        ]
+      },
+      "image": {
+        "url": "https://wooting-website.ams3.cdn.digitaloceanspaces.com/products/keyboards/60HE/60HE_OG.webp",
+        "source_page": "https://wooting.io/wooting-60he"
+      }
+    },
+    {
+      "id": "kb-wooting-80he",
+      "kind": "keyboard",
+      "vendor": "Wooting",
+      "name": "Wooting 80HE",
+      "match": {
+        "names": [
+          "wooting 80he"
+        ]
+      },
+      "image": {
+        "url": "https://wooting-website.ams3.cdn.digitaloceanspaces.com/products/keyboards/80HE/80HE_OG_2.webp",
+        "source_page": "https://wooting.io/wooting-80he"
+      }
+    },
+    {
+      "id": "pad-xbox-wireless-controller",
+      "kind": "other",
+      "vendor": "Microsoft",
+      "name": "Xbox Wireless Controller",
+      "match": {
+        "names": [
+          "xbox wireless controller"
+        ]
+      },
+      "image": {
+        "url": "https://assets.xboxservices.com/assets/99/9b/999b6ab0-6ae1-432d-bed3-494bc3dfb138.jpg",
+        "source_page": "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller"
+      }
+    },
+    {
+      "id": "pad-xbox-elite-wireless-controller-series-2",
+      "kind": "other",
+      "vendor": "Microsoft",
+      "name": "Xbox Elite Wireless Controller Series 2",
+      "match": {
+        "names": [
+          "xbox elite wireless controller series 2"
+        ]
+      },
+      "image": {
+        "url": "https://assets.xboxservices.com/assets/d9/c5/d9c5cdbd-4c57-4dac-a044-3a29018b328d.jpg",
+        "source_page": "https://www.xbox.com/en-US/accessories/controllers/elite-wireless-controller-series-2"
+      }
+    },
+    {
+      "id": "pad-xbox-elite-wireless-controller-series-2-core",
+      "kind": "other",
+      "vendor": "Microsoft",
+      "name": "Xbox Elite Wireless Controller Series 2 Core",
+      "match": {
+        "names": [
+          "xbox elite series 2 core"
+        ]
+      },
+      "image": {
+        "url": "https://assets.xboxservices.com/assets/d9/e5/d9e5a177-a7bb-4c78-ad57-4adca5832758.jpg",
+        "source_page": "https://www.xbox.com/en-US/accessories/controllers/xbox-elite-wireless-controller-series-2-core"
+      }
+    },
+    {
+      "id": "pad-xbox-wireless-headset",
+      "kind": "other",
+      "vendor": "Microsoft",
+      "name": "Xbox Wireless Headset",
+      "match": {
+        "names": [
+          "xbox wireless headset"
+        ]
+      },
+      "image": {
+        "url": "https://cms-assets.xboxservices.com/assets/47/be/47be639d-49ac-4ded-a274-ddc8923c653b.jpg",
+        "source_page": "https://www.xbox.com/en-US/accessories/headsets/xbox-wireless-headset"
+      }
+    },
+    {
+      "id": "pad-xbox-stereo-headset",
+      "kind": "other",
+      "vendor": "Microsoft",
+      "name": "Xbox Stereo Headset",
+      "match": {
+        "names": [
+          "xbox stereo headset"
+        ]
+      },
+      "image": {
+        "url": "https://assets.xboxservices.com/assets/ec/5b/ec5b26b2-f515-4b23-a674-1e1b5d508a1e.jpg",
+        "source_page": "https://www.xbox.com/en-US/accessories/headsets/xbox-stereo-headset"
+      }
+    },
+    {
+      "id": "kb-ducky-cushion-98",
+      "kind": "keyboard",
+      "vendor": "Ducky",
+      "name": "Ducky Cushion 98",
+      "match": {
+        "names": [
+          "ducky cushion 98"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0728/4382/1295/files/ducky_asset_cushion-98_blk-1.jpg",
+        "source_page": "https://ducky.global/products/cushion-98"
+      }
+    },
+    {
+      "id": "kb-ducky-one-x-mini-wireless",
+      "kind": "keyboard",
+      "vendor": "Ducky",
+      "name": "Ducky One X Mini Wireless",
+      "match": {
+        "names": [
+          "ducky one x mini wireless"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0728/4382/1295/files/ducky_onex-mini_product-1.jpg",
+        "source_page": "https://ducky.global/products/one-x-mini-wireless"
+      }
+    },
+    {
+      "id": "kb-ducky-one-x-wireless",
+      "kind": "keyboard",
+      "vendor": "Ducky",
+      "name": "Ducky One X Wireless",
+      "match": {
+        "names": [
+          "ducky one x wireless"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0728/4382/1295/files/ducky_onex_product-1.jpg",
+        "source_page": "https://ducky.global/products/one-x-wireless"
+      }
+    },
+    {
+      "id": "kb-ducky-one-3-rgb",
+      "kind": "keyboard",
+      "vendor": "Ducky",
+      "name": "Ducky One 3 RGB",
+      "match": {
+        "names": [
+          "ducky one 3 rgb"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0728/4382/1295/files/one3-rgb_asset_product_b100-1.jpg",
+        "source_page": "https://ducky.global/products/one-3-rgb"
+      }
+    },
+    {
+      "id": "kb-ducky-one-3-aura",
+      "kind": "keyboard",
+      "vendor": "Ducky",
+      "name": "Ducky One 3 Aura",
+      "match": {
+        "names": [
+          "ducky one 3 aura"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0728/4382/1295/files/one3-aura_asset_product_100-1.jpg",
+        "source_page": "https://ducky.global/products/one-aura"
+      }
+    },
+    {
+      "id": "pad-sony-dualsense-wireless-controller",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony DualSense Wireless Controller",
+      "match": {
+        "names": [
+          "sony dualsense"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/dualsense-controller-product-thumbnail-01-en-14sep21",
+        "source_page": "https://www.playstation.com/en-us/accessories/dualsense-wireless-controller/"
+      }
+    },
+    {
+      "id": "pad-sony-dualsense-edge-wireless-controller",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony DualSense Edge Wireless Controller",
+      "match": {
+        "names": [
+          "dualsense edge"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/dualsense-edge-listing-thumb-01-en-23aug22",
+        "source_page": "https://www.playstation.com/en-us/accessories/dualsense-edge-wireless-controller/"
+      }
+    },
+    {
+      "id": "pad-sony-playstation-access-controller",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony PlayStation Access Controller",
+      "match": {
+        "names": [
+          "playstation access controller"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/access-controller-image-block-01-en-12may23",
+        "source_page": "https://www.playstation.com/en-us/accessories/access-controller/"
+      }
+    },
+    {
+      "id": "pad-sony-dualshock-4-wireless-controller",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony DualShock 4 Wireless Controller",
+      "match": {
+        "names": [
+          "sony dualshock 4"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/dualshock-controller-product-thumbnail-01-en-14sep21",
+        "source_page": "https://www.playstation.com/en-us/accessories/dualshock-4-wireless-controller/"
+      }
+    },
+    {
+      "id": "pad-sony-pulse-elite-wireless-headset",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony PULSE Elite Wireless Headset",
+      "match": {
+        "names": [
+          "pulse elite"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/PULSE-Elite-headset-thumbnail-02-en-12sep23",
+        "source_page": "https://www.playstation.com/en-us/accessories/pulse-elite-wireless-headset/"
+      }
+    },
+    {
+      "id": "pad-sony-pulse-3d-wireless-headset",
+      "kind": "other",
+      "vendor": "Sony",
+      "name": "Sony PULSE 3D Wireless Headset",
+      "match": {
+        "names": [
+          "pulse 3d wireless"
+        ]
+      },
+      "image": {
+        "url": "https://gmedia.playstation.com/is/image/SIEPDC/3d-pulse-headset-product-thumbnail-01-en-14sep21",
+        "source_page": "https://www.playstation.com/en-us/accessories/pulse-3d-wireless-headset/"
+      }
+    },
+    {
+      "id": "pad-8bitdo-ultimate-3e-controller-for-xbox",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Ultimate 3E Controller for Xbox",
+      "match": {
+        "names": [
+          "ultimate 3e"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/ultimate-3e.jpg",
+        "source_page": "https://www.8bitdo.com/ultimate-3e-controller-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-arcade-controller-for-xbox",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Arcade Controller for Xbox",
+      "match": {
+        "names": [
+          "8bitdo arcade controller"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/arcade-controller-xbox.jpg",
+        "source_page": "https://www.8bitdo.com/arcade-controller-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-retro-87-mechanical-keyboard-xbox-edition",
+      "kind": "keyboard",
+      "vendor": "8BitDo",
+      "name": "8BitDo Retro 87 Mechanical Keyboard Xbox Edition",
+      "match": {
+        "names": [
+          "retro 87 mechanical keyboard"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/keyboard-xbox.jpg",
+        "source_page": "https://www.8bitdo.com/retro-87-mechanical-keyboard-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-retro-r8-mouse-xbox-edition",
+      "kind": "mouse",
+      "vendor": "8BitDo",
+      "name": "8BitDo Retro R8 Mouse Xbox Edition",
+      "match": {
+        "names": [
+          "retro r8 mouse"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/r8-mouse.jpg",
+        "source_page": "https://www.8bitdo.com/retro-r8-mouse-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-lite-se-wireless-controller-for-xbox",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Lite SE Wireless Controller for Xbox",
+      "match": {
+        "names": [
+          "lite se wireless"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/lite-se-xbox.jpg",
+        "source_page": "https://www.8bitdo.com/lite-se-wireless-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-m30-wired-controller-for-xbox",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo M30 Wired Controller for Xbox",
+      "match": {
+        "names": [
+          "m30 wired controller"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/m30-xbox.jpg",
+        "source_page": "https://www.8bitdo.com/m30-wired-controller-xbox"
+      }
+    },
+    {
+      "id": "pad-8bitdo-neo-geo-wireless-controller",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Neo Geo Wireless Controller",
+      "match": {
+        "names": [
+          "neo geo wireless controller"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/neogeo.jpg",
+        "source_page": "https://www.8bitdo.com/neogeo-wireless-controller"
+      }
+    },
+    {
+      "id": "kb-roccat-vulcan-ii-tkl-pro",
+      "kind": "keyboard",
+      "vendor": "Roccat",
+      "name": "ROCCAT Vulcan II TKL Pro",
+      "match": {
+        "names": [
+          "roccat vulcan ii tkl pro"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/VulcanIITKL-BLK-US_bab3b9fa-8003-403b-9970-d3601372b04f.png",
+        "source_page": "https://www.turtlebeach.com/products/vulcan-ii-tkl-pro-keyboard"
+      }
+    },
+    {
+      "id": "kb-roccat-vulcan-ii-mini-air",
+      "kind": "keyboard",
+      "vendor": "Roccat",
+      "name": "ROCCAT Vulcan II Mini Air",
+      "match": {
+        "names": [
+          "roccat vulcan ii mini air"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/VulcanIIMiniAir-BLK-US_895dffd1-16c5-483b-bdcf-6bbebaf294ee.png",
+        "source_page": "https://www.turtlebeach.com/products/vulcan-ii-mini-air-keyboard"
+      }
+    },
+    {
+      "id": "kb-roccat-vulcan-ii-max",
+      "kind": "keyboard",
+      "vendor": "Roccat",
+      "name": "ROCCAT Vulcan II Max",
+      "match": {
+        "names": [
+          "roccat vulcan ii max"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/VulcanIIMax-BLK-US.png",
+        "source_page": "https://www.turtlebeach.com/products/vulcan-ii-max-keyboard"
+      }
+    },
+    {
+      "id": "kb-roccat-vulcan-ii-tkl",
+      "kind": "keyboard",
+      "vendor": "Roccat",
+      "name": "ROCCAT Vulcan II TKL",
+      "match": {
+        "names": [
+          "roccat vulcan ii tkl"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/VulkanIITKL_US_front_1106x840_dd92a39d-5f76-4dd7-8bce-e9447dc14064.png",
+        "source_page": "https://www.turtlebeach.com/products/vulcan-ii-tkl-keyboard"
+      }
+    },
+    {
+      "id": "kb-roccat-vulcan-ii",
+      "kind": "keyboard",
+      "vendor": "Roccat",
+      "name": "ROCCAT Vulcan II",
+      "match": {
+        "names": [
+          "roccat vulcan ii"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/VulcanII-BLK-US_31f2f2f7-6f18-4c2a-85f4-8f52b74df495.png",
+        "source_page": "https://www.turtlebeach.com/products/vulcan-ii-keyboard"
+      }
+    },
+    {
+      "id": "mouse-roccat-burst-ii-pro",
+      "kind": "mouse",
+      "vendor": "Roccat",
+      "name": "ROCCAT Burst II Pro",
+      "match": {
+        "names": [
+          "roccat burst ii pro"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/BurstII8kBlack-PackageFront_1106x840_417f1672-6db0-4885-ac7c-a2dc360cfd17.png",
+        "source_page": "https://www.turtlebeach.com/products/burst-ii-pro-mouse"
+      }
+    },
+    {
+      "id": "mouse-roccat-burst-ii-air",
+      "kind": "mouse",
+      "vendor": "Roccat",
+      "name": "ROCCAT Burst II Air",
+      "match": {
+        "names": [
+          "roccat burst ii air"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/BurstIIAir-BLK_85a780e8-606e-4064-b73d-08897ba8afb1.png",
+        "source_page": "https://www.turtlebeach.com/products/burst-ii-air-mouse"
+      }
+    },
+    {
+      "id": "mouse-roccat-kone-xp-air",
+      "kind": "mouse",
+      "vendor": "Roccat",
+      "name": "ROCCAT Kone XP Air",
+      "match": {
+        "names": [
+          "roccat kone xp air"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/KoneXPAir-BLK.png",
+        "source_page": "https://www.turtlebeach.com/products/kone-xp-air-mouse"
+      }
+    },
+    {
+      "id": "kb-turtle-beach-command-series-kb7",
+      "kind": "keyboard",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Command Series KB7",
+      "match": {
+        "names": [
+          "turtle beach kb7"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_KB7_TopDownTransparent_1106x840_8ee4ea3c-1de0-43a1-8552-7298f6992b28.png",
+        "source_page": "https://www.turtlebeach.com/products/command-series-kb7-keyboard"
+      }
+    },
+    {
+      "id": "kb-turtle-beach-command-series-kb5",
+      "kind": "keyboard",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Command Series KB5",
+      "match": {
+        "names": [
+          "turtle beach kb5"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_KB5_TopDown_1106x840_ecf8b09f-f3f1-4cd2-9498-0037706a2345.png",
+        "source_page": "https://www.turtlebeach.com/products/command-series-kb5-keyboard"
+      }
+    },
+    {
+      "id": "mouse-turtle-beach-command-series-mc7",
+      "kind": "mouse",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Command Series MC7",
+      "match": {
+        "names": [
+          "turtle beach mc7"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_MC7_TopDown_1106x840_803c264c-f6df-4cf2-ab5e-445c72504b3c.png",
+        "source_page": "https://www.turtlebeach.com/products/command-series-mc7-mouse"
+      }
+    },
+    {
+      "id": "mouse-turtle-beach-command-series-mc5",
+      "kind": "mouse",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Command Series MC5",
+      "match": {
+        "names": [
+          "turtle beach mc5"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_MC5_TopDown_1106x840_faf140aa-d9c5-4f64-9ffb-0586c3fdbf18.png",
+        "source_page": "https://www.turtlebeach.com/products/command-series-mc5-mouse"
+      }
+    },
+    {
+      "id": "hs-turtle-beach-stealth-pro-ii",
+      "kind": "other",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Stealth Pro II",
+      "match": {
+        "names": [
+          "turtle beach stealth pro ii"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_XB_Stealth_PRO_II_BLK_1106x840_2_21156a41-eced-4730-a581-926976741cba.png",
+        "source_page": "https://www.turtlebeach.com/products/stealth-pro-ii-headset"
+      }
+    },
+    {
+      "id": "hs-turtle-beach-stealth-700-gen-3",
+      "kind": "other",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Stealth 700 Gen 3",
+      "match": {
+        "names": [
+          "turtle beach stealth 700 gen 3"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_VariantImage_Stealth_700_XB_Cobalt_1106x840_c2dc8a3a-e4e5-431f-ab46-685248d6713d.png",
+        "source_page": "https://www.turtlebeach.com/products/stealth-700-gen-3-headset"
+      }
+    },
+    {
+      "id": "hs-turtle-beach-stealth-600",
+      "kind": "other",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Stealth 600",
+      "match": {
+        "names": [
+          "turtle beach stealth 600"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/stealth-600-XB-BLK.png",
+        "source_page": "https://www.turtlebeach.com/products/stealth-600-headset"
+      }
+    },
+    {
+      "id": "hs-turtle-beach-stealth-500",
+      "kind": "other",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Stealth 500",
+      "match": {
+        "names": [
+          "turtle beach stealth 500"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/stealth-500-BLK.png",
+        "source_page": "https://www.turtlebeach.com/products/stealth-500-headset"
+      }
+    },
+    {
+      "id": "hs-turtle-beach-atlas-200",
+      "kind": "other",
+      "vendor": "Turtle Beach",
+      "name": "Turtle Beach Atlas 200",
+      "match": {
+        "names": [
+          "turtle beach atlas 200"
+        ]
+      },
+      "image": {
+        "url": "https://cdn.shopify.com/s/files/1/0556/5795/5430/files/TB_Atlas-200_Multiplatform_Seafoam_Breeze_1106x840_95e7bb8a-49b3-4fb6-a342-c215aa6ca542.png",
+        "source_page": "https://www.turtlebeach.com/products/atlas-200-headset"
+      }
+    },
+    {
+      "id": "case-phanteks-nv9-mkii",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks NV9 MKII",
+      "match": {
+        "names": [
+          "nv9 mkii"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/01-scaled.webp",
+        "source_page": "https://phanteks.com/product/nv9-mkii-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-nv5-mk2",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks NV5 MKII",
+      "match": {
+        "names": [
+          "nv5 mkii",
+          "nv5 mk2"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/07/NV5-MKII-0-scaled.webp",
+        "source_page": "https://phanteks.com/product/nv5-mk2-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-nv5x",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks NV5X",
+      "match": {
+        "names": [
+          "phanteks nv5x"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/06/NV5X_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/nv5x-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-nv5s",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks NV5S",
+      "match": {
+        "names": [
+          "phanteks nv5s"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/06/NV5S_Black_01.webp",
+        "source_page": "https://phanteks.com/product/nv5s-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-ex5",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks EX5",
+      "match": {
+        "names": [
+          "phanteks ex5"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/07/EX5_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/ex5-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-ex5-plus",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks EX5-Plus",
+      "match": {
+        "names": [
+          "ex5 plus"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/08/EX5-Plus_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/ex5-plus-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-ex5-max",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks EX5-Max",
+      "match": {
+        "names": [
+          "ex5 max"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/08/EX5-Max_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/ex5-max-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-enthoo-elite",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Enthoo Elite",
+      "match": {
+        "names": [
+          "enthoo elite"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/01_Enthoo_Elite_black-scaled.webp",
+        "source_page": "https://phanteks.com/product/enthoo-elite/"
+      }
+    },
+    {
+      "id": "case-phanteks-enthoo-719",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Enthoo 719",
+      "match": {
+        "names": [
+          "enthoo 719"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/01_Enthoo_719_Black_12-scaled.webp",
+        "source_page": "https://phanteks.com/product/enthoo-719/"
+      }
+    },
+    {
+      "id": "case-phanteks-enthoo-pro-2-tg",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Enthoo Pro II Tempered Glass",
+      "match": {
+        "names": [
+          "enthoo pro ii tempered glass"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/01_PRO2-TG-scaled.webp",
+        "source_page": "https://phanteks.com/product/enthoo-pro-2-tg/"
+      }
+    },
+    {
+      "id": "case-phanteks-enthoo-pro-tg",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Enthoo Pro Tempered Glass",
+      "match": {
+        "names": [
+          "enthoo pro tempered glass"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/01_PRO-TEMPERED-GLASS-scaled.webp",
+        "source_page": "https://phanteks.com/product/enthoo-pro-tg/"
+      }
+    },
+    {
+      "id": "case-phanteks-evolv-x2-matrix",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Evolv X2 Matrix",
+      "match": {
+        "names": [
+          "evolv x2 matrix"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/12/EvolvX2-Matrix_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/evolv-x2-matrix-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-evolv-s2",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Evolv S2",
+      "match": {
+        "names": [
+          "evolv s2"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/05/Evolv_S2_Black_02.webp",
+        "source_page": "https://phanteks.com/product/evolv-s2-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-xt-v5",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks XT V5",
+      "match": {
+        "names": [
+          "xt v5"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/06/XT-V5_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/xt-v5-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-xt-v5-lcd",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks XT V5-LCD",
+      "match": {
+        "names": [
+          "xt v5 lcd"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/07/XT-V5-LCD_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/xt-v5-lcd-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-xt-m5",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks XT M5",
+      "match": {
+        "names": [
+          "xt m5"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/06/XT-M5_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/xt-m5-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-xt-v3",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks XT V3",
+      "match": {
+        "names": [
+          "xt v3"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/07/XT-V3_Black_01.webp",
+        "source_page": "https://phanteks.com/product/xt-v3-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-xt-pro-silent",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks XT Pro Silent",
+      "match": {
+        "names": [
+          "xt pro silent"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/12/XT-Pro_Silent_Black_15-scaled.webp",
+        "source_page": "https://phanteks.com/product/xt-silent-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-eclipse-g370a",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Eclipse G370A",
+      "match": {
+        "names": [
+          "eclipse g370a"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/06/Eclipse-G370A_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/eclipse-g370a-black/"
+      }
+    },
+    {
+      "id": "case-phanteks-eclipse-g500a",
+      "kind": "other",
+      "vendor": "Phanteks",
+      "name": "Phanteks Eclipse G500A",
+      "match": {
+        "names": [
+          "eclipse g500a"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2023/12/03_G500A_DRGB_Black-scaled.webp",
+        "source_page": "https://phanteks.com/product/eclipse-g500a-drgb-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-360m25-lcd",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 360M25 LCD",
+      "match": {
+        "names": [
+          "glacier one 360m25 lcd"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/10/GlacierOne_M25LCD_Black_00.webp",
+        "source_page": "https://phanteks.com/product/glacier-one-360m25-lcd-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-360m25g2",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 360M25G2",
+      "match": {
+        "names": [
+          "glacier one 360m25g2"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/12/GlacierOne_360M25G2_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/glacier-one-360m25g2-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-420d30",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 420D30",
+      "match": {
+        "names": [
+          "glacier one 420d30"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/05/01_Glacier-One_D30-420_Black-scaled.webp",
+        "source_page": "https://phanteks.com/product/glacier-one-420d30-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-360d30",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 360D30",
+      "match": {
+        "names": [
+          "glacier one 360d30"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/02/01_Glacier-One_D30-360_Black-scaled.webp",
+        "source_page": "https://phanteks.com/product/glacier-one-360d30-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-240d30",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 240D30",
+      "match": {
+        "names": [
+          "glacier one 240d30"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/02/01_Glacier-One_D30-240_Black-scaled.webp",
+        "source_page": "https://phanteks.com/product/glacierone-240d30-black/"
+      }
+    },
+    {
+      "id": "aio-phanteks-glacier-one-360s25-se",
+      "kind": "aio",
+      "vendor": "Phanteks",
+      "name": "Phanteks Glacier One 360S25-SE",
+      "match": {
+        "names": [
+          "glacier one 360s25 se"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2026/08/Glacier_One_360S25-SE_Black_01.webp",
+        "source_page": "https://phanteks.com/product/glacier-one-360s25-se-black/"
+      }
+    },
+    {
+      "id": "fan-phanteks-d30-120",
+      "kind": "fan",
+      "vendor": "Phanteks",
+      "name": "Phanteks D30-120 D-RGB",
+      "match": {
+        "names": [
+          "phanteks d30 120"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/02/02_PH-F120D30_DRGB_PWM_BK01_Regular-scaled.webp",
+        "source_page": "https://phanteks.com/product/d30-120-black/"
+      }
+    },
+    {
+      "id": "fan-phanteks-d30-140",
+      "kind": "fan",
+      "vendor": "Phanteks",
+      "name": "Phanteks D30-140 D-RGB",
+      "match": {
+        "names": [
+          "phanteks d30 140"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/04/02_PH-F140D30R_DRGB_PWM_BK01_Reversed-scaled.webp",
+        "source_page": "https://phanteks.com/product/d30-140-black/"
+      }
+    },
+    {
+      "id": "fan-phanteks-m25g2-120",
+      "kind": "fan",
+      "vendor": "Phanteks",
+      "name": "Phanteks M25G2-120",
+      "match": {
+        "names": [
+          "m25g2 120"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/12/M25G2_120_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/m25g2-120-black/"
+      }
+    },
+    {
+      "id": "fan-phanteks-m25g2-140",
+      "kind": "fan",
+      "vendor": "Phanteks",
+      "name": "Phanteks M25G2-140",
+      "match": {
+        "names": [
+          "m25g2 140"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2024/12/M25G2_140_Black_01-scaled.webp",
+        "source_page": "https://phanteks.com/product/m25g2-140-black/"
+      }
+    },
+    {
+      "id": "fan-phanteks-t30-140",
+      "kind": "fan",
+      "vendor": "Phanteks",
+      "name": "Phanteks T30-140",
+      "match": {
+        "names": [
+          "phanteks t30 140"
+        ]
+      },
+      "image": {
+        "url": "https://phanteks.com/wp-content/uploads/2025/04/PH-F140T30_1.webp",
+        "source_page": "https://phanteks.com/product/t30-140/"
       }
     }
   ]

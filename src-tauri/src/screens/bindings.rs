@@ -167,6 +167,7 @@ impl ValueStore {
     }
 
     /// Injecte une valeur (tests de rendu, aperçu) ; alimente aussi l'historique.
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn set_for_test(&self, key: &str, val: f64) {
         let mut inner = self.inner.lock();
         inner.values.insert(key.to_string(), val);
@@ -174,6 +175,7 @@ impl ValueStore {
     }
 
     /// Store sans capteurs (tests, aperçu hors-ligne).
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn empty() -> ValueStore {
         Self::build(None)
     }

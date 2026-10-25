@@ -206,6 +206,7 @@ impl<T: Transport> TurzxScreen<T> {
         Ok(s)
     }
 
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn firmware(&self) -> Option<&str> {
         self.firmware.as_deref()
     }

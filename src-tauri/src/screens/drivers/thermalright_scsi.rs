@@ -46,6 +46,7 @@ impl Timing {
         Timing { boot_wait: Duration::from_secs(3), post_poll: Duration::from_secs(1), post_init: Duration::from_millis(100) }
     }
 
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn none() -> Self {
         Timing { boot_wait: Duration::ZERO, post_poll: Duration::ZERO, post_init: Duration::ZERO }
     }

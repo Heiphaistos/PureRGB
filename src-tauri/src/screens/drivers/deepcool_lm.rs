@@ -68,6 +68,7 @@ pub fn brightness_packet(level: u8) -> Vec<u8> {
 }
 
 /// Bascule écran allumé/éteint (« zen ») : payload `03 00 00 00`.
+#[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
 pub fn zen_toggle_packet() -> Vec<u8> {
     packet(&[0x03, 0x00, 0x00, 0x00]).unwrap_or_default()
 }
@@ -122,6 +123,7 @@ impl<T: Transport> DeepcoolScreen<T> {
     }
 
     /// Bascule l'écran (« zen »). État courant INCONNU : c'est une bascule, pas un réglage.
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn toggle_screen(&mut self) -> Result<()> {
         self.ensure_init()?;
         write_all(&mut self.transport, &zen_toggle_packet(), "zen")

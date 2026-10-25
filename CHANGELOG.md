@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.47.0
+
+- Catalogue de photos produit : 969 -> 1 220 références (MSI cartes mères, cartes graphiques et AIO ; Gigabyte Aorus ; Noctua ; be quiet! ; Phanteks ; HYTE ; Sharkoon ; Roccat ; Wooting ; Ducky ; Turtle Beach ; manettes Sony, Xbox, 8BitDo, Flydigi). Images téléchargées et regardées, puis téléchargement réel complet par PureRGB (3 lenteurs ponctuelles sur 1 221, 1 image défaillante retirée).
+- Nettoyage : les fonctions d'écrans prêtes et testées mais non branchées (rotation, firmware, bascule d'affichage) sont marquées explicitement, 12 avertissements de code mort en moins.
+
 ## 0.46.0
 
 - Catalogue de photos produit : 330 -> 969 références (périphériques Corsair, Razer, Logitech G, SteelSeries, HyperX, Glorious, Keychron ; cartes graphiques ASUS, Gigabyte, PowerColor, ASRock, Palit, PNY ; cartes mères ASUS, MSI, NZXT ; RAM Corsair et TeamGroup ; boîtiers, AIO et ventirads ; ventilateurs, hubs et bandeaux). Chaque image a été téléchargée et regardée, le catalogue passe le schéma, l'unicité des motifs et un téléchargement réel complet par le code de PureRGB (curl, liste blanche d'hôtes, décodage). Les entrées sans image vérifiable ont été écartées plutôt que devinées.

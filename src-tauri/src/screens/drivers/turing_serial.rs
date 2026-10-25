@@ -44,6 +44,7 @@ pub(crate) trait Wire: Send {
 
 /// Orientation (valeurs de la doc : portrait 0, portrait inversé 1, paysage 2, paysage inversé 3).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
 pub enum Orientation {
     Portrait = 0,
     ReversePortrait = 1,
@@ -290,12 +291,14 @@ fn is_sleeping(p: &PortMeta) -> bool {
 }
 
 impl TuringProvider {
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché
     pub fn with_orientation(mut self, o: Orientation) -> Self {
         self.orientation = o;
         self
     }
 
     /// Impose révision et taille pour un port (ex. `COM5`), seulement s'il est au catalogue.
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché
     pub fn with_override(mut self, port: &str, ov: Override) -> Self {
         self.overrides.push((port.to_string(), ov));
         self

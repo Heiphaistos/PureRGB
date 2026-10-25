@@ -73,6 +73,7 @@ pub fn brightness_report(percent: u8) -> [u8; 4] {
 }
 
 /// Feature report de rotation : `03 0C <0-3> 01` (quarts de tour ; sens INCONNU).
+#[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
 pub fn rotation_report(quarter_turns: u8) -> Result<[u8; 4]> {
     if quarter_turns > 3 {
         bail!("Rotation Corsair hors bornes : {quarter_turns} (0 à 3 quarts de tour).");
@@ -103,6 +104,7 @@ impl<L: HidLink> CorsairScreen<L> {
     }
 
     /// Rotation matérielle en quarts de tour (0 à 3).
+    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
     pub fn set_rotation(&mut self, quarter_turns: u8) -> Result<()> {
         self.link.send_feature(&rotation_report(quarter_turns)?)
     }
