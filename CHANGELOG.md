@@ -1,12 +1,14 @@
 # Journal des modifications
 
-## 0.43.0 (en préparation)
+## 0.43.0
 
 - OpenRGB : un OpenRGB.exe résiduel de NOTRE installation (sous %ProgramFiles%\PureRGB) qui tient le port du serveur sans répondre au protocole est maintenant terminé puis relancé. Un OpenRGB de l'utilisateur ou tout autre programme n'est jamais touché. Le diagnostic nomme le processus qui tient le port et son ancienneté.
 - Carte mère MSI (Mystic Light) : le nombre de LEDs de chaque connecteur ARGB (JPIPE 1/2, JRAINBOW 1/2, JCORSAIR) est réglable (1 à 75), enregistré dans les réglages et réappliqué au démarrage. Limite du protocole par zone : une seule couleur par connecteur (la 1re LED), appliquée à tout le connecteur, hub inclus ; pas de dégradé spatial. Les zones des autres drivers natifs redimensionnables (ASUS, Gigabyte, ASRock, Thermaltake) deviennent réglables aussi.
 - Écrans USB : l'erreur « Accès refusé » indique maintenant les pilotes/services Windows liés au périphérique (WinUSB, usbccgp, HidUsb, pilote tiers) et ce qu'il faut en faire ; le texte part aussi dans la télémétrie `screens.scan_errors`.
 - Diagnostic : les casques Logitech PRO X (046d:0aba, 046d:0af7), sans éclairage, ne sont plus signalés « hors catalogue, signalez-le » ni « non reconnu ».
 
+- Manettes : toutes les manettes vues en HID (dont celles en XInput) sont listées avec le type « Manette », même sans RGB, avec la raison (Xbox, Nintendo, autres). La Flydigi Vader 4 (qui emprunte l'ID Xbox 360 045E:028E) est reconnue par sa chaîne produit, sans confondre les vraies manettes Xbox ; son éclairage n'est pas pris en charge pour l'instant (aucun protocole public fiable, voir docs/rgb-protocols/flydigi.md).
+- Nouveaux pilotes intégrés (expérimentaux, jamais validés sur du vrai matériel, désactivés par défaut) : Sony DualSense / DualSense Edge (barre lumineuse + 5 LED de joueur) et DualShock 4 (barre lumineuse), USB et Bluetooth (CRC32), couleur directe sans réglage persistant, d'après le driver Linux hid-playstation (voir docs/rgb-protocols/manettes.md). Les palettes et effets existants s'appliquent.
 
 ## 0.42.0
 
