@@ -138,7 +138,7 @@ pub fn send_report_now(diagnostics_json: &str, app_version: &str) -> Result<()> 
 
 /// Le serveur répond `{"ok":true}` ; un refus (schéma, taille, quota) arrive avec un statut HTTP d'erreur mais curl
 /// réussit quand même : sans cette vérification, un rapport rejeté passerait pour envoyé.
-fn ensure_accepted(body: &str) -> Result<()> {
+pub(crate) fn ensure_accepted(body: &str) -> Result<()> {
     let ok = serde_json::from_str::<serde_json::Value>(body.trim()).ok().and_then(|v| v.get("ok")?.as_bool()).unwrap_or(false);
     if ok {
         Ok(())

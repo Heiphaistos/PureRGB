@@ -1,6 +1,7 @@
 mod backends;
 mod commands;
 mod conflicts;
+mod device_feedback;
 mod core;
 mod engine;
 mod diag_extra;
@@ -619,6 +620,9 @@ pub fn run() {
             commands::diagnostics::selftest_scan,
             commands::diagnostics::selftest_apply,
             commands::diagnostics::send_telemetry_report,
+            commands::feedback::device_feedback_preview,
+            commands::feedback::device_feedback_send,
+            commands::feedback::community_feedback_list,
             commands::diagnostics::usb_capture_ready,
             commands::diagnostics::usb_capture_install,
             commands::diagnostics::usb_capture_start,

@@ -3,6 +3,7 @@
 pub(crate) mod conflicts_cmds;
 pub(crate) mod devices;
 pub(crate) mod diagnostics;
+pub(crate) mod feedback;
 pub(crate) mod hardware;
 pub(crate) mod openrgb_cmds;
 pub(crate) mod profiles;
