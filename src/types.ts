@@ -147,6 +147,9 @@ export interface Settings {
   telemetry_opt_in: boolean;
   auto_update_check: boolean;
   product_photos?: boolean;
+  game_mode?: boolean;
+  game_mode_keep_hid?: boolean;
+  game_mode_games?: string[];
 }
 
 export type NetworkDeviceKind =

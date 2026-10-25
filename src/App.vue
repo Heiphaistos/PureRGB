@@ -10,6 +10,7 @@ import EffectDrawer from "./components/EffectDrawer.vue";
 import FanPanel from "./components/FanPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
 import { checkForUpdate } from "./autoUpdate";
+import { bannerText, gameMode, watchGameMode } from "./gameMode";
 import ScreensPanel from "./components/screens/ScreensPanel.vue";
 import SettingsPanel from "./components/SettingsPanel.vue";
 import type { LayoutMode } from "./components/SettingsPanel.vue";
@@ -243,6 +244,7 @@ async function startOpenRgb() {
 }
 
 onMounted(async () => {
+  void watchGameMode().catch(() => undefined);
   await loadSettings();
   // Vérification silencieuse (sans bloquer l'init) si le réglage est actif.
   if (settings.value?.auto_update_check !== false) void checkForUpdate(true);
@@ -324,6 +326,10 @@ onUnmounted(() => {
       </div>
     </header>
 
+    <div v-if="bannerText(gameMode)" class="info-banner" role="status">
+      <span>🎮 {{ bannerText(gameMode) }}</span>
+      <button @click="tab = 'settings'">Réglages du mode jeu</button>
+    </div>
     <div v-if="activeConflicts > 0" class="conflict-banner">
       <span>
         ⚠️ Logiciels RGB actifs :
@@ -333,7 +339,7 @@ onUnmounted(() => {
       <button @click="tab = 'conflicts'">Gérer les conflits</button>
     </div>
     <div
-      v-if="orgb.server_reachable && !orgb.pawnio_ready"
+      v-if="!gameMode.active && orgb.server_reachable && !orgb.pawnio_ready"
       class="info-banner"
     >
       <span>
@@ -344,7 +350,7 @@ onUnmounted(() => {
         {{ pawnioInstalling ? "Installation..." : orgb.pawnio_installed ? "Réparer PawnIO" : "Installer PawnIO" }}
       </button>
     </div>
-    <div v-if="!orgb.server_reachable || orgb.last_error" class="info-banner">
+    <div v-if="!gameMode.active && (!orgb.server_reachable || orgb.last_error)" class="info-banner">
       <span>
         <template v-if="!orgb.server_reachable">Serveur OpenRGB non joignable — nécessaire pour piloter 900+ appareils.</template>
         <template v-if="!orgb.server_reachable">{{ orgb.exe_path ? "OpenRGB embarqué prêt." : "OpenRGB sera téléchargé (officiel, vérifié)." }}</template>

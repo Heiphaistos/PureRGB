@@ -104,6 +104,9 @@ impl ScreenManager {
     /// Arrête les écrans en cours, détecte à nouveau et relance avec les réglages sauvegardés.
     pub fn scan(&self, with_sim: bool) -> Vec<ScreenInfo> {
         let _one_at_a_time = self.scanning.lock();
+        if crate::gamemode::active() {
+            return Vec::new(); // mode jeu : l'interface USB des écrans reste libre
+        }
         let old: Vec<Runner> = std::mem::take(&mut *self.runners.lock());
         for r in old {
             r.stop();

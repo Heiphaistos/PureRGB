@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.44.0 (en préparation)
+
+- Mode jeu (activé par défaut, réglable dans Réglages > Général) : quand un jeu protégé par un anti-cheat est détecté (liste versionnée `src-tauri/data/gamemode_anticheat.json` : EasyAntiCheat, BattlEye, Vanguard, FACEIT, EA Javelin, GameGuard, Call of Duty, plus vos propres exécutables), PureRGB arrête l'OpenRGB qu'il a lancé, sensord (capteurs, ventilateurs carte mère rendus au BIOS), l'accès SMBus/RAM (poignée PawnIO fermée), l'envoi aux mini-écrans USB et les pilotes HID natifs (option « garder l'éclairage USB »). Bandeau et notification en français ; reprise automatique 10 s après la fermeture du jeu. Le pilote PawnIO n'est jamais déchargé ni désinstallé.
+- Réglages : texte d'honnêteté (le mode jeu réduit le risque sans garantir l'absence de bannissement, seule la fermeture de PureRGB le supprime) et bouton « Quitter PureRGB proprement ».
 ## 0.43.0
 
 - OpenRGB : un OpenRGB.exe résiduel de NOTRE installation (sous %ProgramFiles%\PureRGB) qui tient le port du serveur sans répondre au protocole est maintenant terminé puis relancé. Un OpenRGB de l'utilisateur ou tout autre programme n'est jamais touché. Le diagnostic nomme le processus qui tient le port et son ancienneté.

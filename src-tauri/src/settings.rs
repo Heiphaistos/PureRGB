@@ -53,6 +53,12 @@ pub struct Settings {
     pub auto_update_check: bool,
     /// Affiche les photos des produits (téléchargées depuis le site du fabricant).
     pub product_photos: bool,
+    /// Mode jeu : suspend tout accès matériel bas niveau tant qu'un jeu protégé par anti-cheat tourne.
+    pub game_mode: bool,
+    /// Mode jeu : garde l'éclairage des pilotes HID natifs (USB, sans pilote noyau) pendant la partie.
+    pub game_mode_keep_hid: bool,
+    /// Exécutables de jeux/lanceurs ajoutés par l'utilisateur (en plus de la liste d'anti-cheat embarquée).
+    pub game_mode_games: Vec<String>,
 }
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
@@ -86,6 +92,9 @@ impl Default for Settings {
             telemetry_opt_in: false,
             auto_update_check: true,
             product_photos: true,
+            game_mode: true,
+            game_mode_keep_hid: false,
+            game_mode_games: Vec::new(),
         }
     }
 }

@@ -164,6 +164,9 @@ impl OpenRgbManager {
 
     /// Le device est réellement utilisable (devnode PnP présent, driver chargé).
     pub fn pawnio_ready() -> bool {
+        if crate::gamemode::active() {
+            return false; // mode jeu : on n'ouvre même pas le périphérique du pilote
+        }
         std::fs::OpenOptions::new()
             .read(true)
             .open(r"\\.\PawnIO")
@@ -302,6 +305,9 @@ impl OpenRgbManager {
     /// En cas d'échec, la cause (avec diagnostic) est gardée pour l'interface.
     /// Si le port est pris par un autre programme (hôte local), bascule seul sur un port libre.
     pub fn ensure_running(&self, host: &str, port: u16) -> Result<bool> {
+        if crate::gamemode::active() {
+            return Ok(false); // mode jeu : on ne relance pas OpenRGB tant que le jeu tourne
+        }
         let local = matches!(host, "127.0.0.1" | "localhost" | "::1");
         let mut p = port;
         let r = loop {

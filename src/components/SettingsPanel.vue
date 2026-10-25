@@ -10,6 +10,7 @@ import { photosEnabled, setPhotosEnabled } from "../productPhotos";
 import RgbInventory from "./RgbInventory.vue";
 import DecoderSetting from "./DecoderSetting.vue";
 import DriversSetting from "./DriversSetting.vue";
+import GameModeSetting from "./GameModeSetting.vue";
 import SelfTest from "./SelfTest.vue";
 
 export type LayoutMode = "grid" | "list" | "canvas";
@@ -366,6 +367,8 @@ async function save() {
         <label for="productphotos">Afficher les photos des produits (téléchargées depuis le site du fabricant)</label>
       </div>
     </div>
+
+    <GameModeSetting v-show="section === 'general'" />
 
     <DecoderSetting v-show="section === 'media'" />
 

@@ -4,6 +4,7 @@ mod conflicts;
 mod core;
 mod engine;
 mod diag_extra;
+mod gamemode;
 mod hotplug;
 mod inventory;
 mod led_catalog;
@@ -211,6 +212,8 @@ pub fn run() {
     init_logging();
 
     let saved = settings::load();
+    // Avant tout démarrage matériel : un jeu protégé déjà lancé empêche OpenRGB, sensord et les écrans de démarrer.
+    let game_at_start = gamemode::precheck(&saved);
     // Créer settings.json dès le premier lancement (valeurs par défaut visibles).
     if let Err(e) = settings::save(&saved) {
         log::warn!("écriture settings initiale: {e:#}");
@@ -367,7 +370,8 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .manage(state)
         .manage(screen_mgr)
-        .setup(|app| {
+        .setup(move |app| {
+            gamemode::start(app.handle(), game_at_start);
             shutdown::schedule_autoquit(app.handle(), cleanup_before_exit);
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
             if let Ok(res) = app.path().resource_dir() {
@@ -440,6 +444,9 @@ pub fn run() {
                         let mut screen_try: Option<(Vec<String>, std::time::Instant)> = None;
                         loop {
                             std::thread::sleep(std::time::Duration::from_secs(5));
+                            if gamemode::active() {
+                                continue; // mode jeu : ni re-détection ni relance de pilote pendant la partie
+                            }
                             let state = app_handle.state::<AppState>();
                             let current: Vec<crate::backends::hid::RawHidDevice> = {
                                 let mut reg = state.registry.lock();
@@ -601,6 +608,9 @@ pub fn run() {
             commands::openrgb_cmds::openrgb_stop,
             commands::openrgb_cmds::openrgb_restart,
             commands::openrgb_cmds::pawnio_install,
+            gamemode::game_mode_status,
+            gamemode::set_game_mode,
+            gamemode::quit_app,
             commands::profiles::get_settings,
             commands::profiles::update_settings,
             product_commands::product_lookup,

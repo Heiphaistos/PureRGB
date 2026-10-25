@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "note": "Noms d'executables (sans chemin, casse ignoree, .exe facultatif). Les pilotes noyau (vgk, BEDaisy, ricochet, Denuvo Anti-Cheat) n'ont pas de processus : on detecte leurs services/processus compagnons ou l'executable du jeu.",
+  "anticheat": [
+    { "name": "Easy Anti-Cheat", "exes": ["EasyAntiCheat.exe", "EasyAntiCheat_EOS.exe", "EasyAntiCheat_Launcher.exe", "start_protected_game.exe"] },
+    { "name": "BattlEye", "exes": ["BEService.exe", "BEService_x64.exe"] },
+    { "name": "Riot Vanguard", "exes": ["vgc.exe", "vgtray.exe", "VALORANT-Win64-Shipping.exe"] },
+    { "name": "FACEIT", "exes": ["FACEITClient.exe", "FACEIT.exe"] },
+    { "name": "EA Javelin", "exes": ["EAAntiCheat.GameService.exe"] },
+    { "name": "nProtect GameGuard", "exes": ["npggsvc.exe", "GameMon.des", "GameGuard.des"] },
+    { "name": "Ricochet (Call of Duty)", "exes": ["cod.exe", "ModernWarfare.exe"] },
+    { "name": "Fortnite", "exes": ["FortniteClient-Win64-Shipping_EAC.exe", "FortniteClient-Win64-Shipping_BE.exe"] }
+  ]
+}

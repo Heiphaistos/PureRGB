@@ -109,7 +109,7 @@ impl SensorHub {
 
     /// Démarre sensord + thread lecteur. No-op si déjà lancé ou exe absent.
     pub fn start(self: &Arc<Self>) -> Result<bool> {
-        if self.child.lock().is_some() {
+        if self.child.lock().is_some() || crate::gamemode::active() {
             return Ok(false);
         }
         let exe = match self.locate() {

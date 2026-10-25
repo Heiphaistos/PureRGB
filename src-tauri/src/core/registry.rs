@@ -67,6 +67,9 @@ impl DeviceRegistry {
         self.failures.clear();
         for backend in &mut self.backends {
             let bname = backend.name();
+            if crate::gamemode::backend_suspended(bname) {
+                continue;
+            }
             match backend.scan() {
                 Ok(devs) => {
                     log::info!("scan backend {bname}: {} appareil(s)", devs.len());
@@ -125,6 +128,9 @@ impl DeviceRegistry {
 
     fn colors_via(&mut self, id: &str, colors: &[Color]) -> Result<()> {
         let (bname, local) = self.split_id(id)?;
+        if crate::gamemode::backend_suspended(bname) {
+            return Ok(()); // mode jeu : rien n'est envoyé, et ce n'est pas une panne (pas de repli définitif)
+        }
         let (bname, local) = (bname.to_string(), local.to_string());
         let backend = self
             .backends
@@ -176,6 +182,9 @@ impl DeviceRegistry {
 
     pub fn set_fan_duty(&mut self, id: &str, channel: u8, percent: u8) -> Result<()> {
         let (bname, local) = self.split_id(id)?;
+        if crate::gamemode::backend_suspended(bname) {
+            return Ok(()); // mode jeu : les ventilateurs restent rendus au BIOS
+        }
         let (bname, local) = (bname.to_string(), local.to_string());
         let backend = self
             .backends
