@@ -1,5 +1,5 @@
 //! Backend HID natif : détection USB de tous les contrôleurs connus
-//! + pilotage direct expérimental (Corsair Lighting Node, NZXT HUE2).
+//! + pilotage direct expérimental (Corsair Lighting Node).
 //!
 //! Anti-conflit : aucun handle HID n'est ouvert au scan (énumération seule).
 //! Un handle n'est ouvert que si les drivers natifs sont activés ET qu'une
@@ -10,7 +10,6 @@ pub mod gamepads;
 pub mod known;
 pub mod known_remote;
 pub mod native;
-pub mod nzxt_hue2;
 
 use crate::backends::Backend;
 use crate::core::{Color, DeviceInfo, DeviceType, FanChannel, ZoneInfo};
@@ -18,7 +17,6 @@ use anyhow::{bail, Context, Result};
 use corsair_node::CorsairLightingNode;
 use hidapi::HidApi;
 use known::NativeDriver;
-use nzxt_hue2::NzxtHue2;
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -39,7 +37,6 @@ pub struct RawHidDevice {
 }
 
 const CORSAIR_NODE_LEDS_PER_CHANNEL: u32 = 60;
-const NZXT_HUE2_LEDS_PER_CHANNEL: u32 = 40;
 
 struct Entry {
     path: std::ffi::CString,
@@ -54,7 +51,6 @@ struct Entry {
 
 enum DriverInstance {
     Corsair(CorsairLightingNode),
-    Nzxt(NzxtHue2),
     Native(Box<dyn native::NativeRgb>),
 }
 
@@ -191,7 +187,6 @@ impl HidBackend {
                 NativeDriver::CorsairLightingNode => {
                     DriverInstance::Corsair(CorsairLightingNode::new(device))
                 }
-                NativeDriver::NzxtHue2 => DriverInstance::Nzxt(NzxtHue2::new(device)),
             };
             self.open_drivers.insert(local_id.to_string(), instance);
         }
@@ -318,27 +313,6 @@ impl Backend for HidBackend {
                         "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
                     },
                 ),
-                Some(NativeDriver::NzxtHue2) => (
-                    vec![
-                        ZoneInfo::fixed("LED 1", NZXT_HUE2_LEDS_PER_CHANNEL),
-                        ZoneInfo::fixed("LED 2", NZXT_HUE2_LEDS_PER_CHANNEL),
-                    ],
-                    NZXT_HUE2_LEDS_PER_CHANNEL * 2,
-                    (0..3)
-                        .map(|i| FanChannel {
-                            index: i,
-                            name: format!("Ventilateur {}", i + 1),
-                            duty_percent: None,
-                            rpm: None,
-                        })
-                        .collect(),
-                    native_enabled,
-                    if native_enabled {
-                        "driver natif expérimental".to_string()
-                    } else {
-                        "driver natif disponible (désactivé) — sinon via OpenRGB".to_string()
-                    },
-                ),
                 None if pad.is_some() && known::find_known(vid, pid).is_none() => (
                     Vec::new(),
                     0,
@@ -402,18 +376,6 @@ impl Backend for HidBackend {
                 }
                 Ok(())
             }
-            DriverInstance::Nzxt(d) => {
-                let per = NZXT_HUE2_LEDS_PER_CHANNEL as usize;
-                for ch in 0..2u8 {
-                    let start = ch as usize * per;
-                    let end = (start + per).min(colors.len());
-                    if start >= colors.len() {
-                        break;
-                    }
-                    d.set_channel_colors(ch, &colors[start..end])?;
-                }
-                Ok(())
-            }
         }
     }
 
@@ -423,7 +385,6 @@ impl Backend for HidBackend {
         }
         let driver = self.open_driver(local_id)?;
         match driver {
-            DriverInstance::Nzxt(d) => d.set_fan_duty(channel, percent),
             DriverInstance::Native(d) => d.set_fan_duty(channel, percent),
             _ => bail!("contrôle ventilateur non supporté sur cet appareil"),
         }

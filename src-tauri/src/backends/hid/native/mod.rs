@@ -20,6 +20,7 @@ pub mod hyperx;
 pub mod lianli_uni;
 pub mod logitech;
 pub mod msi_mystic;
+pub mod nzxt_hue2;
 pub mod razer;
 pub mod roccat;
 mod sony_crc;
@@ -156,6 +157,7 @@ pub const FAMILIES: &[&Family] = &[
     &lianli_uni::FAMILY,
     &logitech::FAMILY,
     &msi_mystic::FAMILY,
+    &nzxt_hue2::FAMILY,
     &razer::FAMILY,
     &roccat::FAMILY,
     &steelseries::FAMILY,

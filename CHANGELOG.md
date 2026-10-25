@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.45.0 (en préparation)
+
+- Nouveau pilote natif NZXT (HUE 2, Smart Device V2, « Motherboard Device », RGB & Fan Controller 3 et 6 canaux, B650E, RGB & Fan Controller 2024 : PID 2001, 2002, 2005, 2006, 200B, 200D, 200F, 2009, 200E, 2010, 2011, 2019, 201F, 2020, 201B, 2022), expérimental, jamais validé sur du vrai matériel, désactivé par défaut. Il remplace l'ancien pilote HUE 2 : lecture des accessoires branchés (`20 03`/`21 03`) pour connaître le nombre de LED de chaque canal (canal vide ou accessoire inconnu : ignoré, rien n'est écrit), couleur directe par LED (ordre G,R,B, 40 LED par canal au plus), cadence limitée à 50 images par seconde. Ventilateurs : consigne bornée à 20-100 % ; à la remise en état d'origine, les ventilateurs réglés par PureRGB repartent à 100 % (aucun retour au mode matériel n'est documenté). Aucun effet matériel, aucun firmware, aucune lecture de statut (le cadre natif n'en a pas) ; les Kraken, les « 2023 RGB Controller » (2012, 2021) et les PID 200C, 2016, 2023, 2029, 3016 ne sont pas pris en charge. Voir docs/rgb-protocols/nzxt.md.
+
 ## 0.44.0
 
 - Mode jeu (activé par défaut, réglable dans Réglages > Général) : quand un jeu protégé par un anti-cheat est détecté (liste versionnée `src-tauri/data/gamemode_anticheat.json` : EasyAntiCheat, BattlEye, Vanguard, FACEIT, EA Javelin, GameGuard, Call of Duty, plus vos propres exécutables), PureRGB arrête l'OpenRGB qu'il a lancé, sensord (capteurs, ventilateurs carte mère rendus au BIOS), l'accès SMBus/RAM (poignée PawnIO fermée), l'envoi aux mini-écrans USB et les pilotes HID natifs (option « garder l'éclairage USB »). Bandeau et notification en français ; reprise automatique 10 s après la fermeture du jeu. Le pilote PawnIO n'est jamais déchargé ni désinstallé.

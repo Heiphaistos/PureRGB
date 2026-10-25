@@ -16,7 +16,6 @@ pub struct KnownDevice {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NativeDriver {
     CorsairLightingNode,
-    NzxtHue2,
 }
 
 pub const KNOWN_DEVICES: &[KnownDevice] = &[
@@ -31,7 +30,7 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x1B1C, pid: 0x0C21, name: "Corsair Hydro Platinum / Pro XT", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1B1C, pid: 0x0C35, name: "Corsair iCUE Elite Capellix", device_type: DeviceType::Aio, native_driver: None },
     // ---- NZXT (0x1E71) — PIDs alignés sur liquidctl ----
-    KnownDevice { vid: 0x1E71, pid: 0x2006, name: "NZXT Smart Device V2", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
+    KnownDevice { vid: 0x1E71, pid: 0x2006, name: "NZXT Smart Device V2", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x1714, name: "NZXT Smart Device V1", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x1711, name: "NZXT Grid+ V3", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x170E, name: "NZXT Kraken X42/X52/X62/X72", device_type: DeviceType::Aio, native_driver: None },
@@ -40,11 +39,11 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x1E71, pid: 0x3008, name: "NZXT Kraken Z53/Z63/Z73", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x300C, name: "NZXT Kraken 2023 Elite", device_type: DeviceType::Aio, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x300E, name: "NZXT Kraken 2023", device_type: DeviceType::Aio, native_driver: None },
-    KnownDevice { vid: 0x1E71, pid: 0x2009, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x200E, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2019, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2020, name: "NZXT RGB & Fan Controller V2", device_type: DeviceType::Hub, native_driver: Some(NativeDriver::NzxtHue2) },
-    KnownDevice { vid: 0x1E71, pid: 0x2001, name: "NZXT HUE 2", device_type: DeviceType::LedStrip, native_driver: Some(NativeDriver::NzxtHue2) },
+    KnownDevice { vid: 0x1E71, pid: 0x2009, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x200E, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x2019, name: "NZXT RGB & Fan Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x2020, name: "NZXT RGB & Fan Controller V2", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x1E71, pid: 0x2001, name: "NZXT HUE 2", device_type: DeviceType::LedStrip, native_driver: None },
     KnownDevice { vid: 0x1E71, pid: 0x2002, name: "NZXT HUE 2 Ambient", device_type: DeviceType::LedStrip, native_driver: None },
     // ---- ASUS (0x0B05) ----
     KnownDevice { vid: 0x0B05, pid: 0x1867, name: "ASUS Aura LED Controller", device_type: DeviceType::Motherboard, native_driver: None },

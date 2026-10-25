@@ -123,3 +123,13 @@ Smart Device V1 : **faible**. Effets matériels complets : **moyenne** (nombreux
 - `62 01 01 00 00 00` + duty à l'octet 3 pour ventilo 1 ; `62 01 04 ...` + duty à l'octet 5 pour ventilo 3.
 - Décodage d'une réponse `21 03` fabriquée : octet 14 = 2, octets 15..20 = `0B 0B 00 00 00 00`, 21..26 = `04 00 ...` -> deux canaux avec accessoires.
 - Kraken : calculer 40 duty pour 20..59 °C et vérifier `72 01 00 00` + 40 octets.
+
+## Pilote natif PureRGB `native/nzxt_hue2.rs` (0.45.0, expérimental)
+
+Remplace `backends/hid/nzxt_hue2.rs` (supprimé). Sources : liquidctl `smart_device.py` + OpenRGB `NZXTHue2Controller` (analyse-nzxt-cam.md §9). **Testé** : trames d'octets écrites à la main (MockHid). **Jamais essayé sur du vrai matériel.**
+
+- PID : 2001, 2002, 2005, 200B, 2006, 200D, 200F, 2009, 200E, 2010 (2 canaux LED, 4 pour 2001), 2011, 2019, 201F, 2020, 201B, 2022 (6 canaux) ; 3 ventilateurs sauf 2001/2002 (0). Non revendiqués : 2012, 2021 (protocole voisin, autre classe liquidctl), 200C, 2016, 2023, 2029, 3016, Kraken, Smart Device V1.
+- Ouverture : `20 03`, relecture jusqu'à `21 03` complet de 64 o (12 essais de 300 ms). Nombre de LED par canal = somme des accessoires (liste s'arrêtant au premier 0) ; table des nombres de LED = OpenRGB seul. Un ID inconnu invalide son canal entier.
+- Couleur : `22 10`/`22 11 <1<<canal> 00` (20 LED chacun, G,R,B, canal complété de noir jusqu'à 40) puis `22 A0 <1<<canal> 00 01 00 00 00 00 00 64 00 32 00 00 01` (liquidctl ; OpenRGB met `28` à l'octet 7 et `80` à l'octet 10 : rôle INCONNU). Zones redimensionnables 1 à 40 (10 par défaut).
+- Ventilateurs : `62 01 <1<<c> 00 00 00` + consigne à l'octet `3+c`, bornée 20..=100 % (CAM §5.1) ; consigne identique à la précédente : rien d'écrit. `release` : 100 % pour les seuls ventilateurs réglés. **INCONNU** : la consigne survit-elle à une coupure d'alimentation / à la fermeture du logiciel ? (aucune des sources ne le dit).
+- Pas de lecture de statut (`60 02/03`, `67 02`) : le trait `NativeRgb` n'a pas de lecture ; pompe jamais pilotée.
