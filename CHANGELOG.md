@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.46.0
+
+- Catalogue de photos produit : 330 -> 969 références (périphériques Corsair, Razer, Logitech G, SteelSeries, HyperX, Glorious, Keychron ; cartes graphiques ASUS, Gigabyte, PowerColor, ASRock, Palit, PNY ; cartes mères ASUS, MSI, NZXT ; RAM Corsair et TeamGroup ; boîtiers, AIO et ventirads ; ventilateurs, hubs et bandeaux). Chaque image a été téléchargée et regardée, le catalogue passe le schéma, l'unicité des motifs et un téléchargement réel complet par le code de PureRGB (curl, liste blanche d'hôtes, décodage). Les entrées sans image vérifiable ont été écartées plutôt que devinées.
+- Correction : motif `dr12` trop court (Darkflash DR12) rendait le catalogue inutilisable pour le validateur.
+
 ## 0.45.0
 
 - Nouveau pilote natif NZXT (HUE 2, Smart Device V2, « Motherboard Device », RGB & Fan Controller 3 et 6 canaux, B650E, RGB & Fan Controller 2024 : PID 2001, 2002, 2005, 2006, 200B, 200D, 200F, 2009, 200E, 2010, 2011, 2019, 201F, 2020, 201B, 2022), expérimental, jamais validé sur du vrai matériel, désactivé par défaut. Il remplace l'ancien pilote HUE 2 : lecture des accessoires branchés (`20 03`/`21 03`) pour connaître le nombre de LED de chaque canal (canal vide ou accessoire inconnu : ignoré, rien n'est écrit), couleur directe par LED (ordre G,R,B, 40 LED par canal au plus), cadence limitée à 50 images par seconde. Ventilateurs : consigne bornée à 20-100 % ; à la remise en état d'origine, les ventilateurs réglés par PureRGB retrouvent le duty lu sur l'appareil avant le premier réglage (statut `67 02`), ou ne reçoivent rien si ce duty n'a pas pu être lu. Aucun effet matériel, aucun firmware ; les Kraken, les « 2023 RGB Controller » (2012, 2021) et les PID 200C, 2016, 2023, 2029, 3016 ne sont pas pris en charge. Voir docs/rgb-protocols/nzxt.md.
