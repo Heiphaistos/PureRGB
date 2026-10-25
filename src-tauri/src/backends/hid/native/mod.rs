@@ -13,6 +13,8 @@ pub mod asus_aura;
 pub mod coolermaster;
 pub mod corsair_commander;
 pub mod corsair_core;
+pub mod dualsense;
+pub mod dualshock4;
 pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod lianli_uni;
@@ -20,6 +22,7 @@ pub mod logitech;
 pub mod msi_mystic;
 pub mod razer;
 pub mod roccat;
+mod sony_crc;
 pub mod steelseries;
 pub mod thermaltake;
 pub mod wooting;
@@ -104,11 +107,13 @@ pub struct Model {
     /// Seconde collection HID à ouvrir en plus (protocoles à deux interfaces : contrôle + LEDs) ; le pilote
     /// la reçoit par `Hid::aux()`. `None` = une seule collection.
     pub aux: Option<HidSelect>,
+    /// Appareil joint en Bluetooth (renseigné à l'ouverture par le backend) : certains protocoles changent de format de rapport.
+    pub bluetooth: bool,
 }
 
 impl Model {
     pub fn new(name: impl Into<String>, device_type: DeviceType, zones: Vec<ZoneInfo>) -> Model {
-        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None, aux: None }
+        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None, aux: None, bluetooth: false }
     }
 
     pub fn led_count(&self) -> u32 {
@@ -144,6 +149,8 @@ pub const FAMILIES: &[&Family] = &[
     &coolermaster::FAMILY,
     &corsair_commander::FAMILY,
     &corsair_core::FAMILY,
+    &dualsense::FAMILY,
+    &dualshock4::FAMILY,
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
     &lianli_uni::FAMILY,
@@ -269,7 +276,7 @@ mod tests {
         ids.dedup();
         assert_eq!(ids.len(), FAMILIES.len());
         // Aucun couple VID/PID ne doit être revendiqué par deux familles.
-        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71, 0x2516, 0x1E7D, 0x10F5] {
+        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71, 0x2516, 0x1E7D, 0x10F5, 0x054C] {
             for pid in 0..=u16::MAX {
                 let n = FAMILIES.iter().filter(|f| (f.probe)(vid, pid).is_some()).count();
                 assert!(n <= 1, "{vid:04x}:{pid:04x} revendiqué par {n} familles");
