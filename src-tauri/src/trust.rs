@@ -39,7 +39,7 @@ fn lower(p: &Path) -> Vec<String> {
 }
 
 /// `path` est sous l'une des `roots` (insensible à la casse, sans `..`).
-fn is_under(path: &Path, roots: &[PathBuf]) -> bool {
+pub(crate) fn is_under(path: &Path, roots: &[PathBuf]) -> bool {
     if path.components().any(|c| matches!(c, Component::ParentDir)) {
         return false;
     }
