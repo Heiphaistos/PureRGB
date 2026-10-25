@@ -105,7 +105,7 @@ impl NusbTransport {
             }
         }
         let device = info.open().map_err(|e| {
-            anyhow!("Ouverture de l'écran USB {vid:04X}:{pid:04X} impossible ({e}). Fermez TRCC (ou tout logiciel constructeur) et rebranchez l'écran.")
+            anyhow!("Ouverture de l'écran USB {vid:04X}:{pid:04X} impossible ({e}). Fermez TRCC (ou tout logiciel constructeur) et rebranchez l'écran. {}", super::usb_service::describe(vid, pid))
         })?;
         let config = device.active_configuration().map_err(|e| anyhow!("Configuration USB illisible : {e}"))?;
         let mut found: Option<(u8, u8, u8)> = None;
@@ -140,7 +140,7 @@ impl NusbTransport {
             };
             #[cfg(not(windows))]
             let extra = String::new();
-            anyhow!("Impossible de réclamer l'interface {num} de {vid:04X}:{pid:04X} ({e}). {extra}")
+            anyhow!("Impossible de réclamer l'interface {num} de {vid:04X}:{pid:04X} ({e}). {extra} {}", super::usb_service::describe(vid, pid))
         })?;
         Ok(NusbTransport { iface, ep_out, ep_in, timeout })
     }
