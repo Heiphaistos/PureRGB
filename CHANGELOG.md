@@ -1,6 +1,6 @@
 # Journal des modifications
 
-## 0.45.0 (en préparation)
+## 0.45.0
 
 - Nouveau pilote natif NZXT (HUE 2, Smart Device V2, « Motherboard Device », RGB & Fan Controller 3 et 6 canaux, B650E, RGB & Fan Controller 2024 : PID 2001, 2002, 2005, 2006, 200B, 200D, 200F, 2009, 200E, 2010, 2011, 2019, 201F, 2020, 201B, 2022), expérimental, jamais validé sur du vrai matériel, désactivé par défaut. Il remplace l'ancien pilote HUE 2 : lecture des accessoires branchés (`20 03`/`21 03`) pour connaître le nombre de LED de chaque canal (canal vide ou accessoire inconnu : ignoré, rien n'est écrit), couleur directe par LED (ordre G,R,B, 40 LED par canal au plus), cadence limitée à 50 images par seconde. Ventilateurs : consigne bornée à 20-100 % ; à la remise en état d'origine, les ventilateurs réglés par PureRGB retrouvent le duty lu sur l'appareil avant le premier réglage (statut `67 02`), ou ne reçoivent rien si ce duty n'a pas pu être lu. Aucun effet matériel, aucun firmware ; les Kraken, les « 2023 RGB Controller » (2012, 2021) et les PID 200C, 2016, 2023, 2029, 3016 ne sont pas pris en charge. Voir docs/rgb-protocols/nzxt.md.
 - Ventilateurs, règle stricte « ne rien toucher sans réglage manuel » (suite à des ventilateurs bruyants « à fond » signalés) :
@@ -9,6 +9,8 @@
   - Carte mère (sensord/LibreHardwareMonitor) : seuls les canaux réglés par PureRGB sont rendus au BIOS (fermeture, mode jeu) ; une courbe supprimée ou désactivée rend aussitôt son canal au lieu de le laisser figé à la dernière consigne.
   - Hubs natifs : à la fermeture, Lian Li Uni (synchro carte mère) et NZXT (duty d'origine) rendent leurs ventilateurs, même après un re-scan ; Thermaltake et Corsair Commander Pro n'ont pas d'état lisible : ils gardent le dernier réglage et la note de l'appareil le dit.
   - Tests : ouverture/scan/couleurs/fermeture sans réglage = zéro écriture de vitesse (NZXT, Lian Li, Thermaltake, Commander Pro, carte mère), restauration de la valeur capturée, aucune valeur à 100 % générée par le logiciel.
+- Pilote natif iCUE LINK System Hub (Corsair 0C3F), expérimental : énumération de la chaîne en lecture seule puis couleurs directes. Une zone « Chaîne iCUE LINK » redimensionnable (1 à 476 LED, dans l'ordre des canaux) car la chaîne n'est connue qu'après ouverture. Appareil inconnu ou nombre de LED contradictoire entre sources (ORIGIN OA, XG3 Hybrid) : ouverture refusée sans rien écrire. Aucune consigne de pompe/ventilateur, aucune écriture des ressources 1D/1E ni changement de mode matériel `01 03`. Pas de keep-alive autonome ; réduction de luminosité d'iCUE non appliquée. Non testé sur matériel.
+- Pilote natif casque SteelSeries Arctis 5 (1250, 12AA), source unique (OpenRGB) : une couleur par oreille (6 écritures de 37 octets par zone). Zone inchangée non réécrite, changements à moins de 1 s refusés (persistance de l'application INCONNUE). Nova 3 non implémenté (sauvegarde flash possible). Non testé sur matériel.
 
 ## 0.44.0
 

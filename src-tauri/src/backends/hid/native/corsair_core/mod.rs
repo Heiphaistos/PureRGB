@@ -4,8 +4,7 @@
 //! - RGB : couleurs directes (endpoint `22 00`, type `12 00`, 3 octets R,G,B par LED).
 //! - Ventilateurs : REFUSÉ. Écrire une consigne exige de relire l'objet de vitesse puis de le réécrire en entier (sinon les autres canaux sont
 //!   cassés), or l'offset des données dans une réponse de lecture est INCONNU dans la note (seul le type, octets 3..4, est donné).
-//! - Famille B (iCUE LINK 0C3F) NON revendiquée : la disposition de la chaîne n'est connue qu'après énumération (réponse dont les offsets sont
-//!   ambigus) alors que les zones du modèle sont fixées avant l'ouverture ; pompe/ventilo non distinguables sans cela (minimum 50 % pompe).
+//! - Famille B (iCUE LINK 0C3F) : voir `corsair_link/` (RGB seulement, zone de chaîne redimensionnable).
 //! - Famille D (Hydro Platinum / Pro XT / Elite) NON revendiquée : paquets d'activation de l'éclairage = constante INCONNUE, profil de
 //!   refroidissement trop lacunaire pour piloter une pompe sans risque.
 //!

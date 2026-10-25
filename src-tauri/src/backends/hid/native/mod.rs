@@ -13,6 +13,7 @@ pub mod asus_aura;
 pub mod coolermaster;
 pub mod corsair_commander;
 pub mod corsair_core;
+pub mod corsair_link;
 pub mod dualsense;
 pub mod dualshock4;
 pub mod gigabyte_fusion;
@@ -25,6 +26,7 @@ pub mod razer;
 pub mod roccat;
 mod sony_crc;
 pub mod steelseries;
+pub mod steelseries_arctis5;
 pub mod thermaltake;
 pub mod wooting;
 
@@ -169,6 +171,7 @@ pub const FAMILIES: &[&Family] = &[
     &coolermaster::FAMILY,
     &corsair_commander::FAMILY,
     &corsair_core::FAMILY,
+    &corsair_link::FAMILY,
     &dualsense::FAMILY,
     &dualshock4::FAMILY,
     &gigabyte_fusion::FAMILY,
@@ -180,6 +183,7 @@ pub const FAMILIES: &[&Family] = &[
     &razer::FAMILY,
     &roccat::FAMILY,
     &steelseries::FAMILY,
+    &steelseries_arctis5::FAMILY,
     &thermaltake::FAMILY,
     &wooting::FAMILY,
 ];
