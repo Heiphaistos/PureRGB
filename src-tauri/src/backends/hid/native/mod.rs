@@ -25,6 +25,7 @@ pub mod razer;
 pub mod roccat;
 mod sony_crc;
 pub mod steelseries;
+pub mod steelseries_arctis5;
 pub mod thermaltake;
 pub mod wooting;
 
@@ -161,6 +162,7 @@ pub const FAMILIES: &[&Family] = &[
     &razer::FAMILY,
     &roccat::FAMILY,
     &steelseries::FAMILY,
+    &steelseries_arctis5::FAMILY,
     &thermaltake::FAMILY,
     &wooting::FAMILY,
 ];

@@ -17,7 +17,8 @@
 //! - Rival 100 / 300 (PID 1702, 170C, 1814, 1816, 1729 / 1710, 1714, 1394, 1716, 171A, 1392, 1718) : la note donne `05 00 R G B`
 //!   et `08 <zone+1> R G B` sans dire quelle trame va à quelle famille, ni la longueur du rapport, le préfixe d'identifiant ni
 //!   le nombre de zones : refusés ;
-//! - casques Arctis 5 (1250, 12AA), Arctis Nova 3 (12EC), Siberia 350 (1229) : octets de remplissage (« .. »), identifiants de
+//! - casque Arctis 5 (1250, 12AA) : pris en charge par `steelseries_arctis5` (source unique) ;
+//! - casques Arctis Nova 3 (12EC), Siberia 350 (1229) : octets de remplissage (« .. »), identifiants de
 //!   zone, transport et seconde trame d'init non donnés, rapport de 521 octets incomplet : refusés ;
 //! - table des touches des Apex 9 / Pro TKL : pas de `layout.bin`, la table des 114 codes confirmée pour les autres Apex est
 //!   réutilisée (le nombre de touches envoyé tient dans 513 octets) ; 0xFB (Apex Pro 2024 seulement) non utilisé.

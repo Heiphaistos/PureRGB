@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.45.0 (en préparation)
+
+- Pilote natif iCUE LINK System Hub (Corsair 0C3F), expérimental : énumération de la chaîne en lecture seule puis couleurs directes. Une zone « Chaîne iCUE LINK » redimensionnable (1 à 476 LED, dans l'ordre des canaux) car la chaîne n'est connue qu'après ouverture. Appareil inconnu ou nombre de LED contradictoire entre sources (ORIGIN OA, XG3 Hybrid) : ouverture refusée sans rien écrire. Aucune consigne de pompe/ventilateur, aucune écriture des ressources 1D/1E ni changement de mode matériel `01 03`. Pas de keep-alive autonome ; réduction de luminosité d'iCUE non appliquée. Non testé sur matériel.
+- Pilote natif casque SteelSeries Arctis 5 (1250, 12AA), source unique (OpenRGB) : une couleur par oreille (6 écritures de 37 octets par zone). Zone inchangée non réécrite, changements à moins de 1 s refusés (persistance de l'application INCONNUE). Nova 3 non implémenté (sauvegarde flash possible). Non testé sur matériel.
+
 ## 0.44.0
 
 - Mode jeu (activé par défaut, réglable dans Réglages > Général) : quand un jeu protégé par un anti-cheat est détecté (liste versionnée `src-tauri/data/gamemode_anticheat.json` : EasyAntiCheat, BattlEye, Vanguard, FACEIT, EA Javelin, GameGuard, Call of Duty, plus vos propres exécutables), PureRGB arrête l'OpenRGB qu'il a lancé, sensord (capteurs, ventilateurs carte mère rendus au BIOS), l'accès SMBus/RAM (poignée PawnIO fermée), l'envoi aux mini-écrans USB et les pilotes HID natifs (option « garder l'éclairage USB »). Bandeau et notification en français ; reprise automatique 10 s après la fermeture du jeu. Le pilote PawnIO n'est jamais déchargé ni désinstallé.
