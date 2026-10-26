@@ -45,11 +45,25 @@ impl Catalog {
     }
 }
 
+const EXTRAS: [&str; 3] = [
+    include_str!("../assets/rgb_usb_catalog_extra_a.json"),
+    include_str!("../assets/rgb_usb_catalog_extra_b.json"),
+    include_str!("../assets/rgb_usb_catalog_extra_c.json"),
+];
+
 /// Catalogue embarqué (analysé une seule fois ; un JSON invalide est une erreur de build détectée par les tests).
 pub fn catalog() -> &'static Catalog {
     static C: OnceLock<Catalog> = OnceLock::new();
     C.get_or_init(|| {
-        Catalog::parse(include_str!("../assets/rgb_usb_catalog.json")).unwrap_or(Catalog { vendors: HashMap::new(), devices: HashMap::new() })
+        let mut c = Catalog::parse(include_str!("../assets/rgb_usb_catalog.json")).unwrap_or(Catalog { vendors: HashMap::new(), devices: HashMap::new() });
+        // Compléments par famille de marques (même format) : un fichier par groupe pour éviter les conflits de fusion.
+        for extra in EXTRAS {
+            if let Ok(e) = Catalog::parse(extra) {
+                c.vendors.extend(e.vendors);
+                c.devices.extend(e.devices);
+            }
+        }
+        c
     })
 }
 
@@ -107,6 +121,13 @@ mod tests {
         assert!(c.len() > 1000, "{} appareils", c.len());
         assert!(c.vendor(0x1B1C).is_some_and(|v| v.contains("Corsair")), "Corsair connu");
         assert!(c.vendor(0x1532).is_some(), "Razer connu");
+    }
+
+    #[test]
+    fn extra_catalogs_are_valid_json() {
+        for e in EXTRAS {
+            Catalog::parse(e).expect("complément de catalogue valide");
+        }
     }
 
     #[test]
