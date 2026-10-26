@@ -14,15 +14,18 @@ pub mod coolermaster;
 pub mod corsair_commander;
 pub mod corsair_core;
 pub mod corsair_link;
+pub mod dell_g;
 pub mod dualsense;
 pub mod dualshock4;
 pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod jbl_quantum;
+pub mod lenovo_4zone;
 pub mod lianli_uni;
 pub mod litra;
 pub mod logitech;
 pub mod logitech_centurion;
+pub mod msi_3zone;
 pub mod msi_mystic;
 pub mod nzxt_hue2;
 pub mod razer;
@@ -161,6 +164,7 @@ pub fn settings_schema(family_id: &str, model: &Model) -> Vec<crate::core::Devic
     use crate::core::{DeviceSetting, SettingKind};
     match family_id {
         "litra" => litra::settings(model),
+        "lenovo_4zone" => lenovo_4zone::settings(),
         "jbl_quantum" => jbl_quantum::settings(),
         // Retour du micro : feature Centurion 0x0604 (docs/rgb-protocols/analyse-logitech-ghub.md §13).
         "logitech_centurion" => vec![DeviceSetting {
@@ -198,15 +202,18 @@ pub const FAMILIES: &[&Family] = &[
     &corsair_commander::FAMILY,
     &corsair_core::FAMILY,
     &corsair_link::FAMILY,
+    &dell_g::FAMILY,
     &dualsense::FAMILY,
     &dualshock4::FAMILY,
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
     &jbl_quantum::FAMILY,
+    &lenovo_4zone::FAMILY,
     &lianli_uni::FAMILY,
     &litra::FAMILY,
     &logitech::FAMILY,
     &logitech_centurion::FAMILY,
+    &msi_3zone::FAMILY,
     &msi_mystic::FAMILY,
     &nzxt_hue2::FAMILY,
     &razer::FAMILY,
@@ -330,7 +337,7 @@ mod tests {
         ids.dedup();
         assert_eq!(ids.len(), FAMILIES.len());
         // Aucun couple VID/PID ne doit être revendiqué par deux familles.
-        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71, 0x2516, 0x1E7D, 0x10F5, 0x054C, 0x0ECB] {
+        for vid in [0x0B05u16, 0x1462, 0x1532, 0x26CE, 0x048D, 0x1038, 0x0951, 0x03F0, 0x046D, 0x31E3, 0x264A, 0x1B1C, 0x0CF2, 0x1E71, 0x2516, 0x1E7D, 0x10F5, 0x054C, 0x0ECB, 0x187C, 0x1770] {
             for pid in 0..=u16::MAX {
                 let n = FAMILIES.iter().filter(|f| (f.probe)(vid, pid).is_some()).count();
                 assert!(n <= 1, "{vid:04x}:{pid:04x} revendiqué par {n} familles");
