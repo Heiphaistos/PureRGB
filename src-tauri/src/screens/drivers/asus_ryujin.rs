@@ -143,7 +143,7 @@ impl<'a> Hid<'a> {
     }
 
     /// Version du firmware (`82` -> `EC 02`).
-    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
+    #[allow(dead_code)] // prêt, volontairement non branché (écriture matériel non validée)
     pub fn firmware(&mut self) -> Result<String> {
         self.send(0x82, &[])?;
         parse_firmware(&self.wait("version", |r| r.len() >= 2 && r[0] == REPORT_ID && r[1] == 0x02)?)
@@ -313,7 +313,7 @@ impl RyujinScreen {
     }
 
     /// Version du firmware lue sur l'appareil.
-    #[cfg_attr(not(test), allow(dead_code))] // prêt et testé, volontairement non branché (écriture matériel non validée)
+    #[allow(dead_code)] // prêt, volontairement non branché (écriture matériel non validée)
     pub fn firmware(&mut self) -> Result<String> {
         self.with_hid(|h| h.firmware())
     }
