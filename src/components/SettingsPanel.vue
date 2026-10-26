@@ -10,6 +10,7 @@ import DiagnosticPanel from "./DiagnosticPanel.vue";
 import DecoderSetting from "./DecoderSetting.vue";
 import DriversSetting from "./DriversSetting.vue";
 import GameModeSetting from "./GameModeSetting.vue";
+import BackgroundSetting from "./BackgroundSetting.vue";
 import SelfTest from "./SelfTest.vue";
 
 export type LayoutMode = "grid" | "list" | "canvas";
@@ -260,6 +261,9 @@ async function save() {
 
     <h3 v-show="section === 'general'" class="cat">Mode jeu</h3>
     <GameModeSetting v-show="section === 'general'" />
+
+    <h3 v-show="section === 'general'" class="cat">Arrière-plan</h3>
+    <BackgroundSetting v-show="section === 'general'" />
 
     <div v-show="section === 'media'" class="card">
       <h3>Photos des produits</h3>

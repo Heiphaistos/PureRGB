@@ -155,6 +155,7 @@ export interface Settings {
   game_mode?: boolean;
   game_mode_keep_hid?: boolean;
   game_mode_games?: string[];
+  background?: { screens: boolean; lighting: boolean; fans: boolean; gamepad: boolean };
 }
 
 export type NetworkDeviceKind =

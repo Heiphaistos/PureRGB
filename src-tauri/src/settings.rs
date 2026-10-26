@@ -59,6 +59,8 @@ pub struct Settings {
     pub game_mode_keep_hid: bool,
     /// Exécutables de jeux/lanceurs ajoutés par l'utilisateur (en plus de la liste d'anti-cheat embarquée).
     pub game_mode_games: Vec<String>,
+    /// Ce qui reste actif sans fenêtre quand PureRGB est fermé (processus `--background`), au « Quitter ».
+    pub background: crate::background::Modules,
     /// Remappage de manette via une manette Xbox 360 virtuelle (ViGEmBus) : désactivé par défaut.
     pub gamepad_remap_enabled: bool,
     /// Profils de remappage par nom (gamepad_remap/model.rs).
@@ -104,6 +106,7 @@ impl Default for Settings {
             game_mode: true,
             game_mode_keep_hid: false,
             game_mode_games: Vec::new(),
+            background: crate::background::Modules::NONE,
             gamepad_remap_enabled: false,
             gamepad_remap_profiles: BTreeMap::new(),
             gamepad_remap_assign: BTreeMap::new(),
