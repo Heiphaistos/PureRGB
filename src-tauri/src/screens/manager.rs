@@ -217,6 +217,22 @@ impl ScreenManager {
         self.update(id, |c| c.layout = None)
     }
 
+    /// Un écran tourne avec un design (c'est lui que « garder les écrans allumés » doit préserver).
+    pub fn has_active_design(&self) -> bool {
+        self.runners.lock().iter().any(|r| r.is_running() && r.shared.cfg.lock().layout.is_some())
+    }
+
+    /// Designs des écrans en cours (pour savoir si les capteurs matériels sont nécessaires).
+    pub fn active_layouts(&self) -> Vec<Layout> {
+        self.runners.lock().iter().filter_map(|r| r.shared.cfg.lock().layout.clone()).collect()
+    }
+
+    /// Faux si aucun écran ne tourne ou si le fil d'un écran s'est arrêté (débranché, erreur d'envoi) : il faut re-détecter.
+    pub fn all_running(&self) -> bool {
+        let r = self.runners.lock();
+        !r.is_empty() && r.iter().all(Runner::is_running)
+    }
+
     /// Libère tous les périphériques (fermeture de l'application).
     pub fn shutdown(&self) {
         let old: Vec<Runner> = std::mem::take(&mut *self.runners.lock());

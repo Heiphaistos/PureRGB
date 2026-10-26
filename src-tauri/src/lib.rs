@@ -1,4 +1,6 @@
+mod background;
 mod backends;
+mod boot;
 mod commands;
 mod conflicts;
 mod device_feedback;
@@ -27,13 +29,10 @@ mod trust;
 mod usbcapture;
 
 use crate::backends::hid::HidBackend;
-use crate::backends::liquidctl::LiquidctlBackend;
 use crate::backends::mobo::MoboFanBackend;
 use crate::backends::openrgb::manager::OpenRgbManager;
 use crate::backends::openrgb::OpenRgbBackend;
-use crate::backends::smbus::SmbusBackend;
-use crate::backends::Backend;
-use crate::core::registry::{DeviceRegistry, SharedRegistry};
+use crate::core::registry::SharedRegistry;
 use crate::engine::curves::CurveEngine;
 use crate::engine::EffectsEngine;
 use crate::sensors::SensorHub;
@@ -42,7 +41,6 @@ use parking_lot::Mutex;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri::{Emitter, Manager};
-use commands::devices::scan_with_zone_sizes;
 use commands::diagnostics::{diagnostics_json, rescan_after_plug, rescan_and_notify};
 pub(crate) use commands::diagnostics::HardwareDiagnostics;
 
@@ -163,6 +161,36 @@ pub(crate) fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEng
 
 /// Nettoyage avant sortie (exécuté dans un thread borné, voir `shutdown.rs`) : jamais sur le thread d'interface.
 pub(crate) fn cleanup_before_exit(app: &tauri::AppHandle) {
+    cleanup(app, background::Modules::NONE, true);
+}
+
+/// Nettoyage des chemins « Quitter » (menu, bouton, test) : comme `cleanup_before_exit`, mais laisse un processus
+/// `--background` prendre le relais des modules cochés ET déjà actifs (écrans avec design, éclairage appliqué,
+/// courbes de ventilateurs existantes, remappage manette activé).
+/// Pas utilisé pour les mises à jour : l'exécutable en cours ne doit pas rester ouvert.
+pub(crate) fn cleanup_for_quit(app: &tauri::AppHandle) {
+    let sm = app.state::<std::sync::Arc<screens::manager::ScreenManager>>();
+    let (chosen, facts) = {
+        let s = app.state::<AppState>().settings.lock().clone();
+        (
+            s.background,
+            background::Facts {
+                screen_design_active: sm.has_active_design(),
+                game_active: gamemode::active(),
+                saved_screen_design: screens::state::load().values().any(|c| c.layout.is_some()),
+                has_lighting: !s.effects.is_empty() || !s.hw_modes.is_empty(),
+                has_fan_settings: !s.curves.is_empty(),
+                gamepad_enabled: s.gamepad_remap_enabled,
+            },
+        )
+    };
+    cleanup(app, background::modules_to_keep(chosen, facts), true);
+}
+
+/// `keep` : modules confiés au processus d'arrière-plan. `restore_vendor` : relancer les logiciels constructeur
+/// arrêtés au lancement (faux quand quelqu'un d'autre reprend la main : ils restent arrêtés, liste transmise).
+pub(crate) fn cleanup(app: &tauri::AppHandle, keep: background::Modules, restore_vendor: bool) {
+    let restore_vendor = restore_vendor && !keep.any();
     let state = app.state::<AppState>();
     // D'abord ce qui est rapide et qui libère les processus et le matériel...
     state.engine.shutdown();
@@ -186,10 +214,22 @@ pub(crate) fn cleanup_before_exit(app: &tauri::AppHandle) {
         log::info!("capture USB en cours arrêtée à la fermeture de l'app");
         usbcapture::stop_capture(session);
     }
+    // Le processus écrans seuls démarre AVANT la libération de l'écran (il réessaie jusqu'à ce qu'il soit libre) :
+    // coupure la plus courte possible. Sidecars déjà arrêtés ci-dessus, donc le job peut être relâché.
+    if keep.any() {
+        match background::spawn_daemon(keep) {
+            Ok(()) => log::info!("arrière-plan lancé ({}) : ces modules restent actifs sans fenêtre", keep.to_list()),
+            Err(e) => log::warn!("lancement de l'arrière-plan : {e}"),
+        }
+    }
     app.state::<std::sync::Arc<screens::manager::ScreenManager>>().shutdown();
     // ...puis, en dernier (peut être lent), redémarrer les logiciels constructeur arrêtés
     // automatiquement au lancement. Best-effort : l'échéance de `shutdown.rs` borne le tout.
     let families = state.auto_stopped.lock().clone();
+    if !restore_vendor {
+        background::handover_save(&families); // pris en charge par le processus suivant
+        return;
+    }
     for key in families {
         if let Err(e) = conflicts::restore_family(&key, &std::collections::HashMap::new()) {
             log::warn!("redémarrage auto {key}: {e:#}");
@@ -218,6 +258,13 @@ pub fn run() {
     job::kill_children_on_exit();
     self_update::cleanup_old();
     init_logging();
+    let ctx = tauri::generate_context!();
+    if let background::Mode::Background(mods) = background::parse_mode(std::env::args()) {
+        background::run(ctx, mods);
+        return;
+    }
+    // Un processus « écrans seuls » tient peut-être l'écran : on le libère avant toute détection.
+    background::stop_running_daemon();
 
     let saved = settings::load();
     // Avant tout démarrage matériel : un jeu protégé déjà lancé empêche OpenRGB, sensord et les écrans de démarrer.
@@ -226,102 +273,11 @@ pub fn run() {
     if let Err(e) = settings::save(&saved) {
         log::warn!("écriture settings initiale: {e:#}");
     }
-    let settings_shared: std::sync::Arc<Mutex<Settings>> =
-        std::sync::Arc::new(Mutex::new(saved.clone()));
-    let sensors = SensorHub::new();
-    let backends: Vec<Box<dyn Backend>> = vec![
-        Box::new(OpenRgbBackend::new(
-            saved.openrgb_host.clone(),
-            saved.openrgb_port,
-        )),
-        Box::new(HidBackend::new(saved.native_drivers_enabled)),
-        Box::new(SmbusBackend::new(saved.native_drivers_enabled, saved.smbus_writes_enabled)),
-        Box::new(LiquidctlBackend::new()),
-        Box::new(MoboFanBackend::new(sensors.clone())),
-    ];
-    let registry = DeviceRegistry::shared(backends);
-    let engine = EffectsEngine::start(registry.clone());
-    engine.set_fps(saved.fps);
-    let openrgb_mgr = std::sync::Arc::new(OpenRgbManager::new());
-    // Port d'OpenRGB changé automatiquement (le port réglé était pris) : on l'enregistre et on réoriente le client.
-    {
-        let (registry, settings_shared) = (registry.clone(), settings_shared.clone());
-        openrgb_mgr.set_port_hook(Box::new(move |port| {
-            let host = {
-                let mut s = settings_shared.lock();
-                s.openrgb_port = port;
-                if let Err(e) = settings::save(&s) {
-                    log::warn!("enregistrement du nouveau port OpenRGB: {e:#}");
-                }
-                s.openrgb_host.clone()
-            };
-            if let Some(mut reg) = registry.try_lock_for(std::time::Duration::from_secs(5)) {
-                for b in reg.backends_mut() {
-                    if let Some(orgb) = b.as_any_mut().downcast_mut::<OpenRgbBackend>() {
-                        orgb.set_endpoint(host.clone(), port);
-                    }
-                }
-            }
-        }));
-    }
-    let curve_engine = CurveEngine::start(registry.clone(), sensors.clone(), saved.curves.clone());
-
-    let auto_stopped: std::sync::Arc<Mutex<Vec<String>>> = std::sync::Arc::new(Mutex::new(Vec::new()));
-
-    // Démarrage matériel en arrière-plan : auto-start OpenRGB embarqué
-    // (si activé et aucun serveur joignable), scan, restauration des effets.
-    // Hors du thread UI — l'init OpenRGB peut prendre 20 s.
-    {
-        let registry = registry.clone();
-        let engine = engine.clone();
-        let mgr = openrgb_mgr.clone();
-        let settings_shared = settings_shared.clone();
-        let auto_stopped = auto_stopped.clone();
-        std::thread::Builder::new()
-            .name("hw-init".into())
-            .spawn(move || {
-                let saved = settings_shared.lock().clone();
-                // Arrêt auto des logiciels constructeur en conflit AVANT le scan
-                // matériel : libère les handles HID pour qu'OpenRGB détecte tout.
-                // Réversible (disable=false), redémarrés au "Quitter" du tray.
-                if saved.auto_manage_conflicts {
-                    let (found, _) = conflicts::scan();
-                    let mut stopped = auto_stopped.lock();
-                    for fam in found.iter().filter(|f| f.active) {
-                        match conflicts::stop_family(&fam.family, false) {
-                            Ok(_) => {
-                                log::info!("conflit auto-arrêté au lancement: {}", fam.name);
-                                stopped.push(fam.family.clone());
-                            }
-                            Err(e) => log::warn!("auto-arrêt {}: {e:#}", fam.name),
-                        }
-                    }
-                }
-                // Config réseau à jour AVANT le démarrage du serveur : les
-                // détecteurs réseau ne lisent OpenRGB.json qu'au boot.
-                if !saved.network_devices.is_empty() {
-                    match netdev::openrgb_config_path() {
-                        Ok(path) => {
-                            if let Err(e) = netdev::sync_openrgb_config(&saved.network_devices, &path) {
-                                log::warn!("synchro appareils réseau: {e:#}");
-                            }
-                        }
-                        Err(e) => log::warn!("chemin OpenRGB.json: {e:#}"),
-                    }
-                }
-                if saved.auto_start_openrgb {
-                    match mgr.ensure_running(&saved.openrgb_host, saved.openrgb_port) {
-                        Ok(true) => log::info!("OpenRGB embarqué démarré"),
-                        Ok(false) => log::info!("serveur OpenRGB déjà actif"),
-                        Err(e) => log::warn!("auto-start OpenRGB: {e:#}"),
-                    }
-                }
-                scan_with_zone_sizes(&mut registry.lock(), &saved.zone_sizes);
-
-                restore_saved_state(&registry, &engine, &saved);
-            })
-            .expect("spawn hw-init");
-    }
+    let mods = background::Modules::ALL;
+    let (state, screen_mgr) = boot::build(&saved, mods);
+    // Reprend la liste des logiciels constructeur arrêtés par un processus d'arrière-plan précédent.
+    state.auto_stopped.lock().extend(background::handover_take());
+    boot::start_hw_init(&state, mods, saved.auto_manage_conflicts);
 
     // Télémétrie de démarrage : entièrement séparée de `hw-init` pour ne
     // jamais retarder scan_with_zone_sizes()/restore_saved_state() (le curl
@@ -340,7 +296,6 @@ pub fn run() {
     }
 
     // Mini-écrans : détection en arrière-plan (ne retarde ni la fenêtre ni le RGB).
-    let screen_mgr = screens::manager::ScreenManager::new(sensors.clone());
     {
         let m = screen_mgr.clone();
         if let Err(e) = std::thread::Builder::new().name("screens-init".into()).spawn(move || {
@@ -351,17 +306,6 @@ pub fn run() {
             log::warn!("thread screens-init: {e}");
         }
     }
-
-    let state = AppState {
-        registry,
-        engine,
-        settings: settings_shared,
-        openrgb_mgr,
-        sensors,
-        curve_engine,
-        auto_stopped,
-        active_capture: Mutex::new(None),
-    };
 
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
@@ -381,41 +325,9 @@ pub fn run() {
         .setup(move |app| {
             gamemode::start(app.handle(), game_at_start);
             gamepad_remap::start(app.handle());
-            shutdown::schedule_autoquit(app.handle(), cleanup_before_exit);
-            // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
-            if let Ok(res) = app.path().resource_dir() {
-                let state = app.state::<AppState>();
-                state.openrgb_mgr.set_resource_dir(res.clone());
-                state.sensors.set_resource_dir(res.clone());
-                gamepad_remap::driver::set_resource_dir(res.clone());
-                let mut reg = state.registry.lock();
-                for b in reg.backends_mut() {
-                    if b.name() == "liquidctl" {
-                        if let Some(lc) = b.as_any_mut().downcast_mut::<LiquidctlBackend>() {
-                            lc.set_resource_dir(res.clone());
-                        }
-                    }
-                }
-            }
-            // Capteurs : démarrage différé hors du thread UI (init LHM ~2-5 s).
-            {
-                let state = app.state::<AppState>();
-                let sensors = state.sensors.clone();
-                let registry = state.registry.clone();
-                std::thread::Builder::new()
-                    .name("sensord-start".into())
-                    .spawn(move || match sensors.start() {
-                        Ok(true) => {
-                            log::info!("sensord démarré");
-                            // Premier relevé après ~2 s : re-scanner pour faire
-                            // apparaître les ventilateurs carte mère (backend mobo).
-                            std::thread::sleep(std::time::Duration::from_secs(6));
-                            registry.lock().scan_all();
-                        }
-                        Ok(false) => log::info!("sensord absent"),
-                        Err(e) => log::warn!("sensord: {e:#}"),
-                    })?;
-            }
+            shutdown::schedule_autoquit(app.handle(), cleanup_for_quit);
+            boot::set_resources(app.handle());
+            boot::start_sensord(app.handle())?;
             // Garde anti-relance : certains logiciels (Corsair.Service) se
             // relancent seuls malgré service désactivé + tâche neutralisée.
             // Balayage périodique tant que l'app tourne, familles opt-in.
@@ -571,7 +483,8 @@ pub fn run() {
 
             let show = MenuItem::with_id(app, "show", "Afficher PureRGB", true, None::<&str>)?;
             let quit = MenuItem::with_id(app, "quit", "Quitter", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show, &quit])?;
+            let quit_all = MenuItem::with_id(app, "quit_all", "Quitter complètement", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&show, &quit, &quit_all])?;
             TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
@@ -583,7 +496,8 @@ pub fn run() {
                             let _ = w.set_focus();
                         }
                     }
-                    "quit" => shutdown::quit_async(app.clone(), cleanup_before_exit),
+                    "quit" => shutdown::quit_async(app.clone(), cleanup_for_quit),
+                    "quit_all" => shutdown::quit_async(app.clone(), cleanup_before_exit),
                     _ => {}
                 })
                 .build(app)?;
@@ -597,6 +511,8 @@ pub fn run() {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            background::background_get,
+            background::background_set,
             self_update::update_is_portable,
             self_update::update_prepare,
             self_update::update_portable,
@@ -688,7 +604,7 @@ pub fn run() {
             screens::commands::theme_export,
             screens::commands::theme_import
         ])
-        .run(tauri::generate_context!())
+        .run(ctx)
         .expect("erreur au lancement de PureRGB");
 }
 

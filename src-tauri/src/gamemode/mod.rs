@@ -56,7 +56,7 @@ pub fn current_game() -> (Option<String>, bool) {
     (st.game.clone(), st.grace)
 }
 
-fn set_gate(on: bool, keep_hid: bool) {
+pub(crate) fn set_gate(on: bool, keep_hid: bool) {
     *SUSPENDED.lock() = if on { detect::suspended_backends(keep_hid) } else { Vec::new() };
     ACTIVE.store(on, Ordering::Release);
 }
@@ -66,7 +66,7 @@ fn running_names(sys: &mut System) -> Vec<String> {
     sys.processes().values().map(|p| p.name().to_string_lossy().to_string()).collect()
 }
 
-fn detect_now(sys: &mut System, rules: &Rules) -> Option<String> {
+pub(crate) fn detect_now(sys: &mut System, rules: &Rules) -> Option<String> {
     let names = running_names(sys);
     rules.detect(names.iter().map(String::as_str))
 }
@@ -153,14 +153,21 @@ fn exit(app: &AppHandle) {
             }
         }
     }
-    let sensors_started = match state.sensors.start() {
-        Ok(started) => started,
-        Err(e) => {
-            log::warn!("sensord après mode jeu : {e:#}");
-            false
+    // Processus d'arrière-plan : on ne relance que les modules choisis (sensord seulement pour les ventilateurs ;
+    // les écrans le redémarrent eux-mêmes si leur design en a besoin).
+    let mods = crate::background::active_modules();
+    let sensors_started = if mods.fans {
+        match state.sensors.start() {
+            Ok(started) => started,
+            Err(e) => {
+                log::warn!("sensord après mode jeu : {e:#}");
+                false
+            }
         }
+    } else {
+        false
     };
-    if saved.auto_start_openrgb {
+    if saved.auto_start_openrgb && mods.lighting {
         if let Err(e) = state.openrgb_mgr.ensure_running(&saved.openrgb_host, saved.openrgb_port) {
             log::warn!("OpenRGB après mode jeu : {e:#}");
         }
@@ -172,7 +179,14 @@ fn exit(app: &AppHandle) {
     restore_saved_state(&state.registry, &state.engine, &saved);
     state.engine.invalidate();
     let sm = app.state::<Arc<screens::manager::ScreenManager>>();
-    let screens_found = sm.scan(std::env::var_os("PURERGB_SIM_SCREEN").is_some()).len();
+    let screens_found = if !mods.screens {
+        0
+    } else if crate::background::is_background() {
+        crate::background::request_rescan(); // le module écrans re-détecte et relance sensord si besoin
+        0
+    } else {
+        sm.scan(std::env::var_os("PURERGB_SIM_SCREEN").is_some()).len()
+    };
     for (event, n) in [("devices-changed", devices.len()), ("screens-changed", screens_found)] {
         if let Err(e) = app.emit(event, n) {
             log::debug!("émission {event} : {e:#}");
@@ -273,7 +287,7 @@ pub(crate) fn set_game_mode(state: State<AppState>, enabled: bool, keep_hid: boo
 /// « Quitter PureRGB proprement » : même chemin que le menu du tray (nettoyage borné hors thread UI).
 #[tauri::command]
 pub(crate) fn quit_app(app: AppHandle) {
-    crate::shutdown::quit_async(app, crate::cleanup_before_exit);
+    crate::shutdown::quit_async(app, crate::cleanup_for_quit);
 }
 
 #[cfg(test)]
