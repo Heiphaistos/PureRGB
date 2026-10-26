@@ -60,9 +60,12 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 2] = [
+const NO_RGB: [(u16, u16, &str); 4] = [
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
     (0x046D, 0x0AF7, "Casque Logitech PRO X"),
+    // Concentrateurs USB : le descripteur lu sur la tour dit « Hub Controller » / « Concentrateur USB générique ».
+    (0x187C, 0x1012, "Concentrateur USB (Hub Controller)"),
+    (0x1A86, 0x8091, "Concentrateur USB générique"),
 ];
 
 /// Nom du périphérique s'il est connu pour ne PAS avoir d'éclairage RGB.
@@ -100,6 +103,7 @@ mod tests {
     #[test]
     fn known_without_rgb_list_is_exact() {
         assert!(known_without_rgb(0x046D, 0x0ABA).is_some() && known_without_rgb(0x046D, 0x0AF7).is_some());
+        assert!(known_without_rgb(0x187C, 0x1012).is_some() && known_without_rgb(0x1A86, 0x8091).is_some());
         assert!(known_without_rgb(0x046D, 0xC08B).is_none());
         assert!(known_without_rgb(0x1EA7, 0x0064).is_none(), "Sharkoon : aucune source, reste hors catalogue");
     }
