@@ -9,7 +9,7 @@
 //!   public de PawnIOLib, hors de la note, qui ne donne que les noms de fonctions ;
 //! - répartition des données dans les 5 derniers mots d'entrée / 5 mots de sortie : buffer de 40 octets [longueur, données...]
 //!   rangé en little-endian (convention [général] des unions SMBus de Linux : 34 octets utiles) ;
-//! - codes de taille (2 = octet+commande, 5 = bloc) et sens (1 = lecture, 0 = écriture) : convention [général] Linux i2c-dev ;
+//! - codes de taille (2 = octet+commande, 3 = mot, 5 = bloc) et sens (1 = lecture, 0 = écriture) : convention [général] Linux i2c-dev ;
 //! - disposition des 3 mots de `ioctl_identity` (nom sur 8 octets ; IDs PCI) : seul le nom ASCII du mot 0 est affiché, la liste
 //!   blanche PCI de la note n'est PAS appliquée (disposition INCONNUE) ; la signature Corsair reste le garde-fou.
 //! Une erreur de ces hypothèses se traduit par un refus (échec ou signature fausse), la détection ne faisant que lire.
@@ -35,6 +35,7 @@ const MODULES: [&str; 2] = ["SmbusI801.bin", "SmbusPIIX4.bin"];
 const BLOB_MAX: u64 = 1 << 20;
 const ATTEMPTS: u64 = 3;
 const SIZE_BYTE_DATA: u64 = 2;
+const SIZE_WORD_DATA: u64 = 3;
 const SIZE_BLOCK_DATA: u64 = 5;
 
 pub struct PawnioBus {
@@ -177,6 +178,10 @@ impl PawnioBus {
 impl SmbusBus for PawnioBus {
     fn read_byte_data(&mut self, addr: u8, reg: u8) -> Result<u8> {
         Ok((self.xfer(addr, true, reg, SIZE_BYTE_DATA, &[])?[0] & 0xFF) as u8)
+    }
+
+    fn read_word_data(&mut self, addr: u8, reg: u8) -> Result<u16> {
+        Ok((self.xfer(addr, true, reg, SIZE_WORD_DATA, &[])?[0] & 0xFFFF) as u16)
     }
 
     fn write_byte_data(&mut self, addr: u8, reg: u8, value: u8) -> Result<()> {

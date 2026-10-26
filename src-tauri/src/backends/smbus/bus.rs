@@ -17,6 +17,10 @@ pub fn ensure_writable(addr: u8) -> Result<()> {
 
 pub trait SmbusBus: Send {
     fn read_byte_data(&mut self, addr: u8, reg: u8) -> Result<u8>;
+    /// Mot SMBus (2 octets, premier octet reçu = poids faible), LECTURE seule : capteurs de température.
+    fn read_word_data(&mut self, addr: u8, _reg: u8) -> Result<u16> {
+        bail!("lecture de mot SMBus non prise en charge (0x{addr:02X})")
+    }
     fn write_byte_data(&mut self, addr: u8, reg: u8, value: u8) -> Result<()>;
     /// Bloc SMBus de 1 à 32 octets sur `reg`.
     fn write_block_data(&mut self, addr: u8, reg: u8, data: &[u8]) -> Result<()>;
@@ -45,6 +49,8 @@ mod mock {
     #[derive(Default)]
     pub struct MockBus {
         pub mem: HashMap<(u8, u8), u8>,
+        /// Mots SMBus (valeur telle que reçue : premier octet du fil = poids faible), pour `read_word_data`.
+        pub words: HashMap<(u8, u8), u16>,
         pub present: HashSet<u8>,
         /// Octets renvoyés par lectures successives de 0x40 après une écriture sur 0x21.
         pub info: HashMap<u8, Vec<u8>>,
@@ -83,6 +89,13 @@ mod mock {
                 return Ok(self.stream.get_mut(&addr).and_then(|q| q.pop_front()).unwrap_or(0));
             }
             Ok(self.mem.get(&(addr, reg)).copied().unwrap_or(0))
+        }
+        fn read_word_data(&mut self, addr: u8, reg: u8) -> Result<u16> {
+            self.log.push(Txn::Read(addr, reg));
+            if !self.present.contains(&addr) {
+                bail!("NACK à 0x{addr:02X}");
+            }
+            Ok(self.words.get(&(addr, reg)).copied().unwrap_or(0))
         }
         fn write_byte_data(&mut self, addr: u8, reg: u8, value: u8) -> Result<()> {
             ensure_writable(addr)?;
