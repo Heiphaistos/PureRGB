@@ -32,3 +32,8 @@ Aucune : pas de preuve qu'un appareil du groupe soit dépourvu de RGB ; `NO_RGB`
 
 ## Code natif
 Aucun pilote ajouté : aucun protocole [V] (pas de logiciel officiel analysé). Reste INCONNU = non implémenté.
+
+## Tentative d'installation des logiciels officiels (2026-10-26)
+- Glorious Core 2.1.23 (source officielle gloriousgaming.com, installeur Inno Setup 7.0.0.3) : `innoextract` ne gère pas cette version, 7-Zip ne sort qu'un blob. Lancé en silencieux (`/VERYSILENT /CURRENTUSER`), l'installeur reste bloqué sur l'élévation (clé HKLM, aucune réponse UAC possible) : arrêté, rien installé, temporaires nettoyés. Non contourné. Protocole Glorious : toujours [S] uniquement.
+- Redragon (redragonzone.com injoignable), Rapoo (page de téléchargement 404), Epomaker (404), Akko (page sans lien direct), NuPhy (429) : aucun installeur obtenu depuis une source officielle ; non analysés.
+- Havit, Fantech, Xtrfy, Motospeed, Ajazz, Tecware : non tentés. Aucun réglage non lumineux [V] relevé, donc aucun pilote natif.
