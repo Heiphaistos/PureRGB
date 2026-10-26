@@ -9,7 +9,7 @@ import {
 
 interface Live { virtual_active: boolean; pad_key: string | null; raw: PadState; out: PadState; error: string | null; message: string | null }
 interface View { enabled: boolean; profiles: Record<string, Profile>; assign: Record<string, string>; live: Live; game_mode_active: boolean }
-interface Drivers { vigem_ready: boolean; hidhide_installed: boolean; vigem_version: string; vigem_sha256: string; hidhide_url: string }
+interface Drivers { vigem_ready: boolean; hidhide_installed: boolean; vigem_version: string; vigem_sha256: string; hidhide_url: string; hidhide_version: string; hidhide_sha256: string }
 
 const DEFAULT_NAME = "Défaut";
 const view = ref<View | null>(null);
@@ -82,11 +82,28 @@ function setTarget(src: Button, choice: string): void {
   dirty.value = true;
 }
 
+async function installHidHide(): Promise<void> {
+  const d = drivers.value;
+  const ok = window.confirm(
+    `Installer HidHide ${d?.hidhide_version ?? ""} ?
+
+` +
+      "Installeur officiel embarqué (Nefarius), empreinte SHA-256 vérifiée (" + (d?.hidhide_sha256.slice(0, 16) ?? "") + "…). " +
+      "C'est un pilote noyau : Windows demandera votre accord et un redémarrage sera nécessaire. " +
+      "PureRGB ne règle PAS HidHide : vous choisissez vous-même les périphériques à masquer dans HidHide Configuration Client.",
+  );
+  if (!ok) return;
+  busy.value = true;
+  await run(() => invoke("gamepad_remap_install_hidhide", { confirmed: true }));
+  await refreshDrivers();
+  busy.value = false;
+}
+
 async function installDriver(): Promise<void> {
   const d = drivers.value;
   const ok = window.confirm(
     `Installer le pilote ViGEmBus ${d?.vigem_version ?? ""} ?\n\n` +
-      "PureRGB va télécharger l'installeur officiel (github.com/nefarius/ViGEmBus), vérifier son empreinte SHA-256 " +
+      "PureRGB va utiliser l'installeur officiel embarqué (Nefarius, ViGEmBus), vérifier son empreinte SHA-256 " +
       `(${d?.vigem_sha256.slice(0, 16) ?? ""}…) puis le lancer : c'est un pilote noyau, Windows demandera votre accord. ` +
       "Ne fermez pas PureRGB pendant l'installation. ViGEmBus n'est plus maintenu par son auteur.",
   );
@@ -140,7 +157,8 @@ onUnmounted(() => clearInterval(timer));
         Manette virtuelle active (lecture de {{ padKey }}).
         Les jeux voient aussi la manette physique : <b>deux manettes</b>. Pour la masquer, option avancée :
         <a :href="drivers?.hidhide_url" target="_blank" rel="noopener">HidHide</a>
-        ({{ drivers?.hidhide_installed ? "détecté sur ce PC ; ajoutez PureRGB à sa liste d'applications autorisées" : "non installé, PureRGB ne l'installe pas" }}).
+        ({{ drivers?.hidhide_installed ? "détecté sur ce PC ; ajoutez PureRGB à sa liste d'applications autorisées" : "non installé" }}).
+        <button v-if="drivers && !drivers.hidhide_installed" :disabled="busy || view?.game_mode_active" @click="installHidHide">Installer HidHide</button>
       </p>
     </div>
 

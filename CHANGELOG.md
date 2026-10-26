@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.49.0
+
+- Pilotes **embarqués** dans l'application : installeurs officiels ViGEmBus 1.22.0 et HidHide 1.5.230 (signés Nefarius), fonctionnent hors ligne. Chaque installeur est copié dans un dossier protégé, son SHA-256 épinglé est vérifié, puis il est lancé : rien ne s'installe sans confirmation, jamais pendant le mode jeu. Bouton « Installer HidHide » dans Manettes ; PureRGB ne configure pas HidHide (vous choisissez les périphériques à masquer). Pas de pilote Flydigi : l'application officielle n'en utilise pas et son protocole n'est pas documenté.
+
 ## 0.48.0
 
 - Nouvel onglet **Surveillance** : tous les capteurs de la machine (processeur, carte graphique, carte mère, disques, tensions, fréquences, puissance, ventilateurs) regroupés par composant, avec filtre, mini-courbes, min/max et alerte de température, ainsi que la vitesse des hubs et AIO pilotés par PureRGB.

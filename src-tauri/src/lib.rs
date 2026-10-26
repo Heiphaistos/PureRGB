@@ -384,6 +384,7 @@ pub fn run() {
                 let state = app.state::<AppState>();
                 state.openrgb_mgr.set_resource_dir(res.clone());
                 state.sensors.set_resource_dir(res.clone());
+                gamepad_remap::driver::set_resource_dir(res.clone());
                 let mut reg = state.registry.lock();
                 for b in reg.backends_mut() {
                     if b.name() == "liquidctl" {
@@ -626,6 +627,7 @@ pub fn run() {
             gamepad_remap::commands::gamepad_remap_assign,
             gamepad_remap::commands::gamepad_remap_calibrate,
             gamepad_remap::commands::gamepad_remap_install_driver,
+            gamepad_remap::commands::gamepad_remap_install_hidhide,
             commands::profiles::get_settings,
             commands::profiles::update_settings,
             product_commands::product_lookup,

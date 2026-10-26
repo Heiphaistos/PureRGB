@@ -97,3 +97,9 @@ pub(crate) fn gamepad_remap_calibrate() {
 pub(crate) fn gamepad_remap_install_driver(confirmed: bool) -> Result<(), String> {
     driver::install(confirmed).map_err(|e| format!("{e:#}"))
 }
+
+/// « Installer HidHide » (option avancée) : n'agit qu'avec `confirmed == true`.
+#[tauri::command(async)]
+pub(crate) fn gamepad_remap_install_hidhide(confirmed: bool) -> Result<(), String> {
+    driver::install_hidhide(confirmed).map_err(|e| format!("{e:#}"))
+}

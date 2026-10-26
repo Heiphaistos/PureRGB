@@ -10,12 +10,31 @@
 use crate::trust;
 use anyhow::{bail, Context, Result};
 use serde::Serialize;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
+
+static RESOURCE_DIR: OnceLock<PathBuf> = OnceLock::new();
+
+/// Dossier des ressources de l'application (appelé une fois au démarrage).
+pub fn set_resource_dir(dir: PathBuf) {
+    let _ = RESOURCE_DIR.set(dir);
+}
+
+/// Installeur embarqué (`resources/drivers/<nom>`), s'il existe dans l'installation.
+fn bundled(name: &str) -> Option<PathBuf> {
+    let res = RESOURCE_DIR.get()?;
+    [res.join("resources").join("drivers").join(name), res.join("drivers").join(name)].into_iter().find(|p| p.is_file())
+}
 
 pub const VIGEM_VERSION: &str = "1.22.0";
 pub const VIGEM_URL: &str = "https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe";
 pub const VIGEM_SHA256: &str = "89220a7865076b342892f98865f3499fb7c4cfd673159e89d352c360fd014c6a";
+pub const VIGEM_FILE: &str = "ViGEmBus_1.22.0_x64_x86_arm64.exe";
 pub const HIDHIDE_URL: &str = "https://github.com/nefarius/HidHide";
+pub const HIDHIDE_VERSION: &str = "1.5.230";
+pub const HIDHIDE_FILE: &str = "HidHide_1.5.230_x64.exe";
+/// SHA-256 de l'installeur officiel HidHide v1.5.230.0 (signé Nefarius), relevé le 2026-10-26.
+pub const HIDHIDE_SHA256: &str = "f4bbbcb82e6258641b887c74bc81c4c5f66e4aa811808dfc304347687b7605f6";
 const MAX_INSTALLER: u64 = 32 << 20;
 
 #[derive(Debug, Clone, Serialize)]
@@ -27,6 +46,8 @@ pub struct DriverInfo {
     pub vigem_version: &'static str,
     pub vigem_sha256: &'static str,
     pub hidhide_url: &'static str,
+    pub hidhide_version: &'static str,
+    pub hidhide_sha256: &'static str,
 }
 
 /// Ouvre le périphérique du pilote ; ne crée aucune manette.
@@ -49,7 +70,7 @@ pub fn info() -> DriverInfo {
     // Mode jeu : on n'ouvre même pas le périphérique du pilote.
     let ready = !crate::gamemode::active() && vigem_ready();
     let hidhide = std::env::var_os("SystemRoot").is_some_and(|r| hidhide_installed_in(Path::new(&r)));
-    DriverInfo { vigem_ready: ready, hidhide_installed: hidhide, vigem_version: VIGEM_VERSION, vigem_sha256: VIGEM_SHA256, hidhide_url: HIDHIDE_URL }
+    DriverInfo { vigem_ready: ready, hidhide_installed: hidhide, vigem_version: VIGEM_VERSION, vigem_sha256: VIGEM_SHA256, hidhide_url: HIDHIDE_URL, hidhide_version: HIDHIDE_VERSION, hidhide_sha256: HIDHIDE_SHA256 }
 }
 
 /// Garde-fous de l'installation, sans effet de bord (testable).
@@ -66,21 +87,49 @@ pub fn check_install_allowed(confirmed: bool, already_ready: bool, game_mode: bo
     Ok(())
 }
 
-/// Télécharge l'installeur officiel (hash épinglé) dans `%ProgramFiles%\PureRGB\vigembus` puis le
-/// lance et attend sa fin. N'est appelé que par la commande confirmée par l'utilisateur.
-pub fn install(confirmed: bool) -> Result<()> {
-    check_install_allowed(confirmed, vigem_ready(), crate::gamemode::active())?;
-    let dir = trust::managed_dir("vigembus").context("ProgramFiles introuvable")?;
+/// Copie l'installeur EMBARQUÉ dans `%ProgramFiles%\PureRGB\<sub>` (dossier protégé : pas de
+/// substitution possible), vérifie son SHA-256 épinglé, le lance et attend sa fin. Si la copie
+/// embarquée manque (ViGEmBus seulement), repli sur le téléchargement officiel à hash épinglé.
+fn run_installer(sub: &str, file: &str, sha256: &str, fallback_url: Option<&str>) -> Result<()> {
+    let dir = trust::managed_dir(sub).context("ProgramFiles introuvable")?;
     std::fs::create_dir_all(&dir)?;
-    let setup = dir.join("ViGEmBus_setup.exe");
-    let lim = trust::DlLimits { max_bytes: MAX_INSTALLER, max_secs: 120, redirect_hosts: Some(trust::GITHUB_REDIRECT_HOSTS) };
-    trust::download_pinned(VIGEM_URL, VIGEM_SHA256, &setup, &lim, &|_| {}).context("téléchargement ViGEmBus")?;
-    let status = std::process::Command::new(&setup).status().context("lancement de l'installeur ViGEmBus")?;
+    let setup = dir.join(file);
+    match bundled(file) {
+        Some(src) => {
+            std::fs::copy(&src, &setup).context("copie de l'installeur embarqué")?;
+            trust::verify_sha256(&setup, sha256).inspect_err(|_| {
+                let _ = std::fs::remove_file(&setup);
+            })?;
+        }
+        None => {
+            let url = fallback_url.context("installeur absent de cette installation")?;
+            let lim = trust::DlLimits { max_bytes: MAX_INSTALLER, max_secs: 120, redirect_hosts: Some(trust::GITHUB_REDIRECT_HOSTS) };
+            trust::download_pinned(url, sha256, &setup, &lim, &|_| {}).context("téléchargement")?;
+        }
+    }
+    let status = std::process::Command::new(&setup).status().context("lancement de l'installeur")?;
     let _ = std::fs::remove_file(&setup);
     if !status.success() {
-        bail!("L'installeur ViGEmBus s'est terminé avec le code {status}");
+        bail!("L'installeur s'est terminé avec le code {status}");
     }
     Ok(())
+}
+
+/// ViGEmBus. N'est appelé que par la commande confirmée par l'utilisateur.
+pub fn install(confirmed: bool) -> Result<()> {
+    check_install_allowed(confirmed, vigem_ready(), crate::gamemode::active())?;
+    run_installer("vigembus", VIGEM_FILE, VIGEM_SHA256, Some(VIGEM_URL))
+}
+
+/// HidHide (masque la manette physique derrière la virtuelle ; redémarrage requis, réglé par l'utilisateur
+/// dans HidHide Configuration Client : PureRGB ne modifie JAMAIS sa liste de périphériques masqués).
+pub fn install_hidhide(confirmed: bool) -> Result<()> {
+    let already = std::env::var_os("SystemRoot").is_some_and(|r| hidhide_installed_in(Path::new(&r)));
+    if already {
+        bail!("HidHide est déjà installé");
+    }
+    check_install_allowed(confirmed, false, crate::gamemode::active())?;
+    run_installer("hidhide", HIDHIDE_FILE, HIDHIDE_SHA256, None)
 }
 
 #[cfg(test)]
@@ -94,6 +143,20 @@ mod tests {
         assert!(VIGEM_SHA256.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)));
         // un autre dépôt du même hôte reste refusé
         assert!(trust::validate_url("https://github.com/evil/ViGEmBus/releases/download/v1/x.exe").is_err());
+    }
+
+    #[test]
+    fn hidhide_hash_well_formed_and_refused_unconfirmed() {
+        assert_eq!(HIDHIDE_SHA256.len(), 64);
+        assert!(install_hidhide(false).is_err());
+    }
+
+    #[test]
+    fn bundled_installers_match_pinned_hashes() {
+        let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("resources").join("drivers");
+        for (f, h) in [(VIGEM_FILE, VIGEM_SHA256), (HIDHIDE_FILE, HIDHIDE_SHA256)] {
+            trust::verify_sha256(&dir.join(f), h).unwrap_or_else(|e| panic!("{f}: {e}"));
+        }
     }
 
     #[test]
