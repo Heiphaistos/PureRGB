@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.50.1
+
+- Même contenu que 0.50.0 (la 0.50.0 n'a pas été publiée : un test de temporisation échouait sur la machine de build, rendu déterministe).
+
 ## 0.50.0
 
 - Interface refaite en pleine largeur (2 à 4 colonnes selon la fenêtre) : **Surveillance** (bandeau de synthèse + cartes par composant avec jauges et mini-courbes), **Ventilateurs** (catégories Carte mère/BIOS, AIO, ventirad, hubs, boîtier ; éditeur de courbe à côté de la liste ; aucune règle de sécurité modifiée), **Manettes** (testeur et remappage en cartes), **Réglages** (catégories claires, Mode jeu et anti-cheat réécrit : état, ce qui est suspendu, anti-cheats reconnus), liste du test de compatibilité groupée par catégorie avec les appareils non pilotables repliés.

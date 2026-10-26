@@ -222,7 +222,8 @@ mod tests {
     fn send_error_is_exposed_and_requests_a_restart() {
         let shared = Arc::new(Shared::new(ScreenConfig::default(), true));
         let (driver, got) = slow(1, Some(3));
-        run(&shared, &driver, 5);
+        // Cadencé : sans cela, l'image 3 peut être jetée sous charge (CI) et l'erreur n'arrive jamais.
+        run_paced(&shared, &driver, &got, 5);
         assert!(shared.failed.load(Ordering::Acquire));
         assert!(shared.error.lock().as_deref().is_some_and(|e| e.contains("câble débranché")) || got.lock().contains(&5));
         assert!(!got.lock().contains(&3));
