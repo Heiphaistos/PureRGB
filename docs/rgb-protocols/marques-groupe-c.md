@@ -55,3 +55,9 @@ Control Center/Camera Hub, AVerMedia RECentral, Govee/Hue/Nanoleaf : non analys�
 ## Non fait / reste
 
 Analyse des logiciels officiels (voir plus haut), protocoles Aquacomputer (liquidctl les décrit), Thermaltake DPSG, AverMedia, Elgato réseau, JBL : à traiter si Momo le demande. Aucun pilote écrit sans protocole [V].
+
+## Suite (2026-10-26)
+
+- **Litra** : marche, luminosité (lm) et température (K) exposées par `DeviceSetting` (`white_on`, `white_lumens`, `white_kelvin`), en plus de la correspondance couleur. Tests MockHid.
+- **Aqua Computer** : liquidctl (`aquacomputer.py`) lit les capteurs et écrit la vitesse des ventilateurs en réécrivant tout le rapport de configuration 0x03 (lecture-modification-écriture + CRC-16 USB), donc probablement persistant : **refusé** (pas de profil, pas de ventilateur). `set_color` y est « not yet reverse engineered » : éclairage **INCONNU** ; il faudrait décompiler aquasuite.
+- Non traités à ce jour : Creative, JBL, manettes, HyperX/Omen périphériques, Arctic, Elgato (aucun logiciel officiel téléchargé ni décompilé).
