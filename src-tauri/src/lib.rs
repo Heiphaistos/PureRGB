@@ -600,6 +600,7 @@ pub fn run() {
             commands::conflicts_cmds::conflict_stop,
             commands::conflicts_cmds::conflict_restore,
             commands::hardware::get_sensors,
+            commands::hardware::get_ram_temp_status,
             commands::hardware::set_curve,
             commands::hardware::lcd_apply,
             commands::devices::set_hardware_mode,

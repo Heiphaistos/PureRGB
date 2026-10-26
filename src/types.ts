@@ -87,6 +87,11 @@ export interface Sensor {
   value: number;
 }
 
+export interface RamTempStatus {
+  state: "ok" | "disabled" | "nobus" | "conflict" | "none";
+  message: string;
+}
+
 export interface CurvePoint {
   temp: number;
   duty: number;

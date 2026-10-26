@@ -2,15 +2,42 @@
 
 use crate::backends::liquidctl::LiquidctlBackend;
 use crate::engine::curves::CurveConfig;
+use crate::backends::smbus::{RamTempStatus, SmbusBackend};
 use crate::sensors::Sensor;
 use tauri::State;
 use crate::settings;
 use crate::AppState;
 
-/// Dernier relevé capteurs (sensord). Vide si le sidecar est absent.
-#[tauri::command]
+/// Logiciel RGB qui tient le bus SMBus (processus en cours, pas un simple service installé).
+fn smbus_conflict() -> Option<String> {
+    const KEYS: &[&str] = &["corsair", "asus", "msi", "gigabyte", "asrock", "adata_xpg", "signalrgb"];
+    let (found, _) = crate::conflicts::scan();
+    found.into_iter().find(|c| KEYS.contains(&c.family.as_str()) && !c.processes.is_empty()).map(|c| c.name)
+}
+
+/// Relevé des températures de la RAM (lecture seule, mis en cache 10 s côté backend).
+fn ram_temps(state: &AppState) -> (RamTempStatus, Vec<Sensor>) {
+    let mut reg = state.registry.lock();
+    for b in reg.backends_mut() {
+        if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
+            return sm.ram_temperatures(smbus_conflict);
+        }
+    }
+    (RamTempStatus { state: "nobus".into(), message: "Backend SMBus indisponible.".into() }, Vec::new())
+}
+
+/// Dernier relevé capteurs (sensord) + températures de la RAM. Vide si le sidecar est absent.
+#[tauri::command(async)]
 pub(crate) fn get_sensors(state: State<AppState>) -> Vec<Sensor> {
-    state.sensors.snapshot()
+    let mut all = state.sensors.snapshot();
+    all.extend(ram_temps(&state).1);
+    all
+}
+
+/// État de la lecture des températures de la RAM (message affiché dans Surveillance si non « ok »).
+#[tauri::command(async)]
+pub(crate) fn get_ram_temp_status(state: State<AppState>) -> RamTempStatus {
+    ram_temps(&state).0
 }
 
 /// Définit ou supprime (config=None) la courbe d'un canal ventilateur.
