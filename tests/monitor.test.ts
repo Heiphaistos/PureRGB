@@ -35,3 +35,18 @@ test("historique borné et mini-courbe", () => {
   assert.equal(sparkPoints([0, 10], 80, 20), "0.0,20.0 80.0,0.0");
   assert.doesNotThrow(() => sparkPoints([3, 3, 3]));
 });
+
+test("catégories et jauges", async () => {
+  const { categoryOf, groupByCategory, headlineTemp, gaugePercent } = await import("../src/monitor.ts");
+  assert.equal(categoryOf({ hardware: "NVIDIA GeForce RTX 4070", type: "Temperature" }), "gpu");
+  assert.equal(categoryOf({ hardware: "AMD Ryzen 7 5800X", type: "Load" }), "cpu");
+  assert.equal(categoryOf({ hardware: "Samsung SSD 980", type: "Temperature" }), "disk");
+  assert.equal(categoryOf({ hardware: "Nuvoton NCT6798D", type: "Fan" }), "fans");
+  assert.equal(categoryOf({ hardware: "Generic Memory", type: "Load" }), "memory");
+  const all = [S("AMD Ryzen", "Core (Tctl/Tdie)", "Temperature", 60), S("AMD Ryzen", "Core #1", "Temperature", 70), S("Nuvoton", "Fan #1", "Fan", 900)];
+  assert.deepEqual(groupByCategory(all).map((g) => g.id), ["cpu", "fans"]);
+  assert.equal(headlineTemp(all, "cpu")?.value, 60);
+  assert.equal(headlineTemp(all, "gpu"), null);
+  assert.equal(gaugePercent({ type: "Fan", value: 900 }), null);
+  assert.equal(gaugePercent({ type: "Load", value: 150 }), 100);
+});

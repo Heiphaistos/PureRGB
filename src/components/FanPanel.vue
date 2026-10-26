@@ -11,6 +11,7 @@ import type {
 } from "../types";
 import DeviceCard from "./DeviceCard.vue";
 import { CURVE_PRESETS, presetPoints } from "../fanCurves";
+import { groupFanDevices } from "../fanGroups";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -46,6 +47,17 @@ function emptyFanMessageFor(s: SensorDiag | null | undefined): string {
 }
 
 const emptyFanMessage = computed(() => emptyFanMessageFor(diag.value?.sensord));
+
+const fanGroups = computed(() => groupFanDevices(props.devices));
+
+function hasEditor(d: DeviceInfo): boolean {
+  return d.fan_channels.some((fc) => editors[curveKey(d, fc.index)]);
+}
+
+function toggleEditor(d: DeviceInfo, ch: number) {
+  if (editors[curveKey(d, ch)]) delete editors[curveKey(d, ch)];
+  else openEditor(d, ch);
+}
 
 function key(d: DeviceInfo, ch: number) {
   return `${d.id}:${ch}`;
@@ -159,224 +171,143 @@ onUnmounted(() => clearInterval(timer));
 
 <template>
   <section class="fan-panel">
-    <h2>Ventilateurs &amp; courbes</h2>
-    <p class="sub">
-      Vitesse fixe ou courbe automatique selon un capteur de température
-      (capteurs via LibreHardwareMonitor, AIO/hubs via liquidctl et drivers natifs).
-    </p>
-
-    <div v-if="mainTemps.length" class="sensor-strip">
-      <span v-for="s in mainTemps" :key="s.id" class="sensor-chip">
-        {{ s.hardware }} · {{ s.name }} : <strong>{{ s.value }} °C</strong>
-      </span>
-    </div>
-    <p v-else class="note">
-      Capteurs indisponibles (sidecar sensord absent) — courbes inactives.
-    </p>
-
-    <p v-if="devices.length === 0" class="empty">
-      {{ emptyFanMessage }}
-    </p>
-
-    <div v-for="d in devices" :key="d.id" class="fan-device">
-      <div class="fan-device-head">
-        <DeviceCard :device="d" compact />
-        <span class="backend-tag">{{ d.backend }}</span>
+    <header class="top">
+      <div>
+        <h2>Ventilateurs &amp; courbes</h2>
+        <p class="sub">
+          Vitesse fixe ou courbe automatique selon un capteur de température. Rien n'est réglé sans votre action : « Appliquer » ou
+          une courbe activée.
+        </p>
       </div>
-      <div v-for="fc in d.fan_channels" :key="fc.index" class="fan-block">
-        <div class="fan-row">
-          <span class="fan-name">
-            {{ fc.name }}<template v-if="fc.rpm != null"> · {{ fc.rpm }} tr/min</template>
-          </span>
-          <input
-            type="range"
-            min="20"
-            max="100"
-            step="5"
-            :value="duty(d, fc.index)"
-            @input="duties[key(d, fc.index)] = Number(($event.target as HTMLInputElement).value)"
-          />
-          <span class="fan-val">{{ duty(d, fc.index) }}%</span>
-          <button @click="apply(d, fc.index)">Appliquer</button>
-          <button
-            :class="{ active: savedCurve(d, fc.index)?.enabled }"
-            :disabled="tempSensors.length === 0"
-            @click="editors[curveKey(d, fc.index)] ? delete editors[curveKey(d, fc.index)] : openEditor(d, fc.index)"
-          >
-            {{ savedCurve(d, fc.index) ? "Courbe ✓" : "Courbe auto" }}
-          </button>
-        </div>
-
-        <div v-if="editors[curveKey(d, fc.index)]" class="curve-editor">
-          <label>
-            Capteur
-            <select v-model="editors[curveKey(d, fc.index)].sensor_id">
-              <option v-for="s in tempSensors" :key="s.id" :value="s.id">
-                {{ s.hardware }} — {{ s.name }} ({{ s.value }} °C)
-              </option>
-            </select>
-          </label>
-          <label>
-            Préréglage
-            <select @change="applyPreset(d, fc.index, ($event.target as HTMLSelectElement).value)">
-              <option value="">— choisir —</option>
-              <option v-for="p in CURVE_PRESETS" :key="p.id" :value="p.id">{{ p.label }}</option>
-            </select>
-          </label>
-          <div
-            v-for="(p, i) in editors[curveKey(d, fc.index)].points"
-            :key="i"
-            class="point-row"
-          >
-            <input type="number" v-model.number="p.temp" min="0" max="120" /> °C →
-            <input type="number" v-model.number="p.duty" min="0" max="100" /> %
-          </div>
-          <label class="enable-row">
-            <input type="checkbox" v-model="editors[curveKey(d, fc.index)].enabled" />
-            Courbe active
-          </label>
-          <div class="editor-actions">
-            <button class="primary" @click="saveCurve(d, fc.index)">Enregistrer</button>
-            <button v-if="d.fan_channels.length > 1" @click="saveCurveToAll(d, fc.index)">Enregistrer sur tous les canaux</button>
-            <button v-if="savedCurve(d, fc.index)" @click="deleteCurve(d, fc.index)">
-              Supprimer
-            </button>
-          </div>
-        </div>
+      <div v-if="mainTemps.length" class="sensor-strip">
+        <span v-for="s in mainTemps" :key="s.id" class="sensor-chip">
+          {{ s.hardware }} · {{ s.name }} : <strong>{{ Math.round(s.value) }} °C</strong>
+        </span>
       </div>
-      <p class="note">
-        Minimum 20 % en manuel pour éviter l'arrêt d'une pompe AIO. PureRGB ne touche à un ventilateur que si vous appliquez
-        un réglage ou activez une courbe. À la fermeture : cartes mères rendues au BIOS, Lian Li rendus à la synchro carte mère,
-        NZXT restaurés à leur valeur d'avant ; les autres matériels (Thermaltake, Corsair Commander, liquidctl) gardent le dernier
-        réglage appliqué.
-      </p>
+      <p v-else class="note">Capteurs indisponibles (sidecar sensord absent) — courbes inactives.</p>
+    </header>
+
+    <p v-if="devices.length === 0" class="empty">{{ emptyFanMessage }}</p>
+
+    <div class="cats">
+    <section v-for="g in fanGroups" :key="g.id" class="cat" :class="{ wide: g.devices.some(hasEditor) }">
+      <h3>{{ g.label }} <small>{{ g.hint }}</small></h3>
+      <div class="cards">
+        <article v-for="d in g.devices" :key="d.id" class="fan-device" :class="{ wide: hasEditor(d) }">
+          <div class="fan-device-head">
+            <DeviceCard :device="d" compact />
+            <span class="backend-tag">{{ d.backend }}</span>
+          </div>
+          <div class="fan-body">
+            <div class="chan-list">
+              <div v-for="fc in d.fan_channels" :key="fc.index" class="fan-row" :class="{ editing: editors[curveKey(d, fc.index)] }">
+                <span class="fan-name">
+                  {{ fc.name }}<template v-if="fc.rpm != null"> · <strong>{{ fc.rpm }} tr/min</strong></template>
+                </span>
+                <input
+                  type="range"
+                  min="20"
+                  max="100"
+                  step="5"
+                  :value="duty(d, fc.index)"
+                  @input="duties[key(d, fc.index)] = Number(($event.target as HTMLInputElement).value)"
+                />
+                <span class="fan-val">{{ duty(d, fc.index) }}%</span>
+                <button @click="apply(d, fc.index)">Appliquer</button>
+                <button :class="{ active: savedCurve(d, fc.index)?.enabled }" :disabled="tempSensors.length === 0" @click="toggleEditor(d, fc.index)">
+                  {{ savedCurve(d, fc.index) ? "Courbe ✓" : "Courbe auto" }}
+                </button>
+              </div>
+            </div>
+
+            <div v-if="hasEditor(d)" class="editors">
+              <template v-for="fc in d.fan_channels" :key="fc.index">
+                <div v-if="editors[curveKey(d, fc.index)]" class="curve-editor">
+                  <h4>Courbe : {{ fc.name }}</h4>
+                  <label>
+                    Capteur
+                    <select v-model="editors[curveKey(d, fc.index)].sensor_id">
+                      <option v-for="s in tempSensors" :key="s.id" :value="s.id">{{ s.hardware }} — {{ s.name }} ({{ s.value }} °C)</option>
+                    </select>
+                  </label>
+                  <label>
+                    Préréglage
+                    <select @change="applyPreset(d, fc.index, ($event.target as HTMLSelectElement).value)">
+                      <option value="">— choisir —</option>
+                      <option v-for="p in CURVE_PRESETS" :key="p.id" :value="p.id">{{ p.label }}</option>
+                    </select>
+                  </label>
+                  <div class="points">
+                    <div v-for="(p, i) in editors[curveKey(d, fc.index)].points" :key="i" class="point-row">
+                      <input type="number" v-model.number="p.temp" min="0" max="120" /> °C →
+                      <input type="number" v-model.number="p.duty" min="0" max="100" /> %
+                    </div>
+                  </div>
+                  <label class="enable-row">
+                    <input type="checkbox" v-model="editors[curveKey(d, fc.index)].enabled" />
+                    Courbe active
+                  </label>
+                  <div class="editor-actions">
+                    <button class="primary" @click="saveCurve(d, fc.index)">Enregistrer</button>
+                    <button v-if="d.fan_channels.length > 1" @click="saveCurveToAll(d, fc.index)">Enregistrer sur tous les canaux</button>
+                    <button v-if="savedCurve(d, fc.index)" @click="deleteCurve(d, fc.index)">Supprimer</button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
     </div>
+
+    <p v-if="devices.length" class="note foot">
+      Minimum 20 % en manuel pour éviter l'arrêt d'une pompe AIO. PureRGB ne touche à un ventilateur que si vous appliquez
+      un réglage ou activez une courbe. À la fermeture : cartes mères rendues au BIOS, Lian Li rendus à la synchro carte mère,
+      NZXT restaurés à leur valeur d'avant ; les autres matériels (Thermaltake, Corsair Commander, liquidctl) gardent le dernier
+      réglage appliqué.
+    </p>
   </section>
 </template>
 
 <style scoped>
-.fan-panel {
-  flex: 1;
-  overflow-y: auto;
-  padding: 22px 26px;
-}
-
-.fan-panel h2 {
-  font-size: 19px;
-}
-
-.sub {
-  color: var(--text-dim);
-  font-size: 13px;
-  margin: 6px 0 14px;
-}
-
-.sensor-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.sensor-chip {
-  font-size: 12px;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 4px 12px;
-}
-
-.empty {
-  color: var(--text-dim);
-  line-height: 1.7;
-}
-
-.fan-device {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  margin-bottom: 14px;
-  max-width: 680px;
-}
-
-.fan-device-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
-
-.backend-tag {
-  font-size: 11px;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 1px 8px;
-  margin-left: 8px;
-}
-
-.fan-block {
-  margin-bottom: 10px;
-}
-
-.fan-row {
-  display: grid;
-  grid-template-columns: minmax(120px, 180px) 1fr 44px auto auto;
-  align-items: center;
-  gap: 10px;
-}
-
-.fan-name {
-  font-size: 13px;
-  color: var(--text-dim);
-}
-
-.fan-val {
-  font-size: 13px;
-  text-align: right;
-}
-
-.fan-row button.active {
-  border-color: var(--ok);
-  color: var(--ok);
-}
-
-.curve-editor {
-  margin: 10px 0 4px;
-  padding: 12px 14px;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.curve-editor select {
-  margin-left: 8px;
-  max-width: 380px;
-}
-
-.point-row input {
-  width: 64px;
-}
-
-.enable-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.editor-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.note {
-  font-size: 12px;
-  color: var(--text-dim);
-  font-style: italic;
-  margin-top: 6px;
-}
+.fan-panel { flex: 1; min-width: 0; overflow-y: auto; padding: 22px 26px; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4); }
+.fan-panel h2 { font-size: 19px; }
+.sub { color: var(--text-dim); font-size: 13px; margin: 6px 0 0; }
+.sensor-strip { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.sensor-chip { font-size: 12px; color: var(--text-dim); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; }
+.empty { color: var(--text-dim); line-height: 1.7; }
+.cats { display: grid; grid-auto-flow: dense; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: var(--space-5) var(--space-4); align-items: start; margin-bottom: var(--space-4); }
+.cat { min-width: 0; }
+.cat.wide { grid-column: 1 / -1; }
+.cat h3 { font-size: 14px; margin-bottom: var(--space-3); padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.cat h3 small { font-weight: 400; font-size: 12px; color: var(--text-dim); margin-left: 10px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: var(--space-3); align-items: start; }
+.fan-device { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.fan-device.wide { grid-column: 1 / -1; }
+.fan-device-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.backend-tag { font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; margin-left: 8px; }
+.fan-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+.wide .fan-body { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+.chan-list { display: flex; flex-direction: column; gap: 10px; }
+.fan-row { display: grid; grid-template-columns: 1fr 44px auto auto; grid-template-areas: "name name name name" "slider val ap cv"; align-items: center; gap: 4px 10px; padding: 6px 8px; border-radius: var(--radius-sm); }
+.fan-row.editing { background: var(--accent-soft); }
+.fan-name { grid-area: name; font-size: 13px; color: var(--text-dim); }
+.fan-name strong { color: var(--text); font-weight: 600; }
+.fan-row input[type="range"] { grid-area: slider; }
+.fan-val { grid-area: val; font-size: 13px; text-align: right; }
+.fan-row button { padding: 5px 10px; }
+.fan-row button.active { border-color: var(--ok); color: var(--ok); }
+.editors { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.curve-editor { padding: 12px 14px; border: 1px dashed var(--border); border-radius: 8px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.curve-editor h4 { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+.curve-editor select { margin-left: 8px; max-width: 100%; }
+.points { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px; }
+.point-row input { width: 64px; }
+.enable-row { display: flex; align-items: center; gap: 8px; }
+.editor-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.note { font-size: 12px; color: var(--text-dim); font-style: italic; }
+.note.foot { margin-top: var(--space-2); }
+@media (max-width: 900px) { .wide .fan-body { grid-template-columns: minmax(0, 1fr); } }
 </style>

@@ -98,3 +98,81 @@ export function sparkPoints(values: number[], w = 80, h = 20): string {
   const span = Math.max(...values) - lo || 1;
   return values.map((v, i) => `${((i / (values.length - 1)) * w).toFixed(1)},${(h - ((v - lo) / span) * h).toFixed(1)}`).join(" ");
 }
+
+export type CategoryId = "cpu" | "gpu" | "memory" | "board" | "disk" | "fans" | "voltage" | "power" | "other";
+
+export const CATEGORIES: { id: CategoryId; label: string }[] = [
+  { id: "cpu", label: "Processeur" },
+  { id: "gpu", label: "Carte graphique" },
+  { id: "memory", label: "Mémoire" },
+  { id: "board", label: "Carte mère" },
+  { id: "disk", label: "Disques" },
+  { id: "fans", label: "Ventilateurs" },
+  { id: "voltage", label: "Tensions" },
+  { id: "power", label: "Puissance" },
+  { id: "other", label: "Autres capteurs" },
+];
+
+export interface CategoryGroup {
+  id: CategoryId;
+  label: string;
+  /** Sous-blocs : par type pour les composants, par composant pour ventilateurs/tensions/puissance. */
+  sections: { title: string; items: Sensor[] }[];
+  count: number;
+}
+
+/** Catégorie d'un capteur : le type prime pour ventilateurs/tensions/puissance, sinon le nom du composant. */
+export function categoryOf(s: Pick<Sensor, "hardware" | "type">): CategoryId {
+  if (s.type === "Fan" || s.type === "Control") return "fans";
+  if (s.type === "Voltage") return "voltage";
+  if (s.type === "Power") return "power";
+  const h = norm(s.hardware);
+  if (/nvidia|geforce|radeon|\barc\b|gpu|graphi/.test(h)) return "gpu";
+  if (/memory|memoire|\bram\b|dimm|ddr/.test(h)) return "memory";
+  if (/ssd|nvme|hdd|disk|disque|samsung|crucial|kingston|seagate|toshiba|sandisk|western|\bwd\b|storage/.test(h)) return "disk";
+  if (/nuvoton|\bite\b|fintek|asus|msi|gigabyte|asrock|mainboard|motherboard|carte mere|super ?io|embedded|chipset/.test(h)) return "board";
+  if (/intel|amd|ryzen|\bcore\b|cpu|xeon|threadripper|processor|processeur/.test(h)) return "cpu";
+  return "other";
+}
+
+/** Capteurs filtrés puis rangés par catégorie claire (ordre de CATEGORIES), catégories vides omises. */
+export function groupByCategory(sensors: Sensor[], query = ""): CategoryGroup[] {
+  const q = norm(query.trim());
+  const byCat = new Map<CategoryId, Sensor[]>();
+  for (const s of sensors) {
+    if (q && !norm(`${s.hardware} ${s.name} ${TYPE_LABEL[s.type] ?? s.type}`).includes(q)) continue;
+    const c = categoryOf(s);
+    byCat.set(c, [...(byCat.get(c) ?? []), s]);
+  }
+  const rank = (t: string) => {
+    const i = TYPE_ORDER.indexOf(t);
+    return i < 0 ? TYPE_ORDER.length : i;
+  };
+  return CATEGORIES.filter((c) => byCat.has(c.id)).map((c) => {
+    const items = byCat.get(c.id)!;
+    const perHardware = ["fans", "voltage", "power"].includes(c.id);
+    const m = new Map<string, Sensor[]>();
+    for (const s of items) {
+      const k = perHardware ? s.hardware : s.type;
+      m.set(k, [...(m.get(k) ?? []), s]);
+    }
+    const sections = [...m.entries()]
+      .sort((a, b) => (perHardware ? a[0].localeCompare(b[0]) : rank(a[0]) - rank(b[0])))
+      .map(([k, list]) => ({ title: perHardware ? k : (TYPE_LABEL[k] ?? k), items: list }));
+    return { id: c.id, label: c.label, sections, count: items.length };
+  });
+}
+
+/** Température représentative d'une catégorie (package/cœur/point chaud si présent, sinon la plus haute). */
+export function headlineTemp(sensors: Sensor[], cat: CategoryId): Sensor | null {
+  const temps = sensors.filter((s) => s.type === "Temperature" && categoryOf(s) === cat);
+  if (!temps.length) return null;
+  const pref = temps.find((s) => /package|gpu core|tctl|composite|temperature$/i.test(s.name));
+  return pref ?? temps.reduce((m, s) => (s.value > m.value ? s : m));
+}
+
+/** Remplissage de jauge 0..100 pour les mesures en pourcentage ou en température (sinon null). */
+export function gaugePercent(s: Pick<Sensor, "type" | "value">): number | null {
+  const v = s.type === "Temperature" ? (s.value / 110) * 100 : s.type === "Load" || s.type === "Control" ? s.value : null;
+  return v == null ? null : Math.max(0, Math.min(100, v));
+}
