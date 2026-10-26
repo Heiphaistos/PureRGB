@@ -43,6 +43,7 @@
       "icons/icon.ico"
     ],
     "windows": {
+      "signCommand": { "cmd": "powershell", "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "../scripts/sign-windows.ps1", "%1"] },
       "nsis": {
         "installMode": "perMachine",
         "languages": ["French", "English"]

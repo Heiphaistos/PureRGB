@@ -258,7 +258,7 @@ async function uploadCaptureFiles(): Promise<void> {
               {{ d.recognized ? (d.has_native_driver ? "driver natif" : "reconnu") : "non reconnu" }}
             </td>
             <td class="row-actions">
-              <button v-if="!d.recognized" @click="openCaptureWarning(d)">Capturer le protocole USB</button>
+              <button @click="openCaptureWarning(d)">Capturer le protocole USB</button>
               <FeedbackButton :vid="d.vid" :pid="d.pid" :manufacturer="d.manufacturer" :product="d.product" />
             </td>
           </tr>

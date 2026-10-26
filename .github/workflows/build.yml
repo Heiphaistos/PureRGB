@@ -50,6 +50,8 @@ jobs:
       - name: Build Tauri app
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          PURERGB_PFX_B64: ${{ secrets.PURERGB_PFX_B64 }}
+          PURERGB_PFX_PASSWORD: ${{ secrets.PURERGB_PFX_PASSWORD }}
         run: |
           if ($env:TAURI_SIGNING_PRIVATE_KEY) {
             npx tauri build
