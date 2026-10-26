@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.50.0
+
+- Interface refaite en pleine largeur (2 à 4 colonnes selon la fenêtre) : **Surveillance** (bandeau de synthèse + cartes par composant avec jauges et mini-courbes), **Ventilateurs** (catégories Carte mère/BIOS, AIO, ventirad, hubs, boîtier ; éditeur de courbe à côté de la liste ; aucune règle de sécurité modifiée), **Manettes** (testeur et remappage en cartes), **Réglages** (catégories claires, Mode jeu et anti-cheat réécrit : état, ce qui est suspendu, anti-cheats reconnus), liste du test de compatibilité groupée par catégorie avec les appareils non pilotables repliés.
+- **Diagnostic matériel** pousse : nouveau panneau en cartes avec pastille d'état, système/BIOS, pilotes natifs, SMBus, ViGEmBus/HidHide, ventilateurs (tr/min, commande, pilotable), logiciels concurrents, mode jeu, dernières erreurs ; boutons « Copier le rapport » et « Enregistrer le rapport » (lecture seule, aucune donnée de plus envoyée).
+- Corrections : faux avertissements « reconnu mais non détecté » pour un appareil déjà piloté par OpenRGB (clavier Cougar, carte MSI) ; journal du rapport limité aux dernières 24 h.
+
 ## 0.49.0
 
 - Pilotes **embarqués** dans l'application : installeurs officiels ViGEmBus 1.22.0 et HidHide 1.5.230 (signés Nefarius), fonctionnent hors ligne. Chaque installeur est copié dans un dossier protégé, son SHA-256 épinglé est vérifié, puis il est lancé : rien ne s'installe sans confirmation, jamais pendant le mode jeu. Bouton « Installer HidHide » dans Manettes ; PureRGB ne configure pas HidHide (vous choisissez les périphériques à masquer). Pas de pilote Flydigi : l'application officielle n'en utilise pas et son protocole n'est pas documenté.
