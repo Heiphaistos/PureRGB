@@ -20,6 +20,7 @@ pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod lianli_uni;
 pub mod logitech;
+pub mod logitech_centurion;
 pub mod msi_mystic;
 pub mod nzxt_hue2;
 pub mod razer;
@@ -155,7 +156,15 @@ pub trait NativeRgb: Send {
 /// Réglages non lumineux proposés pour une famille (liste statique : rien n'est envoyé à l'affichage).
 /// Chaque famille qui implémente `NativeRgb::set_setting` ajoute ici son entrée, avec la source du protocole.
 pub fn settings_schema(family_id: &str, _model: &Model) -> Vec<crate::core::DeviceSetting> {
+    use crate::core::{DeviceSetting, SettingKind};
     match family_id {
+        // Retour du micro : feature Centurion 0x0604 (docs/rgb-protocols/analyse-logitech-ghub.md §13).
+        "logitech_centurion" => vec![DeviceSetting {
+            id: "sidetone".into(),
+            label: "Retour du micro dans le casque".into(),
+            kind: SettingKind::Slider { min: 0, max: 100, step: 5, unit: "%".into() },
+            default: 0,
+        }],
         _ => Vec::new(),
     }
 }
@@ -191,6 +200,7 @@ pub const FAMILIES: &[&Family] = &[
     &hyperx::FAMILY,
     &lianli_uni::FAMILY,
     &logitech::FAMILY,
+    &logitech_centurion::FAMILY,
     &msi_mystic::FAMILY,
     &nzxt_hue2::FAMILY,
     &razer::FAMILY,
