@@ -522,6 +522,7 @@ pub fn run() {
             commands::devices::apply_effect,
             commands::devices::apply_effect_all,
             commands::devices::set_fan_duty,
+            commands::devices::set_device_setting,
             commands::conflicts_cmds::check_conflicts,
             commands::conflicts_cmds::conflict_stop,
             commands::conflicts_cmds::conflict_restore,

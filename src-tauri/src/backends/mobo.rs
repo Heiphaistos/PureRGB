@@ -85,6 +85,7 @@ impl Backend for MoboFanBackend {
             zones: Vec::new(),
             led_count: 0,
             fan_channels,
+            settings: Vec::new(),
             controllable: true,
             has_lcd: false,
             modes: Vec::new(),

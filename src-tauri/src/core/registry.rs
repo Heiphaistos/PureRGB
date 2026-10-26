@@ -194,6 +194,17 @@ impl DeviceRegistry {
         backend.set_fan_duty(&local, channel, percent.min(100))
     }
 
+    pub fn set_device_setting(&mut self, id: &str, setting: &str, value: i32) -> Result<()> {
+        let (bname, local) = self.split_id(id)?;
+        let (bname, local) = (bname.to_string(), local.to_string());
+        let backend = self
+            .backends
+            .iter_mut()
+            .find(|b| b.name() == bname)
+            .ok_or_else(|| anyhow!("backend inconnu: {bname}"))?;
+        backend.set_device_setting(&local, setting, value)
+    }
+
     /// Rend un canal que PureRGB pilotait (courbe retirée). Sans effet si le backend ne sait pas le rendre.
     pub fn release_fan(&mut self, id: &str, channel: u8) {
         let Ok((bname, local)) = self.split_id(id) else { return };
@@ -265,6 +276,7 @@ mod dedup_tests {
             zones: Vec::new(),
             led_count: 0,
             fan_channels: Vec::new(),
+            settings: Vec::new(),
             controllable,
             has_lcd: false,
             modes: Vec::new(),

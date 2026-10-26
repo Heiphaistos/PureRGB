@@ -196,6 +196,7 @@ mod tests {
             zones: Vec::new(),
             led_count: leds,
             fan_channels: Vec::new(),
+            settings: Vec::new(),
             controllable,
             has_lcd: false,
             modes: Vec::new(),

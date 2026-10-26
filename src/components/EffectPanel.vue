@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { computed, reactive, ref, watch } from "vue";
 import type { Color, DeviceInfo, EffectConfig, EffectKind, ModeInfo } from "../types";
 import { colorToHex, EFFECT_LABELS, hexToColor, zoneResizable } from "../types";
+import DeviceSettings from "./DeviceSettings.vue";
 import { FAN_GROUPS, ledsFor, type FanPreset } from "../data/fanPresets";
 
 const props = defineProps<{
@@ -519,6 +520,8 @@ function snapshot(): EffectConfig {
       <p v-if="!device.controllable" class="warn-note">
         Appareil détecté mais non pilotable directement — {{ device.note }}.
       </p>
+
+      <DeviceSettings v-if="device.settings?.length" :device="device" />
 
       <div v-if="device.modes.length > 0" class="hw-modes">
         <h3>Modes matériels natifs</h3>
