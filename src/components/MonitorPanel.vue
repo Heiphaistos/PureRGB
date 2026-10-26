@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import CardHandle from "./CardHandle.vue";
+import { columnCount, masonry } from "../cardOrder";
+import { useCardOrder } from "../useCardOrder";
 import type { DeviceInfo, RamTempStatus, Sensor } from "../types";
 import { formatValue, gaugePercent, groupByCategory, headlineTemp, levelOf, pushHistory, sparkPoints } from "../monitor";
-import type { CategoryId } from "../monitor";
+import type { CategoryGroup, CategoryId } from "../monitor";
 
 const props = defineProps<{ devices: DeviceInfo[] }>();
 
@@ -28,6 +31,28 @@ const tiles = computed(() =>
 );
 const hasFanCard = computed(() => cards.value.some((c) => c.id === "fans"));
 const showFanDevices = computed(() => fanDevices.value.length > 0 && (!query.value.trim() || hasFanCard.value));
+// Cartes affichées : les catégories, plus une carte « Ventilateurs » synthétique si seuls les ventilateurs pilotés existent.
+const allCards = computed<CategoryGroup[]>(() =>
+  showFanDevices.value && !hasFanCard.value
+    ? [...cards.value, { id: "fans", label: "Ventilateurs", sections: [], count: fanDevices.value.length }]
+    : cards.value,
+);
+const cardById = computed(() => new Map(allCards.value.map((c) => [c.id as string, c])));
+const ids = computed(() => allCards.value.map((c) => c.id as string));
+const ord = useCardOrder("purergb.monitor.cardOrder", ids);
+
+const width = ref(1200);
+const cols = computed(() => columnCount(width.value));
+/** Hauteur estimée d'une carte (lignes), pour remplir la colonne la plus courte. */
+function weight(id: string): number {
+  const c = cardById.value.get(id);
+  if (!c) return 1;
+  const fan = id === "fans" && showFanDevices.value ? fanDevices.value.reduce((n, d) => n + 1 + d.fan_channels.length, 0) : 0;
+  return 3 + c.sections.reduce((n, sec) => n + 1.5 + sec.items.length, 0) + fan;
+}
+const columns = computed(() => masonry(ord.order.value, weight, cols.value));
+const root = ref<HTMLElement | null>(null);
+let ro: ResizeObserver | undefined;
 
 function range(id: string): string {
   const h = hist[id];
@@ -46,20 +71,31 @@ async function refresh() {
 }
 
 onMounted(() => {
+  if (root.value) {
+    width.value = root.value.clientWidth;
+    ro = new ResizeObserver(() => root.value && (width.value = root.value.clientWidth));
+    ro.observe(root.value);
+  }
   refresh();
   timer = setInterval(refresh, 2000);
 });
-onUnmounted(() => clearInterval(timer));
+onUnmounted(() => {
+  clearInterval(timer);
+  ro?.disconnect();
+});
 </script>
 
 <template>
-  <section class="monitor">
+  <section ref="root" class="monitor">
     <header class="top">
       <div>
         <h2>Surveillance</h2>
         <p class="sub">Tous les capteurs de la machine, en lecture seule, mis à jour toutes les 2 s. Les réglages sont dans l'onglet Ventilateurs.</p>
       </div>
-      <input v-model="query" type="search" placeholder="Filtrer (ex. CPU, GPU, NVMe, tension)" />
+      <div class="tools">
+        <button v-if="ord.customized.value" class="reset" @click="ord.reset()">Réinitialiser l'ordre</button>
+        <input v-model="query" type="search" placeholder="Filtrer (ex. CPU, GPU, NVMe, tension)" />
+      </div>
     </header>
 
     <p v-if="failed || sensors.length === 0" class="note">
@@ -86,10 +122,22 @@ onUnmounted(() => clearInterval(timer));
       </div>
     </div>
 
+    <p v-if="allCards.length > 1" class="hint">Astuce : glissez la poignée ⋮⋮ d'une carte pour l'organiser (ou flèches du clavier sur la poignée).</p>
     <div class="cards">
-      <article v-for="c in cards" :key="c.id" class="card">
-        <h3>{{ c.label }} <small>{{ c.count }}</small></h3>
-        <template v-for="sec in c.sections" :key="sec.title">
+      <div v-for="(col, ci) in columns" :key="ci" class="col">
+      <article
+        v-for="id in col"
+        :key="id"
+        class="card"
+        :class="{ dragging: ord.dragId.value === id, over: ord.overId.value === id && ord.dragId.value !== id }"
+        @dragover="ord.onDragOver(id, $event)"
+        @drop="ord.onDrop(id, $event)"
+      >
+        <h3>
+          <CardHandle :label="cardById.get(id)!.label" @dragstart="ord.onDragStart(id, $event)" @dragend="ord.onDragEnd()" @move="ord.move(id, $event)" />
+          {{ cardById.get(id)!.label }} <small>{{ cardById.get(id)!.count }}</small>
+        </h3>
+        <template v-for="sec in cardById.get(id)!.sections" :key="sec.title">
           <h4>{{ sec.title }}</h4>
           <div v-for="s in sec.items" :key="s.id" class="row" :class="levelOf(s)">
             <span class="name" :title="`${s.hardware} · ${s.name}`">{{ s.name }}</span>
@@ -102,7 +150,7 @@ onUnmounted(() => clearInterval(timer));
             <span v-if="gaugePercent(s) != null" class="gauge"><i :style="{ width: gaugePercent(s) + '%' }" /></span>
           </div>
         </template>
-        <template v-if="c.id === 'fans' && showFanDevices">
+        <template v-if="id === 'fans' && showFanDevices">
           <template v-for="d in fanDevices" :key="d.id">
             <h4>{{ d.name }} (piloté par PureRGB)</h4>
             <div v-for="fc in d.fan_channels" :key="fc.index" class="row">
@@ -114,19 +162,7 @@ onUnmounted(() => clearInterval(timer));
           </template>
         </template>
       </article>
-
-      <article v-if="showFanDevices && !hasFanCard" class="card">
-        <h3>Ventilateurs <small>{{ fanDevices.length }}</small></h3>
-        <template v-for="d in fanDevices" :key="d.id">
-          <h4>{{ d.name }} (piloté par PureRGB)</h4>
-          <div v-for="fc in d.fan_channels" :key="fc.index" class="row">
-            <span class="name">{{ fc.name }}</span>
-            <span class="spark" />
-            <span class="range">{{ fc.duty_percent != null ? `${fc.duty_percent} %` : "" }}</span>
-            <strong class="val">{{ fc.rpm != null ? `${fc.rpm} tr/min` : "—" }}</strong>
-          </div>
-        </template>
-      </article>
+      </div>
     </div>
   </section>
 </template>
@@ -136,7 +172,9 @@ onUnmounted(() => clearInterval(timer));
 .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4); }
 .monitor h2 { font-size: 19px; }
 .sub { color: var(--text-dim); font-size: 13px; margin-top: 6px; }
+.tools { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 .top input { min-width: 280px; }
+.hint { font-size: 12px; color: var(--text-dim); margin-bottom: var(--space-2); }
 .note { color: var(--text-dim); margin-bottom: var(--space-3); }
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-5); }
 .tile { position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; color: var(--ok); }
@@ -148,9 +186,12 @@ onUnmounted(() => clearInterval(timer));
 .t-val.none { color: var(--text-dim); }
 .t-sub { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .t-spark { width: 100%; height: 26px; margin-top: 6px; opacity: 0.85; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: var(--space-3); align-items: start; }
-.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
-.card h3 { font-size: 15px; margin-bottom: 4px; }
+.cards { display: flex; gap: var(--space-3); align-items: flex-start; }
+.col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.card { transition: opacity 0.15s, border-color 0.15s; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+.card.dragging { opacity: 0.45; }
+.card.over { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), inset 0 3px 0 var(--accent); }
+.card h3 { display: flex; align-items: center; font-size: 15px; margin-bottom: 4px; }
 .card h3 small { font-weight: 400; font-size: 11px; color: var(--text-dim); margin-left: 6px; }
 .card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin: 12px 0 4px; }
 .row { display: grid; grid-template-columns: minmax(0, 1fr) 64px 76px 84px; grid-template-areas: "n s r v" "g g g g"; align-items: center; gap: 0 8px; padding: 3px 0; font-size: 13px; }
@@ -165,7 +206,6 @@ onUnmounted(() => clearInterval(timer));
 .row.warn .gauge i { background: var(--warn); }
 .row.hot .gauge i { background: var(--err); }
 @media (max-width: 760px) {
-  .cards { grid-template-columns: minmax(0, 1fr); }
   .range { display: none; }
 }
 </style>

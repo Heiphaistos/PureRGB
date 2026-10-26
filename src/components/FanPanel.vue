@@ -12,6 +12,8 @@ import type {
 import DeviceCard from "./DeviceCard.vue";
 import { CURVE_PRESETS, presetPoints } from "../fanCurves";
 import { groupFanDevices } from "../fanGroups";
+import CardHandle from "./CardHandle.vue";
+import { useCardOrder } from "../useCardOrder";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -48,7 +50,10 @@ function emptyFanMessageFor(s: SensorDiag | null | undefined): string {
 
 const emptyFanMessage = computed(() => emptyFanMessageFor(diag.value?.sensord));
 
-const fanGroups = computed(() => groupFanDevices(props.devices));
+const rawGroups = computed(() => groupFanDevices(props.devices));
+// Disposition seulement : l'ordre des catégories est mémorisé, aucune logique de réglage n'est touchée.
+const ord = useCardOrder("purergb.fans.cardOrder", computed(() => rawGroups.value.map((g) => g.id)));
+const fanGroups = computed(() => ord.order.value.map((id) => rawGroups.value.find((g) => g.id === id)!));
 
 function hasEditor(d: DeviceInfo): boolean {
   return d.fan_channels.some((fc) => editors[curveKey(d, fc.index)]);
@@ -189,9 +194,20 @@ onUnmounted(() => clearInterval(timer));
 
     <p v-if="devices.length === 0" class="empty">{{ emptyFanMessage }}</p>
 
+    <p v-if="ord.customized.value" class="note"><button @click="ord.reset()">Réinitialiser l'ordre</button></p>
     <div class="cats">
-    <section v-for="g in fanGroups" :key="g.id" class="cat" :class="{ wide: g.devices.some(hasEditor) }">
-      <h3>{{ g.label }} <small>{{ g.hint }}</small></h3>
+    <section
+      v-for="g in fanGroups"
+      :key="g.id"
+      class="cat"
+      :class="{ wide: g.devices.some(hasEditor), dragging: ord.dragId.value === g.id, over: ord.overId.value === g.id && ord.dragId.value !== g.id }"
+      @dragover="ord.onDragOver(g.id, $event)"
+      @drop="ord.onDrop(g.id, $event)"
+    >
+      <h3>
+        <CardHandle :label="g.label" @dragstart="ord.onDragStart(g.id, $event)" @dragend="ord.onDragEnd()" @move="ord.move(g.id, $event)" />
+        {{ g.label }} <small>{{ g.hint }}</small>
+      </h3>
       <div class="cards">
         <article v-for="d in g.devices" :key="d.id" class="fan-device" :class="{ wide: hasEditor(d) }">
           <div class="fan-device-head">
@@ -280,8 +296,10 @@ onUnmounted(() => clearInterval(timer));
 .empty { color: var(--text-dim); line-height: 1.7; }
 .cats { display: grid; grid-auto-flow: dense; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: var(--space-5) var(--space-4); align-items: start; margin-bottom: var(--space-4); }
 .cat { min-width: 0; }
+.cat.dragging { opacity: 0.45; }
+.cat.over { box-shadow: inset 0 3px 0 var(--accent); }
 .cat.wide { grid-column: 1 / -1; }
-.cat h3 { font-size: 14px; margin-bottom: var(--space-3); padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.cat h3 { display: flex; align-items: center; font-size: 14px; margin-bottom: var(--space-3); padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .cat h3 small { font-weight: 400; font-size: 12px; color: var(--text-dim); margin-left: 10px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: var(--space-3); align-items: start; }
 .fan-device { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
