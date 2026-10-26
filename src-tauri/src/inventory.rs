@@ -39,6 +39,8 @@ pub struct Inventory {
     pub ram: Vec<RamStick>,
     pub gpus: Vec<String>,
     pub usb: Vec<UsbDev>,
+    /// Version et date du BIOS (lecture seule, affichage du diagnostic).
+    pub bios: String,
 }
 
 /// Ce que PureRGB sait par ailleurs (hors WMI).
@@ -189,8 +191,9 @@ fn usb(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Fin
         }
         let Some(vendor) = cat.vendor(u.vid) else { continue };
         let key = vendor.split([' ', '/']).next().unwrap_or(vendor).to_lowercase();
-        let driven = devices.iter().any(|d| d.controllable && format!("{} {}", d.vendor, d.name).to_lowercase().contains(&key));
-        match cat.device(u.vid, u.pid) {
+        let model_name = cat.device(u.vid, u.pid);
+        let driven = is_driven(devices, &key, model_name);
+        match model_name {
             Some(model) if driven => out.push(f("USB", Status::Ok, format!("{model} pilotable"), format!("{} (USB {:04X}:{:04X})", u.name, u.vid, u.pid))),
             Some(model) if !ctx.openrgb_up => out.push(f("USB", Status::Info, format!("{model} reconnu, en attente d'OpenRGB"),
                 format!("USB {:04X}:{:04X} sera pilotable dès que le serveur OpenRGB tourne.", u.vid, u.pid))),
@@ -200,6 +203,21 @@ fn usb(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Fin
                 "Fabricant RGB connu mais ce modèle précis n'est pas encore pris en charge (ou n'a pas d'éclairage). Signalez-le via le diagnostic matériel.")),
         }
     }
+}
+
+fn norm(s: &str) -> String {
+    s.to_lowercase().replace('_', "-")
+}
+
+/// Un périphérique pilotable correspond-il à ce modèle du catalogue ? Par le nom complet du modèle, par son
+/// identifiant (dernier mot avec un chiffre, ex. `ms-7d93`), ou à défaut par le 1er mot du fabricant.
+fn is_driven(devices: &[DeviceInfo], vendor_key: &str, model: Option<&str>) -> bool {
+    let model = model.map(norm);
+    let ident = model.as_deref().and_then(|m| m.rsplit(' ').next()).filter(|t| t.len() >= 4 && t.chars().any(|c| c.is_ascii_digit()));
+    devices.iter().filter(|d| d.controllable).any(|d| {
+        let hay = norm(&format!("{} {}", d.vendor, d.name));
+        hay.contains(vendor_key) || model.as_deref().is_some_and(|m| hay.contains(m)) || ident.is_some_and(|i| hay.contains(i))
+    })
 }
 
 fn fans(ctx: &Context, out: &mut Vec<Finding>) {
@@ -258,6 +276,16 @@ struct Raw {
     gpu: Vec<RawGpu>,
     #[serde(default, deserialize_with = "one_or_many")]
     usb: Vec<RawUsb>,
+    #[serde(default)]
+    bios: Option<RawBios>,
+}
+
+#[derive(Deserialize)]
+struct RawBios {
+    #[serde(default, rename = "SMBIOSBIOSVersion")]
+    version: Option<String>,
+    #[serde(default, rename = "Manufacturer")]
+    vendor: Option<String>,
 }
 
 /// `USB\VID_1B1C&PID_0C3F\...` -> (0x1B1C, 0x0C3F).
@@ -285,6 +313,7 @@ pub fn parse_inventory(json: &str) -> Result<Inventory, String> {
         ram: raw.ram,
         gpus: raw.gpu.into_iter().map(|g| g.name).collect(),
         usb: usb.into_iter().map(|((vid, pid), name)| UsbDev { vid, pid, name: if name.is_empty() { format!("USB {vid:04X}:{pid:04X}") } else { name } }).collect(),
+        bios: raw.bios.map(|b| format!("{} {}", b.vendor.unwrap_or_default(), b.version.unwrap_or_default()).trim().to_string()).unwrap_or_default(),
     })
 }
 
@@ -292,7 +321,7 @@ const QUERY: &str = "[Console]::OutputEncoding=[Text.Encoding]::UTF8; $ErrorActi
 [ordered]@{ \
  board = Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer,Product; \
  ram = @(Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer,PartNumber,DeviceLocator); \
- gpu = @(Get-CimInstance Win32_VideoController | Select-Object Name); \
+ gpu = @(Get-CimInstance Win32_VideoController | Select-Object Name);  bios = Get-CimInstance Win32_BIOS | Select-Object Manufacturer,SMBIOSBIOSVersion; \
  usb = @(Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -like 'USB\\VID_*' } | Select-Object InstanceId,FriendlyName) \
 } | ConvertTo-Json -Compress -Depth 4";
 
@@ -345,6 +374,16 @@ mod tests {
         "usb":[{"InstanceId":"USB\\VID_1532&PID_0043\\5&1","FriendlyName":"Razer DeathAdder"},
                {"InstanceId":"USB\\VID_1532&PID_0043&MI_01\\6&2","FriendlyName":""},
                {"InstanceId":"USB\\VID_8087&PID_0033\\X","FriendlyName":"Intel BT"}]}"#;
+
+    #[test]
+    fn openrgb_devices_count_as_driving_catalog_models() {
+        let mobo = dev("MSI Z790 GAMING PRO WIFI (MS-7D93)", "Micro-Star", DeviceType::Motherboard, vec![]);
+        assert!(is_driven(&[mobo], "msi_zz", Some("MSI Mystic Light MS_7D93")));
+        let kb = dev("Cougar 700K EVO", "Cougar Gaming", DeviceType::Keyboard, vec![]);
+        assert!(is_driven(&[kb], "zzz", Some("Cougar 700K EVO")));
+        let other = dev("Razer Huntsman", "Razer", DeviceType::Keyboard, vec![]);
+        assert!(!is_driven(&[other], "cougar", Some("Cougar 700K EVO")));
+    }
 
     #[test]
     fn parses_powershell_json_with_single_and_multiple_items() {

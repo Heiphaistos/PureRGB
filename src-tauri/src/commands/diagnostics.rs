@@ -8,7 +8,7 @@ use crate::sensors::SensorHub;
 use serde::Serialize;
 use tauri::{Emitter, Manager, State};
 use crate::commands::devices::*;
-use crate::{diag_extra, inventory, screens, selftest, telemetry, usbcapture};
+use crate::{diag_extra, diag_report as diag_extra_report, inventory, screens, selftest, telemetry, usbcapture};
 use crate::AppState;
 
 #[derive(Serialize)]
@@ -129,6 +129,24 @@ pub(crate) fn hardware_diagnostics(state: State<AppState>) -> HardwareDiagnostic
         (s.openrgb_host.clone(), s.openrgb_port)
     };
     compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port)
+}
+
+/// Rapport de diagnostic local : cartes par sous-système + texte à copier (lecture seule, rien n'est envoyé).
+#[tauri::command(async)]
+pub(crate) fn diagnostic_report(app: tauri::AppHandle) -> diag_extra_report::DiagReport {
+    let state = app.state::<AppState>();
+    let (host, port) = {
+        let s = state.settings.lock();
+        (s.openrgb_host.clone(), s.openrgb_port)
+    };
+    let hw = compute_hardware_diagnostics(&state.registry, &state.sensors, &state.openrgb_mgr, &host, port);
+    diag_extra_report::local_report(&state, &app.state::<std::sync::Arc<screens::manager::ScreenManager>>(), hw)
+}
+
+/// Enregistre le texte du rapport à l'emplacement choisi par l'utilisateur (boîte de dialogue côté interface).
+#[tauri::command(async)]
+pub(crate) fn diagnostic_report_save(path: String, text: String) -> Result<(), String> {
+    std::fs::write(&path, text).map_err(|e| format!("écriture impossible : {e}"))
 }
 
 /// Un périphérique RGB vient d'être branché : on laisse USB finir son énumération, on relance l'OpenRGB

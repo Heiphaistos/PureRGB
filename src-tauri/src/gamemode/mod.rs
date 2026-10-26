@@ -50,6 +50,12 @@ pub fn backend_suspended(name: &str) -> bool {
     active() && SUSPENDED.lock().contains(&name)
 }
 
+/// Jeu détecté et reprise imminente (lecture seule, pour le diagnostic).
+pub fn current_game() -> (Option<String>, bool) {
+    let st = STATUS.lock();
+    (st.game.clone(), st.grace)
+}
+
 fn set_gate(on: bool, keep_hid: bool) {
     *SUSPENDED.lock() = if on { detect::suspended_backends(keep_hid) } else { Vec::new() };
     ACTIVE.store(on, Ordering::Release);
