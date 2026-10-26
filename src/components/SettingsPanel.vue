@@ -316,24 +316,40 @@ async function save() {
     </nav>
 
     <div class="cols">
+    <h3 v-show="section === 'general'" class="cat">Démarrage et fenêtre</h3>
     <div v-show="section === 'general'" class="card">
-      <h3>Disposition</h3>
-      <p class="hint">Agencement de l'onglet Éclairage.</p>
+      <h3>Lancement</h3>
+      <div class="inline" style="margin-bottom: 12px">
+        <input id="winstart" type="checkbox" :checked="autostartEnabled" :disabled="autostartBusy" @change="toggleAutostart" />
+        <label for="winstart">Lancer PureRGB au démarrage de Windows (tâche planifiée, sans fenêtre UAC)</label>
+      </div>
+      <div class="inline">
+        <input id="startmin" type="checkbox" v-model="form.start_minimized" />
+        <label for="startmin">Démarrer minimisé dans la barre système</label>
+      </div>
+    </div>
+
+    <div v-show="section === 'general'" class="card">
+      <h3>Disposition de l'onglet Éclairage</h3>
       <div class="layout-options">
-        <button
-          v-for="l in LAYOUTS"
-          :key="l.id"
-          type="button"
-          class="layout-option"
-          :class="{ active: layout === l.id }"
-          @click="emit('layout-change', l.id)"
-        >
+        <button v-for="l in LAYOUTS" :key="l.id" type="button" class="layout-option" :class="{ active: layout === l.id }" @click="emit('layout-change', l.id)">
           <strong>{{ l.label }}</strong>
           <span>{{ l.hint }}</span>
         </button>
       </div>
     </div>
 
+    <div v-show="section === 'general'" class="card">
+      <h3>Performance</h3>
+      <label>Images/seconde des animations — {{ form.fps }} FPS</label>
+      <input type="range" min="5" max="144" step="5" v-model.number="form.fps" />
+      <p class="hint">
+        Plus bas = moins de CPU/USB. 30 FPS est fluide, 60+ pour des transitions très nettes. Les effets statiques ne consomment rien
+        quel que soit ce réglage.
+      </p>
+    </div>
+
+    <h3 v-show="section === 'general'" class="cat">Mises à jour</h3>
     <div v-show="section === 'general'" class="card">
       <h3>Mises à jour de PureRGB</h3>
       <p class="hint">
@@ -357,6 +373,35 @@ async function save() {
       </button>
     </div>
 
+    <h3 v-show="section === 'general'" class="cat">Profils et confidentialité</h3>
+    <div v-show="section === 'general'" class="card">
+      <h3>Profils</h3>
+      <div class="inline" style="gap: 10px; margin-bottom: 12px">
+        <button @click="exportProfile">Exporter le profil…</button>
+        <button @click="importProfile">Importer un profil…</button>
+      </div>
+      <span class="hint" v-if="profileMsg">{{ profileMsg }}</span>
+      <p class="hint">
+        Un profil contient tout : effets (globaux et par zone), modes matériels,
+        courbes ventilateurs et réglages.
+      </p>
+    </div>
+
+    <div v-show="section === 'general'" class="card">
+      <h3>Confidentialité</h3>
+      <div class="inline">
+        <input id="telemetry" type="checkbox" v-model="form.telemetry_opt_in" />
+        <label for="telemetry">
+          Envoyer les informations de diagnostic (modèle de carte mère, mémoire, VID/PID USB, constats
+          de l'inventaire, erreurs de détection et de démarrage, derniers avertissements du journal) pour
+          corriger le matériel non reconnu. Ni numéro de série, ni chemin, ni nom de compte. Désactivé par défaut.
+        </label>
+      </div>
+    </div>
+
+    <h3 v-show="section === 'general'" class="cat">Mode jeu</h3>
+    <GameModeSetting v-show="section === 'general'" />
+
     <div v-show="section === 'media'" class="card">
       <h3>Photos des produits</h3>
       <p class="hint">
@@ -370,66 +415,11 @@ async function save() {
       </div>
     </div>
 
-    <GameModeSetting v-show="section === 'general'" />
-
     <DecoderSetting v-show="section === 'media'" />
 
     <DriversSetting v-show="section === 'drivers'" :form="form" />
 
     <SelfTest v-show="section === 'security'" />
-
-    <div v-show="section === 'general'" class="card">
-      <h3>Système &amp; profils</h3>
-      <div class="inline" style="margin-bottom: 12px">
-        <input
-          id="winstart"
-          type="checkbox"
-          :checked="autostartEnabled"
-          :disabled="autostartBusy"
-          @change="toggleAutostart"
-        />
-        <label for="winstart">
-          Lancer PureRGB au démarrage de Windows (tâche planifiée, sans fenêtre UAC)
-        </label>
-      </div>
-      <div class="inline" style="margin-bottom: 12px">
-        <input id="telemetry" type="checkbox" v-model="form.telemetry_opt_in" />
-        <label for="telemetry">
-          Envoyer les informations de diagnostic (modèle de carte mère, mémoire, VID/PID USB, constats
-          de l'inventaire, erreurs de détection et de démarrage, derniers avertissements du journal) pour
-          corriger le matériel non reconnu. Ni numéro de série, ni chemin, ni nom de compte. Désactivé par défaut.
-        </label>
-      </div>
-      <div class="inline" style="gap: 10px">
-        <button @click="exportProfile">Exporter le profil…</button>
-        <button @click="importProfile">Importer un profil…</button>
-        <span class="hint" v-if="profileMsg">{{ profileMsg }}</span>
-      </div>
-      <p class="hint">
-        Un profil contient tout : effets (globaux et par zone), modes matériels,
-        courbes ventilateurs et réglages.
-      </p>
-    </div>
-
-    <div v-show="section === 'general'" class="card">
-      <h3>Performance</h3>
-      <div class="grid2">
-        <div>
-          <label>Images/seconde des animations — {{ form.fps }} FPS</label>
-          <input type="range" min="5" max="144" step="5" v-model.number="form.fps" />
-          <p class="hint">
-            Plus bas = moins de CPU/USB. 30 FPS est fluide, 60+ pour des
-            transitions très nettes. Cadence à échéance fixe (pas de dérive
-            même avec plusieurs appareils). Les effets statiques ne
-            consomment rien quel que soit ce réglage.
-          </p>
-        </div>
-        <div class="inline top">
-          <input id="startmin" type="checkbox" v-model="form.start_minimized" />
-          <label for="startmin">Démarrer minimisé dans la barre système</label>
-        </div>
-      </div>
-    </div>
 
     </div>
 
@@ -609,12 +599,25 @@ async function save() {
 
 /* Cartes réparties sur 2 à 3 colonnes selon la largeur (au lieu d'une pile étroite). */
 .cols {
-  column-width: 400px;
-  column-gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(420px, 31%), 1fr));
+  gap: 14px;
+  align-items: start;
 }
 
 .cols .card {
-  break-inside: avoid;
+  margin-bottom: 0;
+}
+
+.cat {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-top: 6px;
 }
 
 .settings h2 {
