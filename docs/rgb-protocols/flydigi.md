@@ -126,3 +126,22 @@ Détection par la chaîne produit (voir `manettes.md`) : listée « Manette », 
 - `ahungry/vader3` (Vader 3, D-Input Bluetooth) : pas d'éclairage.
 - SDL : HIDAPI Vader 5 Pro, autre modèle.
 - `pipe01/flydigictl` (GPL-3.0, Vader 3 Pro), `BANANASJIM/flydigi-vader5` : autres modèles, licence incompatible, non exploités.
+
+## Addendum 2026-10-26 : pilote filtre, dongles, décision finale
+
+Même installeur 3.4.4.3 (même SHA-256), toujours jamais exécuté. Analyse des chaînes de `Xbox360Filter64.sys` (24,9 Ko) et `XboxComm64.dll` (54,5 Ko), dossier `extractpp\{app}\Service\` (identique à `{app}\Xbox360Filter64.sys`). Désassemblage complet NON fait.
+
+**Pilote et DLL (CONFIRMÉ par chaînes, comportement HYPOTHÈSE) :**
+- `XboxComm64.dll` exporte `WriteData2Usb`, `IsCurrentUsbCanWrite` ; ouvre `\.\XboxFilter` (`CreateFile`/`DeviceIoControl`/`WriteFile`), et utilise `FilterConnectCommunicationPort` + `FilterGetMessage` (port de communication de minifiltre).
+- Le pilote crée `\Device\XboxFilterCDO`, s'enregistre comme minifiltre (`FltRegisterFilter`, `FltCreateCommunicationPort`), fabrique des requêtes IRP (`IoBuildDeviceIoControlRequest`) et journalise `IOCTL_XBOX_FILTER_GET_WRITE_STATE Enter:Out Pipe:%x,In Pipe:%x` et `g_out_pipe_handle != NULL`.
+- HYPOTHÈSE : il capte les handles de pipes USB OUT/IN du pilote xusb de la manette et y injecte les 15 octets de `WriteData2Usb`. Les IOCTL exacts et la longueur réellement émise sont INCONNUS. Pilote à signature de l'éditeur, non redistribuable : aucun canal côté PureRGB.
+
+**Dongle 2,4 GHz D-Input (CONFIRMÉ, `FDGDevice.cs`) :** couples VID:PID `04B4:2410`, `04B4:2411`, `04B4:2412`, `04B5:2413`, `04B4:2414`, `04B5:2415` (interface `mi_02`). Ajoutés à `backends/hid/gamepads.rs` (détection seule, aucun handle ouvert). Le VID 04B4 est celui de Cypress : la détection par couple exact évite les faux positifs, mais un PID hors liste n'est pas reconnu.
+
+**Autres modèles (Vader 5 Pro, Apex 4/5, Direwolf) :** la version 3.4.4.3 liste Apex 4/3, Direwolf 3, Apex 5 mais aucune autre table VID/PID que celle ci-dessus n'existe dans le code décompilé (aucune occurrence de `37d7`). Vader 5 Pro : VID/PID et protocole INCONNUS d'après cette source (autre pile logicielle, Space Station 4, non téléchargée).
+
+**Réglages hors éclairage (documentation seule, rien d'implémenté) :** touches, gâchettes, zones mortes, joysticks, vibration, macros, profils passent par `StartKMPC` / `StartFLashDataKMPC` (écriture de configuration complète en mémoire de la manette, même cadrage 15 octets, paquets de 10 octets) et `SubFunc_SaveFlashConfig` (`0x50 0x03`). Structure du blob de configuration non décodée ici. Toutes ces commandes écrivent en mémoire de la manette : INTERDIT pour PureRGB.
+
+**Nuance sur le mot « Temp » :** `FormatterFlashLEDTempWriteFullData` (mode D-Input, début `IsStartCmd: false`) et le paramètre `isSave` de `FormatterStartTestData` (`StartFLashDataKMPC`, `isSave = 0` par défaut) suggèrent qu'une écriture non sauvegardée existe, sans preuve que les paquets ne touchent pas la mémoire permanente avant `0x50 0x03`. HYPOTHÈSE, non vérifiable sans capture matérielle.
+
+**DÉCISION : pilote natif REFUSÉ.** Deux conditions du brief échouent : (1) aucun transport HID/WinUSB sûr en XInput (pilote filtre propriétaire) ; (2) éclairage non prouvé volatil (chemin « Flash »). Aucun fichier `native/flydigi.rs` créé. À rouvrir seulement après capture USB sur matériel (voir « Prochaines étapes »).

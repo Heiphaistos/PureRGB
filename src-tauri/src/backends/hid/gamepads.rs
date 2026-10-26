@@ -20,11 +20,15 @@ pub struct Pad {
 
 const NO_RGB: &str = "manette détectée — pas d'éclairage RGB pilotable connu";
 
+/// Dongles 2,4 GHz Flydigi en D-Input : couples VID:PID de `FDGDevice.cs` (SFDG_VIDS/SFDG_PIDS, Space Station 3.4.4.3).
+const FLYDIGI_DONGLES: [(u16, u16); 6] =
+    [(0x04B4, 0x2410), (0x04B4, 0x2411), (0x04B4, 0x2412), (0x04B5, 0x2413), (0x04B4, 0x2414), (0x04B5, 0x2415)];
+
 pub fn classify(vid: u16, pid: u16, product: &str) -> Pad {
     let lower = product.to_lowercase();
     let shown = |fallback: &str| if product.trim().is_empty() { fallback.to_string() } else { product.trim().to_string() };
     // Flydigi d'abord : elle emprunte l'ID d'une manette Xbox 360 (045E:028E) ou d'une Xbox One.
-    if lower.contains("flydigi") || lower.contains("vader") {
+    if lower.contains("flydigi") || lower.contains("vader") || FLYDIGI_DONGLES.contains(&(vid, pid)) {
         return Pad {
             name: shown("Manette Flydigi"),
             vendor: "Flydigi",
@@ -56,6 +60,13 @@ mod tests {
         let fly = classify(0x045E, 0x028E, "Controller (Flydigi VADER4)");
         assert_eq!(fly.vendor, "Flydigi");
         assert!(fly.note.contains("non pris en charge"));
+    }
+
+    #[test]
+    fn flydigi_dongle_ids_are_recognised_without_a_product_string() {
+        assert_eq!(classify(0x04B5, 0x2413, "").vendor, "Flydigi");
+        assert_eq!(classify(0x04B4, 0x2410, "").vendor, "Flydigi");
+        assert_ne!(classify(0x04B4, 0x2416, "").vendor, "Flydigi");
     }
 
     #[test]
