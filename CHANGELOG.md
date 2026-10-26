@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## À venir (brouillon, version non incrémentée)
+
+- **Mode arrière-plan** : au « Quitter » du menu de la zone de notification, PureRGB peut laisser tourner, sans fenêtre ni WebView2, seulement ce que vous cochez (Réglages > Arrière-plan, ou page Écrans) : **écrans** (design/thème/vidéo), **éclairage appliqué**, **ventilateurs** (uniquement les courbes/réglages manuels déjà actifs, jamais de réglage automatique), **mode manette**. Ne sont lancés que les modules cochés ET déjà en service ; « Quitter complètement » arrête tout. C'est le même `purergb.exe` (`--background=écrans,…`) : aucun service Windows, aucune élévation, aucun pilote ajouté, aucune injection.
+- Le mode jeu s'applique dans ce processus comme dans l'application complète (même code). Ce n'est pas un moyen de contourner un anti-cheat : le bénéfice est zéro fenêtre et peu de mémoire.
+- Rouvrir PureRGB (ou « Ouvrir PureRGB » dans le menu du processus d'arrière-plan) arrête proprement ce processus, rend les ventilateurs au BIOS comme à la fermeture normale, puis reprend la main. Les logiciels constructeur arrêtés au lancement ne sont relancés qu'au « Quitter complètement ».
+- « Lancer au démarrage de Windows » est inchangé : l'application complète démarre minimisée, aucune seconde entrée n'est créée.
+
 ## 0.50.2
 
 - Correction de la mise à jour automatique : l'application se fermait sans jamais se relancer. Cause : le « job » de fermeture propre tuait l'installeur et la relance au moment où PureRGB quittait. Il est maintenant relâché juste avant (après restauration du matériel et arrêt des moteurs).
