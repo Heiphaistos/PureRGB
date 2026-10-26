@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { buttonName, drift, stick } from "../gamepad";
+import GamepadRemap from "./GamepadRemap.vue";
 
 interface Live {
   index: number;
@@ -104,6 +105,7 @@ onUnmounted(() => cancelAnimationFrame(raf));
       </div>
       <p v-if="msg" class="note">{{ msg }}</p>
     </div>
+    <GamepadRemap />
   </section>
 </template>
 
