@@ -160,4 +160,14 @@ mod tests {
         assert!(known_without_rgb(0x1EA7, 0x0064).is_some() && known_without_rgb(0x1EA7, 0x0066).is_some(), "récepteurs 2,4 G Empire Gaming");
         assert!(known_without_rgb(0x1EA7, 0x0030).is_none(), "autre PID du même VID : inchangé");
     }
+
+    #[test]
+    fn brand_group_a_ids_are_recognized() {
+        let c = catalog();
+        assert_eq!(c.device(0x145F, 0x02BF), Some("Trust GXT 160X Gaming Mouse"));
+        assert_eq!(c.device(0x3299, 0x000F), Some("ENDORFY GEM (EY6A006)"));
+        assert!(c.device(0x04D9, 0xA09F).is_some_and(|n| n.contains("Savio Gambit")));
+        assert!(c.device(0x258A, 0x1007).is_some_and(|n| n.contains("Genesis Xenon 200") && n.contains("HELLFIRE")));
+        assert!(is_rgb_vendor("3738") && is_rgb_vendor("1d57"));
+    }
 }

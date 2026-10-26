@@ -1,1 +1,316 @@
-{"vendors":{},"devices":[]}
+{
+"vendors": {
+"3738": "Endorfy (LIV)",
+"352d": "OEM 352D (Savio BLACKOUT X2 / WHITEOUT X2)",
+"1d57": "Xenta (Savio RIFT)",
+"260d": "OEM 260D (Trust GXT 950)",
+"248a": "Maxxter (OEM, Sharkoon SGM25W)"
+},
+"devices": [
+[
+"145f",
+"01bc",
+"Trust GXT 155 Gaming Mouse"
+],
+[
+"145f",
+"01c1",
+"Trust Gaming Mouse"
+],
+[
+"145f",
+"01e5",
+"Trust GXT 830 Keyboard"
+],
+[
+"145f",
+"023f",
+"Trust GXT 168 Mouse"
+],
+[
+"145f",
+"02bf",
+"Trust GXT 160X Gaming Mouse"
+],
+[
+"145f",
+"0276",
+"Trust GXT 165 Celox Gaming Mouse"
+],
+[
+"145f",
+"02a7",
+"Trust GXT 950 Gaming Mouse"
+],
+[
+"145f",
+"02fb",
+"Trust GXT 980/981 Redex Gaming Mouse"
+],
+[
+"145f",
+"02f2",
+"Trust GXT 980/981 Redex Gaming Mouse (recepteur 2,4 GHz)"
+],
+[
+"260d",
+"1025",
+"Trust GXT 950 Gaming Mouse (variante OEM 260D)"
+],
+[
+"04d9",
+"a1ee",
+"Trust GXT 160X Gaming Mouse (variante Holtek)"
+],
+[
+"1ea7",
+"0030",
+"Trust GXT 158 Orna Laser Gaming Mouse"
+],
+[
+"1ea7",
+"1002",
+"Sharkoon Vintorez Gaming Mouse"
+],
+[
+"1ea7",
+"2007",
+"Sharkoon SHARK ZONE K30 Illuminated Gaming Keyboard"
+],
+[
+"2ea8",
+"2203",
+"Sharkoon Light2 200 Gaming Mouse"
+],
+[
+"248a",
+"fa02",
+"Sharkoon SKILLER SGM25W"
+],
+[
+"248a",
+"fb01",
+"Sharkoon SKILLER SGM25W (recepteur 2,4 GHz)"
+],
+[
+"258a",
+"1007",
+"Genesis Xenon 200 / Empire Gaming HELLFIRE"
+],
+[
+"258a",
+"0016",
+"Empire Gaming STARDUST (OE-KB-198) / Sinowealth Keyboard"
+],
+[
+"258a",
+"0013",
+"Empire Gaming HELLHOUNDS Mouse"
+],
+[
+"258a",
+"0029",
+"Everest GT-100 RGB / Savio Valiant"
+],
+[
+"258a",
+"0049",
+"FL ESPORTS F11 / Savio Rampage"
+],
+[
+"04d9",
+"a09f",
+"Ozone Neon X50 / Savio Gambit / Savio Hex-R (base XPERT M100)"
+],
+[
+"352d",
+"2380",
+"Savio BLACKOUT X2 / WHITEOUT X2"
+],
+[
+"1d57",
+"fa61",
+"Savio RIFT"
+],
+[
+"1d57",
+"fa60",
+"Savio RIFT (recepteur 2,4 GHz)"
+],
+[
+"0d8c",
+"01da",
+"Savio BLACKOUT / WHITEOUT (casque USB C-Media)"
+],
+[
+"3299",
+"000f",
+"ENDORFY GEM (EY6A006)"
+],
+[
+"3299",
+"000e",
+"ENDORFY GEM Plus (EY6A005)"
+],
+[
+"3299",
+"0067",
+"ENDORFY GEM Onyx White (EY6A012)"
+],
+[
+"3299",
+"0066",
+"ENDORFY GEM Plus Onyx White (EY6A011)"
+],
+[
+"3299",
+"000b",
+"ENDORFY LIX (EY6A002)"
+],
+[
+"3299",
+"000a",
+"ENDORFY LIX Plus (EY6A001)"
+],
+[
+"3299",
+"000d",
+"ENDORFY LIX Onyx White (EY6A004)"
+],
+[
+"3299",
+"000c",
+"ENDORFY LIX Plus Onyx White (EY6A003)"
+],
+[
+"3299",
+"00a6",
+"ENDORFY LIV Plus Wireless"
+],
+[
+"3299",
+"00a7",
+"ENDORFY LIV Plus Wireless (recepteur)"
+],
+[
+"3299",
+"0010",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0064",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0068",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0073",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0011",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0065",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"006a",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"006c",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"006e",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"0074",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"006b",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3299",
+"006d",
+"ENDORFY souris sans fil (EY6A007/008/009/010/013/015)"
+],
+[
+"3738",
+"00b3",
+"ENDORFY LIV (EY6A020)"
+],
+[
+"3738",
+"00b4",
+"ENDORFY LIV Onyx White (EY6A021)"
+],
+[
+"3738",
+"00af",
+"ENDORFY LIV Wireless"
+],
+[
+"3738",
+"00b1",
+"ENDORFY LIV Wireless"
+],
+[
+"3738",
+"00b0",
+"ENDORFY LIV Wireless (recepteur)"
+],
+[
+"3738",
+"00b2",
+"ENDORFY LIV Wireless (recepteur)"
+],
+[
+"3738",
+"00ad",
+"ENDORFY LIV Plus Wireless"
+],
+[
+"3738",
+"00ae",
+"ENDORFY LIV Plus Wireless (recepteur)"
+],
+[
+"0c45",
+"5f01",
+"Speedlink ORIOS RGB Gaming Mouse"
+],
+[
+"0c45",
+"763d",
+"Speedlink ORIOS RGB Gaming Mousepad"
+],
+[
+"0c45",
+"763e",
+"Speedlink ORIOS RGB Opto-Mech Keyboard"
+],
+[
+"1c4f",
+"0002",
+"TRACER Gamma Ivory Keyboard"
+]
+]
+}
