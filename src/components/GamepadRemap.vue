@@ -139,8 +139,9 @@ onUnmounted(() => clearInterval(timer));
       <b v-if="view?.game_mode_active">Mode jeu actif : remappage suspendu.</b>
     </div>
 
+    <div class="grid">
     <div class="card">
-      <h4>Pilote</h4>
+      <h4>Pilote ViGEmBus et activation</h4>
       <p v-if="drivers">
         ViGEmBus : <b :class="drivers.vigem_ready ? 'ok' : 'bad'">{{ drivers.vigem_ready ? "installé" : "absent" }}</b>
         <template v-if="!drivers.vigem_ready">
@@ -153,6 +154,10 @@ onUnmounted(() => clearInterval(timer));
         Activer le remappage
       </label>
       <p v-if="view?.live.error" class="bad">{{ view.live.error }}</p>
+    </div>
+
+    <div class="card">
+      <h4>HidHide (option avancée)</h4>
       <p v-if="view?.live.virtual_active" class="note">
         Manette virtuelle active (lecture de {{ padKey }}).
         Les jeux voient aussi la manette physique : <b>deux manettes</b>. Pour la masquer, option avancée :
@@ -160,6 +165,7 @@ onUnmounted(() => clearInterval(timer));
         ({{ drivers?.hidhide_installed ? "détecté sur ce PC ; ajoutez PureRGB à sa liste d'applications autorisées" : "non installé" }}).
         <button v-if="drivers && !drivers.hidhide_installed" :disabled="busy || view?.game_mode_active" @click="installHidHide">Installer HidHide</button>
       </p>
+      <p v-else class="note">Utile une fois le remappage actif : HidHide masque la manette physique pour que les jeux ne voient que la virtuelle.</p>
     </div>
 
     <template v-if="view">
@@ -251,19 +257,23 @@ onUnmounted(() => clearInterval(timer));
         <small v-else>Activez le remappage avec une manette connectée pour voir les valeurs. Enregistrez le profil pour appliquer les réglages.</small>
       </div>
     </template>
+    </div>
     <p v-if="error" class="bad">{{ error }}</p>
   </section>
 </template>
 
 <style scoped>
-.remap { max-width: 760px; margin-top: 22px; }
+.remap { margin-top: 22px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(420px, 31%), 1fr)); gap: 14px; align-items: start; }
+.grid .card { margin-bottom: 0; }
 .remap h3 { font-size: 16px; }
 .sub { color: var(--text-dim); font-size: 13px; margin: 6px 0 12px; }
 .warn { border: 1px solid #d9a21b; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
 .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; }
 .card h4 { font-size: 14px; margin-bottom: 8px; }
+.map select { width: 100%; min-width: 0; }
 .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; }
-.map { display: grid; grid-template-columns: 180px 1fr; gap: 6px 12px; align-items: center; font-size: 13px; }
+.map { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 6px 12px; align-items: center; font-size: 13px; }
 .stick { display: flex; gap: 24px; align-items: flex-start; }
 .ctl { display: flex; flex-direction: column; gap: 8px; flex: 1; font-size: 13px; }
 .ctl label { display: flex; flex-direction: column; gap: 3px; }
