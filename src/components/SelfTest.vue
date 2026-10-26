@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { errMsg } from "../screens/api";
 
 interface Check {
@@ -66,6 +66,30 @@ async function runTest(): Promise<void> {
   }
 }
 
+const CATEGORIES: { title: string; kinds: string[] }[] = [
+  { title: "Mémoire", kinds: ["Dram", "Storage"] },
+  { title: "Carte mère et carte graphique", kinds: ["Motherboard", "Gpu"] },
+  { title: "Ventilateurs et refroidissement", kinds: ["Fan", "Cooler", "Aio", "Hub"] },
+  { title: "Claviers, souris et accessoires", kinds: ["Keyboard", "Mouse", "Mousemat", "Headset", "HeadsetStand", "Gamepad", "Keypad", "Microphone", "Speaker"] },
+  { title: "Boîtier et ARGB", kinds: ["LedStrip", "Case", "Light", "Accessory", "Virtual", "Unknown"] },
+];
+const SCREEN = /écran|ecran|lcd|screen|display/i;
+const categoryOf = (it: Item): string =>
+  SCREEN.test(it.name) ? "Écrans" : (CATEGORIES.find((c) => c.kinds.includes(it.kind))?.title ?? "Boîtier et ARGB");
+const drivable = (it: Item): boolean => it.checks.find((c) => c.label === "Pilote prêt")?.ok !== false;
+
+/** Appareils pilotables groupés par catégorie, puis un bloc replié pour ceux qu'aucun pilote ne contrôle. */
+const sections = computed(() => {
+  const list = items.value ?? [];
+  const order = [...CATEGORIES.map((c) => c.title), "Écrans"];
+  const out: { title: string; items: Item[]; fold: boolean }[] = order
+    .map((title) => ({ title, items: list.filter((i) => drivable(i) && categoryOf(i) === title), fold: false }))
+    .filter((g) => g.items.length);
+  const rest = list.filter((i) => !drivable(i));
+  if (rest.length) out.push({ title: `Détectés mais non pilotables (${rest.length})`, items: rest, fold: true });
+  return out;
+});
+
 function allOk(item: Item): boolean {
   return item.checks.every((c) => c.ok);
 }
@@ -85,31 +109,36 @@ function allOk(item: Item): boolean {
     </div>
     <p v-if="error" class="err">{{ error }}</p>
 
-    <ul v-if="items" class="list">
-      <li v-for="it in items" :key="it.id" :class="{ high: it.risk === 'élevé' }">
-        <div class="head">
-          <strong>{{ it.name }}</strong>
-          <span class="badge" :class="allOk(it) ? 'ok' : 'warn'">{{ allOk(it) ? "Prêt" : "À vérifier" }}</span>
-          <span class="badge" :class="it.risk === 'élevé' ? 'risk' : ''">Risque {{ it.risk }}</span>
-          <span class="src">via {{ it.source }}</span>
-        </div>
-        <ul class="checks">
-          <li v-for="c in it.checks" :key="c.label" :class="c.ok ? 'ok' : 'ko'">
-            <span aria-hidden="true">{{ c.ok ? "✓" : "✗" }}</span> {{ c.label }} <em>— {{ c.detail }}</em>
+    <div v-if="items" class="groups">
+      <component :is="g.fold ? 'details' : 'section'" v-for="g in sections" :key="g.title" class="grp">
+        <component :is="g.fold ? 'summary' : 'h4'" class="gt">{{ g.title }}</component>
+        <ul class="list">
+          <li v-for="it in g.items" :key="it.id" :class="{ high: it.risk === 'élevé' }">
+            <div class="head">
+              <strong>{{ it.name }}</strong>
+              <span class="badge" :class="allOk(it) ? 'ok' : 'warn'">{{ allOk(it) ? "Prêt" : "À vérifier" }}</span>
+              <span class="badge" :class="it.risk === 'élevé' ? 'risk' : ''">{{ it.risk === "élevé" ? "Risque élevé" : "Risque standard" }}</span>
+            </div>
+            <span class="src">via {{ it.source }}</span>
+            <ul class="checks">
+              <li v-for="c in it.checks" :key="c.label" :class="c.ok ? 'ok' : 'ko'">
+                <span aria-hidden="true">{{ c.ok ? "✓" : "✗" }}</span> {{ c.label }} <em>— {{ c.detail }}</em>
+              </li>
+            </ul>
+            <p v-if="it.blocked" class="blocked">Test d'écriture indisponible : {{ it.blocked }}</p>
+            <button v-else :disabled="testing !== null" @click="ask(it)">{{ testing === it.id ? "Test en cours…" : "Tester l'écriture" }}</button>
+            <template v-if="results[it.id]">
+              <ul class="checks res">
+                <li v-for="s in results[it.id].steps" :key="s.label" :class="s.ok ? 'ok' : 'ko'">
+                  <span aria-hidden="true">{{ s.ok ? "✓" : "✗" }}</span> {{ s.label }} <em>— {{ s.detail }}</em>
+                </li>
+              </ul>
+              <p class="restored">{{ results[it.id].ok ? "Test réussi." : "Test interrompu : aucune autre écriture n'a été envoyée." }} {{ results[it.id].restored }}.</p>
+            </template>
           </li>
         </ul>
-        <p v-if="it.blocked" class="blocked">Test d'écriture indisponible : {{ it.blocked }}</p>
-        <button v-else :disabled="testing !== null" @click="ask(it)">{{ testing === it.id ? "Test en cours…" : "Tester l'écriture" }}</button>
-        <template v-if="results[it.id]">
-          <ul class="checks res">
-            <li v-for="s in results[it.id].steps" :key="s.label" :class="s.ok ? 'ok' : 'ko'">
-              <span aria-hidden="true">{{ s.ok ? "✓" : "✗" }}</span> {{ s.label }} <em>— {{ s.detail }}</em>
-            </li>
-          </ul>
-          <p class="restored">{{ results[it.id].ok ? "Test réussi." : "Test interrompu : aucune autre écriture n'a été envoyée." }} {{ results[it.id].restored }}.</p>
-        </template>
-      </li>
-    </ul>
+      </component>
+    </div>
 
     <div v-if="confirming" class="modal" role="dialog" aria-modal="true">
       <div class="inner">
@@ -134,6 +163,7 @@ function allOk(item: Item): boolean {
 
 <style scoped>
 .card {
+  grid-column: 1 / -1;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -146,7 +176,7 @@ h3 {
 }
 .hint {
   color: var(--text-dim);
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 10px;
 }
 .row {
@@ -163,15 +193,16 @@ h3 {
   list-style: none;
   padding: 0;
   margin: 12px 0 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 .list > li {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -186,8 +217,9 @@ h3 {
   flex-wrap: wrap;
 }
 .badge {
-  font-size: 10px;
-  padding: 1px 7px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
   border-radius: 999px;
   background: var(--border);
 }
@@ -202,8 +234,15 @@ h3 {
 }
 .src {
   color: var(--text-dim);
-  margin-left: auto;
+  font-size: 12px;
 }
+.groups { columns: 380px 3; column-gap: 16px; margin-top: 8px; }
+.grp { margin: 0 0 14px; break-inside: avoid; }
+details.grp > .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(max(380px, 31%), 1fr)); }
+details.grp { column-span: all; }
+.gt { font-size: 14px; font-weight: 600; margin: 0 0 4px; cursor: default; }
+details.grp > .gt { cursor: pointer; color: var(--text-dim); }
+.grp .list { margin-top: 8px; }
 .checks {
   list-style: none;
   padding: 0;
@@ -219,7 +258,7 @@ h3 {
   color: #f87171;
 }
 .checks em {
-  color: var(--text-dim);
+  color: #b9b6c4;
   font-style: normal;
 }
 .blocked,
