@@ -19,6 +19,7 @@ pub mod dualshock4;
 pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod lianli_uni;
+pub mod litra;
 pub mod logitech;
 pub mod msi_mystic;
 pub mod nzxt_hue2;
@@ -177,6 +178,7 @@ pub const FAMILIES: &[&Family] = &[
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
     &lianli_uni::FAMILY,
+    &litra::FAMILY,
     &logitech::FAMILY,
     &msi_mystic::FAMILY,
     &nzxt_hue2::FAMILY,
