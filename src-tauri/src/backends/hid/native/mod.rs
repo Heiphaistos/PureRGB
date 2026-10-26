@@ -19,6 +19,7 @@ pub mod dualshock4;
 pub mod gigabyte_fusion;
 pub mod hyperx;
 pub mod lianli_uni;
+pub mod litra;
 pub mod logitech;
 pub mod msi_mystic;
 pub mod nzxt_hue2;
@@ -154,8 +155,9 @@ pub trait NativeRgb: Send {
 
 /// Réglages non lumineux proposés pour une famille (liste statique : rien n'est envoyé à l'affichage).
 /// Chaque famille qui implémente `NativeRgb::set_setting` ajoute ici son entrée, avec la source du protocole.
-pub fn settings_schema(family_id: &str, _model: &Model) -> Vec<crate::core::DeviceSetting> {
+pub fn settings_schema(family_id: &str, model: &Model) -> Vec<crate::core::DeviceSetting> {
     match family_id {
+        "litra" => litra::settings(model),
         _ => Vec::new(),
     }
 }
@@ -190,6 +192,7 @@ pub const FAMILIES: &[&Family] = &[
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
     &lianli_uni::FAMILY,
+    &litra::FAMILY,
     &logitech::FAMILY,
     &msi_mystic::FAMILY,
     &nzxt_hue2::FAMILY,

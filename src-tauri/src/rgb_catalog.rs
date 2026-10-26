@@ -74,7 +74,7 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 21] = [
+const NO_RGB: [(u16, u16, &str); 24] = [
     // 0ABA : G HUB 2026.7 le déclare sans `lightingSupport` (définition lisible, contrairement aux G733/G735) ; analyse-logitech-ghub.md §12.
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
     // 0AF7 (PRO X 2) : absence de LED NON prouvée (définition G HUB chiffrée) ; conservé, à lever si une preuve contraire arrive.
@@ -104,6 +104,11 @@ const NO_RGB: [(u16, u16, &str); 21] = [
     (0x1B1C, 0x1C1F, "Alimentation Corsair HX1500i"),
     (0x1B1C, 0x1C23, "Alimentation Corsair HX1200i"),
     (0x1B1C, 0x1C27, "Alimentation Corsair HX1200i"),
+    // Alimentations NZXT E500/E650/E850 (liquidctl `nzxt_epsu.py` + docs/nzxt-e-series-psu-guide.md) : lecture des tensions/courants/température/
+    // ventilateur seulement ; set_color lève NotSupportedByDevice. Voir docs/rgb-protocols/marques-groupe-c.md.
+    (0x7793, 0x5911, "Alimentation NZXT E500"),
+    (0x7793, 0x5912, "Alimentation NZXT E650"),
+    (0x7793, 0x2500, "Alimentation NZXT E850"),
 ];
 
 /// Nom du périphérique s'il est connu pour ne PAS avoir d'éclairage RGB.
@@ -128,6 +133,15 @@ mod tests {
         for e in EXTRAS {
             Catalog::parse(e).expect("complément de catalogue valide");
         }
+    }
+
+    #[test]
+    fn white_only_litra_and_nzxt_psu_are_known_without_rgb_but_beam_lx_is_not() {
+        assert!(known_without_rgb(0x7793, 0x2500).is_some());
+        assert_eq!(known_without_rgb(0x046D, 0xC900), None, "Litra pilotable");
+        assert_eq!(known_without_rgb(0x046D, 0xC903), None, "la Beam LX a une face couleur");
+        assert!(catalog().device(0x046D, 0xC903).is_some_and(|n| n.contains("Beam LX")));
+        assert!(catalog().vendor(0x2DC8).is_some() && catalog().device(0x0C70, 0xF00E).is_some());
     }
 
     #[test]
