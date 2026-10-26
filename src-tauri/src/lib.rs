@@ -6,6 +6,7 @@ mod core;
 mod engine;
 mod diag_extra;
 mod gamemode;
+mod gamepad_remap;
 mod hotplug;
 mod inventory;
 mod led_catalog;
@@ -175,6 +176,7 @@ fn cleanup_before_exit(app: &tauri::AppHandle) {
             }
         }
     }
+    gamepad_remap::stop(); // manette virtuelle détruite avant tout
     state.sensors.stop();
     state.openrgb_mgr.stop();
     // Arrêter une éventuelle capture USB en cours (pas de USBPcapCMD.exe orphelin).
@@ -375,6 +377,7 @@ pub fn run() {
         .manage(screen_mgr)
         .setup(move |app| {
             gamemode::start(app.handle(), game_at_start);
+            gamepad_remap::start(app.handle());
             shutdown::schedule_autoquit(app.handle(), cleanup_before_exit);
             // Dossier ressources du bundle : openrgb/, liquidctl/, sensord/.
             if let Ok(res) = app.path().resource_dir() {
@@ -614,6 +617,14 @@ pub fn run() {
             gamemode::game_mode_status,
             gamemode::set_game_mode,
             gamemode::quit_app,
+            gamepad_remap::commands::gamepad_remap_status,
+            gamepad_remap::commands::gamepad_remap_drivers,
+            gamepad_remap::commands::gamepad_remap_enable,
+            gamepad_remap::commands::gamepad_remap_save_profile,
+            gamepad_remap::commands::gamepad_remap_delete_profile,
+            gamepad_remap::commands::gamepad_remap_assign,
+            gamepad_remap::commands::gamepad_remap_calibrate,
+            gamepad_remap::commands::gamepad_remap_install_driver,
             commands::profiles::get_settings,
             commands::profiles::update_settings,
             product_commands::product_lookup,

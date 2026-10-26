@@ -16,6 +16,7 @@ const ALLOWED_URL_PREFIXES: &[&str] = &[
     "https://github.com/namazso/PawnIO.Setup/releases/download/",
     "https://github.com/Heiphaistos/PureRGB/releases/download/",
     "https://github.com/GyanD/codexffmpeg/releases/download/",
+    "https://github.com/nefarius/ViGEmBus/releases/download/",
 ];
 
 /// Hôtes où une redirection GitHub (releases) peut légitimement aboutir.

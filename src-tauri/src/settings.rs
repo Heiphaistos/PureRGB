@@ -4,7 +4,7 @@ use crate::engine::curves::CurveMap;
 use crate::engine::effects::EffectConfig;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -59,7 +59,16 @@ pub struct Settings {
     pub game_mode_keep_hid: bool,
     /// Exécutables de jeux/lanceurs ajoutés par l'utilisateur (en plus de la liste d'anti-cheat embarquée).
     pub game_mode_games: Vec<String>,
+    /// Remappage de manette via une manette Xbox 360 virtuelle (ViGEmBus) : désactivé par défaut.
+    pub gamepad_remap_enabled: bool,
+    /// Profils de remappage par nom (gamepad_remap/model.rs).
+    pub gamepad_remap_profiles: BTreeMap<String, crate::gamepad_remap::model::Profile>,
+    /// Manette physique (`xinput0`..`xinput3`) -> nom de profil.
+    pub gamepad_remap_assign: BTreeMap<String, String>,
 }
+
+/// Profil appliqué à une manette sans assignation.
+pub const DEFAULT_REMAP_PROFILE: &str = "Défaut";
 
 /// Mode matériel choisi par l'utilisateur (surcharges du mode d'usine).
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -95,6 +104,9 @@ impl Default for Settings {
             game_mode: true,
             game_mode_keep_hid: false,
             game_mode_games: Vec::new(),
+            gamepad_remap_enabled: false,
+            gamepad_remap_profiles: BTreeMap::new(),
+            gamepad_remap_assign: BTreeMap::new(),
         }
     }
 }
