@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## 0.52.0
+
+- **Réglages d'appareil** : nouveau bloc « Réglages de l'appareil » (interrupteurs, curseurs, listes) pour tout ce qui n'est pas de la lumière : retour du micro, luminosité, température de couleur, seuil de batterie… Appliqués en mémoire vive de l'appareil seulement (rien n'est enregistré dedans), jamais envoyés avant ton action, et uniquement avec les pilotes natifs activés (désactivés par défaut).
+- **Nouveaux pilotes natifs expérimentaux** (jamais essayés sur du vrai matériel, désactivés par défaut) : lampes Logitech Litra (blanc, luminosité, température), casque Logitech PRO X 2 (retour du micro), casques JBL Quantum 610/810/910 (retour du micro, niveau d'origine relu puis remis), HyperX (Alloy Origins/Elite II/Origins 60 et 65, Pulsefire Mat, FURY Ultra, Haste, Haste 2), claviers de portables Lenovo Legion 4 zones, MSI 3 zones et Dell G.
+- **Reconnaissance de toutes les marques** : plus de 180 nouveaux identifiants USB (Trust, Endorfy, Savio, Empire Gaming, Sharkoon, Royal Kludge, Glorious, Rapoo, Creative, JBL, Thermaltake, Alienware, HP Omen, Aqua Computer, Thrustmaster, PowerA, 8BitDo, GameSir…). 13 casques Logitech, 15 alimentations Corsair, hubs et récepteurs 2,4 GHz sont classés « sans éclairage RGB » avec preuve. Manettes tierces nommées par marque.
+- **Documentation** : analyses MasterPlus+, iCUE, G HUB (définitions déchiffrées en local), NGENUITY, QuantumENGINE, Creative, manettes, portables. Les réglages qui écrivent dans l'appareil (profils, macros, DPI mémorisés, éclairage Creative/8BitDo) ne sont pas implémentés tant qu'une capture sur matériel ne prouve pas qu'ils sont réversibles.
+
 ## 0.51.2
 
 - **Inventaire** : les récepteurs 2,4 GHz génériques (`1EA7:0064` et `0066`, souris et claviers sans fil Empire Gaming/OEM) sont classés « sans éclairage RGB » : aucun logiciel officiel ni protocole d'éclairage n'existe pour ces PID (le rétroéclairage se règle aux touches FN).
