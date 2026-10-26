@@ -20,6 +20,12 @@ pub struct Pad {
 
 const NO_RGB: &str = "manette détectée — pas d'éclairage RGB pilotable connu";
 
+/// Manettes dont le logiciel officiel écrit chaque réglage (vibration, gâchettes, sticks, LED) dans un profil gardé en mémoire
+/// flash de la manette : pas de commande « en direct » établie, donc rien n'est piloté (docs/rgb-protocols/manettes-tierces.md).
+const SAVED_IN_PAD: &str = "réglages et LED enregistrés dans les profils de la manette par le logiciel officiel — aucune commande en direct établie, non pilotée";
+/// Manettes de la famille Xbox : le logiciel officiel parle en GIP via l'API Windows Gaming Input (pas en HID), hors de portée de hidapi.
+const GIP_ONLY: &str = "manette Xbox sous licence — réglages envoyés en GIP (API Windows Gaming Input), pas en HID : non pilotée";
+
 /// Dongles 2,4 GHz Flydigi en D-Input : couples VID:PID de `FDGDevice.cs` (SFDG_VIDS/SFDG_PIDS, Space Station 3.4.4.3).
 const FLYDIGI_DONGLES: [(u16, u16); 6] =
     [(0x04B4, 0x2410), (0x04B4, 0x2411), (0x04B4, 0x2412), (0x04B5, 0x2413), (0x04B4, 0x2414), (0x04B5, 0x2415)];
@@ -47,6 +53,13 @@ pub fn classify(vid: u16, pid: u16, product: &str) -> Pad {
             vendor: "Nintendo",
             note: "manette Nintendo — seulement des LED de joueur (pas de RGB), non pilotées",
         },
+        0x2DC8 => Pad { name: shown("Manette 8BitDo"), vendor: "8BitDo", note: SAVED_IN_PAD },
+        0x3537 => Pad { name: shown("Manette GameSir"), vendor: "GameSir", note: SAVED_IN_PAD },
+        0x044F => Pad { name: shown("Manette Thrustmaster"), vendor: "Thrustmaster", note: GIP_ONLY },
+        0x20D6 => Pad { name: shown("Manette PowerA"), vendor: "PowerA", note: GIP_ONLY },
+        0x0F0D => Pad { name: shown("Manette HORI"), vendor: "HORI", note: GIP_ONLY },
+        0x3285 | 0x146B => Pad { name: shown("Manette Nacon"), vendor: "Nacon", note: GIP_ONLY },
+        0x1532 => Pad { name: shown("Manette Razer"), vendor: "Razer", note: GIP_ONLY },
         _ => Pad { name: shown("Manette"), vendor: "", note: NO_RGB },
     }
 }
@@ -85,6 +98,27 @@ mod tests {
         assert!(!is_pad_collection(0x01, 0x06)); // clavier
         assert!(!is_pad_collection(0x01, 0x02)); // souris
         assert!(!is_pad_collection(0xFF00, 0x05));
+    }
+
+    #[test]
+    fn third_party_brands_get_their_own_vendor_and_reason() {
+        let cases: [(u16, u16, &str, &str); 8] = [
+            (0x2DC8, 0x310B, "8BitDo", "profils"),
+            (0x3537, 0x100B, "GameSir", "profils"),
+            (0x044F, 0xD01E, "Thrustmaster", "GIP"),
+            (0x20D6, 0x2064, "PowerA", "GIP"),
+            (0x0F0D, 0x0067, "HORI", "GIP"),
+            (0x3285, 0x0614, "Nacon", "GIP"),
+            (0x146B, 0x0601, "Nacon", "GIP"),
+            (0x1532, 0x0A29, "Razer", "GIP"),
+        ];
+        for (vid, pid, vendor, word) in cases {
+            let p = classify(vid, pid, "");
+            assert_eq!(p.vendor, vendor, "{vid:04x}:{pid:04x}");
+            assert!(p.note.contains(word), "{vid:04x}:{pid:04x} {}", p.note);
+        }
+        // La chaîne produit Flydigi garde la priorité même sur un ID tiers.
+        assert_eq!(classify(0x2DC8, 0x1, "Flydigi Apex").vendor, "Flydigi");
     }
 
     #[test]
