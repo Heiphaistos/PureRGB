@@ -8,6 +8,8 @@ import DeviceCanvas from "./components/DeviceCanvas.vue";
 import DeviceGrid from "./components/DeviceGrid.vue";
 import EffectDrawer from "./components/EffectDrawer.vue";
 import FanPanel from "./components/FanPanel.vue";
+import MonitorPanel from "./components/MonitorPanel.vue";
+import GamepadPanel from "./components/GamepadPanel.vue";
 import LcdPanel from "./components/LcdPanel.vue";
 import { checkForUpdate } from "./autoUpdate";
 import { bannerText, gameMode, watchGameMode } from "./gameMode";
@@ -26,7 +28,7 @@ import type {
 } from "./types";
 import { deviceHasRgb } from "./types";
 
-type TabId = "rgb" | "themes" | "smart" | "fans" | "lcd" | "screens" | "conflicts" | "settings";
+type TabId = "rgb" | "themes" | "smart" | "fans" | "monitor" | "gamepad" | "lcd" | "screens" | "conflicts" | "settings";
 
 interface UnknownDeviceAlert {
   vid: string;
@@ -53,6 +55,12 @@ const TABS: { id: TabId; label: string; icon: string[] }[] = [
       "M10.3 12.9C6.4 14 3.4 13 4 10c.5-2 3.1-1.4 4.7.4.9 1 1.4 1.6 1.6 2.5z",
       "M13.7 12.9c3.9 1.1 6.9.1 6.3-2.9-.5-2-3.1-1.4-4.7.4-.9 1-1.4 1.6-1.6 2.5z",
     ],
+  },
+  { id: "monitor", label: "Surveillance", icon: ["M3 12h4l3-8 4 16 3-8h4"] },
+  {
+    id: "gamepad",
+    label: "Manettes",
+    icon: ["M6 8h12a4 4 0 0 1 4 4v1a3 3 0 0 1-5 2l-1-1H8l-1 1a3 3 0 0 1-5-2v-1a4 4 0 0 1 4-4z", "M8 10v3", "M6.5 11.5h3", "M16 11h.01", "M18 12.5h.01"],
   },
   { id: "lcd", label: "Écran LCD", icon: ["M3 4h18v12H3z", "M8 20h8", "M12 16v4"] },
   { id: "screens", label: "Écrans", icon: ["M3 4h18v12H3z", "M8 20h8", "M12 16v4", "M7 9h10", "M7 12h6"] },
@@ -390,6 +398,8 @@ onUnmounted(() => {
         @toast="showToast"
         @saved="loadSettings"
       />
+      <MonitorPanel v-else-if="tab === 'monitor'" :devices="fanDevices" />
+      <GamepadPanel v-else-if="tab === 'gamepad'" />
       <LcdPanel v-else-if="tab === 'lcd'" :devices="lcdDevices" @toast="showToast" />
       <ScreensPanel v-else-if="tab === 'screens'" @toast="showToast" />
       <ConflictPanel

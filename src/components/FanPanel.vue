@@ -10,6 +10,7 @@ import type {
   Settings,
 } from "../types";
 import DeviceCard from "./DeviceCard.vue";
+import { CURVE_PRESETS, presetPoints } from "../fanCurves";
 
 const props = defineProps<{ devices: DeviceInfo[]; settings: Settings | null }>();
 const emit = defineEmits<{ toast: [msg: string]; saved: [] }>();
@@ -96,6 +97,27 @@ async function saveCurve(d: DeviceInfo, ch: number) {
     await invoke("set_curve", { deviceId: d.id, channel: ch, config: cfg });
     delete editors[k];
     emit("toast", "Courbe enregistrée");
+    emit("saved");
+  } catch (e) {
+    emit("toast", `Courbe : ${e}`);
+  }
+}
+
+function applyPreset(d: DeviceInfo, ch: number, id: string) {
+  const e = editors[curveKey(d, ch)];
+  if (e && id) e.points = presetPoints(id);
+}
+
+/** Enregistre la courbe en cours d'édition sur tous les canaux de l'appareil (même capteur, mêmes points). */
+async function saveCurveToAll(d: DeviceInfo, ch: number) {
+  const cfg = editors[curveKey(d, ch)];
+  if (!cfg) return;
+  try {
+    for (const fc of d.fan_channels) {
+      await invoke("set_curve", { deviceId: d.id, channel: fc.index, config: JSON.parse(JSON.stringify(cfg)) });
+      delete editors[curveKey(d, fc.index)];
+    }
+    emit("toast", `Courbe enregistrée sur ${d.fan_channels.length} canaux`);
     emit("saved");
   } catch (e) {
     emit("toast", `Courbe : ${e}`);
@@ -194,6 +216,13 @@ onUnmounted(() => clearInterval(timer));
               </option>
             </select>
           </label>
+          <label>
+            Préréglage
+            <select @change="applyPreset(d, fc.index, ($event.target as HTMLSelectElement).value)">
+              <option value="">— choisir —</option>
+              <option v-for="p in CURVE_PRESETS" :key="p.id" :value="p.id">{{ p.label }}</option>
+            </select>
+          </label>
           <div
             v-for="(p, i) in editors[curveKey(d, fc.index)].points"
             :key="i"
@@ -208,6 +237,7 @@ onUnmounted(() => clearInterval(timer));
           </label>
           <div class="editor-actions">
             <button class="primary" @click="saveCurve(d, fc.index)">Enregistrer</button>
+            <button v-if="d.fan_channels.length > 1" @click="saveCurveToAll(d, fc.index)">Enregistrer sur tous les canaux</button>
             <button v-if="savedCurve(d, fc.index)" @click="deleteCurve(d, fc.index)">
               Supprimer
             </button>
