@@ -74,11 +74,25 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 24] = [
+const NO_RGB: &[(u16, u16, &str)] = &[
+    // Casques Logitech dont la définition G HUB 2026.7 ne déclare aucun éclairage (ni `lightingSupport`) ; analyse-logitech-ghub.md §13.
+    (0x046D, 0x0B1A, "Casque Logitech A50"),
+    (0x046D, 0x0B1C, "Casque Logitech A50"),
+    (0x046D, 0x0B09, "Casque Logitech A50 X"),
+    (0x046D, 0x0B0B, "Casque Logitech A50 X"),
+    (0x046D, 0x0B21, "Casque Logitech G325"),
+    (0x046D, 0x0A4D, "Casque Logitech G430"),
+    (0x046D, 0x0A9B, "Casque Logitech G431"),
+    (0x046D, 0x0A9C, "Casque Logitech G432"),
+    (0x046D, 0x0A66, "Casque Logitech G533"),
+    (0x046D, 0x0AC4, "Casque Logitech G535"),
+    (0x046D, 0x0AA7, "Casque Logitech PRO"),
+    (0x046D, 0x0AAA, "Casque Logitech PRO X"),
+    (0x046D, 0x0B45, "Casque Logitech PRO X3 LIGHTSPEED"),
     // 0ABA : G HUB 2026.7 le déclare sans `lightingSupport` (définition lisible, contrairement aux G733/G735) ; analyse-logitech-ghub.md §12.
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
-    // 0AF7 (PRO X 2) : absence de LED NON prouvée (définition G HUB chiffrée) ; conservé, à lever si une preuve contraire arrive.
-    (0x046D, 0x0AF7, "Casque Logitech PRO X"),
+    // 0AF7 (PRO X 2) : définition G HUB `pro_x2_gaming_wireless_headset` (déchiffrée en local) sans `lightingSupport` ; analyse-logitech-ghub.md §13.
+    (0x046D, 0x0AF7, "Casque Logitech PRO X 2 LIGHTSPEED"),
     // Concentrateurs USB : le descripteur lu sur la tour dit « Hub Controller » / « Concentrateur USB générique ».
     (0x187C, 0x1012, "Concentrateur USB (Hub Controller)"),
     (0x1A86, 0x8091, "Concentrateur USB générique"),
