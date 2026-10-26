@@ -74,7 +74,7 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 27] = [
+const NO_RGB: [(u16, u16, &str); 24] = [
     // 0ABA : G HUB 2026.7 le déclare sans `lightingSupport` (définition lisible, contrairement aux G733/G735) ; analyse-logitech-ghub.md §12.
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
     // 0AF7 (PRO X 2) : absence de LED NON prouvée (définition G HUB chiffrée) ; conservé, à lever si une preuve contraire arrive.
@@ -104,11 +104,6 @@ const NO_RGB: [(u16, u16, &str); 27] = [
     (0x1B1C, 0x1C1F, "Alimentation Corsair HX1500i"),
     (0x1B1C, 0x1C23, "Alimentation Corsair HX1200i"),
     (0x1B1C, 0x1C27, "Alimentation Corsair HX1200i"),
-    // Logitech Litra Glow / Beam : l'API publique litra-rs (MIT, src/lib.rs, 2026-10-26) n'offre que marche/arrêt, luminosité et température
-    // de blanc (2700-6500 K) ; seule la Litra Beam LX (C903) a une face arrière couleur. Voir docs/rgb-protocols/marques-groupe-c.md.
-    (0x046D, 0xC900, "Logitech Litra Glow (lumière blanche)"),
-    (0x046D, 0xC901, "Logitech Litra Beam (lumière blanche)"),
-    (0x046D, 0xB901, "Logitech Litra Beam (lumière blanche)"),
     // Alimentations NZXT E500/E650/E850 (liquidctl `nzxt_epsu.py` + docs/nzxt-e-series-psu-guide.md) : lecture des tensions/courants/température/
     // ventilateur seulement ; set_color lève NotSupportedByDevice. Voir docs/rgb-protocols/marques-groupe-c.md.
     (0x7793, 0x5911, "Alimentation NZXT E500"),
@@ -142,7 +137,8 @@ mod tests {
 
     #[test]
     fn white_only_litra_and_nzxt_psu_are_known_without_rgb_but_beam_lx_is_not() {
-        assert!(known_without_rgb(0x046D, 0xC900).is_some() && known_without_rgb(0x7793, 0x2500).is_some());
+        assert!(known_without_rgb(0x7793, 0x2500).is_some());
+        assert_eq!(known_without_rgb(0x046D, 0xC900), None, "Litra pilotable");
         assert_eq!(known_without_rgb(0x046D, 0xC903), None, "la Beam LX a une face couleur");
         assert!(catalog().device(0x046D, 0xC903).is_some_and(|n| n.contains("Beam LX")));
         assert!(catalog().vendor(0x2DC8).is_some() && catalog().device(0x0C70, 0xF00E).is_some());
