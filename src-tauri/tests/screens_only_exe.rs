@@ -22,18 +22,68 @@ fn appdata(tag: &str, keep: bool) -> PathBuf {
     root
 }
 
-fn spawn(root: &Path, args: &[&str], envs: &[(&str, &str)]) -> Child {
+/// Tue le processus de test si un `assert!` échoue : jamais de processus orphelin.
+struct Kill(Child);
+impl std::ops::Deref for Kill {
+    type Target = Child;
+    fn deref(&self) -> &Child {
+        &self.0
+    }
+}
+impl std::ops::DerefMut for Kill {
+    fn deref_mut(&mut self) -> &mut Child {
+        &mut self.0
+    }
+}
+impl Drop for Kill {
+    fn drop(&mut self) {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
+fn spawn(root: &Path, args: &[&str], envs: &[(&str, &str)]) -> Kill {
     let mut c = Command::new(EXE);
     c.args(args).env("APPDATA", root).env("PURERGB_SIM_SCREEN", "1").stdout(Stdio::null()).stderr(Stdio::null());
     for (k, v) in envs {
         c.env(k, v);
     }
-    c.spawn().expect("lancement de l'exe")
+    // Build debug = sous-système console : sans CREATE_NO_WINDOW la console serait comptée comme une fenêtre.
+    std::os::windows::process::CommandExt::creation_flags(&mut c, 0x0800_0000);
+    Kill(c.spawn().expect("lancement de l'exe"))
 }
 
 fn ps(script: &str) -> String {
     let o = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", script]).output().unwrap();
     String::from_utf8_lossy(&o.stdout).trim().to_string()
+}
+
+/// Classes des fenêtres VISIBLES du processus (hors fenêtre de console du build debug, absente en release, et fenêtre-cible invisible de la boucle d'événements tao).
+fn visible_window_classes(pid: u32) -> String {
+    ps(&format!(
+        r#"Add-Type -Namespace W -Name N -MemberDefinition '
+[DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc p, IntPtr l);
+public delegate bool EnumProc(IntPtr h, IntPtr l);
+[DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+[DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+[DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetClassName(IntPtr h, System.Text.StringBuilder s, int n);'
+$r = New-Object System.Collections.ArrayList
+$cb = [W.N+EnumProc]{{ param($h,$l) $p=0; [W.N]::GetWindowThreadProcessId($h,[ref]$p) | Out-Null
+ if ($p -eq {pid} -and [W.N]::IsWindowVisible($h)) {{ $sb=New-Object System.Text.StringBuilder 256; [W.N]::GetClassName($h,$sb,256) | Out-Null; [void]$r.Add($sb.ToString()) }}; $true }}
+[W.N]::EnumWindows($cb,[IntPtr]::Zero) | Out-Null
+($r | Where-Object {{ $_ -notin 'ConsoleWindowClass','PseudoConsoleWindow','Tao Thread Event Target' }}) -join ','"#
+    ))
+}
+
+fn count_named(names: &str) -> String {
+    ps(&format!("(Get-Process {names} -ErrorAction SilentlyContinue | Measure-Object).Count"))
+}
+
+/// Attend que plus aucun processus de ce nom ne reste (mesure le délai réel) ; échoue au bout de `secs`.
+fn wait_gone(names: &str, secs: u64) {
+    let t = Instant::now();
+    wait_for(&format!("plus de {names}"), secs, || count_named(names) == "0");
+    println!("{names} disparus {:.1} s après l'arrêt", t.elapsed().as_secs_f32());
 }
 
 fn alive(pid: u32) -> bool {
@@ -71,9 +121,9 @@ fn daemon_has_no_window_no_children_low_ram_and_stops_cleanly() {
     assert!(d.try_wait().unwrap().is_none(), "le processus doit rester en vie");
     assert_eq!(read_pid(&root), Some(pid));
     // Aucune fenêtre visible, aucun enfant (ni WebView2 ni sensord : le design n'utilise que l'heure).
-    assert_eq!(ps(&format!("(Get-Process -Id {pid}).MainWindowHandle")), "0", "aucune fenêtre attendue");
+    assert_eq!(visible_window_classes(pid), "", "aucune fenêtre visible attendue");
     let kids = ps(&format!("(Get-CimInstance Win32_Process -Filter 'ParentProcessId={pid}' | Select-Object -ExpandProperty Name) -join ','"));
-    assert_eq!(kids, "", "aucun processus enfant attendu, trouvé : {kids}");
+    assert_eq!(kids.replace("conhost.exe", ""), "", "aucun processus enfant attendu, trouvé : {kids}"); // conhost = console du build debug
     let ws_mb: f64 = ps(&format!("[math]::Round((Get-Process -Id {pid}).WorkingSet64/1MB,1)")).replace(',', ".").parse().unwrap();
     let cpu0: f64 = ps(&format!("(Get-Process -Id {pid}).TotalProcessorTime.TotalSeconds")).replace(',', ".").parse().unwrap();
     std::thread::sleep(Duration::from_secs(10));
@@ -149,7 +199,7 @@ fn all_modules_start_without_window_or_openrgb_and_leave_nothing() {
     wait_for("démarrage", 30, || log_text(&root).contains("arrière-plan : 1 écran(s) actif(s)"));
     std::thread::sleep(Duration::from_secs(12)); // laisse sensord et le scan matériel démarrer
     assert!(d.try_wait().unwrap().is_none());
-    assert_eq!(ps(&format!("(Get-Process -Id {pid}).MainWindowHandle")), "0");
+    assert_eq!(visible_window_classes(pid), "");
     let kids = ps(&format!("(Get-CimInstance Win32_Process -Filter 'ParentProcessId={pid}' | Select-Object -ExpandProperty Name) -join ','"));
     println!("enfants : [{kids}]");
     assert!(!kids.to_lowercase().contains("openrgb"), "OpenRGB ne doit pas être lancé (auto_start coupé / non demandé)");
@@ -159,8 +209,7 @@ fn all_modules_start_without_window_or_openrgb_and_leave_nothing() {
     std::fs::write(root.join("PureRGB").join("background.stop"), b"stop").unwrap();
     wait_for("arrêt", 20, || d.try_wait().unwrap().is_some());
     std::thread::sleep(Duration::from_secs(2));
-    let left = ps("(Get-Process sensord,OpenRGB -ErrorAction SilentlyContinue | Measure-Object).Count");
-    assert_eq!(left, "0", "processus sensord/OpenRGB restants");
+    wait_gone("sensord,OpenRGB", 20);
     let log = log_text(&root);
     assert!(!log.contains("OpenRGB embarqué démarré"));
     let _ = std::fs::remove_dir_all(&root);
@@ -177,7 +226,6 @@ fn fans_only_without_curves_runs_no_screen_and_stops_cleanly() {
     assert!(!log_text(&root).contains("écran(s) actif(s)"), "le module écrans ne doit pas tourner");
     std::fs::write(root.join("PureRGB").join("background.stop"), b"stop").unwrap();
     wait_for("arrêt", 20, || d.try_wait().unwrap().is_some());
-    std::thread::sleep(Duration::from_secs(2));
-    assert_eq!(ps("(Get-Process sensord -ErrorAction SilentlyContinue | Measure-Object).Count"), "0");
+    wait_gone("sensord", 20);
     let _ = std::fs::remove_dir_all(&root);
 }
