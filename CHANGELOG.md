@@ -1,6 +1,15 @@
 # Journal des modifications
 
-## À venir (brouillon, version non incrémentée)
+## 0.51.0
+
+- **Surveillance** : les cartes (Processeur, Carte graphique, Carte mère, Disques, Ventilateurs, Puissance…) se déplacent par glisser-déposer (ou flèches du clavier sur la poignée), l'ordre est mémorisé, et elles se répartissent en maçonnerie sur 1 à 4 colonnes sans trou. Même chose pour les catégories de l'onglet Ventilateurs (disposition seulement, aucune règle d'écriture modifiée).
+- **Mode jeu** : base d'anti-cheats étendue de 8 à 19 familles (~75 exécutables, source citée pour chacun), panneau repliable avec recherche. Limite : détection par nom de processus (les pilotes noyau sans processus ne sont pas interrogés).
+- **Photos des produits** : nouvelle correspondance tolérante (carte MSI Z790 GAMING PRO WIFI, clavier Cougar 700K EVO, casque Logitech, manettes Xbox/Sony/Nintendo/8BitDo, ~24 manettes) ; les appareils connus seulement du fabricant affichent le nom produit HID ; photo des écrans en grand.
+- **Manettes** : photo et nom propre de chaque manette détectée.
+- **Diagnostic** : « Capturer le protocole USB » disponible aussi pour les appareils reconnus (écran Thermalright) ; l'analyse « Inventaire RGB et ventilateurs » est envoyée à la télémétrie (si l'envoi de diagnostic est coché) avec un bouton « Envoyer l'analyse ».
+- Signature Authenticode préparée dans la CI (inactive sans certificat dans les secrets du dépôt).
+
+### Mode arrière-plan
 
 - **Mode arrière-plan** : au « Quitter » du menu de la zone de notification, PureRGB peut laisser tourner, sans fenêtre ni WebView2, seulement ce que vous cochez (Réglages > Arrière-plan, ou page Écrans) : **écrans** (design/thème/vidéo), **éclairage appliqué**, **ventilateurs** (uniquement les courbes/réglages manuels déjà actifs, jamais de réglage automatique), **mode manette**. Ne sont lancés que les modules cochés ET déjà en service ; « Quitter complètement » arrête tout. C'est le même `purergb.exe` (`--background=écrans,…`) : aucun service Windows, aucune élévation, aucun pilote ajouté, aucune injection.
 - Le mode jeu s'applique dans ce processus comme dans l'application complète (même code). Ce n'est pas un moyen de contourner un anti-cheat : le bénéfice est zéro fenêtre et peu de mémoire.
