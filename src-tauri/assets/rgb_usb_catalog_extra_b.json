@@ -1,1 +1,147 @@
-{"vendors":{},"devices":[]}
+{
+"vendors": {
+"24ae": "Rapoo"
+},
+"devices": [
+[
+"04d9",
+"fc2a",
+"Redragon M709"
+],
+[
+"258a",
+"2013",
+"Glorious Model O Wireless (câble)"
+],
+[
+"258a",
+"2014",
+"Glorious Model D Wireless (câble)"
+],
+[
+"258a",
+"2024",
+"Glorious Model O Wireless"
+],
+[
+"258a",
+"2025",
+"Glorious Model D Wireless"
+],
+[
+"258a",
+"2026",
+"Glorious Model O Wireless"
+],
+[
+"258a",
+"004a",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"0055",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"0059",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"005d",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"0060",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"0065",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"007a",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"00c1",
+"Royal Kludge RK98"
+],
+[
+"258a",
+"00c7",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"00c8",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"00e1",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"00ec",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"00f3",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"00f4",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"00f8",
+"Royal Kludge RK61"
+],
+[
+"258a",
+"010d",
+"Royal Kludge RK84"
+],
+[
+"258a",
+"0173",
+"Royal Kludge RK98"
+],
+[
+"258a",
+"01af",
+"Royal Kludge RK98"
+],
+[
+"3842",
+"240d",
+"EVGA X17 Gaming Mouse"
+],
+[
+"3842",
+"2415",
+"EVGA X15 Gaming Mouse"
+],
+[
+"24ae",
+"4110",
+"Rapoo V280 Optical Gaming Mouse"
+],
+[
+"24ae",
+"1813",
+"Rapoo E9260 Wireless Multi-mode Keyboard"
+]
+]
+}
