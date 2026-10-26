@@ -251,6 +251,7 @@ impl Backend for OpenRgbBackend {
                         zones: c.zones,
                         led_count: c.led_count,
                         fan_channels: Vec::new(),
+                        settings: Vec::new(),
                         controllable: true,
                         has_lcd: false,
                         modes: c.modes,

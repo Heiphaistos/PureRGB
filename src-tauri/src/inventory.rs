@@ -360,6 +360,7 @@ mod tests {
             zones: zones.into_iter().map(|(n, c)| ZoneInfo { name: n.into(), led_count: c, zone_type: 1, leds_min: if c == 0 { 0 } else { c }, leds_max: if c == 0 { 60 } else { c } }).collect(),
             led_count: 0,
             fan_channels: vec![],
+            settings: Vec::new(),
             controllable: true,
             has_lcd: false,
             modes: vec![],

@@ -23,6 +23,11 @@ pub trait Backend: Send {
         anyhow::bail!("contrôle ventilateur non supporté par ce backend")
     }
 
+    /// Applique un réglage non lumineux d'appareil (`DeviceInfo.settings`), en RAM seulement.
+    fn set_device_setting(&mut self, _local_id: &str, _setting: &str, _value: i32) -> Result<()> {
+        anyhow::bail!("réglages non supportés par ce backend")
+    }
+
     /// Rend un canal que PureRGB pilotait (courbe supprimée/désactivée). Par défaut : rien (le matériel garde sa consigne).
     fn release_fan(&mut self, _local_id: &str, _channel: u8) {}
 

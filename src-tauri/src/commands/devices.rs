@@ -302,6 +302,11 @@ pub(crate) fn set_fan_duty(
         .map_err(|e| format!("{e:#}"))
 }
 
+#[tauri::command]
+pub(crate) fn set_device_setting(state: State<AppState>, device_id: String, setting: String, value: i32) -> Result<(), String> {
+    state.registry.lock().set_device_setting(&device_id, &setting, value).map_err(|e| format!("{e:#}"))
+}
+
 #[cfg(test)]
 mod zone_size_tests {
     use super::wanted_zone_size;

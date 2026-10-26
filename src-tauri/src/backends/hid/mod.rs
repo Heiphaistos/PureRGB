@@ -380,6 +380,7 @@ impl Backend for HidBackend {
 
             let aux_path = aux_seen.get(&(vid, pid, _serial.clone())).cloned();
             let bt = bluetooth.contains(&(vid, pid, _serial.clone()));
+            let settings = nat.as_ref().map(|(f, m)| native::settings_schema(f.id, m)).unwrap_or_default();
             self.entries.insert(local_id.clone(), Entry { path, aux_path, driver, native: nat, bluetooth: bt });
 
             devices.push(DeviceInfo {
@@ -391,6 +392,7 @@ impl Backend for HidBackend {
                 zones,
                 led_count,
                 fan_channels,
+                settings,
                 controllable,
                 has_lcd: false,
                 modes: Vec::new(),
@@ -433,6 +435,16 @@ impl Backend for HidBackend {
         match driver {
             DriverInstance::Native(d) => d.set_fan_duty(channel, percent),
             _ => bail!("contrôle ventilateur non supporté sur cet appareil"),
+        }
+    }
+
+    fn set_device_setting(&mut self, local_id: &str, setting: &str, value: i32) -> Result<()> {
+        if !self.native_enabled {
+            bail!("drivers natifs désactivés — activer dans Réglages");
+        }
+        match self.open_driver(local_id)? {
+            DriverInstance::Native(d) => d.set_setting(setting, value),
+            _ => bail!("réglages non supportés sur cet appareil"),
         }
     }
 

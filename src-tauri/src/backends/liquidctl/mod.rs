@@ -479,6 +479,7 @@ impl Backend for LiquidctlBackend {
                 device_type: dtype,
                 zones: Vec::new(),
                 led_count: 0,
+                settings: Vec::new(),
                 fan_channels: channels
                     .iter()
                     .enumerate()

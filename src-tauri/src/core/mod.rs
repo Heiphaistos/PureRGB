@@ -180,6 +180,26 @@ pub struct FanChannel {
     pub rpm: Option<u32>,
 }
 
+/// Type d'un réglage d'appareil non lumineux (son, DPI, sidetone…).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum SettingKind {
+    Toggle,
+    Slider { min: i32, max: i32, step: i32, unit: String },
+    Choice { options: Vec<String> },
+}
+
+/// Réglage non lumineux d'un appareil. RÈGLES : appliqué en RAM de l'appareil seulement (jamais en flash/profil),
+/// réversible, et jamais envoyé avant une action explicite de l'utilisateur (`default` n'est qu'une indication).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DeviceSetting {
+    pub id: String,
+    pub label: String,
+    #[serde(flatten)]
+    pub kind: SettingKind,
+    pub default: i32,
+}
+
 fn default_active_mode() -> i32 {
     -1
 }
@@ -196,6 +216,9 @@ pub struct DeviceInfo {
     pub zones: Vec<ZoneInfo>,
     pub led_count: u32,
     pub fan_channels: Vec<FanChannel>,
+    /// Réglages non lumineux exposés par le pilote (vide pour la plupart des appareils).
+    #[serde(default)]
+    pub settings: Vec<DeviceSetting>,
     /// true = contrôle réel possible; false = détecté mais non pilotable (driver manquant).
     pub controllable: bool,
     /// true = écran LCD pilotable (Kraken Z / 2023 via liquidctl).
@@ -209,4 +232,23 @@ pub struct DeviceInfo {
     pub active_mode: i32,
     /// Note affichée à l'utilisateur (ex: "pilotable via OpenRGB", "driver expérimental").
     pub note: String,
+}
+
+#[cfg(test)]
+mod setting_tests {
+    use super::*;
+
+    #[test]
+    fn device_setting_json_is_flat_and_tagged() {
+        let s = DeviceSetting {
+            id: "sidetone".into(),
+            label: "Retour micro".into(),
+            kind: SettingKind::Slider { min: 0, max: 100, step: 5, unit: "%".into() },
+            default: 0,
+        };
+        let v = serde_json::to_value(&s).unwrap();
+        assert_eq!(v["kind"], "slider");
+        assert_eq!(v["max"], 100);
+        assert_eq!(serde_json::from_value::<DeviceSetting>(v).unwrap(), s);
+    }
 }

@@ -57,6 +57,13 @@ export interface ModeInfo {
   colors: Color[];
 }
 
+/** Réglage non lumineux d'un appareil (son, DPI…), appliqué en RAM seulement. */
+export type DeviceSetting = { id: string; label: string; default: number } & (
+  | { kind: "toggle" }
+  | { kind: "slider"; min: number; max: number; step: number; unit: string }
+  | { kind: "choice"; options: string[] }
+);
+
 export interface DeviceInfo {
   id: string;
   name: string;
@@ -66,6 +73,7 @@ export interface DeviceInfo {
   zones: ZoneInfo[];
   led_count: number;
   fan_channels: FanChannel[];
+  settings?: DeviceSetting[];
   controllable: boolean;
   has_lcd: boolean;
   modes: ModeInfo[];

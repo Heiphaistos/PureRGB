@@ -134,6 +134,11 @@ pub trait NativeRgb: Send {
         bail!("contrôle ventilateur non supporté sur cet appareil")
     }
 
+    /// Applique un réglage non lumineux (voir `settings_schema`). RAM de l'appareil seulement, jamais de flash/profil.
+    fn set_setting(&mut self, _id: &str, _value: i32) -> Result<()> {
+        bail!("réglage non supporté sur cet appareil")
+    }
+
     /// Remise en état d'origine à la fermeture (mode matériel / BIOS), si le protocole le permet.
     fn release(&mut self) {}
 
@@ -146,6 +151,14 @@ pub trait NativeRgb: Send {
     /// RÈGLE : n'écrit RIEN si l'utilisateur n'a rien réglé, et jamais une valeur devinée (surtout pas 100 %).
     /// Les appareils dont l'état n'est pas lisible gardent l'implémentation vide : ils conservent le dernier réglage.
     fn release_fans(&mut self) {}
+}
+
+/// Réglages non lumineux proposés pour une famille (liste statique : rien n'est envoyé à l'affichage).
+/// Chaque famille qui implémente `NativeRgb::set_setting` ajoute ici son entrée, avec la source du protocole.
+pub fn settings_schema(family_id: &str, _model: &Model) -> Vec<crate::core::DeviceSetting> {
+    match family_id {
+        _ => Vec::new(),
+    }
 }
 
 /// Ce qui arrive aux ventilateurs d'un appareil natif à la fermeture (affiché dans la note de l'appareil).
