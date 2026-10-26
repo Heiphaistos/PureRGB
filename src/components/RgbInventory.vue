@@ -10,11 +10,13 @@ interface Finding {
   detail: string;
 }
 
+const props = defineProps<{ telemetryOptIn: boolean }>();
 const emit = defineEmits<{ restart: [] }>();
 
 const findings = ref<Finding[] | null>(null);
 const busy = ref(false);
 const error = ref("");
+const sent = ref("");
 
 const ICON = { ok: "✓", info: "i", warn: "!" } as const;
 
@@ -23,10 +25,22 @@ async function run(): Promise<void> {
   error.value = "";
   try {
     findings.value = await invoke<Finding[]>("rgb_inventory");
+    sent.value = "";
+    if (props.telemetryOptIn) await send();
   } catch (e) {
     error.value = errMsg(e);
   } finally {
     busy.value = false;
+  }
+}
+
+/** Envoie le diagnostic complet (dont cet inventaire) : ce que PureRGB reconnaît, ne reconnaît pas, et pourquoi. */
+async function send(): Promise<void> {
+  try {
+    await invoke("send_telemetry_report");
+    sent.value = "Analyse envoyée pour amélioration de la prise en charge.";
+  } catch (e) {
+    sent.value = `Envoi impossible : ${errMsg(e)}`;
   }
 }
 </script>
@@ -40,9 +54,14 @@ async function run(): Promise<void> {
     </p>
     <div class="row">
       <button :disabled="busy" @click="run">{{ busy ? "Analyse…" : findings ? "Relancer l'analyse" : "Analyser mon PC" }}</button>
+      <button v-if="findings && props.telemetryOptIn" :disabled="busy" @click="send">Envoyer l'analyse</button>
       <button v-if="findings?.some((f) => f.status !== 'ok')" :disabled="busy" @click="emit('restart')">Redémarrer OpenRGB</button>
     </div>
     <p v-if="error" class="err">{{ error }}</p>
+    <p v-if="findings && !props.telemetryOptIn" class="hint">
+      Pour envoyer cette analyse, cochez « Envoyer les informations de diagnostic » dans Réglages › Général, puis Enregistrer.
+    </p>
+    <p v-if="sent" class="hint">{{ sent }}</p>
     <ul v-if="findings" class="list">
       <li v-for="(f, i) in findings" :key="i" :class="f.status">
         <span class="ico" aria-hidden="true">{{ ICON[f.status] }}</span>

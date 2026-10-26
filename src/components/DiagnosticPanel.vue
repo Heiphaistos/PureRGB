@@ -267,7 +267,7 @@ async function uploadCaptureFiles(): Promise<void> {
       <p v-if="hidRows.length === 0" class="hint">Aucun appareil dans ce filtre.</p>
     </div>
 
-    <RgbInventory @restart="emit('restart')" />
+    <RgbInventory :telemetry-opt-in="props.telemetryOptIn" @restart="emit('restart')" />
     <CommunityFeedback v-if="report" />
 
     <div v-if="captureStep !== 'idle'" class="capture-modal">
