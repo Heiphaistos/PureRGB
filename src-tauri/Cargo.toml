@@ -37,7 +37,7 @@ base64 = "0.22"
 tiny-skia = "0.11"
 ab_glyph = "0.2"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp"] }
-jpeg-encoder = "0.6"
+jpeg-encoder = "0.7"
 serialport = { version = "4", default-features = false }
 nusb = "0.1"
 # DES-CBC de l'en-tête chiffré des écrans TURZX (1CBE) : RustCrypto, aucune autre dépendance nouvelle
