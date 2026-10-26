@@ -60,7 +60,7 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 19] = [
+const NO_RGB: [(u16, u16, &str); 21] = [
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
     (0x046D, 0x0AF7, "Casque Logitech PRO X"),
     // Concentrateurs USB : le descripteur lu sur la tour dit « Hub Controller » / « Concentrateur USB générique ».
@@ -78,6 +78,11 @@ const NO_RGB: [(u16, u16, &str); 19] = [
     (0x1B1C, 0x1C0B, "Alimentation Corsair RM750i"),
     (0x1B1C, 0x1C0C, "Alimentation Corsair RM850i"),
     (0x1B1C, 0x1C0D, "Alimentation Corsair RM1000i"),
+    // Récepteurs 2,4 GHz génériques (puce OEM, VID 1EA7 = Sharkoon dans usb.ids, partagé par de nombreuses marques) : 0064 = souris
+    // (interface d'entrée), 0066 = clavier/composite. Sur les packs Empire Gaming (ARMOR RF358, RF800, MK800) le rétroéclairage se règle
+    // aux touches FN, « le pack ne propose aucun logiciel » ; aucun logiciel officiel ne vise ces PID. Voir docs/rgb-protocols/analyse-empire-gaming.md.
+    (0x1EA7, 0x0064, "Récepteur 2,4 GHz souris (Empire Gaming / OEM)"),
+    (0x1EA7, 0x0066, "Récepteur 2,4 GHz clavier-souris (Empire Gaming / OEM)"),
     (0x1B1C, 0x1C11, "Alimentation Corsair AX1600i"),
     (0x1B1C, 0x1C1E, "Alimentation Corsair HX1000i"),
     (0x1B1C, 0x1C1F, "Alimentation Corsair HX1500i"),
@@ -129,6 +134,7 @@ mod tests {
         assert!(known_without_rgb(0x046D, 0x0ABA).is_some() && known_without_rgb(0x046D, 0x0AF7).is_some());
         assert!(known_without_rgb(0x187C, 0x1012).is_some() && known_without_rgb(0x1A86, 0x8091).is_some());
         assert!(known_without_rgb(0x046D, 0xC08B).is_none());
-        assert!(known_without_rgb(0x1EA7, 0x0064).is_none(), "Sharkoon : aucune source, reste hors catalogue");
+        assert!(known_without_rgb(0x1EA7, 0x0064).is_some() && known_without_rgb(0x1EA7, 0x0066).is_some(), "récepteurs 2,4 G Empire Gaming");
+        assert!(known_without_rgb(0x1EA7, 0x0030).is_none(), "autre PID du même VID : inchangé");
     }
 }
