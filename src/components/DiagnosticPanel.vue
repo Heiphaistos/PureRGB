@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { save as saveDialog } from "@tauri-apps/plugin-dialog";
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import type { CaptureFileInfo, RawHidDevice } from "../types";
 import { errMsg } from "../screens/api";
 import CommunityFeedback from "./CommunityFeedback.vue";
@@ -21,7 +21,8 @@ interface DiagReport {
   hid_raw: RawHidDevice[];
 }
 
-const props = defineProps<{ telemetryOptIn: boolean; trigger?: number }>();
+const props = defineProps<{ telemetryOptIn: boolean; trigger?: number; mode?: "full" | "usb" }>();
+const usbOnly = props.mode === "usb";
 const emit = defineEmits<{ restart: [] }>();
 
 const STATUS_LABEL: Record<CardStatus, string> = { ok: "OK", warn: "Avertissement", error: "Erreur" };
@@ -29,7 +30,12 @@ const STATUS_LABEL: Record<CardStatus, string> = { ok: "OK", warn: "Avertissemen
 const report = ref<DiagReport | null>(null);
 const running = ref(false);
 const msg = ref("");
-const showUnrecognizedOnly = ref(true);
+const showUnrecognizedOnly = ref(!usbOnly);
+
+// Page « Appareils USB » : la liste apparaît tout de suite (lecture seule), sans cliquer sur « Lancer le diagnostic ».
+onMounted(() => {
+  if (usbOnly) void run();
+});
 
 async function run(): Promise<void> {
   running.value = true;
@@ -194,7 +200,22 @@ async function uploadCaptureFiles(): Promise<void> {
 
 <template>
   <div class="diag">
-    <div class="card head">
+    <div v-if="usbOnly" class="card head">
+      <div class="head-text">
+        <h3>Appareils USB : tester et capturer</h3>
+        <p class="hint">
+          Tous les périphériques USB/HID vus par Windows, lus sans rien écrire. Pour apprendre un appareil (macros, DPI,
+          éclairage, disposition des touches), utilisez « Capturer le protocole USB » sur sa ligne, puis changez un réglage dans le
+          logiciel officiel : le fichier reste en local, vous choisissez ensuite de l'envoyer ou non.
+        </p>
+      </div>
+      <div class="head-actions">
+        <button class="primary" :disabled="running" @click="run">{{ running ? "Lecture…" : "Actualiser la liste" }}</button>
+      </div>
+      <span v-if="msg" class="hint msg">{{ msg }}</span>
+    </div>
+
+    <div v-if="!usbOnly" class="card head">
       <div class="head-text">
         <h3>Diagnostic matériel</h3>
         <p class="hint">
@@ -220,7 +241,7 @@ async function uploadCaptureFiles(): Promise<void> {
       <span v-if="msg" class="hint msg">{{ msg }}</span>
     </div>
 
-    <div v-if="report" class="cards">
+    <div v-if="report && !usbOnly" class="cards">
       <article v-for="c in report.cards" :key="c.id" class="card dcard" :class="[`st-${c.status}`, { wide: c.id === 'log' || c.id === 'findings' }]">
         <header>
           <h4>{{ c.title }}</h4>
@@ -267,8 +288,8 @@ async function uploadCaptureFiles(): Promise<void> {
       <p v-if="hidRows.length === 0" class="hint">Aucun appareil dans ce filtre.</p>
     </div>
 
-    <RgbInventory :telemetry-opt-in="props.telemetryOptIn" @restart="emit('restart')" />
-    <CommunityFeedback v-if="report" />
+    <RgbInventory v-if="!usbOnly" :telemetry-opt-in="props.telemetryOptIn" @restart="emit('restart')" />
+    <CommunityFeedback v-if="report && !usbOnly" />
 
     <div v-if="captureStep !== 'idle'" class="capture-modal">
       <div class="capture-modal-inner">

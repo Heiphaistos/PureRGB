@@ -112,10 +112,14 @@ async function quit(): Promise<void> {
         <h4>Anti-cheats reconnus ({{ anticheats.length }} familles, {{ exeCount }} exécutables)</h4>
         <details class="acbox">
           <summary>Afficher la liste</summary>
+          <p class="legend">
+            <em class="ok">Vérifié</em> : noms confirmés par la source officielle. <em class="todo">À confirmer</em> : anti-cheat
+            surveillé aussi, mais ses noms n'ont pas encore été recoupés. Tous les anti-cheats de la liste déclenchent le mode jeu.
+          </p>
           <input v-model="search" type="search" placeholder="Rechercher (nom, .exe, pilote)…" aria-label="Rechercher un anti-cheat" />
           <ul class="list ac">
             <li v-for="a in filtered" :key="a.name">
-              <strong>{{ a.name }}<em v-if="a.verified" title="Noms confirmés par la source"> ✓</em></strong>
+              <strong>{{ a.name }} <em v-if="a.verified" class="ok" title="Noms confirmés par la source">Vérifié</em><em v-else class="todo" title="Surveillé, noms à recouper">À confirmer</em></strong>
               <small>{{ [...a.exes, ...(a.games ?? [])].join(", ") }}</small>
               <small v-if="a.drivers?.length">Pilote noyau : {{ a.drivers.join(", ") }} (non surveillé directement)</small>
             </li>
@@ -133,12 +137,16 @@ async function quit(): Promise<void> {
       Le mode jeu réduit le risque, il ne garantit pas l'absence de bannissement : le pilote PawnIO reste installé et PureRGB reste
       ouvert dans la barre des tâches. Risque nul seulement en fermant PureRGB avant de jouer.
     </p>
-    <button :disabled="quitting" @click="quit">{{ quitting ? "Fermeture…" : "Quitter PureRGB proprement" }}</button>
+    <button :disabled="quitting" @click="quit">{{ quitting ? "Fermeture…" : "Quitter PureRGB complètement" }}</button>
     <p v-if="error" class="hint">{{ error }}</p>
   </div>
 </template>
 
 <style scoped>
+.legend { font-size: 11px; color: var(--text-dim); margin: 6px 0; line-height: 1.5; }
+em.ok, em.todo { font-style: normal; font-size: 10px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--border); }
+em.ok { color: var(--ok); border-color: var(--ok); }
+em.todo { color: var(--text-dim); }
 .wide { grid-column: 1 / -1; }
 .hint { font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px; }
 .inline { display: flex; align-items: center; gap: 8px; }

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.52.1
+
+- **Réglages refaits** : chaque catégorie remplit toute la largeur (plus de colonnes vides ni de carrés noirs) ; nouvelles sections « Mode jeu et arrière-plan » et « Appareils USB (test) » ; le bouton Enregistrer n'apparaît que là où il sert.
+- **Arrière-plan** : déplacé des écrans vers Réglages. Cases mieux présentées, bouton « Enregistrer » avec confirmation, état réel du processus d'arrière-plan, boutons « Quitter complètement maintenant » et « Arrêter le processus d'arrière-plan », et explication claire de la croix, de « Quitter » et de « Quitter complètement ».
+- **Quitter** : le bouton du mode jeu ferme maintenant tout (il pouvait laisser le processus d'arrière-plan). Le menu de l'icône précise ce que « Quitter » conserve.
+- **Anti-cheats** : chaque entrée affiche « Vérifié » (noms confirmés par la source) ou « À confirmer » (surveillé aussi, noms à recouper), avec une légende.
+- **Appareils USB (test)** : la liste des périphériques USB/HID s'affiche tout de suite, avec le bouton « Capturer le protocole USB » sur chaque ligne (plus besoin de lancer le diagnostic).
+- **Inventaire** : « Envoyer l'analyse » affiche un état « Envoi… » puis un message vert ou rouge bien visible.
+
 ## 0.52.0
 
 - **Réglages d'appareil** : nouveau bloc « Réglages de l'appareil » (interrupteurs, curseurs, listes) pour tout ce qui n'est pas de la lumière : retour du micro, luminosité, température de couleur, seuil de batterie… Appliqués en mémoire vive de l'appareil seulement (rien n'est enregistré dedans), jamais envoyés avant ton action, et uniquement avec les pilotes natifs activés (désactivés par défaut).

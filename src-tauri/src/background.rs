@@ -385,6 +385,18 @@ pub(crate) fn background_set(state: tauri::State<AppState>, modules: Modules) ->
     settings::save(&s).map_err(|e| e.to_string())
 }
 
+/// Un processus d'arrière-plan (`--background`) tourne-t-il en ce moment ? (interface : état réel, pas seulement le réglage)
+#[tauri::command]
+pub(crate) fn background_status() -> bool {
+    live_daemon_pid().is_some()
+}
+
+/// Arrête le processus d'arrière-plan s'il tourne (demande d'arrêt, puis forcé si besoin) ; hors thread d'interface.
+#[tauri::command]
+pub(crate) async fn background_stop() -> Result<(), String> {
+    tauri::async_runtime::spawn_blocking(stop_running_daemon).await.map_err(|e| e.to_string())
+}
+
 /// Point d'entrée du processus d'arrière-plan. Aucune fenêtre n'est créée (donc pas de WebView2).
 pub fn run(mut ctx: tauri::Context, mods: Modules) {
     if !claim() {

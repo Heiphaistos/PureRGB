@@ -103,11 +103,13 @@ const form = reactive({
   telemetry_opt_in: false,
   auto_update_check: true,
 });
-type Section = "general" | "drivers" | "media" | "security" | "diag";
+type Section = "general" | "bg" | "drivers" | "media" | "usb" | "security" | "diag";
 const SECTIONS: { id: Section; label: string }[] = [
   { id: "general", label: "Général" },
+  { id: "bg", label: "Mode jeu et arrière-plan" },
   { id: "drivers", label: "Appareils et pilotes" },
   { id: "media", label: "Photos et vidéo" },
+  { id: "usb", label: "Appareils USB (test)" },
   { id: "security", label: "Test de sécurité" },
   { id: "diag", label: "Diagnostic" },
 ];
@@ -175,9 +177,10 @@ async function save() {
       <button v-for="x in SECTIONS" :key="x.id" type="button" :class="{ active: section === x.id }" @click="section = x.id">{{ x.label }}</button>
     </nav>
 
-    <div class="cols">
-    <h3 v-show="section === 'general'" class="cat">Démarrage et fenêtre</h3>
-    <div v-show="section === 'general'" class="card">
+    <section v-show="section === 'general'" class="grp">
+      <h3 class="cat">Démarrage et fenêtre</h3>
+      <div class="grid">
+    <div class="card">
       <h3>Lancement</h3>
       <div class="inline" style="margin-bottom: 12px">
         <input id="winstart" type="checkbox" :checked="autostartEnabled" :disabled="autostartBusy" @change="toggleAutostart" />
@@ -189,7 +192,7 @@ async function save() {
       </div>
     </div>
 
-    <div v-show="section === 'general'" class="card">
+    <div class="card">
       <h3>Disposition de l'onglet Éclairage</h3>
       <div class="layout-options">
         <button v-for="l in LAYOUTS" :key="l.id" type="button" class="layout-option" :class="{ active: layout === l.id }" @click="emit('layout-change', l.id)">
@@ -199,7 +202,7 @@ async function save() {
       </div>
     </div>
 
-    <div v-show="section === 'general'" class="card">
+    <div class="card">
       <h3>Performance</h3>
       <label>Images/seconde des animations — {{ form.fps }} FPS</label>
       <input type="range" min="5" max="144" step="5" v-model.number="form.fps" />
@@ -209,8 +212,13 @@ async function save() {
       </p>
     </div>
 
-    <h3 v-show="section === 'general'" class="cat">Mises à jour</h3>
-    <div v-show="section === 'general'" class="card">
+      </div>
+    </section>
+
+    <section v-show="section === 'general'" class="grp">
+      <h3 class="cat">Mises à jour</h3>
+      <div class="grid">
+    <div class="card">
       <h3>Mises à jour de PureRGB</h3>
       <p class="hint">
         Les mises à jour sont signées et vérifiées avant installation, puis
@@ -233,8 +241,13 @@ async function save() {
       </button>
     </div>
 
-    <h3 v-show="section === 'general'" class="cat">Profils et confidentialité</h3>
-    <div v-show="section === 'general'" class="card">
+      </div>
+    </section>
+
+    <section v-show="section === 'general'" class="grp">
+      <h3 class="cat">Profils et confidentialité</h3>
+      <div class="grid">
+    <div class="card">
       <h3>Profils</h3>
       <div class="inline" style="gap: 10px; margin-bottom: 12px">
         <button @click="exportProfile">Exporter le profil…</button>
@@ -247,7 +260,7 @@ async function save() {
       </p>
     </div>
 
-    <div v-show="section === 'general'" class="card">
+    <div class="card">
       <h3>Confidentialité</h3>
       <div class="inline">
         <input id="telemetry" type="checkbox" v-model="form.telemetry_opt_in" />
@@ -259,13 +272,23 @@ async function save() {
       </div>
     </div>
 
-    <h3 v-show="section === 'general'" class="cat">Mode jeu</h3>
-    <GameModeSetting v-show="section === 'general'" />
+      </div>
+    </section>
 
-    <h3 v-show="section === 'general'" class="cat">Arrière-plan</h3>
-    <BackgroundSetting v-show="section === 'general'" />
+    <section v-show="section === 'bg'" class="grp">
+      <h3 class="cat">Mode jeu</h3>
+      <div class="grid one"><GameModeSetting /></div>
+    </section>
 
-    <div v-show="section === 'media'" class="card">
+    <section v-show="section === 'bg'" class="grp">
+      <h3 class="cat">Arrière-plan et fermeture</h3>
+      <div class="grid"><BackgroundSetting /></div>
+    </section>
+
+    <section v-show="section === 'media'" class="grp">
+      <h3 class="cat">Photos et vidéo</h3>
+      <div class="grid">
+    <div class="card">
       <h3>Photos des produits</h3>
       <p class="hint">
         Quand un appareil est reconnu avec certitude (identifiant USB ou modèle exact), PureRGB affiche sa photo,
@@ -278,21 +301,33 @@ async function save() {
       </div>
     </div>
 
-    <DecoderSetting v-show="section === 'media'" />
+        <DecoderSetting />
+      </div>
+    </section>
 
-    <DriversSetting v-show="section === 'drivers'" :form="form" />
+    <section v-show="section === 'drivers'" class="grp">
+      <h3 class="cat">Appareils et pilotes</h3>
+      <div class="grid one"><DriversSetting :form="form" /></div>
+    </section>
 
-    <SelfTest v-show="section === 'security'" />
+    <section v-show="section === 'security'" class="grp">
+      <h3 class="cat">Test de sécurité</h3>
+      <div class="grid one"><SelfTest /></div>
+    </section>
 
-    </div>
-
-    <div class="actions">
+    <div v-if="section === 'general' || section === 'drivers' || section === 'media'" class="actions">
       <button class="primary" :disabled="saving" @click="save">
         {{ saving ? "Enregistrement..." : "Enregistrer" }}
       </button>
       <span v-if="error" class="error">{{ error }}</span>
     </div>
 
+    <DiagnosticPanel
+      v-if="section === 'usb'"
+      mode="usb"
+      :telemetry-opt-in="props.settings?.telemetry_opt_in ?? false"
+      @restart="restartOpenRgb"
+    />
     <DiagnosticPanel
       v-show="section === 'diag'"
       :telemetry-opt-in="props.settings?.telemetry_opt_in ?? false"
@@ -330,27 +365,34 @@ async function save() {
   padding: 22px 26px;
 }
 
-/* Cartes réparties sur 2 à 3 colonnes selon la largeur (au lieu d'une pile étroite). */
-.cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(max(420px, 31%), 1fr));
-  gap: 14px;
-  align-items: start;
+/* Chaque catégorie remplit toute la largeur : 1 carte = pleine largeur, 2 = moitié, 3 = tiers (aucune colonne vide). */
+.grp {
+  margin-bottom: 18px;
 }
 
-.cols .card {
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.grid.one {
+  grid-template-columns: 1fr;
+}
+
+.grid > .card {
   margin-bottom: 0;
 }
 
 .cat {
-  grid-column: 1 / -1;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-dim);
   border-bottom: 1px solid var(--border);
   padding-bottom: 4px;
-  margin-top: 6px;
+  margin: 0 0 10px;
 }
 
 .settings h2 {

@@ -17,6 +17,8 @@ const findings = ref<Finding[] | null>(null);
 const busy = ref(false);
 const error = ref("");
 const sent = ref("");
+const sending = ref(false);
+const sentOk = ref(false);
 
 const ICON = { ok: "✓", info: "i", warn: "!" } as const;
 
@@ -36,11 +38,17 @@ async function run(): Promise<void> {
 
 /** Envoie le diagnostic complet (dont cet inventaire) : ce que PureRGB reconnaît, ne reconnaît pas, et pourquoi. */
 async function send(): Promise<void> {
+  sending.value = true;
+  sent.value = "";
   try {
     await invoke("send_telemetry_report");
-    sent.value = "Analyse envoyée pour amélioration de la prise en charge.";
+    sentOk.value = true;
+    sent.value = "Analyse envoyée, merci : elle sert à corriger les appareils non reconnus.";
   } catch (e) {
+    sentOk.value = false;
     sent.value = `Envoi impossible : ${errMsg(e)}`;
+  } finally {
+    sending.value = false;
   }
 }
 </script>
@@ -54,14 +62,14 @@ async function send(): Promise<void> {
     </p>
     <div class="row">
       <button :disabled="busy" @click="run">{{ busy ? "Analyse…" : findings ? "Relancer l'analyse" : "Analyser mon PC" }}</button>
-      <button v-if="findings && props.telemetryOptIn" :disabled="busy" @click="send">Envoyer l'analyse</button>
+      <button v-if="findings && props.telemetryOptIn" :disabled="busy || sending" @click="send">{{ sending ? "Envoi…" : "Envoyer l'analyse" }}</button>
       <button v-if="findings?.some((f) => f.status !== 'ok')" :disabled="busy" @click="emit('restart')">Redémarrer OpenRGB</button>
     </div>
     <p v-if="error" class="err">{{ error }}</p>
     <p v-if="findings && !props.telemetryOptIn" class="hint">
       Pour envoyer cette analyse, cochez « Envoyer les informations de diagnostic » dans Réglages › Général, puis Enregistrer.
     </p>
-    <p v-if="sent" class="hint">{{ sent }}</p>
+    <p v-if="sent" class="status" :class="sentOk ? 'good' : 'bad'" role="status">{{ sentOk ? "✓" : "✗" }} {{ sent }}</p>
     <ul v-if="findings" class="list">
       <li v-for="(f, i) in findings" :key="i" :class="f.status">
         <span class="ico" aria-hidden="true">{{ ICON[f.status] }}</span>
@@ -99,6 +107,10 @@ h3 {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+.status { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; border: 1px solid var(--border); }
+.status.good { color: var(--ok); border-color: var(--ok); }
+.status.bad { color: var(--err); border-color: var(--err); }
 
 .err {
   color: #f87171;

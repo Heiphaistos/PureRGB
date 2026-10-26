@@ -482,7 +482,7 @@ pub fn run() {
             }
 
             let show = MenuItem::with_id(app, "show", "Afficher PureRGB", true, None::<&str>)?;
-            let quit = MenuItem::with_id(app, "quit", "Quitter", true, None::<&str>)?;
+            let quit = MenuItem::with_id(app, "quit", "Quitter (garde l'arrière-plan coché)", true, None::<&str>)?;
             let quit_all = MenuItem::with_id(app, "quit_all", "Quitter complètement", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show, &quit, &quit_all])?;
             TrayIconBuilder::new()
@@ -513,6 +513,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             background::background_get,
             background::background_set,
+            background::background_status,
+            background::background_stop,
             self_update::update_is_portable,
             self_update::update_prepare,
             self_update::update_portable,

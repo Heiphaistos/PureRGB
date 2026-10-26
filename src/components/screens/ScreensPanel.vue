@@ -7,7 +7,6 @@ import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
 import ProductPhoto from "../ProductPhoto.vue";
 import type { ProductView } from "../../productPhotos";
 import ScreenDetail from "./ScreenDetail.vue";
-import BackgroundSetting from "../BackgroundSetting.vue";
 import "./screens.css";
 
 const emit = defineEmits<{ toast: [msg: string] }>();
@@ -101,7 +100,7 @@ watch(screens, () => void loadStates(), { immediate: true });
         <button :disabled="scanning" @click="doScan(false)">{{ scanning ? "Recherche…" : "Rechercher" }}</button>
       </div>
 
-      <BackgroundSetting />
+      <p class="sc-sub">Pour que les écrans gardent leur affichage quand PureRGB est fermé : Réglages › Arrière-plan.</p>
 
       <div v-if="screens.length" class="cards">
         <button v-for="s in screens" :key="s.id" class="sc-card scr" @click="selectedId = s.id">

@@ -284,10 +284,14 @@ pub(crate) fn set_game_mode(state: State<AppState>, enabled: bool, keep_hid: boo
     crate::settings::save(&s).map_err(|e| e.to_string())
 }
 
-/// « Quitter PureRGB proprement » : même chemin que le menu du tray (nettoyage borné hors thread UI).
+/// « Quitter PureRGB complètement » (bouton du mode jeu : risque nul seulement si RIEN ne reste ouvert) : même chemin
+/// que « Quitter complètement » du tray, sans processus d'arrière-plan ; un processus déjà lancé est arrêté aussi.
 #[tauri::command]
 pub(crate) fn quit_app(app: AppHandle) {
-    crate::shutdown::quit_async(app, crate::cleanup_for_quit);
+    crate::shutdown::quit_async(app, |a| {
+        crate::background::stop_running_daemon();
+        crate::cleanup_before_exit(a);
+    });
 }
 
 #[cfg(test)]
