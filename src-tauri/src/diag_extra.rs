@@ -62,6 +62,10 @@ pub struct ExtraDiag {
 
 /// Contexte de l'inventaire : état d'OpenRGB, PawnIO, capteurs, logiciels actifs.
 pub fn inventory_context(state: &AppState) -> inventory::Context {
+    context_with(state, &conflicts::scan().0)
+}
+
+pub(crate) fn context_with(state: &AppState, found: &[conflicts::ConflictingSoftware]) -> inventory::Context {
     let (host, port) = {
         let s = state.settings.lock();
         (s.openrgb_host.clone(), s.openrgb_port)
@@ -74,7 +78,7 @@ pub fn inventory_context(state: &AppState) -> inventory::Context {
         sensord_up: state.sensors.running(),
         fans_measured: sensors.iter().filter(|s| s.kind == "Fan" && s.id.starts_with("/lpc/")).count(),
         fans_controllable: sensors.iter().filter(|s| s.kind == "Control" && s.controllable && s.id.starts_with("/lpc/")).count(),
-        active_conflicts: conflicts::scan().0.into_iter().filter(|c| c.active).map(|c| c.name).collect(),
+        active_conflicts: found.iter().filter(|c| c.active).map(|c| c.name.clone()).collect(),
         openrgb_error: st.last_error,
     }
 }
@@ -90,6 +94,25 @@ pub fn scrub(line: &str) -> String {
     out
 }
 
+/// Secondes UNIX d'un horodatage ISO 8601 UTC en début de ligne (`[2026-10-26T10:00:00Z WARN …`).
+fn line_epoch(line: &str) -> Option<i64> {
+    let t = line.trim_start().trim_start_matches('[');
+    let n = |r: std::ops::Range<usize>| t.get(r)?.parse::<i64>().ok();
+    let (y, m, d, hh, mm, ss) = (n(0..4)?, n(5..7)?, n(8..10)?, n(11..13)?, n(14..16)?, n(17..19)?);
+    // Jours depuis 1970 (algorithme civil de H. Hinnant).
+    let (y, m) = if m <= 2 { (y - 1, m + 9) } else { (y, m - 3) };
+    let era = y.div_euclid(400);
+    let yoe = y - era * 400;
+    let doy = (153 * m + 2) / 5 + d - 1;
+    let days = era * 146_097 + yoe * 365 + yoe / 4 - yoe / 100 + doy - 719_468;
+    Some(days * 86_400 + hh * 3600 + mm * 60 + ss)
+}
+
+/// Garde les lignes datées des dernières 24 h avant `now` (secondes UNIX).
+fn keep_recent(lines: Vec<String>, now: i64) -> Vec<String> {
+    lines.into_iter().filter(|l| line_epoch(l).is_some_and(|t| now - t <= 86_400)).collect()
+}
+
 fn log_tail(max: usize) -> Vec<String> {
     use std::io::{Read, Seek, SeekFrom};
     let Some(path) = crate::settings::dirs_dir().map(|d| d.join("purergb.log")) else { return Vec::new() };
@@ -100,17 +123,24 @@ fn log_tail(max: usize) -> Vec<String> {
         return Vec::new();
     }
     let text = String::from_utf8_lossy(&buf);
-    let mut lines: Vec<String> =
-        text.lines().filter(|l| l.contains(" WARN ") || l.contains(" ERROR ")).map(|l| scrub(l.trim()).chars().take(240).collect()).collect();
+    let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs() as i64).unwrap_or(0);
+    let mut lines: Vec<String> = keep_recent(
+        text.lines().filter(|l| l.contains(" WARN ") || l.contains(" ERROR ")).map(|l| scrub(l.trim()).chars().take(240).collect()).collect(),
+        now,
+    );
     let skip = lines.len().saturating_sub(max);
     lines.drain(..skip);
     lines
 }
 
 pub fn collect(state: &AppState, screens: &ScreenManager) -> ExtraDiag {
-    let ctx = inventory_context(state);
+    collect_from(state, screens, inventory::collect(), inventory_context(state))
+}
+
+/// Même collecte à partir d'un inventaire et d'un contexte déjà relevés (le rapport local les réutilise).
+pub(crate) fn collect_from(state: &AppState, screens: &ScreenManager, inv: Result<inventory::Inventory, String>, ctx: inventory::Context) -> ExtraDiag {
     let devices = state.registry.lock().device_list();
-    let (inv, inventory_error) = match inventory::collect() {
+    let (inv, inventory_error) = match inv {
         Ok(i) => (i, None),
         Err(e) => (inventory::Inventory::default(), Some(e)),
     };
@@ -160,6 +190,18 @@ pub fn collect(state: &AppState, screens: &ScreenManager) -> ExtraDiag {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_last_24h_of_log_lines_are_kept() {
+        let now = line_epoch("2026-10-26T12:00:00Z").unwrap();
+        let lines = vec![
+            "[2026-10-23T09:00:00Z WARN  a] vieux".to_string(),
+            "[2026-10-25T13:00:00Z ERROR a] récent".to_string(),
+            "pas de date WARN".to_string(),
+        ];
+        assert_eq!(keep_recent(lines, now), vec!["[2026-10-25T13:00:00Z ERROR a] récent".to_string()]);
+        assert_eq!(line_epoch("1970-01-02T00:00:00Z"), Some(86_400));
+    }
 
     #[test]
     fn scrub_hides_the_account_name() {

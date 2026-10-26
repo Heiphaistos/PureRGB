@@ -5,6 +5,7 @@ mod device_feedback;
 mod core;
 mod engine;
 mod diag_extra;
+mod diag_report;
 mod gamemode;
 mod gamepad_remap;
 mod hotplug;
@@ -643,6 +644,8 @@ pub fn run() {
             commands::conflicts_cmds::conflict_guard_set,
             commands::diagnostics::hardware_diagnostics,
             commands::diagnostics::rgb_inventory,
+            commands::diagnostics::diagnostic_report,
+            commands::diagnostics::diagnostic_report_save,
             commands::diagnostics::selftest_scan,
             commands::diagnostics::selftest_apply,
             commands::diagnostics::send_telemetry_report,
