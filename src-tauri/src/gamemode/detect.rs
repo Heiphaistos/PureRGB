@@ -15,6 +15,15 @@ const HID_LIKE: [&str; 2] = ["hid", "liquidctl"];
 struct Entry {
     name: String,
     exes: Vec<String>,
+    /// Exécutables de jeux à anti-cheat noyau (pas de processus d'anti-cheat propre).
+    #[serde(default)]
+    games: Vec<String>,
+    #[serde(default)]
+    services: Vec<String>,
+    #[serde(default)]
+    drivers: Vec<String>,
+    #[serde(default)]
+    source: String,
 }
 
 #[derive(Deserialize)]
@@ -40,7 +49,7 @@ impl Rules {
             log::error!("liste anti-cheat illisible : {e}");
             Data { anticheat: Vec::new() }
         });
-        let known = data.anticheat.iter().flat_map(|a| a.exes.iter().map(|e| (norm(e), a.name.clone()))).collect();
+        let known = data.anticheat.iter().flat_map(|a| a.exes.iter().chain(&a.games).map(|e| (norm(e), a.name.clone()))).collect();
         Rules { known, user: user_games.iter().map(|g| norm(g)).filter(|g| !g.is_empty()).collect() }
     }
 
@@ -128,7 +137,7 @@ mod tests {
     #[test]
     fn data_file_parses_and_names_are_unique() {
         let r = Rules::load(&[]);
-        assert!(r.known.len() >= 15);
+        assert!(r.known.len() >= 60);
         let mut names: Vec<&String> = r.known.iter().map(|(k, _)| k).collect();
         names.sort();
         let n = names.len();
@@ -144,6 +153,43 @@ mod tests {
         assert_eq!(r.detect(["vgc.exe"]).as_deref(), Some("Riot Vanguard"));
         assert_eq!(r.detect(["EAAntiCheat.GameService.exe"]).as_deref(), Some("EA Javelin"));
         assert_eq!(r.detect(["npggsvc.exe"]).as_deref(), Some("nProtect GameGuard"));
+    }
+
+    #[test]
+    fn entries_are_well_formed_and_sourced() {
+        let d: Data = serde_json::from_str(include_str!("../../data/gamemode_anticheat.json")).expect("json");
+        assert!(d.anticheat.len() >= 18);
+        let mut names: Vec<&str> = d.anticheat.iter().map(|a| a.name.as_str()).collect();
+        names.sort();
+        let n = names.len();
+        names.dedup();
+        assert_eq!(n, names.len(), "famille en double");
+        for a in &d.anticheat {
+            assert!(!a.source.is_empty(), "{} sans source", a.name);
+            assert!(!a.exes.is_empty() || !a.games.is_empty(), "{} sans executable", a.name);
+            for e in a.exes.iter().chain(&a.games).chain(&a.services).chain(&a.drivers) {
+                assert!(!e.contains(|c| c == '\\' || c == '/') && !e.trim().is_empty(), "nom invalide : {e}");
+            }
+        }
+    }
+
+    #[test]
+    fn detects_one_example_per_family() {
+        let r = Rules::load(&[]);
+        for (p, fam) in [
+            ("EasyAntiCheat_EOS.exe", "Easy Anti-Cheat"), ("eldenring.exe", "Easy Anti-Cheat"),
+            ("BEService_x64.exe", "BattlEye"), ("EscapeFromTarkov_BE.exe", "BattlEye"),
+            ("vgc.exe", "Riot Vanguard"), ("FACEITClient.exe", "FACEIT"),
+            ("EAAntiCheat.GameService.exe", "EA Javelin"), ("npggsvc.exe", "nProtect GameGuard"),
+            ("BlackOps6.exe", "Ricochet (Call of Duty)"), ("FortniteClient-Win64-Shipping.exe", "Fortnite"),
+            ("cs2.exe", "Valve VAC / Trusted Mode"), ("RobloxPlayerBeta.exe", "Roblox Hyperion (Byfron)"),
+            ("GenshinImpact.exe", "HoYoverse mhyprot"), ("BlackDesert64.exe", "XIGNCODE3 (Wellbia)"),
+            ("EhSvc.exe", "HackShield (AhnLab)"), ("PnkBstrA.exe", "PunkBuster"),
+            ("SGuard64.exe", "ACE Anti-Cheat Expert (Tencent)"), ("NGM64.exe", "Nexon Gepard / BlackCipher"),
+            ("DOOMEternalx64vk.exe", "Denuvo Anti-Cheat"), ("Wow.exe", "Blizzard Warden"),
+        ] {
+            assert_eq!(r.detect([p]).as_deref(), Some(fam), "{p}");
+        }
     }
 
     #[test]
