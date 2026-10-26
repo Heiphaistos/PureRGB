@@ -34,6 +34,7 @@ JSON `deviceType` et des classes `Node*` de cmt.dll, pas d'une table PID -> clas
 | 0x0173 | LED Controller A1 (`ArgbGen2Controller`), 3 canaux | 0 | `ARGBGEN2` | [V] |
 | 0x01C9 | LED Controller A1 (`ArgbGen2Rev2Controller`), 3 canaux | 0 | `ARGBGEN2V2` | [V] |
 | 0x01CB | LED Controller A1 Mini (`ArgbGen2LiteController`), 1 canal | 0 | `ARGBGEN2LITE` | [V] |
+| 0x01C1 | **HAF700 EVO** (catégorie `Case`, `isSupportLed:0`, UUID 63) : écran LCD « Iris » du boîtier HAF 700 EVO | 1 | `CMUOT_HAF700` / `HAF700` (**pas HID**, voir section dédiée) | [V] |
 | 0x0155 | **ML240P** (catégorie `Fan`, AIO MasterLiquid, écran LCD) | 1 | `ML240` | [V] |
 | 0x020A | **ML360** (catégorie `Fan`, AIO MasterLiquid, écran LCD) | 1 | `ML360` | [V] |
 
@@ -143,6 +144,17 @@ Le même schéma d'enveloppe est utilisé pour les superpositions (`setOverlay*`
 - Configuré par l'utilisateur ou lu du matériel : `80 06 02` (écriture) ; la lecture des sous-ports Gen 2 (`80 07 01`) donne les sous-ports. Valeur par défaut : 60 / nombre de ventilateurs. Table par modèle de ventilateur :
   `json\Accessory\NewFanList.json` (présent dans l'installeur, non dépouillé ici) : INCONNU.
 
+## HAF 700 EVO (PID 0x01C1, classe `HAF700`) : écran Iris, transport ADB/TCP, pas de RGB HID [V] (passe 2026-10-26, CMUOT.dll 1.9.6)
+
+Absent de la première passe ; trouvé dans `DeviceList.cfg` (`deviceName`/`deviceType` « HAF700 EVO », `deviceCategory` `Case`, `INTERFACE` 1, `isSupportLed` 0) et `json\HAF700\component.json`.
+- **Le 01C1 est l'afficheur LCD du panneau avant, pas un contrôleur de LED.** `component.json` : profil `lcdDisplay` (modes : CM LOGO, SYSTEM [CPU/GPU clock, CPU/GPU temp, usage, APM, FAN RPM, PING, état micro], TIME, MULTIMEDIA, MULTI DISPLAY, TURN OFF ; rotation d'écran ; économiseur) [V].
+- **Les LED du boîtier ne passent pas par lui** : le composant porte `hasArgbGen2: 1` et délègue l'éclairage (`lightingDelegate`, composant « HAF700-SIDE ») au contrôleur ARGB Gen 2 A1 intégré (famille 0173/01C9/01CB, déjà pilotée) [V pour la délégation, S pour le PID exact du contrôleur intégré].
+- **Transport** [V : `HAF700::HAF700`, `TcpClient::InitADB`, `ProtocolWriteTCP`] : le logiciel n'ouvre PAS de rapport HID. Il lance `adb forward tcp:8888 tcp:9900` (adb.exe fourni dans `appdb`, nettoyage préalable `adb forward --remove tcp:8888`), puis se connecte en TCP à `127.0.0.1:8888` (0x22B8). L'écran est donc un périphérique Android/ADB (interface 1 = ADB) et le protocole est un service TCP côté appareil (port 9900).
+- Trame TCP : en-tête puis charge utile ; la longueur (u16 big-endian) précède la charge, charge max 0x4FFA octets, 3 tentatives, reconnexion ADB au 2e échec [V]. Disposition exacte des 4 premiers octets de l'en-tête : [S] (champ commande + drapeau) non relevée.
+- Codes de commande vus (1er paramètre de `ProtocolWriteTCP`) : `10` rotation (valeur+1), `12` info de mode LCD, `14` (7 o, réglage lumineux/LCD), `15` lecture, `16` sauvegarde de valeur, `18` multi-affichage, `19` version firmware (réponse u16 big-endian), `F2` liste de fichiers, `F5`/`F6`/`F7` envoi d'animations/images, `F8` ping, `FC` synchro de l'heure (9 o) [V pour les codes, INCONNU pour le sens octet par octet].
+- `CMUOT_HAF700::setLighting`/`setLedMode`/`getLighting` sont des **fonctions vides qui journalisent et renvoient « succès »** [V] : aucun octet de LED n'est émis pour ce PID.
+- **Décision PureRGB** : rien à coder en HID. Ajouter un pilote ADB serait de l'installation d'un composant tiers et des écritures sur un appareil Android (profils, fichiers) : hors périmètre. Le 01C1 est seulement nommé dans le catalogue (`known.rs`, type Boîtier). Les LED du HAF 700 EVO se pilotent par le contrôleur Gen 2 A1 intégré.
+
 ## Ventilateurs / pompes MasterLiquid
 - **ML240P (0x0155) et ML360 (0x020A)** : écran LCD + LED, classes `ML240`/`ML360` (mêmes fonctions). Aucune fonction de vitesse de ventilateur ou de pompe n'existe dans ces classes ni dans les classes
   `CMUOT_ML240`/`CMUOT_ML360` (liste complète lue dans `CMUOT.pdb`) : **le logiciel ne pilote pas la pompe ni les ventilateurs de ces AIO via USB** [V par absence ; la vitesse relève du PWM carte mère]. Aucune plage de sécurité à documenter.
@@ -166,6 +178,7 @@ Le même schéma d'enveloppe est utilisé pour les superpositions (`setOverlay*`
 - Conflit avec le logiciel officiel : MasterPlus+ garde le périphérique ouvert ; fermer son service (`MPService`) avant de piloter en HID.
 
 ## Ce qui est INCONNU
+- 01C1 : en-tête TCP exact et sens des commandes (inutile tant qu'aucun pilote ADB n'est prévu) ; passe 2026-10-26 : port RGB 12 V du 0x1011 et trame Small non revus (pas de nouvelle fonction trouvée dans `ARGB_BOX`).
 - Usage page HID de chaque PID.
 - Valeur filaire du mode statique du Small (0x1000) et mapping complet des ids d'effets JSON -> octet.
 - Écriture du port RGB 12 V du 0x1011 ; en-tête de la trame directe de `RGB_BOX` ; octets de sortie `ARGB_BOX::setLightingUninit`.

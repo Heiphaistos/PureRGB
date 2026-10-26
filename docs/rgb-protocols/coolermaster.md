@@ -20,7 +20,8 @@ Date : 2026-10-22. **[V]** lu dans la source citée, **[S]** supposé, **[?]** I
 | 0173 | ARGB Gen 2 LED Controller A1 | interface 1, usage page 0xFF01, usage 1 | aucun (known.rs a 0173) |
 | 01C9 | ARGB Gen 2 A1 V2 | idem | aucun |
 | 01CB | ARGB Gen 2 A1 Mini | idem | aucun |
-| 004F | RGB Controller (12 V, non adressable) | [S] | known.rs le nomme « ARGB Controller » : **à vérifier** (OpenRGB : 004F = RGB, 1011 = ARGB) |
+| 004F | RGB Controller (12 V, non adressable) | 1 (DeviceList.cfg) | aucun ; nom corrigé dans known.rs (2026-10-26) |
+| 01C1 | HAF 700 EVO : écran Iris (ADB/TCP, pas HID) | 1 | aucun, voir `analyse-coolermaster-masterplus.md` |
 
 ## ARGB Controller gen 1 (1011) [V : CMARGBController.cpp/.h]
 

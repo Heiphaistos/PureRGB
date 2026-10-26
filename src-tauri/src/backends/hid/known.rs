@@ -66,8 +66,14 @@ pub const KNOWN_DEVICES: &[KnownDevice] = &[
     KnownDevice { vid: 0x264A, pid: 0x1FA5, name: "Thermaltake Riing Plus", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x264A, pid: 0x2260, name: "Thermaltake Riing Quad", device_type: DeviceType::Hub, native_driver: None },
     // ---- Cooler Master (0x2516) ----
-    KnownDevice { vid: 0x2516, pid: 0x004F, name: "Cooler Master ARGB Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x004F, name: "Cooler Master RGB LED Controller (12 V)", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x1000, name: "Cooler Master A-RGB LED Small Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x1007, name: "Cooler Master ARGB2 LED Controller", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x1011, name: "Cooler Master ARGB LED Controller", device_type: DeviceType::Hub, native_driver: None },
     KnownDevice { vid: 0x2516, pid: 0x0173, name: "Cooler Master ARGB Gen2", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x01C1, name: "Cooler Master HAF 700 EVO (écran Iris, ADB)", device_type: DeviceType::Case, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x01C9, name: "Cooler Master ARGB Gen2 A1 V2", device_type: DeviceType::Hub, native_driver: None },
+    KnownDevice { vid: 0x2516, pid: 0x01CB, name: "Cooler Master ARGB Gen2 A1 Mini", device_type: DeviceType::Hub, native_driver: None },
     // ---- ASRock (0x26CE) ----
     KnownDevice { vid: 0x26CE, pid: 0x01A2, name: "ASRock Polychrome LED Controller", device_type: DeviceType::Motherboard, native_driver: None },
     // ---- Corsair AIO (compléments liquidctl) ----

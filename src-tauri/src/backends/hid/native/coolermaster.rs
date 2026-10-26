@@ -230,7 +230,7 @@ mod tests {
 
     #[test]
     fn probe_claims_only_documented_pids() {
-        for pid in [0x1000, 0x1007, 0x004F, 0x010B, 0x0155, 0x020A] {
+        for pid in [0x1000, 0x1007, 0x004F, 0x010B, 0x0155, 0x020A, 0x01C1] {
             assert!(probe(VID, pid).is_none(), "{pid:04x}");
         }
         assert!(probe(0x1532, 0x1011).is_none());
