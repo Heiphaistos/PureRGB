@@ -13,7 +13,7 @@
 //! Collection HID : page d'usage 0xFF43. Non touchés : luminosité/marche de la face arrière.
 
 use super::{Family, Hid, Model, NativeRgb};
-use crate::core::{Color, DeviceType, ZoneInfo};
+use crate::core::{Color, DeviceSetting, DeviceType, SettingKind, ZoneInfo};
 use anyhow::{bail, Result};
 
 const VID_LOGITECH: u16 = 0x046D;
@@ -100,6 +100,17 @@ fn white_of(kind: Kind, c: Color) -> (bool, u16, u16) {
     (m > 0, lumens, ((k + 50) / 100 * 100).clamp(2700, 6500) as u16)
 }
 
+/// Réglages de la lumière blanche (RAM de l'appareil, rien n'est envoyé avant une action de l'utilisateur).
+pub fn settings(model: &Model) -> Vec<DeviceSetting> {
+    let (lo, hi) = kind_of(&model.name).lumens();
+    let slider = |min, max, step, unit: &str| SettingKind::Slider { min, max, step, unit: unit.into() };
+    vec![
+        DeviceSetting { id: "white_on".into(), label: "Lumière allumée".into(), kind: SettingKind::Toggle, default: 1 },
+        DeviceSetting { id: "white_lumens".into(), label: "Luminosité".into(), kind: slider(i32::from(lo), i32::from(hi), 1, "lm"), default: i32::from(lo) },
+        DeviceSetting { id: "white_kelvin".into(), label: "Température de couleur".into(), kind: slider(2700, 6500, 100, "K"), default: 4600 },
+    ]
+}
+
 fn zone_report(zone: u8, c: Color) -> [u8; REPORT_LEN] {
     let mut r = [0u8; REPORT_LEN];
     r[..4].copy_from_slice(&[0x11, 0xFF, 0x0C, 0x1B]);
@@ -141,6 +152,28 @@ impl NativeRgb for Litra {
             }
             self.hid.write(&commit_report())?;
         }
+        Ok(())
+    }
+
+    fn set_setting(&mut self, id: &str, value: i32) -> Result<()> {
+        let idx = self.kind.idx();
+        let (lo, hi) = self.kind.lumens();
+        let report = match id {
+            "white_on" => white_report(idx, 0x1C, u8::from(value != 0), 0),
+            "white_lumens" => {
+                let v = u16::try_from(value).ok().filter(|v| (lo..=hi).contains(v));
+                let Some(v) = v else { bail!("luminosité {value} lm hors plage {lo}..{hi}") };
+                white_report(idx, 0x4C, (v >> 8) as u8, v as u8)
+            }
+            "white_kelvin" => {
+                let v = u16::try_from(value).ok().filter(|v| (2700..=6500).contains(v) && v % 100 == 0);
+                let Some(v) = v else { bail!("température {value} K invalide (2700..6500, multiples de 100)") };
+                white_report(idx, 0x9C, (v >> 8) as u8, v as u8)
+            }
+            _ => bail!("réglage inconnu : {id}"),
+        };
+        self.hid.write(&report)?;
+        self.last_white = None; // l'état réel a changé : la prochaine couleur réécrit le blanc
         Ok(())
     }
 }
@@ -207,6 +240,24 @@ mod tests {
         z1[5..8].copy_from_slice(&[1, 1, 1]);
         assert_eq!(s[4], z1);
         assert_eq!(&s[10][..9], &[0x11, 0xFF, 0x0C, 0x7B, 0, 0, 1, 0, 0]);
+    }
+
+    #[test]
+    fn settings_write_one_report_each_and_reject_bad_values() {
+        let (mut d, sent) = driver(0xC901);
+        d.set_setting("white_lumens", 400).expect("lm");
+        d.set_setting("white_kelvin", 6500).expect("K");
+        d.set_setting("white_on", 0).expect("off");
+        assert!(d.set_setting("white_lumens", 29).is_err());
+        assert!(d.set_setting("white_kelvin", 4650).is_err());
+        assert!(d.set_setting("autre", 1).is_err());
+        let s = sent.lock();
+        assert_eq!(s.len(), 3);
+        assert_eq!(&s[0][..6], &[0x11, 0xFF, 0x04, 0x4C, 0x01, 0x90]);
+        assert_eq!(&s[1][..6], &[0x11, 0xFF, 0x04, 0x9C, 0x19, 0x64]);
+        assert_eq!(&s[2][..6], &[0x11, 0xFF, 0x04, 0x1C, 0, 0]);
+        let model = probe(VID_LOGITECH, 0xC900).expect("glow");
+        assert_eq!(settings(&model).len(), 3);
     }
 
     #[test]

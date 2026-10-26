@@ -155,8 +155,9 @@ pub trait NativeRgb: Send {
 
 /// Réglages non lumineux proposés pour une famille (liste statique : rien n'est envoyé à l'affichage).
 /// Chaque famille qui implémente `NativeRgb::set_setting` ajoute ici son entrée, avec la source du protocole.
-pub fn settings_schema(family_id: &str, _model: &Model) -> Vec<crate::core::DeviceSetting> {
+pub fn settings_schema(family_id: &str, model: &Model) -> Vec<crate::core::DeviceSetting> {
     match family_id {
+        "litra" => litra::settings(model),
         _ => Vec::new(),
     }
 }
