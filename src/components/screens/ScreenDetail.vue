@@ -99,7 +99,7 @@ onMounted(reload);
   <div class="sc-page">
     <header class="top">
       <button class="sm" @click="emit('back')">← Écrans</button>
-      <ProductPhoto :vendor="screen.vendor" :name="screen.model" :usb="screen.id" :size="64" caption @found="product = $event" />
+      <ProductPhoto :vendor="screen.vendor" :name="screen.model" :usb="screen.id" :size="96" caption @found="product = $event" />
       <div class="sc-grow">
         <strong>{{ product?.name ?? `${screen.vendor} ${screen.model}` }}</strong>
         <span class="dim"> · {{ screen.width }} × {{ screen.height }}</span>

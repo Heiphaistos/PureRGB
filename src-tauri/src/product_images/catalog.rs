@@ -55,9 +55,11 @@ struct Catalog {
     products: Vec<Product>,
 }
 
-/// Minuscules, accents retirés, tout non alphanumérique -> espace simple.
+/// Minuscules, accents retirés, tout non alphanumérique -> espace simple, et espace entre lettre et
+/// chiffre (« X2 » = « X 2 », « 7D93 » = « 7 d 93 ») : « Pro X2 » et « PRO X 2 » se valent.
 pub fn normalize(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
+    let mut prev: Option<char> = None;
     for c in s.chars().flat_map(char::to_lowercase) {
         let c = match c {
             'à' | 'á' | 'â' | 'ã' | 'ä' | 'å' => 'a',
@@ -70,7 +72,12 @@ pub fn normalize(s: &str) -> String {
             'ý' | 'ÿ' => 'y',
             c => c,
         };
-        out.push(if c.is_alphanumeric() { c } else { ' ' });
+        let c = if c.is_alphanumeric() { c } else { ' ' };
+        if prev.is_some_and(|p| p.is_ascii_digit() != c.is_ascii_digit() && p.is_alphanumeric() && c.is_alphanumeric()) {
+            out.push(' ');
+        }
+        out.push(c);
+        prev = Some(c);
     }
     out.split_whitespace().collect::<Vec<_>>().join(" ")
 }
@@ -162,7 +169,39 @@ pub fn identify(vendor: &str, name: &str, usb_ids: &[&str]) -> Option<&'static P
     identify_in(products(), vendor, name, usb_ids)
 }
 
-fn best_by_name<'a>(cands: impl Iterator<Item = &'a Product>, hay: &str) -> Option<&'a Product> {
+/// Repli quand aucun motif n'est une sous-chaîne du nom : tous les mots d'un motif de 2 mots ou plus
+/// se retrouvent dans le nom, dans n'importe quel ordre (« G PRO X 2 LIGHTSPEED Gaming Headset »).
+fn best_by_tokens<'a>(cands: impl Iterator<Item = &'a Product>, hay: &str) -> Option<&'a Product> {
+    let words: std::collections::HashSet<&str> = hay.split(' ').collect();
+    let mut best: Option<(usize, &Product)> = None;
+    let mut tie = false;
+    for p in cands {
+        let score = p
+            .matching
+            .names
+            .iter()
+            .map(|n| normalize(n))
+            .filter(|n| n.split(' ').count() >= 2 && n.split(' ').all(|w| words.contains(w)))
+            .map(|n| n.len())
+            .max();
+        let Some(s) = score else { continue };
+        match best {
+            Some((b, _)) if s < b => {}
+            Some((b, bp)) if s == b => tie |= bp.id != p.id,
+            _ => {
+                tie = false;
+                best = Some((s, p));
+            }
+        }
+    }
+    if tie {
+        None
+    } else {
+        best.map(|(_, p)| p)
+    }
+}
+
+fn best_by_name<'a>(cands: impl Iterator<Item = &'a Product>, hay: &str) -> Option<Option<&'a Product>> {
     let hay = format!(" {hay} ");
     let mut best: Option<(usize, &Product)> = None;
     let mut tie = false;
@@ -185,11 +224,7 @@ fn best_by_name<'a>(cands: impl Iterator<Item = &'a Product>, hay: &str) -> Opti
             }
         }
     }
-    if tie {
-        None
-    } else {
-        best.map(|(_, p)| p)
-    }
+    best.map(|(_, p)| if tie { None } else { Some(p) })
 }
 
 fn identify_in<'a>(all: &'a [Product], vendor: &str, name: &str, usb_ids: &[&str]) -> Option<&'a Product> {
@@ -197,9 +232,9 @@ fn identify_in<'a>(all: &'a [Product], vendor: &str, name: &str, usb_ids: &[&str
     let usbs: Vec<String> = usb_ids.iter().filter_map(|u| extract_usb(u)).collect();
     let by_usb: Vec<&Product> = all.iter().filter(|p| p.matching.usb.iter().any(|u| usbs.contains(u))).collect();
     match by_usb.len() {
-        0 => best_by_name(all.iter(), &hay),
+        0 => best_by_name(all.iter(), &hay).unwrap_or_else(|| best_by_tokens(all.iter(), &hay)),
         1 => Some(by_usb[0]),
-        _ => best_by_name(by_usb.into_iter(), &hay),
+        _ => best_by_name(by_usb.into_iter(), &hay).flatten(),
     }
 }
 
@@ -236,6 +271,15 @@ mod tests {
     fn accents_match_in_names() {
         let all = [prod("a", &[], &["écran été"])];
         assert!(identify_in(&all, "", "ECRAN ETE", &[]).is_some());
+    }
+
+    #[test]
+    fn letters_and_digits_are_split_and_token_fallback_ignores_order() {
+        assert_eq!(normalize("PRO X2 7D93"), "pro x 2 7 d 93");
+        let all = [prod("a", &[], &["pro x 2 lightspeed"])];
+        assert!(identify_in(&all, "", "Logitech G PRO X2 LIGHTSPEED", &[]).is_some());
+        assert!(identify_in(&all, "", "LIGHTSPEED headset PRO X 2 Gaming", &[]).is_some(), "ordre libre");
+        assert!(identify_in(&all, "", "PRO X 2 SUPERLIGHT", &[]).is_none());
     }
 
     #[test]
@@ -322,5 +366,19 @@ mod tests {
         assert_eq!(id("MSI", "MSI MAG Z790 TOMAHAWK WIFI"), Some("mb-msi-mag-z790-tomahawk-wifi"));
         assert_eq!(id("Gigabyte", "Z790 AORUS ELITE AX"), Some("mb-gigabyte-z790-aorus-elite-ax"));
         assert_eq!(id("Marque", "Carte inconnue XYZ-123"), None);
+        // Noms exacts vus dans l'onglet Éclairage de la tour de Momo.
+        assert_eq!(id("MSI", "MSI Z790 GAMING PRO WIFI (MS-7D93)"), Some("mb-msi-z790-gaming-pro-wifi"));
+        assert_eq!(identify("Micro-Star", "MSI Mystic Light", &["hid:1462:7d93:0"]).map(|p| p.id.as_str()), Some("mb-msi-z790-gaming-pro-wifi"));
+        assert_eq!(id("Cougar Gaming", "Cougar 700K EVO Gaming Keyboard"), Some("keyboard-cougar-700k-evo"));
+        assert_eq!(id("Cooler Master", "ARGB Gen 2 Controller A1"), Some("hub-coolermaster-argb-gen2-controller-a1"));
+        assert_eq!(id("Logitech", "Logitech G PRO X 2 LIGHTSPEED Gaming Headset"), Some("logitech-pro-x-2-lightspeed"));
+        assert_eq!(id("Logitech", "G PRO X Gaming Headset"), Some("logitech-pro-x-wired-headset"));
+        assert_eq!(id("Logitech", "PRO X2 LIGHTSPEED"), Some("logitech-pro-x-2-lightspeed"));
+        // Manettes : par VID:PID du navigateur / de HID, ou par le nom.
+        let usb = |u: &str| identify("", "Wireless Controller", &[u]).map(|p| p.id.as_str());
+        assert_eq!(usb("054c:0ce6"), Some("pad-sony-dualsense-wireless-controller"));
+        assert_eq!(usb("hid:054c:09cc:0"), Some("pad-sony-dualshock-4-wireless-controller"));
+        assert_eq!(identify("", "Pro Controller", &["057e:2009"]).map(|p| p.id.as_str()), Some("pad-nintendo-switch-pro-controller"));
+        assert_eq!(id("8BitDo", "8BitDo Ultimate 2 Wireless Controller"), Some("pad-8bitdo-ultimate-2-wireless"));
     }
 }
