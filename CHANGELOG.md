@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.51.2
+
+- **Inventaire** : les récepteurs 2,4 GHz génériques (`1EA7:0064` et `0066`, souris et claviers sans fil Empire Gaming/OEM) sont classés « sans éclairage RGB » : aucun logiciel officiel ni protocole d'éclairage n'existe pour ces PID (le rétroéclairage se règle aux touches FN).
+- **Casques Logitech** : le PRO X Wireless (`046D:0ABA`) est confirmé sans éclairage d'après la définition G HUB. Le PRO X 2 LIGHTSPEED (`046D:0AF7`) reste INCONNU (définition chiffrée par Logitech), aucun pilote.
+
 ## 0.51.1
 
 - **Inventaire** : à partir du rapport reçu de la tour, les concentrateurs USB et 15 alimentations Corsair (dont l'AX1600i, `1B1C:1C11`, identifiée dans iCUE) sont classés « sans éclairage RGB » au lieu de « hors catalogue ». 20 contrôleurs Corsair ajoutés au catalogue.

@@ -292,3 +292,21 @@ Aucune nouvelle analyse de G HUB n'a été faite dans ce passage (pas de téléc
 | `NO_RGB` (`rgb_catalog.rs`) | **Laissé tel quel** : l'analyse ne prouve ni la présence ni l'absence de RGB (consigne : ambigu = ne pas toucher). |
 
 **Sharkoon 1EA7:0064 / 0066 (souris 2.4G)** : (mis à jour : voir analyse-empire-gaming.md, classés sans RGB) ancien constat : **aucune source.** Aucun logiciel officiel Sharkoon relié à ces PID trouvé (Drakonia / Skiller existent pour des modèles filaires ; seule mention de 1ea7:0066 = fil Arch Linux où usbhid suffit, sans lien avec un logiciel RGB). Rien téléchargé. Les PID restent hors catalogue (test existant `rgb_catalog`).
+
+**Sharkoon 1EA7:0064 / 0066 (souris 2.4G)** : **aucune source.** Aucun logiciel officiel Sharkoon relié à ces PID trouvé (Drakonia / Skiller existent pour des modèles filaires ; seule mention de 1ea7:0066 = fil Arch Linux où usbhid suffit, sans lien avec un logiciel RGB). Rien téléchargé. Les PID restent hors catalogue (test existant `rgb_catalog`).
+
+## 12. Passage 2026-10-26 (branche logi4) : G HUB 2026.7.4691 installé puis désinstallé
+
+**Obtention** : `https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe` (CDN officiel, aussi la cible de `winget Logitech.GHUB`), signature Authenticode Valide (Logitech Inc) [V]. C'est bien un installeur en ligne (bootstrapper .NET + curl, options `--silent`, `--uninstall`) ; lancé avec `--silent` (autorisation de Momo), il a téléchargé et installé G HUB dans `C:\Program Files\LGHUB` + `C:\ProgramData\LGHUB\depots\...` (600 Mo + 1,4 Go) [V]. Aucun appareil branché, aucune trame envoyée.
+
+**Format des définitions** : `core/data/devices/devices_NNNN.json` : 14 fichiers en JSON clair (79 appareils), 65 chiffrés (en-tête `21 05 21 20`, `key-id`, clés dans `keys.json`). **Les fichiers chiffrés n'ont pas été déchiffrés** (contournement d'une protection du fournisseur, hors de l'autorisation donnée).
+
+| Appareil | Résultat |
+|---|---|
+| PRO X Wireless (046D:0ABA, modelId `pro_71_gaming_wireless_headset`) | [V] définition en clair : capacités `audio`, `powerOffTimer`, `hasBatteryStatus` ; **aucun `lightingSupport`**. Idem PRO X filaire (`pro_71_gaming_headset`) et PRO. À l'inverse G733 (`HEADSET_RGB_ZONAL`, zones TOP/BOTTOM, effets OFF/FIXED/CYCLE/BREATHING) et G735 (`HEADSET_RGB_PER_KEY`) déclarent `lightingSupport`. **Donc 0ABA : pas d'éclairage piloté par G HUB.** |
+| PRO X 2 LIGHTSPEED (046D:0AF7, modelId `prox2wirelessheadset`) | **INCONNU.** Sa définition est dans un fichier chiffré. Indices clairs [V] : le diaporama d'accueil G HUB (4 diapos) ne parle que d'audio (graphène 50 mm, EQ, DTS), Blue VO!CE et LIGHTSPEED/Bluetooth, sans éclairage ; le modelId n'apparaît que pour les cartes Blue VOICE / effets vocaux dans l'UI. Ni preuve de présence ni preuve d'absence de LED. |
+| Trames HID++ 0x0620 | INCONNU pour 0AF7 (aucune trame dans les fichiers clairs). Rien d'implémenté ; pas de fonction d'énumération ajoutée (protocole non [V]). |
+
+Pour trancher 0AF7 : soit Momo autorise le déchiffrement des définitions avec `keys.json` (réinstallation nécessaire), soit lecture seule sur la tour (feature 0x0620 GET_INFO via diagnostic).
+
+**Nettoyage** : désinstallé par `lghub_software_manager.exe --uninstall --silent` ; service `LGHUBUpdaterService`, processus lghub*, `C:\Program Files\LGHUB`, `C:\ProgramData\LGHUB` disparus ; deux pilotes ajoutés (`logi_lamparray_hid.inf`, `logi_lamparray_usb.inf`, oem173/174) retirés par `pnputil /delete-driver`. Copies d'analyse (définitions claires) dans `D:\Toolsnalyse\logitech\devices\`.

@@ -61,7 +61,9 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
 const NO_RGB: [(u16, u16, &str); 21] = [
+    // 0ABA : G HUB 2026.7 le déclare sans `lightingSupport` (définition lisible, contrairement aux G733/G735) ; analyse-logitech-ghub.md §12.
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
+    // 0AF7 (PRO X 2) : absence de LED NON prouvée (définition G HUB chiffrée) ; conservé, à lever si une preuve contraire arrive.
     (0x046D, 0x0AF7, "Casque Logitech PRO X"),
     // Concentrateurs USB : le descripteur lu sur la tour dit « Hub Controller » / « Concentrateur USB générique ».
     (0x187C, 0x1012, "Concentrateur USB (Hub Controller)"),
