@@ -4,7 +4,8 @@ Document d'interopérabilité. Aucun code ni asset HyperX copié ; seuls des fai
 
 ## Source analysée
 
-- **HyperX NGENUITY : NON analysé.** Distribué via le Microsoft Store (v2, UWP) et un installeur HP/HyperX en ligne ; pas d'installeur autonome récupéré, et installation interdite par la consigne. Aucun binaire HyperX examiné.
+- **Mise à jour 2026-10-26 : HyperX NGENUITY a depuis été analysé, voir `hyperx-ngenuity.md` (qui corrige plusieurs points ci-dessous : Origins 60/65, tapis, Elite II).**
+- (Ancien état) **HyperX NGENUITY : NON analysé.** Distribué via le Microsoft Store (v2, UWP) et un installeur HP/HyperX en ligne ; pas d'installeur autonome récupéré, et installation interdite par la consigne. Aucun binaire HyperX examiné.
 - Faits tirés d'**OpenRGB** commit `bbc7747`, `Controllers/HyperXKeyboardController/*`, `HyperXMouseController/*`, `HyperXMousematController/*` (fichiers `*Detect*.cpp` et `*Controller.cpp` lus). Marqueur (O). Code copié : aucun.
 - Copie de travail : `D:\Projet\Analyses\rgb\_src\` (hors dépôt).
 

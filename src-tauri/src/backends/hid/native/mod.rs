@@ -19,6 +19,7 @@ pub mod dualsense;
 pub mod dualshock4;
 pub mod gigabyte_fusion;
 pub mod hyperx;
+pub mod hyperx_universal;
 pub mod jbl_quantum;
 pub mod lenovo_4zone;
 pub mod lianli_uni;
@@ -164,6 +165,7 @@ pub fn settings_schema(family_id: &str, model: &Model) -> Vec<crate::core::Devic
     use crate::core::{DeviceSetting, SettingKind};
     match family_id {
         "litra" => litra::settings(model),
+        "hyperx_universal" => hyperx_universal::settings(model),
         "lenovo_4zone" => lenovo_4zone::settings(),
         "jbl_quantum" => jbl_quantum::settings(),
         // Retour du micro : feature Centurion 0x0604 (docs/rgb-protocols/analyse-logitech-ghub.md §13).
@@ -207,6 +209,7 @@ pub const FAMILIES: &[&Family] = &[
     &dualshock4::FAMILY,
     &gigabyte_fusion::FAMILY,
     &hyperx::FAMILY,
+    &hyperx_universal::FAMILY,
     &jbl_quantum::FAMILY,
     &lenovo_4zone::FAMILY,
     &lianli_uni::FAMILY,
