@@ -1,6 +1,6 @@
 [package]
 name = "purergb"
-version = "0.50.1"
+version = "0.50.2"
 description = "PureRGB — contrôle RGB, ARGB, ventilateurs, AIO et hubs pour Windows 10/11"
 authors = ["Heiphaistos"]
 edition = "2021"
@@ -31,6 +31,9 @@ tauri-plugin-dialog = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-updater = "2"
 tauri-plugin-process = "2"
+# Vérification de la signature de la mise à jour portable (self_update.rs) : déjà dans Cargo.lock via tauri-plugin-updater
+minisign-verify = "0.3"
+base64 = "0.22"
 tiny-skia = "0.11"
 ab_glyph = "0.2"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp"] }

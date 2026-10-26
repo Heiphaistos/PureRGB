@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.50.2
+
+- Correction de la mise à jour automatique : l'application se fermait sans jamais se relancer. Cause : le « job » de fermeture propre tuait l'installeur et la relance au moment où PureRGB quittait. Il est maintenant relâché juste avant (après restauration du matériel et arrêt des moteurs).
+- Version portable : la mise à jour remplace maintenant le fichier `.exe` lui-même (téléchargé depuis la release, signature vérifiée avec la clé de l'application avant tout remplacement), puis relance. Avant, c'était l'installeur qui était lancé, inadapté à la version portable.
+- La release publie `PureRGB-portable.exe.sig`.
+
 ## 0.50.1
 
 - Même contenu que 0.50.0 (la 0.50.0 n'a pas été publiée : un test de temporisation échouait sur la machine de build, rendu déterministe).

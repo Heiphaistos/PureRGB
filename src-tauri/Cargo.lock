@@ -3120,10 +3120,11 @@ dependencies = [
 
 [[package]]
 name = "purergb"
-version = "0.50.1"
+version = "0.50.2"
 dependencies = [
  "ab_glyph",
  "anyhow",
+ "base64 0.22.1",
  "des",
  "env_logger",
  "hidapi",
@@ -3131,6 +3132,7 @@ dependencies = [
  "jpeg-encoder",
  "libloading",
  "log",
+ "minisign-verify",
  "nusb",
  "parking_lot",
  "serde",

@@ -12,6 +12,7 @@ mod hotplug;
 mod inventory;
 mod led_catalog;
 mod selftest;
+mod self_update;
 mod job;
 mod netdev;
 mod product_commands;
@@ -161,7 +162,7 @@ pub(crate) fn restore_saved_state(registry: &SharedRegistry, engine: &EffectsEng
 }
 
 /// Nettoyage avant sortie (exécuté dans un thread borné, voir `shutdown.rs`) : jamais sur le thread d'interface.
-fn cleanup_before_exit(app: &tauri::AppHandle) {
+pub(crate) fn cleanup_before_exit(app: &tauri::AppHandle) {
     let state = app.state::<AppState>();
     // D'abord ce qui est rapide et qui libère les processus et le matériel...
     state.engine.shutdown();
@@ -215,6 +216,7 @@ fn init_logging() {
 pub fn run() {
     // Tous les processus enfants meurent avec PureRGB (même en cas de plantage).
     job::kill_children_on_exit();
+    self_update::cleanup_old();
     init_logging();
 
     let saved = settings::load();
@@ -595,6 +597,9 @@ pub fn run() {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            self_update::update_is_portable,
+            self_update::update_prepare,
+            self_update::update_portable,
             commands::devices::scan_devices,
             commands::devices::list_devices,
             commands::devices::backend_status,

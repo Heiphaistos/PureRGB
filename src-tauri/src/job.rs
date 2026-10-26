@@ -53,6 +53,20 @@ mod imp {
             Ok(())
         }
 
+        /// Retire « tuer à la fermeture » : les processus du job survivent à PureRGB (mise à jour).
+        pub fn disarm(&self) {
+            // SAFETY: job valide, structure initialisée à zéro (aucun drapeau).
+            unsafe {
+                let info: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = std::mem::zeroed();
+                SetInformationJobObject(
+                    self.0,
+                    JobObjectExtendedLimitInformation,
+                    &info as *const _ as *const _,
+                    size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
+                );
+            }
+        }
+
         pub fn assign_self(&self) -> Result<(), String> {
             // SAFETY: GetCurrentProcess renvoie un pseudo-handle toujours valide.
             self.assign_raw(unsafe { GetCurrentProcess() })
@@ -70,11 +84,25 @@ mod imp {
 #[cfg(windows)]
 pub use imp::KillJob;
 
+#[cfg(windows)]
+static JOB: std::sync::OnceLock<KillJob> = std::sync::OnceLock::new();
+
+/// À appeler juste avant de lancer l'installeur ou la nouvelle version : sans cela le job tue
+/// l'installeur (et la relance) dès que PureRGB quitte. Les sidecars doivent être déjà arrêtés.
+#[cfg(windows)]
+pub fn release_children() {
+    if let Some(j) = JOB.get() {
+        j.disarm();
+    }
+}
+
+#[cfg(not(windows))]
+pub fn release_children() {}
+
 /// Place le processus courant dans un job « tuer à la fermeture » qu'il garde ouvert jusqu'à sa mort.
 /// Les enfants lancés ensuite en héritent. Un échec n'est pas fatal (journalisé).
 #[cfg(windows)]
 pub fn kill_children_on_exit() {
-    static JOB: std::sync::OnceLock<KillJob> = std::sync::OnceLock::new();
     match KillJob::new().and_then(|j| j.assign_self().map(|_| j)) {
         Ok(job) => {
             let _ = JOB.set(job);
@@ -109,5 +137,21 @@ mod tests {
             assert!(t.elapsed() < Duration::from_secs(5), "le fils a survécu à la fermeture du job");
             std::thread::sleep(Duration::from_millis(50));
         }
+    }
+
+    #[test]
+    fn disarmed_job_lets_the_child_survive() {
+        let mut child = Command::new("ping")
+            .args(["-n", "30", "127.0.0.1"])
+            .stdout(Stdio::null())
+            .spawn()
+            .expect("ping disponible");
+        let job = KillJob::new().expect("job");
+        job.assign_raw(child.as_raw_handle() as _).expect("assignation");
+        job.disarm();
+        drop(job);
+        std::thread::sleep(Duration::from_millis(500));
+        assert!(child.try_wait().expect("état").is_none(), "le fils ne doit pas être tué après disarm");
+        let _ = child.kill();
     }
 }
