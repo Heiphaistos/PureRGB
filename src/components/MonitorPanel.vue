@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { invoke } from "@tauri-apps/api/core";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
-import type { DeviceInfo, Sensor } from "../types";
+import type { DeviceInfo, RamTempStatus, Sensor } from "../types";
 import { formatValue, groupSensors, levelOf, pushHistory, sparkPoints } from "../monitor";
 
 const props = defineProps<{ devices: DeviceInfo[] }>();
 
 const sensors = ref<Sensor[]>([]);
 const failed = ref(false);
+const ramStatus = ref<RamTempStatus | null>(null);
 const query = ref("");
 const hist = reactive<Record<string, number[]>>({});
 let timer: ReturnType<typeof setInterval> | undefined;
@@ -27,6 +28,7 @@ async function refresh() {
   try {
     sensors.value = await invoke<Sensor[]>("get_sensors");
     pushHistory(hist, sensors.value);
+    ramStatus.value = await invoke<RamTempStatus>("get_ram_temp_status");
     failed.value = false;
   } catch {
     failed.value = true;
@@ -58,6 +60,8 @@ onUnmounted(() => clearInterval(timer));
     <p v-if="failed || sensors.length === 0" class="note">
       Aucun capteur disponible : le module de lecture (sensord) n'est pas démarré ou la machine n'est pas prise en charge.
     </p>
+
+    <p v-if="ramStatus && ramStatus.state !== 'ok'" class="note">{{ ramStatus.message }}</p>
 
     <div v-for="g in groups" :key="g.hardware" class="hw">
       <h3>{{ g.hardware }}</h3>

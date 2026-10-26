@@ -9,12 +9,31 @@ mod corsair_dram;
 mod detect;
 #[cfg(windows)]
 mod pawnio;
+mod ramtemp;
 
 use crate::backends::Backend;
 use crate::core::{Color, DeviceInfo, DeviceType, ZoneInfo};
 use anyhow::{bail, Context, Result};
 use bus::SmbusBus;
 use corsair_dram::CorsairDram;
+use crate::sensors::Sensor;
+use serde::Serialize;
+use std::time::{Duration, Instant};
+
+/// Délai minimal entre deux lectures réelles du bus pour les températures (le front rafraîchit toutes les 2 s).
+const TEMP_TTL: Duration = Duration::from_secs(10);
+
+/// État de la lecture des températures de la RAM, affiché dans Surveillance.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct RamTempStatus {
+    /// ok | disabled | nobus | conflict | none
+    pub state: String,
+    pub message: String,
+}
+
+fn status(state: &str, message: &str) -> RamTempStatus {
+    RamTempStatus { state: state.into(), message: message.into() }
+}
 
 const NOTE: &str = "driver natif expérimental (SMBus, mode direct) : ne pas lancer iCUE en même temps";
 
@@ -32,11 +51,65 @@ pub struct SmbusBackend {
     dimms: Vec<Dimm>,
     /// Adresses vues en lecture seule (écriture non autorisée).
     seen: Vec<u8>,
+    /// Emplacements avec capteur de température (None = pas encore sondé), dernier relevé et son âge.
+    temp_slots: Option<Vec<ramtemp::Slot>>,
+    temps: Option<(Instant, RamTempStatus, Vec<Sensor>)>,
 }
 
 impl SmbusBackend {
     pub fn new(enabled: bool, writes: bool) -> Self {
-        SmbusBackend { enabled, writes, bus: None, dimms: Vec::new(), seen: Vec::new() }
+        SmbusBackend { enabled, writes, bus: None, dimms: Vec::new(), seen: Vec::new(), temp_slots: None, temps: None }
+    }
+
+    /// Températures des barrettes (LECTURE SEULE, derrière le réglage des pilotes natifs). `conflict` est appelé
+    /// à chaque vrai relevé et renvoie le nom d'un logiciel qui tient le bus (alors aucune lecture).
+    pub fn ram_temperatures(&mut self, conflict: impl FnOnce() -> Option<String>) -> (RamTempStatus, Vec<Sensor>) {
+        if !self.enabled {
+            return (status("disabled", "Températures de la mémoire désactivées : activez les pilotes natifs (SMBus) dans Réglages."), Vec::new());
+        }
+        if let Some((at, st, list)) = &self.temps {
+            if at.elapsed() < TEMP_TTL {
+                return (st.clone(), list.clone());
+            }
+        }
+        let (st, list) = self.read_temps(conflict);
+        self.temps = Some((Instant::now(), st.clone(), list.clone()));
+        (st, list)
+    }
+
+    fn read_temps(&mut self, conflict: impl FnOnce() -> Option<String>) -> (RamTempStatus, Vec<Sensor>) {
+        if let Some(name) = conflict() {
+            let msg = format!("Températures de la mémoire suspendues : {name} utilise le bus SMBus. Fermez-le pour les lire.");
+            return (status("conflict", &msg), Vec::new());
+        }
+        if self.bus.is_none() {
+            self.bus = Self::open_bus();
+        }
+        let Some(bus) = self.bus.as_mut() else {
+            return (status("nobus", "Températures de la mémoire indisponibles : accès SMBus (PawnIO) non prêt."), Vec::new());
+        };
+        let slots = self.temp_slots.get_or_insert_with(|| ramtemp::detect(bus.as_mut())).clone();
+        let list: Vec<Sensor> = slots
+            .iter()
+            .filter_map(|s| match ramtemp::read(bus.as_mut(), *s) {
+                Ok(c) => Some(Sensor {
+                    id: format!("smbus/ram/{}/temp", s.n),
+                    hardware: format!("Mémoire (DIMM {})", s.n + 1),
+                    name: "Température".into(),
+                    kind: "Temperature".into(),
+                    value: c,
+                    controllable: false,
+                }),
+                Err(e) => {
+                    log::debug!("ram temp emplacement {} : {e:#}", s.n);
+                    None
+                }
+            })
+            .collect();
+        if list.is_empty() {
+            return (status("none", "Aucune barrette avec capteur de température lisible détectée."), list);
+        }
+        (status("ok", ""), list)
     }
 
     pub fn set_writes_enabled(&mut self, on: bool) {
@@ -50,6 +123,8 @@ impl SmbusBackend {
     pub fn set_native_enabled(&mut self, on: bool) {
         self.enabled = on;
         if !on {
+            self.temp_slots = None;
+            self.temps = None;
             self.dimms.clear();
             self.seen.clear();
             self.bus = None;
@@ -196,6 +271,9 @@ mod tests {
         fn read_byte_data(&mut self, a: u8, r: u8) -> Result<u8> {
             self.0.lock().expect("verrou").read_byte_data(a, r)
         }
+        fn read_word_data(&mut self, a: u8, r: u8) -> Result<u16> {
+            self.0.lock().expect("verrou").read_word_data(a, r)
+        }
         fn write_byte_data(&mut self, a: u8, r: u8, v: u8) -> Result<()> {
             self.0.lock().expect("verrou").write_byte_data(a, r, v)
         }
@@ -265,5 +343,39 @@ mod tests {
         b.scan().expect("scan");
         b.set_native_enabled(false);
         assert!(b.scan().expect("scan").is_empty());
+    }
+
+    fn temp_backend(enabled: bool) -> (SmbusBackend, Arc<Mutex<MockBus>>) {
+        let mut m = MockBus::default();
+        m.present.insert(0x50);
+        m.mem.extend([((0x50, 0x00), 0x51), ((0x50, 0x01), 0x18), ((0x50, 0x05), 0x02), ((0x50, 0x31), 0x84), ((0x50, 0x32), 0x02)]);
+        let shared = Arc::new(Mutex::new(m));
+        let mut b = SmbusBackend::new(enabled, false);
+        b.bus = Some(Box::new(Shared(shared.clone())));
+        (b, shared)
+    }
+
+    #[test]
+    fn ram_temps_disabled_conflict_and_ok_never_write() {
+        let (mut b, bus) = temp_backend(false);
+        let (st, list) = b.ram_temperatures(|| None);
+        assert_eq!((st.state.as_str(), list.len()), ("disabled", 0));
+        assert!(bus.lock().expect("verrou").log.is_empty());
+
+        let (mut b, bus) = temp_backend(true);
+        let (st, _) = b.ram_temperatures(|| Some("Corsair iCUE".into()));
+        assert_eq!(st.state, "conflict");
+        assert!(st.message.contains("iCUE"));
+        assert!(bus.lock().expect("verrou").log.is_empty());
+
+        b.temps = None;
+        let (st, list) = b.ram_temperatures(|| None);
+        assert_eq!(st.state, "ok");
+        assert_eq!((list[0].hardware.as_str(), list[0].name.as_str(), list[0].kind.as_str(), list[0].value), ("Mémoire (DIMM 1)", "Température", "Temperature", 40.25));
+        assert!(bus.lock().expect("verrou").writes().is_empty());
+        // second appel dans le délai : pas de nouvelle transaction
+        let n = bus.lock().expect("verrou").log.len();
+        b.ram_temperatures(|| panic!("cache"));
+        assert_eq!(bus.lock().expect("verrou").log.len(), n);
     }
 }
