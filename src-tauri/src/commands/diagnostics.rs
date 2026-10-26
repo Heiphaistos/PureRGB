@@ -229,7 +229,10 @@ pub(crate) fn diagnostics_json(app: &tauri::AppHandle) -> serde_json::Result<Str
             match step {
                 0 => x.log_tail.truncate(10),
                 1 => x.devices.truncate(30),
-                _ => x.findings.clear(),
+                _ => {
+                    x.findings.clear();
+                    x.selftest = None;
+                }
             }
         }
         json = serde_json::to_string(&diag)?;

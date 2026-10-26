@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { buttonName, drift, stick } from "../gamepad";
 import GamepadRemap from "./GamepadRemap.vue";
 import PadPhoto from "./PadPhoto.vue";
+import XInputLive from "./XInputLive.vue";
 
 interface Live {
   index: number;
@@ -70,6 +71,8 @@ onUnmounted(() => cancelAnimationFrame(raf));
       Testeur en direct (lecture seule) : boutons, gâchettes, sticks, zone morte, détection de dérive et vibration. Appuyez sur un bouton
       de la manette pour la faire apparaître. L'éclairage des manettes Sony (DualSense, DualShock 4) se règle dans l'onglet Éclairage.
     </p>
+    <XInputLive :deadzone="deadzone" :browser-count="pads.length" />
+
     <p v-if="pads.length === 0" class="note">
       Aucune manette active. Branchez-la et appuyez sur un bouton (la fenêtre doit être au premier plan).
     </p>

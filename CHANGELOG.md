@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.52.2
+
+- **Manettes** : une manette Xbox ou compatible (Flydigi VADER4…) n'est plus signalée « matériel non reconnu » : toute manette vue par Windows est maintenant reconnue. Nouveau bloc « Lecture directe par Windows (XInput) » dans l'onglet Manettes : sticks, gâchettes et boutons en direct, même fenêtre en arrière-plan et même si le navigateur intégré ne voit pas la manette. Lecture seule.
+- **Test de sécurité** : les ventilateurs, les casques et les appareils sans LED sont vérifiés en lecture seule (aucune consigne envoyée) au lieu d'être écartés ; bouton « Envoyer les résultats » (appareils vus et essais joints au rapport de diagnostic, si l'envoi est autorisé).
+- **Rapport** : le bouton d'envoi se désactive pendant l'envoi (évite les rapports en double).
+
 ## 0.52.1
 
 - **Réglages refaits** : chaque catégorie remplit toute la largeur (plus de colonnes vides ni de carrés noirs) ; nouvelles sections « Mode jeu et arrière-plan » et « Appareils USB (test) » ; le bouton Enregistrer n'apparaît que là où il sert.

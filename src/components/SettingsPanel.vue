@@ -312,7 +312,7 @@ async function save() {
 
     <section v-show="section === 'security'" class="grp">
       <h3 class="cat">Test de sécurité</h3>
-      <div class="grid one"><SelfTest /></div>
+      <div class="grid one"><SelfTest :telemetry-opt-in="props.settings?.telemetry_opt_in ?? false" /></div>
     </section>
 
     <div v-if="section === 'general' || section === 'drivers' || section === 'media'" class="actions">

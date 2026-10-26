@@ -15,7 +15,24 @@ const SHOW_FOR: Duration = Duration::from_millis(1500);
 
 static TESTING: AtomicBool = AtomicBool::new(false);
 
-#[derive(Debug, Serialize)]
+/// Dernier état du test (liste des appareils + résultats des essais), joint au rapport envoyé à la télémétrie.
+static LAST: parking_lot::Mutex<serde_json::Value> = parking_lot::const_mutex(serde_json::Value::Null);
+
+fn remember(key: &str, value: serde_json::Value) {
+    let mut last = LAST.lock();
+    if !last.is_object() {
+        *last = serde_json::json!({});
+    }
+    last[key] = value;
+}
+
+/// Ce que le test a vu et fait depuis le lancement (None si le test n'a pas été ouvert).
+pub fn last_json() -> Option<serde_json::Value> {
+    let last = LAST.lock();
+    (!last.is_null()).then(|| last.clone())
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Check {
     pub label: String,
     pub ok: bool,
@@ -26,7 +43,7 @@ fn check(label: &str, ok: bool, detail: impl Into<String>) -> Check {
     Check { label: label.into(), ok, detail: detail.into() }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Item {
     pub id: String,
     pub name: String,
@@ -41,7 +58,7 @@ pub struct Item {
     pub checks: Vec<Check>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct TestResult {
     pub ok: bool,
     pub steps: Vec<Check>,
@@ -68,13 +85,22 @@ fn risk_of(d: &DeviceInfo) -> &'static str {
     }
 }
 
+/// Appareil sans LED mais avec des ventilateurs ou des réglages : on le vérifie en lecture seule (jamais de consigne envoyée).
+fn has_readonly_checks(d: &DeviceInfo) -> bool {
+    !d.fan_channels.is_empty() || !d.settings.is_empty()
+}
+
 /// Pourquoi on refuse d'écrire sur cet appareil (None = autorisé).
 fn blocked_reason(d: &DeviceInfo, ram_writes_allowed: bool) -> Option<String> {
     if !d.controllable {
         return Some("appareil détecté mais non pilotable (aucun pilote)".into());
     }
     if d.led_count == 0 {
-        return Some("nombre de LEDs inconnu : rien à tester".into());
+        return Some(if has_readonly_checks(d) {
+            "aucune LED : pas d'essai de couleur, seules les vérifications en lecture seule ci-dessous s'appliquent".into()
+        } else {
+            "nombre de LEDs inconnu : rien à tester".into()
+        });
     }
     if risk_of(d) == "élevé" && !ram_writes_allowed {
         return Some("écriture sur la mémoire non autorisée : Réglages, Appareils, « Autoriser l'écriture sur la mémoire RAM »".into());
@@ -87,7 +113,7 @@ pub fn scan(state: &AppState) -> Vec<Item> {
     let pawnio = crate::backends::openrgb::manager::OpenRgbManager::pawnio_ready();
     let active: Vec<String> = conflicts::scan().0.into_iter().filter(|c| c.active).map(|c| c.name).collect();
     let devices = state.registry.lock().device_list();
-    devices
+    let items: Vec<Item> = devices
         .iter()
         .map(|d| {
             let risk = risk_of(d);
@@ -95,13 +121,30 @@ pub fn scan(state: &AppState) -> Vec<Item> {
             let mut checks = vec![
                 check("Détecté", true, source_of(d)),
                 check("Pilote prêt", d.controllable, if d.controllable { "oui" } else { "aucun pilote ne le contrôle" }),
-                check("Nombre de LEDs connu", d.led_count > 0, format!("{} LED", d.led_count)),
                 check(
                     "Aucun logiciel concurrent actif",
                     active.is_empty(),
                     if active.is_empty() { "ok".to_string() } else { active.join(", ") },
                 ),
             ];
+            if d.led_count > 0 || !has_readonly_checks(d) {
+                checks.insert(2, check("Nombre de LEDs connu", d.led_count > 0, format!("{} LED", d.led_count)));
+            }
+            if !d.fan_channels.is_empty() {
+                let read = d.fan_channels.iter().filter(|c| c.rpm.is_some()).count();
+                checks.push(check(
+                    "Ventilateurs lisibles (lecture seule)",
+                    read > 0,
+                    format!("{} canal(aux), {read} avec une vitesse lue ; aucune consigne n'est envoyée par ce test", d.fan_channels.len()),
+                ));
+            }
+            if !d.settings.is_empty() {
+                checks.push(check(
+                    "Réglages exposés (son, DPI…)",
+                    true,
+                    format!("{} réglage(s) : {}", d.settings.len(), d.settings.iter().map(|s| s.label.as_str()).collect::<Vec<_>>().join(", ")),
+                ));
+            }
             if risk == "élevé" {
                 checks.push(check("Pilote d'accès au bus (PawnIO) prêt", pawnio, if pawnio { "oui" } else { "non" }));
                 checks.push(check("Écriture sur la mémoire autorisée", ram_writes, if ram_writes { "oui" } else { "non (réglage désactivé)" }));
@@ -118,7 +161,9 @@ pub fn scan(state: &AppState) -> Vec<Item> {
                 checks,
             }
         })
-        .collect()
+        .collect();
+    remember("items", serde_json::to_value(&items).unwrap_or_default());
+    items
 }
 
 /// Libère le verrou « un seul test à la fois » quoi qu'il arrive.
@@ -179,7 +224,11 @@ pub fn apply(state: &AppState, id: &str, confirmed: bool) -> Result<TestResult, 
     } else {
         "appareil laissé éteint (aucun effet enregistré)".to_string()
     };
-    Ok(TestResult { ok, steps, restored })
+    let result = TestResult { ok, steps, restored };
+    let mut all = LAST.lock().get("results").cloned().unwrap_or_else(|| serde_json::json!({}));
+    all[id] = serde_json::to_value(&result).unwrap_or_default();
+    remember("results", all);
+    Ok(result)
 }
 
 #[cfg(test)]
@@ -221,6 +270,26 @@ mod tests {
         assert_eq!((risk_of(&kb), blocked_reason(&kb, false)), ("standard", None));
         assert!(blocked_reason(&dev("hid", DeviceType::Keyboard, false, 100), true).unwrap().contains("non pilotable"));
         assert!(blocked_reason(&dev("hid", DeviceType::Keyboard, true, 0), true).unwrap().contains("LEDs inconnu"));
+    }
+
+    #[test]
+    fn ledless_device_with_settings_gets_readonly_checks_only() {
+        let mut headset = dev("hid", DeviceType::Headset, true, 0);
+        assert!(blocked_reason(&headset, false).unwrap().contains("LEDs inconnu"));
+        headset.settings.push(crate::core::DeviceSetting {
+            id: "sidetone".into(),
+            label: "Retour micro".into(),
+            kind: crate::core::SettingKind::Toggle,
+            default: 0,
+        });
+        assert!(has_readonly_checks(&headset));
+        assert!(blocked_reason(&headset, false).unwrap().contains("lecture seule"));
+    }
+
+    #[test]
+    fn last_result_is_kept_for_the_telemetry_report() {
+        remember("items", serde_json::json!([1]));
+        assert_eq!(last_json().unwrap()["items"][0], 1);
     }
 
     #[test]

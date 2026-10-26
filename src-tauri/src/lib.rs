@@ -27,6 +27,7 @@ mod shutdown;
 mod telemetry;
 mod trust;
 mod usbcapture;
+mod xinput;
 
 use crate::backends::hid::HidBackend;
 use crate::backends::mobo::MoboFanBackend;
@@ -514,6 +515,7 @@ pub fn run() {
             background::background_get,
             background::background_set,
             background::background_status,
+            xinput::xinput_state,
             background::background_stop,
             self_update::update_is_portable,
             self_update::update_prepare,

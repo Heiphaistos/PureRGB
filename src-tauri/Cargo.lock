@@ -3120,7 +3120,7 @@ dependencies = [
 
 [[package]]
 name = "purergb"
-version = "0.52.1"
+version = "0.52.2"
 dependencies = [
  "ab_glyph",
  "anyhow",

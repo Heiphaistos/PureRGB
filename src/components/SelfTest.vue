@@ -25,7 +25,11 @@ interface TestResult {
   restored: string;
 }
 
+const props = defineProps<{ telemetryOptIn: boolean }>();
 const items = ref<Item[] | null>(null);
+const sending = ref(false);
+const sentMsg = ref("");
+const sentOk = ref(false);
 const busy = ref(false);
 const error = ref("");
 const results = ref<Record<string, TestResult>>({});
@@ -43,6 +47,22 @@ async function scan(): Promise<void> {
     error.value = errMsg(e);
   } finally {
     busy.value = false;
+  }
+}
+
+/** Envoie le diagnostic complet, qui contient la liste des appareils testés et les résultats des essais de cette page. */
+async function sendResults(): Promise<void> {
+  sending.value = true;
+  sentMsg.value = "";
+  try {
+    await invoke("send_telemetry_report");
+    sentOk.value = true;
+    sentMsg.value = "Résultats envoyés, merci.";
+  } catch (e) {
+    sentOk.value = false;
+    sentMsg.value = `Envoi impossible : ${errMsg(e)}`;
+  } finally {
+    sending.value = false;
   }
 }
 
@@ -102,11 +122,17 @@ function allOk(item: Item): boolean {
       Étape 1 : PureRGB passe en revue chaque composant détecté sans rien lui envoyer (pilote disponible, nombre de LEDs,
       logiciels concurrents, accès au bus). Étape 2, composant par composant et seulement si vous cliquez : une couleur
       très faible est envoyée (2 écritures en tout) puis l'état d'origine est remis. Commencez par un composant à risque
-      « standard » (clavier, ventilateurs) avant la mémoire.
+      « standard » (clavier, boîtier) avant la mémoire. Les ventilateurs, les casques et les appareils sans LED sont vérifiés
+      en lecture seule : aucune consigne n'est jamais envoyée par ce test.
     </p>
     <div class="row">
       <button :disabled="busy" @click="scan">{{ busy ? "Analyse…" : items ? "Relancer l'analyse" : "Analyser mes composants" }}</button>
+      <button v-if="items && props.telemetryOptIn" :disabled="sending" @click="sendResults">{{ sending ? "Envoi…" : "Envoyer les résultats" }}</button>
     </div>
+    <p v-if="items && !props.telemetryOptIn" class="hint">
+      Pour envoyer ces résultats : Réglages › Général › Confidentialité, cochez « Envoyer les informations de diagnostic », Enregistrer.
+    </p>
+    <p v-if="sentMsg" class="sent" :class="sentOk ? 'good' : 'bad'" role="status">{{ sentOk ? "✓" : "✗" }} {{ sentMsg }}</p>
     <p v-if="error" class="err">{{ error }}</p>
 
     <div v-if="items" class="groups">
@@ -162,6 +188,9 @@ function allOk(item: Item): boolean {
 </template>
 
 <style scoped>
+.sent { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; border: 1px solid var(--border); }
+.sent.good { color: var(--ok); border-color: var(--ok); }
+.sent.bad { color: var(--err); border-color: var(--err); }
 .card {
   grid-column: 1 / -1;
   background: var(--bg-card);

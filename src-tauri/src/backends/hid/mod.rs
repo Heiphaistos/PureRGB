@@ -144,7 +144,12 @@ impl HidBackend {
     pub fn list_raw(&mut self) -> Result<Vec<RawHidDevice>> {
         let api = self.ensure_api()?;
         let mut seen: HashMap<(u16, u16, String), (String, String)> = HashMap::new();
+        // Manettes (collection Joystick/Gamepad) : toujours « reconnues » (classées par `gamepads::classify`), même sans RGB.
+        let mut pads: std::collections::HashSet<(u16, u16)> = Default::default();
         for info in api.device_list() {
+            if gamepads::is_pad_collection(info.usage_page(), info.usage()) {
+                pads.insert((info.vendor_id(), info.product_id()));
+            }
             let key = (
                 info.vendor_id(),
                 info.product_id(),
@@ -165,6 +170,7 @@ impl HidBackend {
                 manufacturer,
                 product,
                 recognized: known::find_known(vid, pid).is_some()
+                    || pads.contains(&(vid, pid))
                     || known::find_vendor(vid).is_some()
                     || known_remote::is_known_remote(vid, pid)
                     || crate::rgb_catalog::known_without_rgb(vid, pid).is_some(),

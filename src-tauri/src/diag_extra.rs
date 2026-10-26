@@ -58,6 +58,9 @@ pub struct ExtraDiag {
     pub inventory_error: Option<String>,
     /// Dernières lignes WARN/ERROR du journal, débarrassées du nom de compte.
     pub log_tail: Vec<String>,
+    /// Test de compatibilité et de sécurité (Réglages) : appareils vus et résultats des essais, s'il a été ouvert.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub selftest: Option<serde_json::Value>,
 }
 
 /// Contexte de l'inventaire : état d'OpenRGB, PawnIO, capteurs, logiciels actifs.
@@ -184,6 +187,7 @@ pub(crate) fn collect_from(state: &AppState, screens: &ScreenManager, inv: Resul
         native_drivers_enabled: state.settings.lock().native_drivers_enabled,
         inventory_error,
         log_tail: log_tail(40),
+        selftest: crate::selftest::last_json(),
     }
 }
 
