@@ -279,3 +279,16 @@ Installeur et extraits de `D:\Projet\Analyses\rgb\logitech\` supprimés ; clones
 ## 7. Complément 2026-10-25 : récepteurs LIGHTSPEED
 
 Aucune nouvelle analyse de G HUB n'a été faite dans ce passage (pas de téléchargement). L'état du §5 reste : séquence de découverte des récepteurs (`10 FF 80 02 02 00 00`, notifications de connexion, mutex partagé, un seul appareil par récepteur Lightspeed) recoupée avec OpenRGB et Solaar, non confirmée dans G HUB ; pas d'octet inconnu nouveau levé. Danger inchangé : ne jamais écrire de registre de jumelage/appairage du récepteur (déconnecte l'appareil) ; aucune écriture de profil sur mémoire embarquée n'est recommandée tant que la feature de profil embarqué n'est pas lue.
+
+## 11. Passage 2026-10-26 (branche logi3) : PRO X / PRO X 2 LIGHTSPEED et Sharkoon
+
+**G HUB toujours NON analysable** : aucun installeur hors ligne officiel (recherche web refaite : seul `lghub_installer.exe` en ligne, connexion requise [V]). La charge utile passe par le service d'accès `/pipeline/v2/access/` : la récupérer = rejouer un jeton d'accès, écarté (cf. §1). Rien téléchargé, rien extrait, Ghidra/REA non lancés (rien à décompiler : le stub ne contient aucun descripteur d'appareil).
+
+| Question | Résultat |
+|---|---|
+| PRO X 2 LIGHTSPEED (046D:0AF7) a-t-il un éclairage piloté ? | **INCONNU.** Les fiches revendeur (Micro Center, Currys, etc.) ne mentionnent ni LIGHTSYNC ni LED [V, absence de mention seulement, pas une preuve]. Indice contraire [S] : OpenRGB range « PRO X 2 » dans la famille Centurion (page 0xFFA0 usage 1, feature 0x0620 `HEADSET_RGB_HOSTMODE`), mais ce libellé de détection ne prouve pas la présence de LED sur ce modèle. Page officielle Logitech inaccessible (HTTP 403). |
+| PRO X Wireless (046D:0ABA) | **INCONNU** (aucune source ; ancien PRO X filaire/Lightspeed, sans LED connue). |
+| Trames HID++ exactes | **INCONNU** pour ces deux PID : rien d'implémenté. Les trames 0x0620 du §5 (issues d'OpenRGB, G522) ne sont pas à rejouer sur 0AF7 sans confirmation matérielle (énumération 0x0620 GET_INFO / GET_RGB_ZONE_INFO en lecture seule, à faire par Momo sur la tour). |
+| `NO_RGB` (`rgb_catalog.rs`) | **Laissé tel quel** : l'analyse ne prouve ni la présence ni l'absence de RGB (consigne : ambigu = ne pas toucher). |
+
+**Sharkoon 1EA7:0064 / 0066 (souris 2.4G)** : **aucune source.** Aucun logiciel officiel Sharkoon relié à ces PID trouvé (Drakonia / Skiller existent pour des modèles filaires ; seule mention de 1ea7:0066 = fil Arch Linux où usbhid suffit, sans lien avec un logiciel RGB). Rien téléchargé. Les PID restent hors catalogue (test existant `rgb_catalog`).
