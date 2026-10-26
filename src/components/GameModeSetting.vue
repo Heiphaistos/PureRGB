@@ -4,7 +4,15 @@ import { errMsg } from "../screens/api";
 import anticheatData from "../../src-tauri/data/gamemode_anticheat.json";
 import { gameMode, quitApp, refreshGameMode, saveGameMode } from "../gameMode";
 
-const anticheats: { name: string; exes: string[] }[] = anticheatData.anticheat;
+type Anticheat = { name: string; exes: string[]; games?: string[]; services?: string[]; drivers?: string[]; verified?: boolean; source?: string };
+const anticheats: Anticheat[] = anticheatData.anticheat;
+const search = ref("");
+const filtered = computed(() => {
+  const q = search.value.trim().toLowerCase();
+  if (!q) return anticheats;
+  return anticheats.filter((a) => [a.name, ...a.exes, ...(a.games ?? []), ...(a.drivers ?? [])].some((t) => t.toLowerCase().includes(q)));
+});
+const exeCount = anticheats.reduce((n, a) => n + a.exes.length + (a.games?.length ?? 0), 0);
 const status = computed(() => {
   if (!gameMode.enabled) return { cls: "off", label: "DÉSACTIVÉ", why: "Le mode jeu est coupé : PureRGB continue d'utiliser le matériel même pendant une partie protégée." };
   if (gameMode.active)
@@ -101,10 +109,19 @@ async function quit(): Promise<void> {
       </div>
 
       <div>
-        <h4>Anti-cheats reconnus</h4>
-        <ul class="list ac">
-          <li v-for="a in anticheats" :key="a.name"><strong>{{ a.name }}</strong><small>{{ a.exes.join(", ") }}</small></li>
-        </ul>
+        <h4>Anti-cheats reconnus ({{ anticheats.length }} familles, {{ exeCount }} exécutables)</h4>
+        <details class="acbox">
+          <summary>Afficher la liste</summary>
+          <input v-model="search" type="search" placeholder="Rechercher (nom, .exe, pilote)…" aria-label="Rechercher un anti-cheat" />
+          <ul class="list ac">
+            <li v-for="a in filtered" :key="a.name">
+              <strong>{{ a.name }}<em v-if="a.verified" title="Noms confirmés par la source"> ✓</em></strong>
+              <small>{{ [...a.exes, ...(a.games ?? [])].join(", ") }}</small>
+              <small v-if="a.drivers?.length">Pilote noyau : {{ a.drivers.join(", ") }} (non surveillé directement)</small>
+            </li>
+            <li v-if="!filtered.length">Aucun résultat.</li>
+          </ul>
+        </details>
         <template v-if="gameMode.games.length">
           <h4>Vos jeux ajoutés</h4>
           <p class="hint">{{ gameMode.games.join(", ") }}</p>
@@ -140,8 +157,11 @@ h4 { font-size: 13px; margin: 0 0 8px; }
 .sw { margin-bottom: 10px; align-items: flex-start; }
 .list { margin: 0 0 12px 16px; font-size: 13px; line-height: 1.6; }
 .list.keep { color: #3ecf6e; }
-.ac { list-style: none; margin-left: 0; columns: 2; column-gap: 16px; }
-.ac li { break-inside: avoid; display: flex; flex-direction: column; margin-bottom: 4px; }
+.ac { list-style: none; margin-left: 0; max-height: 320px; overflow-y: auto; }
+.acbox summary { cursor: pointer; font-size: 13px; margin-bottom: 8px; }
+.acbox input { width: 100%; margin-bottom: 8px; }
+.ac em { color: #3ecf6e; font-style: normal; }
+.ac li { display: flex; flex-direction: column; margin-bottom: 4px; }
 .ac small { color: var(--text-dim); font-size: 11px; word-break: break-all; }
 textarea { width: 100%; background: var(--bg); color: inherit; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 8px; }
 </style>
