@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## 0.48.0
+
+- Nouvel onglet **Surveillance** : tous les capteurs de la machine (processeur, carte graphique, carte mère, disques, tensions, fréquences, puissance, ventilateurs) regroupés par composant, avec filtre, mini-courbes, min/max et alerte de température, ainsi que la vitesse des hubs et AIO pilotés par PureRGB.
+- Températures de la RAM (DDR4 TSE2004, DDR5 SPD5118) en lecture seule via SMBus : uniquement avec le réglage des pilotes natifs, refus si un logiciel constructeur tient le bus, aucune écriture sur le bus. Jamais essayé sur du vrai matériel.
+- Nouvel onglet **Manettes** : testeur en direct (boutons, gâchettes, sticks, zone morte, dérive, vibration) et **remappage** par manette Xbox 360 virtuelle (touches, gâchettes, zones mortes radiale/axiale, courbes, anti-dérive, profils). Désactivé par défaut, suspendu par le mode jeu pour les jeux à anti-cheat, aucune installation de pilote sans confirmation (ViGEmBus 1.22.0, téléchargement épinglé SHA-256). Les jeux voient la manette physique ET la virtuelle sans HidHide (non installé par PureRGB). Nouvelle dépendance : vigem-client 0.1.4.
+- Ventilateurs : préréglages de courbe (Silencieux, Équilibré, Performance) et « Enregistrer sur tous les canaux ».
+- Flydigi : analyse du pilote filtre et des dongles (docs), détection des dongles 2,4 GHz ; pilote natif refusé faute de transport sûr et de preuve que l'éclairage est volatil.
+- Catalogue de photos : +75 références (Zotac, EVGA, Founders Edition, Sapphire, XFX, Inno3D, Gainward, ASRock, Jonsbo, Montech, Zalman, Govee, NZXT Kraken, Flydigi...), 1 295 au total.
+
 ## 0.47.0
 
 - Catalogue de photos produit : 969 -> 1 220 références (MSI cartes mères, cartes graphiques et AIO ; Gigabyte Aorus ; Noctua ; be quiet! ; Phanteks ; HYTE ; Sharkoon ; Roccat ; Wooting ; Ducky ; Turtle Beach ; manettes Sony, Xbox, 8BitDo, Flydigi). Images téléchargées et regardées, puis téléchargement réel complet par PureRGB (3 lenteurs ponctuelles sur 1 221, 1 image défaillante retirée).
