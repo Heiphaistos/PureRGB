@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## 0.51.1
+
+- **Inventaire** : à partir du rapport reçu de la tour, les concentrateurs USB et 15 alimentations Corsair (dont l'AX1600i, `1B1C:1C11`, identifiée dans iCUE) sont classés « sans éclairage RGB » au lieu de « hors catalogue ». 20 contrôleurs Corsair ajoutés au catalogue.
+- **Boîtier Cooler Master** : le `2516:01C1` est l'écran LCD Iris du HAF 700 EVO (ADB/TCP, pas un contrôleur LED) ; il est nommé et jamais adopté par le pilote natif. Noms de six autres identifiants Cooler Master corrigés d'après MasterPlus+.
+- **Documentation** : analyses MasterPlus+, iCUE, G HUB complétées. Casque Logitech PRO X 2 et souris Sharkoon : toujours INCONNU, aucun pilote ajouté.
+
 ## 0.51.0
 
 - **Surveillance** : les cartes (Processeur, Carte graphique, Carte mère, Disques, Ventilateurs, Puissance…) se déplacent par glisser-déposer (ou flèches du clavier sur la poignée), l'ordre est mémorisé, et elles se répartissent en maçonnerie sur 1 à 4 colonnes sans trou. Même chose pour les catégories de l'onglet Ventilateurs (disposition seulement, aucune règle d'écriture modifiée).
