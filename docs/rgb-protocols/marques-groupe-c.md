@@ -31,7 +31,7 @@ Control Center/Camera Hub, AVerMedia RECentral, Govee/Hue/Nanoleaf : non analys�
 | Hori / Nacon / BigBen / Thrustmaster | 0F0D, 11C9, 146B, 044F | VID [usb.ids, xpad.c]. Pas d'éclairage RGB piloté par PC trouvé (Thrustmaster Sol : détecteur OpenRGB sans VID/PID fixe, **INCONNU** côté USB) | 4 vendeurs |
 | Turtle Beach, Flydigi, GameSir | 10F5, 3537 | déjà documentés / dans le catalogue (GameSir Nova 2 Lite 100F/1098) | 0 |
 | Elgato | 0FD9 | Stream Deck déjà là. Key Light et Light Strip = **réseau** (OpenRGB `ElgatoKeyLight`) : liste sans pilote. Caméras/capture : PID absents des sources, **INCONNU** | 0 |
-| Logitech Litra | 046D | **[V litra-rs]** voir ci-dessous. Beam LX C903 piloté ; Glow C900 et Beam C901/B901 = blanc seul → NO_RGB | 1 PID + 3 NO_RGB + pilote |
+| Logitech Litra | 046D | **[V litra-rs]** voir ci-dessous. Glow C900, Beam C901/B901 : lumière blanche pilotée (marche, luminosité, température) ; Beam LX C903 : blanc + face arrière couleur | 4 PID + pilote |
 | AverMedia | 07CA | Live Gamer Ultra Pro-RGB D553 [usb.ids] ; protocole d'éclairage **INCONNU** | vendeur + 1 PID |
 | Creative | 041E | Sound BlasterX G6 déjà là ; AE-5 = carte PCI (détecteur OpenRGB sans USB) ; Katana 3247 [S] | 1 PID |
 | JBL Quantum | – | VID/PID non vérifiables dans les sources locales : **INCONNU**, rien ajouté (pas de PID inventé) | 0 |
@@ -48,7 +48,7 @@ Control Center/Camera Hub, AVerMedia RECentral, Govee/Hue/Nanoleaf : non analys�
 ## Logitech Litra : protocole [V litra-rs, MIT, une implémentation]
 
 - Interface HID : page d'usage **0xFF43** ; PID : Glow C900, Beam C901 et B901, Beam LX C903.
-- Rapports 20 octets, `11 FF <idx> <cmd> …` ; idx `04` (Glow/Beam) ou `06` (Beam LX) pour la lumière blanche : marche `1C`, luminosité `4C` (u16 grand-boutiste), température `9C` (u16, 2700 à 6500 K). Hors périmètre RGB, non implémenté.
+- Rapports 20 octets, `11 FF <idx> <cmd> …` ; idx `04` (Glow/Beam) ou `06` (Beam LX) pour la lumière blanche : marche `1C`, luminosité `4C` (u16 grand-boutiste), température `9C` (u16, 2700 à 6500 K). Implémentés (voir `litra.rs`) : la couleur choisie dans PureRGB est convertie (noir = éteint, luminosité = max(R,V,B) sur la plage Glow 20..250 / Beam 30..400 lm, température = 2700 K + 3800 K x B/(R+B), arrondie à 100 K).
 - **Face arrière couleur (Beam LX seulement)** : zone 1 à 7 : `11 FF 0C 1B <zone> R G B FF 00 00 00 FF 00 00 00 FF 00 00 00` puis validation `11 FF 0C 7B 00 00 01 00 00`. La source ramène chaque composante à 1 minimum (« l'appareil se comporte mal à 0 »). Luminosité arrière `11 FF 0A 2B 00 <%>`, marche arrière `11 FF 0A 4B <0|1>` : non utilisées.
 - Pilote : `backends/hid/native/litra.rs`, famille `litra`, **expérimental** (non vérifié sur matériel), tests MockHid (3). Aucune écriture persistante connue, non testé avec l'appareil : le rapport de validation de 9 octets de la source est complété à 20 par PureRGB (équivalent du remplissage de hidapi, à confirmer).
 
