@@ -285,3 +285,35 @@ Recoupements avec iCUE [C] qui renforcent la confiance :
 
 ### 12.4 Dangers (écritures possiblement persistantes) pour Bragi
 Aucune source (iCUE ou OpenRGB) ne dit si ces écritures vont en flash ; **traiter comme persistantes tant que non prouvé** : `1D 00`/`1E 00` (géométrie, nombre de LED, mode ventilateurs : iCUE les note « matériel » et prévoit `RequiresApplyGeometryCommand`) ; `01 03 00 01|02` (mode) ; tout ce qui touche `CoolersMode`, `CoolersFixRotateSpeed`, `CurveRPM` (formats non lus). Écriture temporaire/sûre présumée : couleurs `22 00`/`12 00`, lecture `08 xx`, firmware `02 13`, énumération `36`. Écrire le moins possible sur 1D/1E : une fois, au premier démarrage, après lecture de la valeur actuelle, et seulement si elle diffère.
+
+## 13. Complément 2026-10-26 : 1B1C:1C11 = AX1600i (alimentation, sans RGB)
+
+Origine : tour de Momo, périphérique « Corsair USBXp Driver » hors catalogue. Sources : paquets `dev-ax1600i` 5.52.0 (SHA-256 `ff79aab0...`), `clink` 5.32.99 (`3acd05c1...`, déjà §1), `clink-device-listing` 5.52.93 (`cc5872fa...`). Extraits sans exécution (7z), .NET décompilé avec `ilspycmd` (`Corsair.Devices.Flextronics`, `SiUSBXpWrapper`, `Corsair.Common.DevicesDefinitions`). Dossier de travail hors dépôt : `D:\Tools\analyse\corsair`. Aucun code copié ; faits ci-dessous. Légende : **[C]** lu dans iCUE · **[X]** source tierce · INCONNU.
+
+### 13.1 Identification [C]
+- `usb-pid 7185` = **0x1C11**, VID 6940 = 0x1B1C, `device-type: power-supply`, nom **AX1600i**, `lister-stage2: clink-device-listing` (second identifiant, 1839368 = 0x1C1108, forme étendue « RequiresExtendedPidDetection »).
+- Manifeste `ax1600i.cuebmf` : `DeviceType PSU`, `HidProto ClinkPsu`, `CoolingConfigurationType PSU`, `LedColors ["NotSingleColored"]`, `MaxLightingsPerLed 0`, `MaxSwLightingLayersCount 0`, `keyToLedMap {}`, `SupportsInstantLighting false`, `OcpNumberOfChannels 12`, `SupportedCoolingImplementations ["OnBoardControl"]`. **Aucune LED, aucun effet** : « sans RGB ». (Le champ `SupportsLightingManagementInPowerSave` est un défaut générique, pas une LED.)
+- Les autres PID `power-supply` d'iCUE (0 LED, même type) : 1C00 AX860i, 1C02 AX1500i, 1C05 HX750i, 1C06 HX850i, 1C07/1C1E HX1000i, 1C08/1C23/1C27 HX1200i, 1C0A RM650i, 1C0B RM750i, 1C0C RM850i, 1C0D RM1000i, 1C1F HX1500i. Marqués « sans RGB » dans `NO_RGB` (type seul lu pour ceux-ci). **1C25 AX1600i SHIFT** (famille LINK, Bragi) non marqué : INCONNU.
+- Énumérateur iCUE `FlextronicsDeviceDefinition` : « dongle » 1C00 et 1C02 ; classe « Barrett » = **1C0E, 1C0F, 1C10, 1C11** [C]. 1C0E..1C10 absents de la liste de paquets `dev-*` : INCONNU.
+
+### 13.2 Transport : USBXpress, pas HID [C]
+- La classe `FlextronicsSiUSBCommunicationHandle` dérive de `SI_DeviceOld` (enveloppe de `SiUSBXp.dll`, Silicon Labs **USBXpress**) ; `clink` dépend du paquet `driver-usbxp` (d'où le nom Windows « Corsair USBXp Driver »). Le périphérique n'est donc **pas** un périphérique HID : `hidapi` (PureRGB) ne le voit pas. L'ouvrir exige l'API USBXpress (DLL fournisseur, non copiable) ou un ré-implémentation des IOCTL du pilote : INCONNU, non étudié.
+- Ouverture iCUE : timeouts 200 ms lecture/écriture, vidage des tampons, **débit 115200**, puis écriture « réglages SMBus » (action 17). Lecture USB par blocs de 16 o max.
+
+### 13.3 Trame (pont USB vers PMBus) [C]
+- Codage : chaque octet envoyé = 2 symboles (quartet bas puis haut) pris dans la table `55 56 59 5A 65 66 69 6A 95 96 99 9A A5 A6 A9 AA` ; trame = 1 octet d'en-tête (`54`) + 2n symboles + 1 octet `00`. Réponse : l'octet 0 porte un code d'erreur (`(décodé & 0xF) >> 1 != 7` = erreur), les symboles 1..n-2 se décodent par quartets.
+- Actions du pont : `00` version (réponse 2 o, version = octet 1 en `haut.bas`), `08` lire mémoire (`08 07 <len>`), `11` (17) réglages SMBus (`11 02 64 00 00 00 00` : adresse 2, 100 kbit/s), `12` (18) état de la commande (ACK `00` OK, `80` occupé -> reboucler, `FF` échec), `13` (19) écrire une commande SMBus.
+- Lecture d'un registre PMBus `cmd` de `len` octets : `13 03 06 01 07 <len> <cmd>`, ACK, puis (Barrett : toujours, pause 1 ms entre étapes) interroger `12` jusqu'à OK, puis `08 07 <len>` et lire la réponse.
+- Écriture d'un registre : `13 01 04 <len+1> <cmd> <données>` puis `12`. **Hors périmètre (jamais)**.
+
+### 13.4 Capteurs (lecture PMBus, valeurs LINEAR11) [C]
+Format LINEAR11 u16 LE : exposant signé 5 bits (haut), mantisse signée 11 bits ; iCUE arrondit une mantisse impaire au pair supérieur (particularité de son décodeur).
+- Sans sélecteur : `88` VIN (V), `89` IIN, `97` PIN (W), `8D` T1 secondaire thermique, `8E` T2 ambiant secondaire, `8F` T3 primaire thermique, `90` vitesse ventilateur (tr/min), `3B` consigne ventilateur (1 o), `F0` mode ventilateur (0 normal, 1 manuel), `EE` puissance totale de sortie, `8A` tension de bus, `9A` modèle (7 o ASCII), `9B` révision (3 o).
+- Avec sélecteur de rail (écriture `00` PAGE : 0 +12 V, 1 +5 V, 2 +3,3 V, 3 -12 V, 4 +5 Vsb) : `8B` VOUT, `8C` IOUT, `96` POUT, limites `40/44/46/68`. Avec sélecteur `E7` (1..10 PCIe, 11 ATX, 12 SATA) : `E8` courant 12 V par connecteur, `E9` puissance, `EA` limite OCP, `EC` OCP actif. Les sélecteurs sont des **écritures** (volatiles à priori, jamais prouvé : INCONNU).
+- AX1600i : 10 canaux PCIe + ATX + SATA = les 12 canaux OCP du manifeste.
+
+### 13.5 Écritures iCUE à NE JAMAIS reproduire [C]
+Consigne/mode ventilateur (`3B`, `F0`, `3A`), limites de tension/courant/puissance (`40..6A`), activation/limite OCP 12 V (`EA`, `EC`, `D8` mode OCP), mise à jour du firmware (`FirmwarePackageSourceType CLinkOldFormat`).
+
+### 13.6 Verdict
+Télémétrie en lecture (watts, rendement, T°, tr/min du ventilateur de l'alimentation) **établie [C] sur le papier mais NON implémentée** : (1) transport USBXpress inaccessible par HID, (2) la séquence d'ouverture écrit des réglages au pont (action 17) et des sélecteurs PMBus, effets persistants INCONNUS, (3) non vérifiable sans envoi USB réel, interdit depuis le PC de dev. Pas de ventilateur ni de tension pilotables par PureRGB. À rouvrir seulement avec un banc dédié (même PID, USBXpress) ; sinon laisser iCUE/HWiNFO.

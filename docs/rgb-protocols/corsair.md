@@ -135,6 +135,11 @@ Rapports de 64 o (ID `00` + 64 o ; réponse lue sur 16 o) [V : commander_pro.py]
   Avant le premier envoi : 3 paquets d'activation (features `001`, `010`, `011`) dont le contenu est une constante « magique » non expliquée.
 - Ré-initialiser à chaque démarrage et reprise de veille.
 
+## Famille E : alimentations AX/HXi/RMi (1C00..1C27), SANS RGB
+
+- **1B1C:1C11 = AX1600i** (vu sur la tour de Momo : « Corsair USBXp Driver »). iCUE : `power-supply`, 0 LED (`MaxLightingsPerLed 0`). Marquée « sans RGB » (`NO_RGB`, `rgb_catalog.rs`) ainsi que 14 autres PID alimentation.
+- Transport USBXpress (Silicon Labs), pas HID ; pont USB vers PMBus à 115200. Télémétrie lisible en théorie, **non implémentée** (transport + écritures de sélecteur INCONNUES). Détail : `analyse-corsair-icue.md` §13.
+
 ## Accès bas niveau
 
 - Tout est USB HID (pas de SMBus). Le service iCUE détient les HID : détecter et demander de le fermer ; rendre la main (`01 03 00 01`) en quittant.

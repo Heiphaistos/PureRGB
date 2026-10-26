@@ -60,12 +60,29 @@ pub fn is_rgb_vendor(vid_hex: &str) -> bool {
 
 /// Périphériques USB connus SANS éclairage RGB (liste fermée, source = indication du mainteneur d'après les
 /// fiches produit) : jamais signalés comme « non pris en charge ». (VID, PID, nom.)
-const NO_RGB: [(u16, u16, &str); 4] = [
+const NO_RGB: [(u16, u16, &str); 19] = [
     (0x046D, 0x0ABA, "Casque Logitech PRO X"),
     (0x046D, 0x0AF7, "Casque Logitech PRO X"),
     // Concentrateurs USB : le descripteur lu sur la tour dit « Hub Controller » / « Concentrateur USB générique ».
     (0x187C, 0x1012, "Concentrateur USB (Hub Controller)"),
     (0x1A86, 0x8091, "Concentrateur USB générique"),
+    // Alimentations Corsair AX/HXi/RMi : iCUE les déclare `power-supply` sans LED (manifeste AX1600i : MaxLightingsPerLed 0,
+    // keyToLedMap vide, 12 canaux OCP) ; voir docs/rgb-protocols/analyse-corsair-icue.md §13. 1C25 (AX1600i SHIFT) non couvert.
+    (0x1B1C, 0x1C00, "Alimentation Corsair AX860i"),
+    (0x1B1C, 0x1C02, "Alimentation Corsair AX1500i"),
+    (0x1B1C, 0x1C05, "Alimentation Corsair HX750i"),
+    (0x1B1C, 0x1C06, "Alimentation Corsair HX850i"),
+    (0x1B1C, 0x1C07, "Alimentation Corsair HX1000i"),
+    (0x1B1C, 0x1C08, "Alimentation Corsair HX1200i"),
+    (0x1B1C, 0x1C0A, "Alimentation Corsair RM650i"),
+    (0x1B1C, 0x1C0B, "Alimentation Corsair RM750i"),
+    (0x1B1C, 0x1C0C, "Alimentation Corsair RM850i"),
+    (0x1B1C, 0x1C0D, "Alimentation Corsair RM1000i"),
+    (0x1B1C, 0x1C11, "Alimentation Corsair AX1600i"),
+    (0x1B1C, 0x1C1E, "Alimentation Corsair HX1000i"),
+    (0x1B1C, 0x1C1F, "Alimentation Corsair HX1500i"),
+    (0x1B1C, 0x1C23, "Alimentation Corsair HX1200i"),
+    (0x1B1C, 0x1C27, "Alimentation Corsair HX1200i"),
 ];
 
 /// Nom du périphérique s'il est connu pour ne PAS avoir d'éclairage RGB.
@@ -92,6 +109,13 @@ mod tests {
         assert_eq!(c.device(0x1B1C, 0xFFFF), None);
         assert_eq!(c.vendor(0x1B1C), Some("Corsair"));
         assert!(Catalog::parse("pas du json").is_err());
+    }
+
+    #[test]
+    fn corsair_psu_is_known_without_rgb() {
+        assert_eq!(known_without_rgb(0x1B1C, 0x1C11), Some("Alimentation Corsair AX1600i"));
+        assert_eq!(known_without_rgb(0x1B1C, 0x0C11), None, "Commander Pro garde son RGB");
+        assert!(catalog().device(0x1B1C, 0x0C11).is_some_and(|n| n.contains("Commander")));
     }
 
     #[test]
