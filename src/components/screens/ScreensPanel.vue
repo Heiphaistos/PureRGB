@@ -102,7 +102,7 @@ watch(screens, () => void loadStates(), { immediate: true });
 
       <div v-if="screens.length" class="cards">
         <button v-for="s in screens" :key="s.id" class="sc-card scr" @click="selectedId = s.id">
-          <ProductPhoto :vendor="s.vendor" :name="s.model" :usb="s.id" :size="96" caption @found="products[s.id] = $event">
+          <ProductPhoto :vendor="s.vendor" :name="s.model" :usb="s.id" :size="300" fill caption @found="products[s.id] = $event">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 4h18v12H3z" /><path d="M8 20h8" /><path d="M12 16v4" />
             </svg>
@@ -149,7 +149,7 @@ watch(screens, () => void loadStates(), { immediate: true });
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
@@ -160,6 +160,7 @@ watch(screens, () => void loadStates(), { immediate: true });
   align-items: flex-start;
   gap: 6px;
   padding: 16px;
+  min-width: 0;
   text-align: left;
 }
 

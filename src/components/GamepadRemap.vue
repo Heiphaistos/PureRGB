@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { errMsg } from "../screens/api";
+import PadPhoto from "./PadPhoto.vue";
 import {
   SOURCES, BUTTON_LABELS, TARGET_CHOICES, choiceToTarget, curvePath, defaultProfile, targetLabel, targetToChoice,
   withoutIdentity, type Button, type PadState, type Profile,
@@ -19,6 +20,8 @@ const draft = ref<Profile>(defaultProfile());
 const dirty = ref(false);
 const error = ref("");
 const busy = ref(false);
+/** 1re manette vue par le navigateur (photo + nom) ; le remappage lit l'emplacement XInput. */
+const padId = ref<string | null>(null);
 let timer = 0;
 
 const names = computed(() => [DEFAULT_NAME, ...Object.keys(view.value?.profiles ?? {}).filter((n) => n !== DEFAULT_NAME)]);
@@ -33,6 +36,7 @@ function load(n: string): void {
 
 async function refresh(): Promise<void> {
   try {
+    padId.value = Array.from(navigator.getGamepads?.() ?? []).find((g) => g)?.id ?? null;
     const first = view.value === null;
     view.value = await invoke<View>("gamepad_remap_status");
     if (first) load(DEFAULT_NAME);
@@ -128,6 +132,7 @@ onUnmounted(() => clearInterval(timer));
 <template>
   <section class="remap">
     <h3>Remappage (manette Xbox 360 virtuelle)</h3>
+    <PadPhoto v-if="padId" :pad-id="padId" :size="72" />
     <p class="sub">
       PureRGB lit votre manette XInput (Xbox, manettes compatibles XInput), applique le profil puis l'envoie à une manette Xbox 360
       virtuelle que les jeux voient. Désactivé par défaut. Les manettes Sony ou génériques non XInput ne sont pas lues.

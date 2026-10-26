@@ -238,6 +238,15 @@ fn vendor_of(vid: u16, name: &str, pad_vendor: Option<&str>, native: bool) -> St
     }
 }
 
+/// « Logitech G PRO X 2 LIGHTSPEED » plutôt que « Appareil Logitech » quand Windows donne la chaîne produit.
+fn vendor_display_name(vendor: &str, product: Option<&String>) -> String {
+    match product {
+        Some(p) if p.to_lowercase().contains(&vendor.to_lowercase()) => p.clone(),
+        Some(p) => format!("{vendor} {p}"),
+        None => format!("Appareil {vendor}"),
+    }
+}
+
 impl Backend for HidBackend {
     fn name(&self) -> &'static str {
         "hid"
@@ -256,10 +265,15 @@ impl Backend for HidBackend {
         // Manettes vues (collection Joystick/Gamepad) : (VID, PID, série) -> chaîne produit ; et appareils joints en Bluetooth.
         let mut pads: HashMap<(u16, u16, String), String> = HashMap::new();
         let mut bluetooth: std::collections::HashSet<(u16, u16, String)> = Default::default();
+        // Chaîne produit de chaque appareil (1re non vide) : nom d'affichage des appareils connus du seul fabricant.
+        let mut products: HashMap<(u16, u16, String), String> = HashMap::new();
         for info in api.device_list() {
             let key = (info.vendor_id(), info.product_id(), info.serial_number().unwrap_or("").to_string());
             if gamepads::is_pad_collection(info.usage_page(), info.usage()) {
                 pads.entry(key.clone()).or_insert_with(|| info.product_string().unwrap_or("").to_string());
+            }
+            if let Some(p) = info.product_string().map(str::trim).filter(|p| !p.is_empty()) {
+                products.entry(key.clone()).or_insert_with(|| p.to_string());
             }
             if matches!(info.bus_type(), hidapi::BusType::Bluetooth) {
                 bluetooth.insert(key.clone());
@@ -304,7 +318,7 @@ impl Backend for HidBackend {
             } else if let Some(k) = known::find_known(vid, pid) {
                 (k.name.to_string(), k.device_type, k.native_driver)
             } else if let Some((_, vendor_name, dtype)) = known::find_vendor(vid) {
-                (format!("Appareil {vendor_name}"), *dtype, None)
+                (vendor_display_name(vendor_name, products.get(&(vid, pid, _serial.clone()))), *dtype, None)
             } else if let Some(p) = &pad {
                 (p.name.clone(), DeviceType::Gamepad, None)
             } else {

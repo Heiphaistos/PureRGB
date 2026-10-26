@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { buttonName, drift, stick } from "../gamepad";
 import GamepadRemap from "./GamepadRemap.vue";
+import PadPhoto from "./PadPhoto.vue";
 
 interface Live {
   index: number;
@@ -79,7 +80,7 @@ onUnmounted(() => cancelAnimationFrame(raf));
     </label>
 
     <div v-for="p in pads" :key="p.index" class="card wide">
-      <h3>{{ p.id }}</h3>
+      <PadPhoto :pad-id="p.id" />
       <div class="body">
       <div class="sticks">
         <div v-for="(s, i) in sticks(p)" :key="i" class="stick">
@@ -118,7 +119,6 @@ onUnmounted(() => cancelAnimationFrame(raf));
 .note { color: var(--text-dim); }
 .dz { white-space: nowrap; max-width: 520px; display: flex; gap: 12px; align-items: center; margin-bottom: 14px; font-size: 13px; }
 .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; }
-.card h3 { font-size: 14px; margin-bottom: 10px; word-break: break-all; }
 .body { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; margin-bottom: 12px; }
 .sticks { display: flex; gap: 28px; }
 .stick { display: flex; flex-direction: column; align-items: center; gap: 4px; }

@@ -3960,7 +3960,8 @@
       "match": {
         "names": [
           "argb gen 2 a1",
-          "led controller a1"
+          "led controller a1",
+          "argb gen 2 controller a1"
         ],
         "usb": [
           "2516:0173",
@@ -3969,7 +3970,7 @@
         ]
       },
       "image": {
-        "url": "https://www.coolermaster.com/dw/image/v2/BMJD_PRD/on/demandware.static/-/Sites-cooler-master-main/default/dw17cee363/Assets/led-controller-a1/large/led-controller-a1-gallery-1.png",
+        "url": "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw630c9679/Assets/led-controller-a1/large/led-controller-a1-gallery-2.png",
         "source_page": "https://www.coolermaster.com/en-global/products/led-controller-a1/"
       }
     },
@@ -10442,7 +10443,14 @@
       "name": "Logitech F710 Wireless Gamepad",
       "match": {
         "names": [
-          "logitech g f710"
+          "logitech g f710",
+          "logitech f710",
+          "gamepad f710",
+          "f710 wireless"
+        ],
+        "usb": [
+          "046d:c219",
+          "046d:c21f"
         ]
       },
       "image": {
@@ -10457,7 +10465,13 @@
       "name": "Logitech F310 Gamepad",
       "match": {
         "names": [
-          "f310 gamepad"
+          "f310 gamepad",
+          "logitech f310",
+          "gamepad f310"
+        ],
+        "usb": [
+          "046d:c216",
+          "046d:c21d"
         ]
       },
       "image": {
@@ -17894,6 +17908,14 @@
       "match": {
         "names": [
           "xbox wireless controller"
+        ],
+        "usb": [
+          "045e:02fd",
+          "045e:02e0",
+          "045e:0b12",
+          "045e:0b13",
+          "045e:02ea",
+          "045e:02d1"
         ]
       },
       "image": {
@@ -17909,6 +17931,9 @@
       "match": {
         "names": [
           "xbox elite wireless controller series 2"
+        ],
+        "usb": [
+          "045e:0b00"
         ]
       },
       "image": {
@@ -18044,6 +18069,9 @@
       "match": {
         "names": [
           "sony dualsense"
+        ],
+        "usb": [
+          "054c:0ce6"
         ]
       },
       "image": {
@@ -18059,6 +18087,9 @@
       "match": {
         "names": [
           "dualsense edge"
+        ],
+        "usb": [
+          "054c:0df2"
         ]
       },
       "image": {
@@ -18089,6 +18120,10 @@
       "match": {
         "names": [
           "sony dualshock 4"
+        ],
+        "usb": [
+          "054c:05c4",
+          "054c:09cc"
         ]
       },
       "image": {
@@ -20141,6 +20176,160 @@
       "image": {
         "url": "https://m.media-amazon.com/images/I/61MR-fqtwsL.jpg",
         "source_page": "https://www.amazon.fr/dp/B0FLXX89P5"
+      }
+    },
+    {
+      "id": "mb-msi-z790-gaming-pro-wifi",
+      "kind": "motherboard",
+      "vendor": "MSI",
+      "name": "Z790 GAMING PRO WIFI",
+      "match": {
+        "names": [
+          "z790 gaming pro wifi",
+          "ms 7d93"
+        ],
+        "usb": [
+          "1462:7d93"
+        ]
+      },
+      "image": {
+        "url": "https://storage-asset.msi.com/global/picture/image/feature/mb/Z790/Z790-GAMING-PRO-WIFI/modelblock-gaming-pd.png",
+        "source_page": "https://www.msi.com/Motherboard/Z790-GAMING-PRO-WIFI"
+      }
+    },
+    {
+      "id": "keyboard-cougar-700k-evo",
+      "kind": "keyboard",
+      "vendor": "Cougar",
+      "name": "700K EVO",
+      "match": {
+        "names": [
+          "cougar 700k evo",
+          "700k evo"
+        ]
+      },
+      "image": {
+        "url": "https://cougargaming.com/_cgrwdr_/wwdpp/wp-content/uploads/2019/07/01-700kevo--1024x819.png",
+        "source_page": "https://cougargaming.com/de/products/keyboards/700k-evo/"
+      }
+    },
+    {
+      "id": "logitech-pro-x-wired-headset",
+      "kind": "other",
+      "vendor": "Logitech G",
+      "name": "Logitech G PRO X Gaming Headset",
+      "match": {
+        "names": [
+          "pro x gaming headset",
+          "pro x wired gaming headset",
+          "pro x headset"
+        ]
+      },
+      "image": {
+        "url": "https://resource.logitechg.com/c_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/gaming/en/products/pro-x/pro-headset-gallery-1.png",
+        "source_page": "https://www.logitechg.com/en-us/products/gaming-audio/pro-x-gaming-headset.981-000817.html"
+      }
+    },
+    {
+      "id": "pad-nintendo-switch-pro-controller",
+      "kind": "other",
+      "vendor": "Nintendo",
+      "name": "Nintendo Switch Pro Controller",
+      "match": {
+        "names": [
+          "nintendo switch pro controller",
+          "switch pro controller"
+        ],
+        "usb": [
+          "057e:2009"
+        ]
+      },
+      "image": {
+        "url": "https://assets.nintendo.com/image/upload/ncom/en_US/products/accessories/nintendo-switch/controllers/pro-controllers/nintendo-switch-pro-controller/104888-nintendo-switch-pro-controller-black-angle-1200x675.png",
+        "source_page": "https://www.nintendo.com/us/store/products/pro-controller/"
+      }
+    },
+    {
+      "id": "pad-nintendo-joy-con",
+      "kind": "other",
+      "vendor": "Nintendo",
+      "name": "Nintendo Switch Joy-Con (L)/(R)",
+      "match": {
+        "names": [
+          "joy con"
+        ],
+        "usb": [
+          "057e:2006",
+          "057e:2007"
+        ]
+      },
+      "image": {
+        "url": "https://assets.nintendo.com/image/upload/ncom/en_US/products/accessories/nintendo-switch/controllers/joy-con-controllers/joy-con-neon-red-neon-blue/104882-nintendo-switch-joy-con-red-blue-1200x675.png",
+        "source_page": "https://www.nintendo.com/us/store/products/joy-con-set-l-r-neon-red-neon-blue/"
+      }
+    },
+    {
+      "id": "pad-8bitdo-ultimate-2-wireless",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Ultimate 2 Wireless Controller",
+      "match": {
+        "names": [
+          "8bitdo ultimate 2 wireless",
+          "ultimate 2 wireless"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/2025/ultimate-2-wireless/01-l.jpg",
+        "source_page": "https://www.8bitdo.com/ultimate-2-wireless-controller"
+      }
+    },
+    {
+      "id": "pad-8bitdo-ultimate-2-bluetooth",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Ultimate 2 Bluetooth Controller",
+      "match": {
+        "names": [
+          "8bitdo ultimate 2 bluetooth",
+          "ultimate 2 bluetooth"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/2025/ultimate-2-bluetooth/01-l.jpg",
+        "source_page": "https://www.8bitdo.com/ultimate-2-bluetooth-controller"
+      }
+    },
+    {
+      "id": "pad-8bitdo-pro-3",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo Pro 3 Bluetooth Gamepad",
+      "match": {
+        "names": [
+          "8bitdo pro 3",
+          "pro 3 bluetooth"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/2025/pro3/01-l.jpg",
+        "source_page": "https://www.8bitdo.com/pro3"
+      }
+    },
+    {
+      "id": "pad-8bitdo-64-wireless",
+      "kind": "other",
+      "vendor": "8BitDo",
+      "name": "8BitDo 64 Wireless Controller",
+      "match": {
+        "names": [
+          "8bitdo 64 wireless",
+          "64 wireless controller"
+        ]
+      },
+      "image": {
+        "url": "https://www.8bitdo.com/images/products/64-wireless-controller.jpg",
+        "source_page": "https://www.8bitdo.com/"
       }
     }
   ]

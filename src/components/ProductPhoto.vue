@@ -11,6 +11,8 @@ const props = defineProps<{
   size?: number;
   /** Légende « Photo : fabricant » avec lien vers la page source. */
   caption?: boolean;
+  /** Photo pleine largeur du conteneur (bandeau), au lieu d'une vignette. */
+  fill?: boolean;
 }>();
 const emit = defineEmits<{ found: [product: ProductView | null] }>();
 
@@ -42,7 +44,7 @@ watch(() => [props.vendor, props.name, props.usb, photosEnabled.value], load);
 </script>
 
 <template>
-  <span v-if="loading || src" class="pp">
+  <span v-if="loading || src" class="pp" :class="{ fill }">
     <span class="pp-box" :style="{ height: `${size ?? 48}px` }">
       <span v-if="loading" class="pp-skel" :style="{ width: `${(size ?? 48) * 1.4}px` }"></span>
       <img v-else-if="src" :src="src" :alt="product?.name ?? name" :title="product?.name" class="pp-img" draggable="false" />
@@ -64,6 +66,16 @@ watch(() => [props.vendor, props.name, props.usb, photosEnabled.value], load);
   align-items: center;
   gap: 2px;
   max-width: 100%;
+}
+.pp.fill {
+  display: flex;
+  width: 100%;
+}
+.pp.fill .pp-box {
+  width: 100%;
+  justify-content: center;
+  background: #fff; /* les photos fabricant ont un fond blanc : bandeau continu, sans bords noirs */
+  border-radius: var(--radius, 8px);
 }
 .pp-box {
   display: inline-flex;
