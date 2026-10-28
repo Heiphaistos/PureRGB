@@ -67,7 +67,7 @@ windows-sys = { version = "0.61", features = [
 
 # Lecture vidéo via Media Foundation (screens/video_mf.rs). 0.61 = version déjà tirée par tauri/wry
 # dans Cargo.lock : aucune seconde copie de la crate. Fonctionnalités minimales.
-windows = { version = "0.61", features = [
+windows = { version = "0.62", features = [
     "Win32_Foundation",
     "Win32_Media_MediaFoundation",
     "Win32_System_Com",
