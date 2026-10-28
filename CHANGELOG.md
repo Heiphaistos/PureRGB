@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.52.3
+
+- Mises à jour de sécurité des dépendances : vite 8.3.5 (alertes Dependabot), vue 3.5.44, tauri-plugin-single-instance 2.5.4.
+
 ## 0.52.2
 
 - **Manettes** : une manette Xbox ou compatible (Flydigi VADER4…) n'est plus signalée « matériel non reconnu » : toute manette vue par Windows est maintenant reconnue. Nouveau bloc « Lecture directe par Windows (XInput) » dans l'onglet Manettes : sticks, gâchettes et boutons en direct, même fenêtre en arrière-plan et même si le navigateur intégré ne voit pas la manette. Lecture seule.

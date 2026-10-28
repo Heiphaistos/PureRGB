@@ -1,7 +1,7 @@
 {
   "name": "purergb",
   "private": true,
-  "version": "0.52.2",
+  "version": "0.52.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,13 +16,13 @@
     "@tauri-apps/plugin-notification": "^2.5.1",
     "@tauri-apps/plugin-process": "^2.4.0",
     "@tauri-apps/plugin-updater": "^2.14.0",
-    "vue": "^3.5.43"
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.12.1",
     "@vitejs/plugin-vue": "^6.0.9",
     "typescript": "^6.0.3",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vue-tsc": "^3.3.11"
   }
 }
