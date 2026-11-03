@@ -34,6 +34,10 @@ use std::time::{Duration, Instant};
 
 const VID: u16 = 0x1CBE;
 const DESKTOP_VID: u16 = 0x1A86;
+// CodeQL `rust/hard-coded-cryptographic-value` + `rust/weak-cryptographic-algorithm` : faux positif justifié.
+// Ce n'est PAS un secret ni une protection : c'est la constante du protocole USB imposée par le firmware TURZX/Lian Li
+// (l'écran déchiffre l'en-tête de commande avec cette clé fixe, publique dans les pilotes cités en tête de fichier).
+// DES sert ici d'encodage de trame matériel ; aucune donnée sensible ne transite. La changer rendrait l'écran muet.
 const KEY: [u8; 8] = *b"slv3tuzx";
 const CMD_GET_VER: u8 = 0x0A;
 const CMD_BRIGHTNESS: u8 = 0x0E;
@@ -109,6 +113,7 @@ fn model(pid: u16) -> Option<&'static Model> {
 }
 
 /// DES-CBC sans bourrage : `data.len()` doit être un multiple de 8.
+/// Encodage de trame exigé par le matériel (voir `KEY`), pas de la cryptographie de sécurité.
 fn des_cbc_encrypt(key: &[u8; 8], iv: &[u8; 8], data: &[u8]) -> Result<Vec<u8>> {
     if data.len() % 8 != 0 {
         bail!("Données DES non alignées sur 8 octets ({}).", data.len());

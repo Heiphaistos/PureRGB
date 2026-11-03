@@ -162,6 +162,9 @@ export const mock = {
     if (file.type.startsWith("video/") && ffmpegMock.needsDecoder(file.name)) {
       throw new Error("DECODEUR_MANQUANT: Windows ne sait pas lire cette vidéo (démonstration)");
     }
+    // CodeQL `js/xss-through-dom` (ligne `v.src = url`) : faux positif justifié. `url` est une URL `blob:` créée par
+    // le navigateur pour ce File et donnée à un <video>/<img> : jamais interprétée comme HTML ni comme `javascript:`.
+    // (`srcObject = file` n'est pas une alternative : Chromium/WebView2 n'accepte que des MediaStream.)
     const url = URL.createObjectURL(file);
     if (file.type.startsWith("video/")) {
       const v = document.createElement("video");
