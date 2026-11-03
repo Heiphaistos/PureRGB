@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.53.0
+
+- Mises à jour de sécurité des dépendances : tauri-plugin-updater 2.14.1 (retire zip 4.6.1 vulnérable), zip 9.3.0 (alertes Dependabot).
+
 ## 0.52.3
 
 - Mises à jour de sécurité des dépendances : vite 8.3.5 (alertes Dependabot), vue 3.5.44, tauri-plugin-single-instance 2.5.4.
