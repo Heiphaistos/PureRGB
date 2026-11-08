@@ -189,6 +189,19 @@ fn usb(inv: &Inventory, devices: &[DeviceInfo], ctx: &Context, out: &mut Vec<Fin
                 "Cet appareil n'a pas d'éclairage : rien à piloter, aucune action requise."));
             continue;
         }
+        // Mini-écran géré par l'onglet Écrans : pas « hors catalogue » (il a son propre pilote).
+        if let Some(e) = crate::screens::drivers::catalog::find(u.vid, u.pid) {
+            out.push(f("USB", Status::Info, format!("{} (USB {:04X}:{:04X}) : écran pris en charge", crate::screens::drivers::catalog::display_name(e), u.vid, u.pid),
+                "Géré par l'onglet Écrans de PureRGB : pas d'éclairage à piloter ici."));
+            continue;
+        }
+        // Déjà identifié par un pilote HID natif mais sans éclairage à piloter (ex. écran Iris d'un boîtier) : pas « hors catalogue ».
+        let hid_id = format!("hid:{:04x}:{:04x}", u.vid, u.pid);
+        if let Some(d) = devices.iter().find(|d| !d.controllable && d.id.starts_with(&hid_id)) {
+            out.push(f("USB", Status::Info, format!("{} (USB {:04X}:{:04X}) : reconnu, rien à piloter", d.name, u.vid, u.pid),
+                "Appareil identifié par PureRGB ; il n'expose aucun éclairage pilotable ici."));
+            continue;
+        }
         let Some(vendor) = cat.vendor(u.vid) else { continue };
         let key = vendor.split([' ', '/']).next().unwrap_or(vendor).to_lowercase();
         let model_name = cat.device(u.vid, u.pid);
@@ -458,6 +471,35 @@ mod tests {
         let inv = collect().expect("inventaire");
         println!("{inv:#?}");
         assert!(!inv.board.product.is_empty() || !inv.gpus.is_empty());
+    }
+
+    #[test]
+    fn supported_mini_screens_are_not_reported_as_out_of_catalog() {
+        let mut inv = Inventory::default();
+        for (vid, pid) in [(0x0416, 0x5408), (0x2516, 0x01C1)] {
+            inv.usb.push(UsbDev { vid, pid, name: "Périphérique d’entrée USB".into() });
+        }
+        let iris = DeviceInfo {
+            id: "hid:2516:01c1:0".into(),
+            name: "Cooler Master HAF 700 EVO (écran Iris, ADB)".into(),
+            vendor: "Cooler Master".into(),
+            backend: "hid".into(),
+            device_type: DeviceType::Case,
+            zones: vec![],
+            led_count: 0,
+            fan_channels: vec![],
+            settings: vec![],
+            controllable: false,
+            has_lcd: false,
+            modes: vec![],
+            active_mode: -1,
+            note: String::new(),
+        };
+        let r = analyze(&inv, &[iris], &Context::default());
+        let usb: Vec<_> = r.iter().filter(|x| x.category == "USB").collect();
+        assert_eq!(usb.len(), 2);
+        assert!(usb.iter().all(|x| x.title.contains("écran pris en charge") || x.title.contains("reconnu, rien à piloter")), "{usb:?}");
+        assert!(!r.iter().any(|x| x.title.contains("hors catalogue")));
     }
 
     #[test]

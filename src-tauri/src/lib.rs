@@ -171,6 +171,7 @@ pub(crate) fn cleanup_before_exit(app: &tauri::AppHandle) {
 /// Pas utilisé pour les mises à jour : l'exécutable en cours ne doit pas rester ouvert.
 pub(crate) fn cleanup_for_quit(app: &tauri::AppHandle) {
     let sm = app.state::<std::sync::Arc<screens::manager::ScreenManager>>();
+    backends::openrgb::abort_all(); // débloque un envoi OpenRGB en attente avant de prendre les verrous
     let (chosen, facts) = {
         let s = app.state::<AppState>().settings.lock().clone();
         (
@@ -231,11 +232,16 @@ pub(crate) fn cleanup(app: &tauri::AppHandle, keep: background::Modules, restore
         background::handover_save(&families); // pris en charge par le processus suivant
         return;
     }
-    for key in families {
-        if let Err(e) = conflicts::restore_family(&key, &std::collections::HashMap::new()) {
-            log::warn!("redémarrage auto {key}: {e:#}");
+    // En parallèle : chaque famille énumère les services puis les démarre ; en série, deux familles dépassaient l'échéance.
+    std::thread::scope(|sc| {
+        for key in &families {
+            sc.spawn(move || {
+                if let Err(e) = conflicts::restore_family(key, &std::collections::HashMap::new()) {
+                    log::warn!("redémarrage auto {key}: {e:#}");
+                }
+            });
         }
-    }
+    });
 }
 
 /// Journal dans %APPDATA%\PureRGB\purergb.log (l'exe n'a pas de console) ; repli stderr. Repart de zéro au-delà de 1 Mo.

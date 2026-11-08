@@ -116,10 +116,14 @@ impl ScreenManager {
         for mut p in providers(with_sim) {
             match p.detect() {
                 Ok(mut d) => found.append(&mut d),
-                Err(e) => {
-                    log::warn!("détection d'écrans ({}) : {e:#}", p.name());
-                    errors.push(format!("{} : {e:#}", p.name()));
-                }
+                Err(e) => errors.push(format!("{} : {e:#}", p.name())),
+            }
+        }
+        // Journal : seulement quand la liste d'échecs change (la détection automatique repasse toutes les quelques secondes
+        // tant qu'un logiciel constructeur tient l'écran : 52 doublons dans un seul rapport de télémétrie).
+        if *self.errors.lock() != errors {
+            for e in &errors {
+                log::warn!("détection d'écrans : {e}");
             }
         }
         *self.errors.lock() = errors;

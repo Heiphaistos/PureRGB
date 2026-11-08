@@ -10,13 +10,35 @@ use crate::core::{Color, DeviceInfo, ModeInfo};
 use anyhow::{bail, Context, Result};
 use protocol as p;
 use std::io::{Read, Write};
-use std::net::TcpStream;
-use std::time::Duration;
+use parking_lot::Mutex;
+use std::net::{Shutdown, TcpStream};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::{Duration, Instant};
+
+/// Pause après un échec de connexion : le moteur d'effets renvoie les couleurs à chaque image ; sans pause chaque image
+/// attendait 1,5 s de timeout en tenant le verrou du registre (interface et fermeture bloquées, centaines d'avertissements).
+const RETRY_PAUSE: Duration = Duration::from_secs(3);
+
+/// Fermeture de l'app en cours : plus aucune connexion OpenRGB ne s'ouvre.
+static CLOSING: AtomicBool = AtomicBool::new(false);
+/// Copie de la connexion vivante, atteignable SANS le verrou du registre (tenu par un envoi bloqué).
+static LIVE: Mutex<Option<TcpStream>> = Mutex::new(None);
+
+/// À la fermeture : coupe la socket pour débloquer tout envoi/lecture en attente (sinon jusqu'à 5 s de délai)
+/// et interdit les nouvelles connexions.
+pub fn abort_all() {
+    CLOSING.store(true, Ordering::SeqCst);
+    if let Some(s) = LIVE.lock().take() {
+        let _ = s.shutdown(Shutdown::Both);
+    }
+}
 
 pub struct OpenRgbBackend {
     host: String,
     port: u16,
     stream: Option<TcpStream>,
+    /// Aucune nouvelle tentative de connexion avant cet instant (après un échec).
+    retry_after: Option<Instant>,
     /// Nb de LEDs par contrôleur, indexé par id local, rempli au scan.
     led_counts: Vec<u32>,
     /// Contrôleurs déjà passés en mode custom (Direct).
@@ -31,6 +53,7 @@ impl OpenRgbBackend {
             host,
             port,
             stream: None,
+            retry_after: None,
             led_counts: Vec::new(),
             custom_mode_set: Vec::new(),
             modes_cache: Vec::new(),
@@ -109,12 +132,25 @@ impl OpenRgbBackend {
         self.host = host;
         self.port = port;
         self.stream = None;
+        self.retry_after = None;
     }
 
     fn connect(&mut self) -> Result<()> {
         if self.stream.is_some() {
             return Ok(());
         }
+        if CLOSING.load(Ordering::SeqCst) {
+            bail!("fermeture en cours");
+        }
+        if self.retry_after.is_some_and(|t| Instant::now() < t) {
+            bail!("serveur OpenRGB injoignable (nouvelle tentative dans quelques secondes)");
+        }
+        let r = self.connect_now();
+        self.retry_after = r.is_err().then(|| Instant::now() + RETRY_PAUSE);
+        r
+    }
+
+    fn connect_now(&mut self) -> Result<()> {
         let addr = format!("{}:{}", self.host, self.port);
         let stream = TcpStream::connect_timeout(
             &addr
@@ -133,6 +169,7 @@ impl OpenRgbBackend {
         stream.set_read_timeout(Some(Duration::from_secs(5)))?;
         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
         stream.set_nodelay(true)?;
+        *LIVE.lock() = stream.try_clone().ok();
         self.stream = Some(stream);
 
         // Handshake : version protocole puis nom client.
@@ -231,6 +268,7 @@ impl Backend for OpenRgbBackend {
     }
 
     fn scan(&mut self) -> Result<Vec<DeviceInfo>> {
+        self.retry_after = None; // recherche demandée : on réessaie tout de suite
         self.connect()?;
         let count = self.controller_count()?;
         let mut devices = Vec::with_capacity(count as usize);
@@ -357,5 +395,24 @@ mod tests {
         b.custom_mode_set = vec![false];
         b.set_colors("0", &[Color::new(1, 2, 3), Color::new(4, 5, 6)]).unwrap();
         assert!(done.load(Ordering::SeqCst), "la trame doit être traitée avant le retour (pas de file d'attente cachée)");
+    }
+}
+
+#[cfg(test)]
+mod retry_tests {
+    use super::*;
+
+    #[test]
+    fn failed_connection_pauses_further_attempts() {
+        // Port local fermé : le premier essai échoue pour de vrai, le suivant est refusé sans toucher au réseau.
+        let port = std::net::TcpListener::bind("127.0.0.1:0").unwrap().local_addr().unwrap().port();
+        let mut b = OpenRgbBackend::new("127.0.0.1".into(), port);
+        assert!(b.connect().is_err());
+        let t = Instant::now();
+        let e = b.connect().unwrap_err().to_string();
+        assert!(e.contains("nouvelle tentative"), "{e}");
+        assert!(t.elapsed() < Duration::from_millis(50));
+        b.set_endpoint("127.0.0.1".into(), port);
+        assert!(b.retry_after.is_none());
     }
 }

@@ -479,41 +479,43 @@ pub fn restore_family(key: &str, saved_modes: &HashMap<String, String>) -> Resul
     let fam = find_family(key)?;
     let all = list_services()?;
     let services = family_services(fam, &all);
-    let mut restored = Vec::new();
-
-    for svc in &services {
-        let mode = saved_modes
-            .get(&svc.name)
-            .map(String::as_str)
-            .unwrap_or(if svc.start_mode.eq_ignore_ascii_case("Disabled") {
-                "Automatic"
-            } else {
-                svc.start_mode.as_str()
-            });
-        // Win32_Service dit "Auto", Set-Service attend "Automatic".
-        let mode = match mode.to_lowercase().as_str() {
-            "auto" | "automatic" => "Automatic",
-            "manual" => "Manual",
-            "disabled" => "Automatic",
-            other => {
-                log::warn!("mode inattendu {other}, Automatic par défaut");
-                "Automatic"
+    // Un Start-Service peut attendre plusieurs secondes : tous les services de la famille démarrent en parallèle
+    // (la fermeture de l'app est bornée dans le temps, voir shutdown.rs).
+    let restored: Vec<String> = std::thread::scope(|sc| {
+        let jobs: Vec<_> = services
+            .iter()
+            .map(|svc| {
+                let mode = saved_modes
+                    .get(&svc.name)
+                    .map(String::as_str)
+                    .unwrap_or(if svc.start_mode.eq_ignore_ascii_case("Disabled") { "Automatic" } else { svc.start_mode.as_str() });
+                // Win32_Service dit "Auto", Set-Service attend "Automatic".
+                let mode = match mode.to_lowercase().as_str() {
+                    "auto" | "automatic" => "Automatic",
+                    "manual" => "Manual",
+                    "disabled" => "Automatic",
+                    other => {
+                        log::warn!("mode inattendu {other}, Automatic par défaut");
+                        "Automatic"
+                    }
+                };
+                let name = svc.name.replace('\'', "''");
+                let script = format!(
+                    "Set-Service -Name '{name}' -StartupType {mode}; Start-Service -Name '{name}' -ErrorAction SilentlyContinue"
+                );
+                sc.spawn(move || (svc, run_powershell(&script)))
+            })
+            .collect();
+        let mut ok = Vec::new();
+        for j in jobs {
+            let Ok((svc, out)) = j.join() else { continue };
+            match out {
+                Ok(o) if o.status.success() => ok.push(svc.name.clone()),
+                Ok(o) => log::warn!("restauration {}: {}", svc.name, String::from_utf8_lossy(&o.stderr)),
+                Err(e) => log::warn!("restauration {}: {e:#}", svc.name),
             }
-        };
-        let name = svc.name.replace('\'', "''");
-        let script = format!(
-            "Set-Service -Name '{name}' -StartupType {mode}; Start-Service -Name '{name}' -ErrorAction SilentlyContinue"
-        );
-        let out = run_powershell(&script)?;
-        if out.status.success() {
-            restored.push(svc.name.clone());
-        } else {
-            log::warn!(
-                "restauration {}: {}",
-                svc.name,
-                String::from_utf8_lossy(&out.stderr)
-            );
         }
-    }
+        ok
+    });
     Ok(restored)
 }

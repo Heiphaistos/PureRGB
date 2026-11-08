@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## 0.54.0
+
+- **Écran Thermalright / Trofeo non visible** : quand TRCC tient l'écran, la page Écrans propose le bouton « Fermer TRCC et réessayer » (ferme TRCC et ses services sans désactiver leur démarrage, puis relance la recherche).
+- **OpenRGB** : après un échec de connexion, pause de 3 s avant la tentative suivante. Auparavant chaque image d'animation attendait 1,5 s de délai en tenant le verrou du registre, ce qui bloquait l'interface et la fermeture (des centaines d'avertissements « connection timed out » dans la télémétrie).
+- **Fermeture** : coupure immédiate de la connexion OpenRGB, et redémarrage des logiciels constructeur (iCUE, TRCC) en parallèle. Le nettoyage dépassait l'échéance de 8 s et abandonnait.
+- **Diagnostic** : les mini-écrans pris en charge (0416:5408…) et les appareils déjà reconnus sans éclairage (écran Iris 2516:01C1) ne sont plus signalés « hors catalogue ».
+- **Journal** : l'échec de détection d'écran n'est écrit qu'une fois tant qu'il ne change pas (52 doublons dans un seul rapport).
+
 ## 0.53.0
 
 - Mises à jour de sécurité des dépendances : tauri-plugin-updater 2.14.1 (retire zip 4.6.1 vulnérable), zip 9.3.0 (alertes Dependabot).

@@ -225,7 +225,7 @@ impl ScreenProvider for LyProvider {
             match res.and_then(|t| LyScreen::connect(t, id, entry)) {
                 Ok(s) => found.push(Box::new(s)),
                 Err(e) => {
-                    log::warn!("Écran USB {:04X}:{:04X} ignoré : {e}", entry.vid, entry.pid);
+                    log::debug!("Écran USB {:04X}:{:04X} ignoré : {e}", entry.vid, entry.pid); // le gestionnaire journalise l'échec une fois
                     first_err.get_or_insert(e);
                 }
             }

@@ -48,6 +48,10 @@ export const scanScreens = (withSimulated = false): Promise<ScreenInfo[]> =>
 export const scanErrors = (): Promise<string[]> =>
   demo.value ? Promise.resolve([]) : invoke<string[]>("screens_errors").catch(() => []);
 
+/** Ferme TRCC (processus + services, sans désactiver leur démarrage) pour libérer l'écran Thermalright. */
+export const freeThermalrightScreen = (): Promise<void> =>
+  demo.value ? Promise.resolve() : invoke<void>("conflict_stop", { family: "thermalright", disable: false });
+
 export const screenState = (id: string): Promise<ScreenState> =>
   demo.value ? mock.screenState(id) : invoke<ScreenState>("screen_state", { id });
 

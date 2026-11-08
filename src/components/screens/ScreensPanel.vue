@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { demo, errMsg, scanErrors, screenState } from "../../screens/api.ts";
+import { demo, errMsg, freeThermalrightScreen, scanErrors, screenState } from "../../screens/api.ts";
 import { loadScreens, loaded, scan, scanning, screens } from "../../screens/store.ts";
 import type { ScreenInfo, ScreenState } from "../../screens/types.ts";
 import ProductPhoto from "../ProductPhoto.vue";
@@ -51,6 +51,18 @@ async function doScan(withSim = false): Promise<void> {
     emit("toast", screens.value.length ? `${screens.value.length} écran(s) détecté(s)` : "Aucun écran détecté");
   } catch (e) {
     emit("toast", `Recherche d'écrans : ${errMsg(e)}`);
+  }
+}
+
+/** TRCC (ou son service) tient l'écran : on propose de le fermer en un clic, puis de relancer la recherche. */
+const heldByTrcc = computed(() => reasons.value.some((r) => /trcc|thermalright/i.test(r) && /déjà utilisé/i.test(r)));
+
+async function freeAndScan(): Promise<void> {
+  try {
+    await freeThermalrightScreen();
+    await doScan(false);
+  } catch (e) {
+    emit("toast", `Fermeture de TRCC : ${errMsg(e)}`);
   }
 }
 
@@ -134,6 +146,9 @@ watch(screens, () => void loadStates(), { immediate: true });
         <div class="sc-row center">
           <button class="primary" :disabled="scanning" @click="doScan(false)">Rechercher</button>
           <button :disabled="scanning" @click="doScan(true)">Écran simulé</button>
+        </div>
+        <div v-if="heldByTrcc" class="sc-row center">
+          <button class="primary" :disabled="scanning" @click="freeAndScan">Fermer TRCC et réessayer</button>
         </div>
         <ul v-if="reasons.length" class="sc-err">
           <li v-for="r in reasons" :key="r">{{ r }}</li>
