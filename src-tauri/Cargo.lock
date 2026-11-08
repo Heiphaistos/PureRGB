@@ -3112,7 +3112,7 @@ version = "0.54.0"
 dependencies = [
  "ab_glyph",
  "anyhow",
- "base64 0.22.1",
+ "base64 0.23.1",
  "des",
  "env_logger",
  "hidapi",
