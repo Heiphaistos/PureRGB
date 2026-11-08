@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.55.0
+
+- **Audio du casque** : la fiche d'un casque, d'un micro ou d'un haut-parleur propose le volume et la sourdine Windows de ses sorties et entrées (comme le mélangeur système), avec repérage automatique des entrées de l'appareil (ex. G PRO X 2) et bouton pour afficher tous les périphériques audio. Le retour du micro (sidetone) reste réglable dans « Réglages de l'appareil ». L'égaliseur embarqué du casque n'est pas ajouté : son protocole n'est pas confirmé et rien n'est envoyé au casque sans preuve.
+
 ## 0.54.0
 
 - **Écran Thermalright / Trofeo non visible** : quand TRCC tient l'écran, la page Écrans propose le bouton « Fermer TRCC et réessayer » (ferme TRCC et ses services sans désactiver leur démarrage, puis relance la recherche).

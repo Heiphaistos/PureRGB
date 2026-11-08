@@ -4,6 +4,7 @@ import { computed, reactive, ref, watch } from "vue";
 import type { Color, DeviceInfo, EffectConfig, EffectKind, ModeInfo } from "../types";
 import { colorToHex, EFFECT_LABELS, hexToColor, zoneResizable } from "../types";
 import DeviceSettings from "./DeviceSettings.vue";
+import AudioPanel from "./AudioPanel.vue";
 import { FAN_GROUPS, ledsFor, type FanPreset } from "../data/fanPresets";
 
 const props = defineProps<{
@@ -522,6 +523,7 @@ function snapshot(): EffectConfig {
       </p>
 
       <DeviceSettings v-if="device.settings?.length" :device="device" />
+      <AudioPanel v-if="['Headset', 'Microphone', 'Speaker'].includes(device.device_type)" :key="device.id" :device="device" />
 
       <div v-if="device.modes.length > 0" class="hw-modes">
         <h3>Modes matériels natifs</h3>

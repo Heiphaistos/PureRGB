@@ -1,6 +1,6 @@
 [package]
 name = "purergb"
-version = "0.54.0"
+version = "0.55.0"
 description = "PureRGB — contrôle RGB, ARGB, ventilateurs, AIO et hubs pour Windows 10/11"
 authors = ["Heiphaistos"]
 edition = "2021"
@@ -74,6 +74,11 @@ windows = { version = "0.61", features = [
     "Win32_System_Com_StructuredStorage",
     "Win32_System_Variant",
     "Win32_UI_Input_XboxController",
+    # Volume/sourdine des casques et micros (audio.rs, WASAPI)
+    "Win32_Media_Audio",
+    "Win32_Media_Audio_Endpoints",
+    "Win32_Devices_FunctionDiscovery",
+    "Win32_UI_Shell_PropertiesSystem",
 ] }
 
 [features]
