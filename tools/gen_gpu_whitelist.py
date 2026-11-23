@@ -10,6 +10,7 @@ FAMILIES = {
     'smbus-i2c-nvapi:asus-legacy-gpu': 'aura_gpu',
     'smbus-i2c-nvapi:asus-ampere-lovelace-gpu': 'ene_gpu',
     'smbus-i2c-nvapi:msi-gpu': 'msi_v1',
+    'smbus-i2c-nvapi:msi-gpu-lovelace': 'msi_v2',
     'smbus-i2c-nvapi:gigabyte-gen1-gpu': 'gigabyte_gen1',
     'smbus-i2c-nvapi:gigabyte-gen2-gpu': 'gigabyte_gen2',
     'smbus-i2c-nvapi:pny-xlr8-lovelace-gpu': 'pny_lovelace',

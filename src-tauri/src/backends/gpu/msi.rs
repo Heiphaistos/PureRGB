@@ -35,10 +35,43 @@ pub fn set_color(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
     write(bus, addr, REG_R1 + 2, c.b)
 }
 
+/// Mystic Light v2 (RTX 40 Gaming X, même adresse 0x68) : séquence « direct » de la note : 0x2E <- 0, 0x22 <- 0x1C (inactif, programmation),
+/// couleur 1 en octets séparés (0x30..0x32), luminosité 0x36 <- 100, puis mode statique 0x22 <- 0x13. 20 ms après CHAQUE écriture.
+/// Le registre 0x3F (validation permanente, 0x00 en v2) n'est JAMAIS écrit.
+pub fn set_color_v2(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
+    write(bus, addr, 0x2E, 0x00)?;
+    write(bus, addr, REG_MODE, 0x1C)?;
+    write(bus, addr, REG_R1, c.r)?;
+    write(bus, addr, REG_R1 + 1, c.g)?;
+    write(bus, addr, REG_R1 + 2, c.b)?;
+    write(bus, addr, REG_BRIGHTNESS, BRIGHTNESS_MAX)?;
+    write(bus, addr, REG_MODE, MODE_STATIC)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::backends::smbus::bus::{MockBus, Txn};
+
+    #[test]
+    fn v2_direct_sequence_and_no_commit() {
+        let mut m = MockBus::default();
+        m.present.insert(0x68);
+        set_color_v2(&mut m, 0x68, Color { r: 9, g: 8, b: 7 }).expect("ok");
+        assert_eq!(
+            m.log,
+            vec![
+                Txn::Write(0x68, 0x2E, 0),
+                Txn::Write(0x68, 0x22, 0x1C),
+                Txn::Write(0x68, 0x30, 9),
+                Txn::Write(0x68, 0x31, 8),
+                Txn::Write(0x68, 0x32, 7),
+                Txn::Write(0x68, 0x36, 100),
+                Txn::Write(0x68, 0x22, 0x13),
+            ]
+        );
+        assert!(m.log.iter().all(|t| !matches!(t, Txn::Write(_, 0x3F, _))));
+    }
 
     #[test]
     fn init_and_frame_bytes_and_no_save() {
