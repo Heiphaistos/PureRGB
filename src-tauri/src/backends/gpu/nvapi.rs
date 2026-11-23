@@ -154,6 +154,16 @@ impl SmbusBus for NvBus {
         let mut d = data.to_vec();
         self.call(true, addr, Some(reg), &mut d)
     }
+    fn write_raw(&mut self, addr: u8, data: &[u8]) -> Result<()> {
+        let mut d = data.to_vec();
+        self.call(true, addr, None, &mut d)
+    }
+    fn read_raw(&mut self, addr: u8, len: usize) -> Result<Vec<u8>> {
+        ensure!((1..=64).contains(&len), "longueur de lecture invalide : {len}");
+        let mut d = vec![0u8; len];
+        self.call(false, addr, None, &mut d)?;
+        Ok(d)
+    }
 }
 
 #[cfg(test)]

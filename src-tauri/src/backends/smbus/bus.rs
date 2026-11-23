@@ -24,6 +24,14 @@ pub trait SmbusBus: Send {
     fn write_byte_data(&mut self, addr: u8, reg: u8, value: u8) -> Result<()>;
     /// Bloc SMBus de 1 à 32 octets sur `reg`.
     fn write_block_data(&mut self, addr: u8, reg: u8, data: &[u8]) -> Result<()>;
+    /// Écriture I2C brute (aucun octet de registre : le premier octet du paquet fait partie du protocole).
+    fn write_raw(&mut self, addr: u8, _data: &[u8]) -> Result<()> {
+        bail!("écriture I2C brute non prise en charge (0x{addr:02X})")
+    }
+    /// Lecture I2C brute de `len` octets, sans registre.
+    fn read_raw(&mut self, addr: u8, _len: usize) -> Result<Vec<u8>> {
+        bail!("lecture I2C brute non prise en charge (0x{addr:02X})")
+    }
     /// Pause entre deux transactions (les contrôleurs RGB sont lents, note §4.6).
     fn pause(&mut self, ms: u64) {
         std::thread::sleep(std::time::Duration::from_millis(ms));

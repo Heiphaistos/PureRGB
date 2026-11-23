@@ -3,10 +3,11 @@
 //! Backend « gpu » : éclairage des cartes graphiques NVIDIA en natif, sans OpenRGB (bus I2C de la carte via NVAPI).
 //! Actif seulement si les pilotes natifs sont activés ET si la carte figure dans la liste blanche PCI (`whitelist.rs`).
 //! Écriture réservée au réglage « écriture sur le bus » (comme la mémoire) : sinon la carte est listée, non pilotable.
-//! Première livraison : ASUS Aura GPU (hérité, signature vérifiée avant toute écriture) et MSI Mystic Light v1.
+//! Familles : ASUS Aura GPU (hérité), MSI Mystic Light v1, Gigabyte Gen1 ; signature vérifiée avant toute écriture quand la note en donne une.
 //! Une couleur par carte (toutes les LEDs identiques) ; jamais d'enregistrement permanent dans la mémoire de la carte.
 
 mod aura;
+mod gigabyte;
 mod msi;
 #[cfg(windows)]
 mod nvapi;
@@ -28,6 +29,7 @@ pub type Source = Box<dyn Fn() -> Vec<(Pci, Box<dyn SmbusBus>)> + Send>;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Family {
     Aura,
+    GigabyteGen1,
     MsiV1,
 }
 
@@ -92,13 +94,17 @@ impl GpuBackend {
             let family = match entry.family.as_str() {
                 "aura_gpu" => Family::Aura,
                 "msi_v1" => Family::MsiV1,
+                "gigabyte_gen1" => Family::GigabyteGen1,
                 _ => continue,
             };
-            if family == Family::Aura {
-                if let Err(e) = aura::verify(bus.as_mut(), entry.addr) {
-                    log::warn!("gpu {} : {e:#}", entry.name);
-                    continue;
-                }
+            let verified = match family {
+                Family::Aura => aura::verify(bus.as_mut(), entry.addr),
+                Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci),
+                Family::MsiV1 => Ok(()),
+            };
+            if let Err(e) = verified {
+                log::warn!("gpu {} : {e:#}", entry.name);
+                continue;
             }
             let id = format!("{index}-{:02x}", entry.addr);
             let vendor = entry.name.split_whitespace().next().unwrap_or("GPU").to_string();
@@ -161,12 +167,14 @@ impl Backend for GpuBackend {
             match card.family {
                 Family::Aura => aura::init(card.bus.as_mut(), card.addr)?,
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
+                Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
             }
             card.initialized = true;
         }
         match card.family {
             Family::Aura => aura::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::MsiV1 => msi::set_color(card.bus.as_mut(), card.addr, color)?,
+            Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
         }
         card.last = Some((color, Instant::now()));
         Ok(())
