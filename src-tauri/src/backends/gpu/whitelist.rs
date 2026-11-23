@@ -87,6 +87,6 @@ mod tests {
     #[test]
     fn every_entry_is_well_formed() {
         assert!(entries().len() >= 140);
-        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2" | "palit_v2" | "colorful") && e.addr < 0x80));
+        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2" | "palit_v2" | "colorful" | "gigabyte_gen3") && e.addr < 0x80));
     }
 }

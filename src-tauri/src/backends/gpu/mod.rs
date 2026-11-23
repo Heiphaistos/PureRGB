@@ -14,6 +14,7 @@ mod evga;
 mod evga3;
 mod gigabyte;
 mod gigabyte2;
+mod gigabyte3;
 mod msi;
 mod palit;
 mod pny;
@@ -46,6 +47,7 @@ enum Family {
     PnyEpicX(bool),
     GigabyteGen1,
     GigabyteGen2,
+    GigabyteGen3,
     MsiV1,
     MsiV2,
     PalitV2,
@@ -118,6 +120,7 @@ impl GpuBackend {
                 "palit_v2" => Family::PalitV2,
                 "gigabyte_gen1" => Family::GigabyteGen1,
                 "gigabyte_gen2" => Family::GigabyteGen2,
+                "gigabyte_gen3" => Family::GigabyteGen3,
                 "ene_gpu" => Family::EneGpu,
                 "evga_turing" => Family::EvgaTuring,
                 "evga_ampere" => Family::EvgaAmpere,
@@ -130,6 +133,7 @@ impl GpuBackend {
                 Family::Colorful(_) => colorful::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
+                Family::GigabyteGen3 => Ok(gigabyte3::leds()),
                 Family::PalitV2 => palit::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
                 Family::MsiV1 | Family::MsiV2 | Family::EvgaTuring => Ok(1),
@@ -208,6 +212,7 @@ impl Backend for GpuBackend {
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
                 Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring | Family::MsiV2 | Family::PalitV2 | Family::Colorful(_) => {}
+                Family::GigabyteGen3 => gigabyte3::init(card.bus.as_mut(), card.addr)?,
                 Family::EvgaAmpere => evga3::init(card.bus.as_mut(), card.addr)?,
                 Family::PnyEpicX(large) => epicx::init(card.bus.as_mut(), card.addr, large)?,
             }
@@ -217,6 +222,7 @@ impl Backend for GpuBackend {
             Family::Aura => aura::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::MsiV1 => msi::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::MsiV2 => msi::set_color_v2(card.bus.as_mut(), card.addr, color)?,
+            Family::GigabyteGen3 => gigabyte3::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::PalitV2 => palit::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::Colorful(v2) => colorful::set_color(card.bus.as_mut(), card.addr, v2, color)?,
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,

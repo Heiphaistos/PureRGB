@@ -14,6 +14,7 @@ FAMILIES = {
     'smbus-i2c-nvapi:msi-gpu-blackwell': 'msi_v2',
     'smbus-i2c-nvapi:gigabyte-gen1-gpu': 'gigabyte_gen1',
     'smbus-i2c-nvapi:gigabyte-gen2-gpu': 'gigabyte_gen2',
+    'smbus-i2c-nvapi:gigabyte-gen3-gpu': 'gigabyte_gen3',
     'smbus-i2c-nvapi:pny-xlr8-lovelace-gpu': 'pny_lovelace',
     'smbus-i2c-nvapi:pny-blackwell-gpu': 'pny_epicx',
     'smbus-i2c-nvapi:pny-turing-ampere-gpu-controller': 'palit_v2',
