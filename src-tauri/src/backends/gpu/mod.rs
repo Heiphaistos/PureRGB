@@ -8,6 +8,7 @@
 
 mod aura;
 mod ene;
+mod epicx;
 mod evga;
 mod evga3;
 mod gigabyte;
@@ -37,6 +38,8 @@ enum Family {
     EneGpu,
     EvgaTuring,
     EvgaAmpere,
+    /// `true` = modèle « large » (RTX 5080 / 5090).
+    PnyEpicX(bool),
     GigabyteGen1,
     GigabyteGen2,
     MsiV1,
@@ -109,6 +112,7 @@ impl GpuBackend {
                 "ene_gpu" => Family::EneGpu,
                 "evga_turing" => Family::EvgaTuring,
                 "evga_ampere" => Family::EvgaAmpere,
+                "pny_epicx" => Family::PnyEpicX(entry.name.contains("5080") || entry.name.contains("5090")),
                 "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
             };
@@ -118,6 +122,7 @@ impl GpuBackend {
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
                 Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
                 Family::MsiV1 | Family::EvgaTuring => Ok(1),
+                Family::PnyEpicX(large) => Ok(epicx::leds(large)),
                 Family::EvgaAmpere => evga3::verify(bus.as_mut(), entry.addr).map(|()| evga3::ZONES as u8),
                 Family::PnyLovelace => Ok(pny::LEDS),
             };
@@ -193,6 +198,7 @@ impl Backend for GpuBackend {
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
                 Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring => {}
                 Family::EvgaAmpere => evga3::init(card.bus.as_mut(), card.addr)?,
+                Family::PnyEpicX(large) => epicx::init(card.bus.as_mut(), card.addr, large)?,
             }
             card.initialized = true;
         }
@@ -204,6 +210,7 @@ impl Backend for GpuBackend {
             Family::PnyLovelace => pny::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::EvgaTuring => evga::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::EvgaAmpere => evga3::set_colors(card.bus.as_mut(), card.addr, &frame)?,
+            Family::PnyEpicX(large) => epicx::set_colors(card.bus.as_mut(), card.addr, large, &frame)?,
             Family::GigabyteGen2 => gigabyte2::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
         card.last = Some((frame, Instant::now()));

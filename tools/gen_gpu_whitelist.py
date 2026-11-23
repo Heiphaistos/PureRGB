@@ -13,6 +13,7 @@ FAMILIES = {
     'smbus-i2c-nvapi:gigabyte-gen1-gpu': 'gigabyte_gen1',
     'smbus-i2c-nvapi:gigabyte-gen2-gpu': 'gigabyte_gen2',
     'smbus-i2c-nvapi:pny-xlr8-lovelace-gpu': 'pny_lovelace',
+    'smbus-i2c-nvapi:pny-blackwell-gpu': 'pny_epicx',
     'smbus-i2c-nvapi:evga-turing-gpu': 'evga_turing',
     'smbus-i2c-nvapi:evga-ampere-gpu': 'evga_ampere',
 }
