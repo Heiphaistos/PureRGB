@@ -13,6 +13,7 @@ FAMILIES = {
     'smbus-i2c-nvapi:gigabyte-gen1-gpu': 'gigabyte_gen1',
     'smbus-i2c-nvapi:gigabyte-gen2-gpu': 'gigabyte_gen2',
     'smbus-i2c-nvapi:pny-xlr8-lovelace-gpu': 'pny_lovelace',
+    'smbus-i2c-nvapi:evga-turing-gpu': 'evga_turing',
 }
 PCI = re.compile(r'\[PCI subvendor=0x([0-9A-Fa-f]{4}) subdevice=0x([0-9A-Fa-f]{4}) i2c=0x([0-9A-Fa-f]{2})\]')
 HEAD = '# famille\tdevice PCI (NVIDIA 10DE)\tsubvendor\tsubdevice\ti2c 7 bits\tnom -- source: docs/rgb-protocols/signalrgb-devices.csv\n'

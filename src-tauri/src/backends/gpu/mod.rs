@@ -8,6 +8,7 @@
 
 mod aura;
 mod ene;
+mod evga;
 mod gigabyte;
 mod gigabyte2;
 mod msi;
@@ -33,6 +34,7 @@ pub type Source = Box<dyn Fn() -> Vec<(Pci, Box<dyn SmbusBus>)> + Send>;
 enum Family {
     Aura,
     EneGpu,
+    EvgaTuring,
     GigabyteGen1,
     GigabyteGen2,
     MsiV1,
@@ -103,6 +105,7 @@ impl GpuBackend {
                 "gigabyte_gen1" => Family::GigabyteGen1,
                 "gigabyte_gen2" => Family::GigabyteGen2,
                 "ene_gpu" => Family::EneGpu,
+                "evga_turing" => Family::EvgaTuring,
                 "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
             };
@@ -111,7 +114,7 @@ impl GpuBackend {
                 Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
                 Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
-                Family::MsiV1 => Ok(1),
+                Family::MsiV1 | Family::EvgaTuring => Ok(1),
                 Family::PnyLovelace => Ok(pny::LEDS),
             };
             let leds = match verified {
@@ -184,7 +187,7 @@ impl Backend for GpuBackend {
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
-                Family::PnyLovelace | Family::GigabyteGen2 => {}
+                Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring => {}
             }
             card.initialized = true;
         }
@@ -194,6 +197,7 @@ impl Backend for GpuBackend {
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::EneGpu => ene::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::PnyLovelace => pny::set_colors(card.bus.as_mut(), card.addr, &frame)?,
+            Family::EvgaTuring => evga::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::GigabyteGen2 => gigabyte2::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
         card.last = Some((frame, Instant::now()));

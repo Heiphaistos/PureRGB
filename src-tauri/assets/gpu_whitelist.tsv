@@ -252,6 +252,40 @@ ene_gpu	2c05	1043	8a53	67	ASUS 5070Ti PRO ART
 ene_gpu	2d04	1043	8a08	67	Asus 5060Ti TUF GAMING
 ene_gpu	2f04	1043	89f2	67	Asus 5070 TUF Gaming
 ene_gpu	2f04	1043	8a18	67	Asus 5070 ROG Strix OC
+evga_turing	1e04	3842	2281	49	EVGA RTX 2080Ti Black Edition
+evga_turing	1e07	3842	2282	49	EVGA RTX 2080Ti Black Edition
+evga_turing	1e07	3842	2382	49	EVGA RTX 2080Ti XC Ultra
+evga_turing	1e07	3842	2383	49	EVGA RTX 2080Ti XC Ultra Gaming
+evga_turing	1e07	3842	2484	49	EVGA RTX 2080Ti FTW3 Ultra Hybrid
+evga_turing	1e07	3842	2487	49	EVGA RTX 2080Ti FTW3 Ultra
+evga_turing	1e07	3842	2489	49	EVGA RTX 2080Ti FTW3 Ultra Hydro Copper Gaming
+evga_turing	1e81	3842	3080	49	EVGA RTX 2080 Super Gaming
+evga_turing	1e81	3842	3182	49	EVGA RTX 2080 Super XC Gaming
+evga_turing	1e81	3842	3183	49	EVGA RTX 2080 Super XC OC Ultra
+evga_turing	1e81	3842	3287	49	EVGA RTX 2080 Super FTW3 Ultra
+evga_turing	1e81	3842	3188	49	EVGA RTX 2080 Super XC Hybrid
+evga_turing	1e81	3842	3189	49	EVGA RTX 2080 Super XC Hydro Copper
+evga_turing	1e81	3842	3288	49	EVGA RTX 2080 Super FTW3 Hybrid Gaming
+evga_turing	1e81	3842	3289	49	EVGA RTX 2080 Super FTW3 Hydro Copper
+evga_turing	1e82	3842	2081	49	EVGA RTX 2080 Black
+evga_turing	1e84	3842	3173	49	EVGA RTX 2070 Super XC Ultra
+evga_turing	1e84	3842	3175	49	EVGA RTX 2070 XC Ultra+
+evga_turing	1e84	3842	3172	49	EVGA RTX 2070 Super XC Gaming
+evga_turing	1e84	3842	3178	49	EVGA RTX 2070 Super XC Hybrid
+evga_turing	1e84	3842	3273	49	EVGA RTX 2070 Super FTW3
+evga_turing	1e84	3842	3277	49	EVGA RTX 2070 Super FTW3 Ultra
+evga_turing	1e84	3842	3377	49	EVGA RTX 2070 Super FTW3 Ultra OC
+evga_turing	1e84	3842	3070	49	EVGA RTX 2070 Super Gaming Blower
+evga_turing	1e87	3842	2284	49	EVGA RTX 2080 FTW3 Hybrid Gaming
+evga_turing	1e87	3842	2082	49	EVGA RTX 2080 XC Black
+evga_turing	1e87	3842	2182	49	EVGA RTX 2080 XC Gaming
+evga_turing	1e87	3842	2187	49	EVGA RTX 2080 XC2 Gaming
+evga_turing	1e87	3842	2183	49	EVGA RTX 2080 XC Ultra Gaming
+evga_turing	1f06	3842	3162	49	EVGA RTX 2060 Super XC Gaming
+evga_turing	1f06	3842	3163	49	EVGA RTX 2060 Super XC Ultra Gaming
+evga_turing	1f07	3842	2172	49	EVGA RTX 2070 XC Gaming
+evga_turing	1f07	3842	2173	49	EVGA RTX 2070 OC
+evga_turing	1f07	3842	2277	49	EVGA RTX 2070 FTW3 Ultra
 gigabyte_gen1	1b06	1458	3752	47	GIGABYTE 1080Ti AORUS
 gigabyte_gen1	1b06	1458	3751	47	GIGABYTE 1080Ti XTREME Edition
 gigabyte_gen1	1b06	1458	374c	47	GIGABYTE 1080Ti Gaming OC
