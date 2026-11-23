@@ -286,6 +286,73 @@ evga_turing	1f06	3842	3163	49	EVGA RTX 2060 Super XC Ultra Gaming
 evga_turing	1f07	3842	2172	49	EVGA RTX 2070 XC Gaming
 evga_turing	1f07	3842	2173	49	EVGA RTX 2070 OC
 evga_turing	1f07	3842	2277	49	EVGA RTX 2070 FTW3 Ultra
+evga_ampere	2203	3842	4985	2d	EVGA RTX 3090Ti FTW3 Ultra Gaming
+evga_ampere	2203	3842	4981	2d	EVGA RTX 3090TI Black Gaming
+evga_ampere	2203	3842	4983	2d	EVGA RTX 3090TI FTW3 Gaming
+evga_ampere	2203	3842	4988	2d	EVGA RTX 3090TI FTW3 Hybrid
+evga_ampere	2203	3842	4998	2d	EVGA RTX 3090TI KINGPIN Hybrid
+evga_ampere	2204	3842	3971	2d	EVGA RTX 3090 XC3 Black
+evga_ampere	2204	3842	3973	2d	EVGA RTX 3090 XC3 Gaming
+evga_ampere	2204	3842	3985	2d	EVGA RTX 3090 FTW3 Gaming
+evga_ampere	2204	3842	3978	2d	EVGA RTX 3090 XC3 Ultra Hybrid
+evga_ampere	2204	3842	3979	2d	EVGA RTX 3090 XC3 Ultra HydroCopper
+evga_ampere	2204	3842	3987	2d	EVGA RTX 3090 FTW3 Ultra
+evga_ampere	2204	3842	3387	2d	EVGA RTX 3090 FTW3 Ultra
+evga_ampere	2204	3842	3982	2d	EVGA RTX 3090 FTW3 Ultra v2
+evga_ampere	2204	3842	3989	2d	EVGA RTX 3090 FTW3 Ultra HydroCopper
+evga_ampere	2204	3842	3975	2d	EVGA RTX 3090 XC3 Ultra Gaming
+evga_ampere	2204	3842	3988	2d	EVGA RTX 3090 FTW3 Ultra Hybrid
+evga_ampere	2204	3842	3983	2d	EVGA RTX 3090 FTW3 Ultra Hybrid V2
+evga_ampere	2204	3842	3998	2d	EVGA RTX 3090 Kingpin
+evga_ampere	2206	3842	3881	2d	EVGA RTX 3080 XC3 Black
+evga_ampere	2206	3842	3883	2d	EVGA RTX 3080 XC3 Gaming
+evga_ampere	2206	3842	3888	2d	EVGA RTX 3080 XC3 Ultra Hybrid
+evga_ampere	2206	3842	3889	2d	EVGA RTX 3080 XC3 Ultra HydroCopper
+evga_ampere	2206	3842	3895	2d	EVGA RTX 3080 FTW3 Gaming
+evga_ampere	2206	3842	3899	2d	EVGA RTX 3080 FTW3 Ultra HydroCopper
+evga_ampere	2206	3842	3885	2d	EVGA RTX 3080 XC3 Ultra
+evga_ampere	2206	3842	3897	2d	EVGA RTX 3080 FTW3 Ultra Gaming
+evga_ampere	2206	3842	3898	2d	EVGA RTX 3080 FTW3 Ultra Hybrid
+evga_ampere	2208	3842	3958	2d	EVGA RTX 3080Ti XC3 Ultra Hybrid
+evga_ampere	2208	3842	3968	2d	EVGA RTX 3080Ti XC3 Ultra Hybrid
+evga_ampere	2208	3842	3969	2d	EVGA RTX 3080Ti FTW3 Ultra HydroCopper
+evga_ampere	2208	3842	3953	2d	EVGA RTX 3080Ti XC3 Gaming
+evga_ampere	2208	3842	3955	2d	EVGA RTX 3080Ti XC3 Ultra Gaming
+evga_ampere	2208	3842	3959	2d	EVGA RTX 3080Ti XC3 Gaming HydroCopper
+evga_ampere	2208	3842	3967	2d	EVGA RTX 3080Ti FTW3 Ultra
+evga_ampere	2208	3842	3367	2d	EVGA RTX 3080Ti FTW3 Ultra
+evga_ampere	220a	3842	4865	2d	EVGA RTX 3080 XC3 Ultra Gaming
+evga_ampere	220a	3842	4869	2d	EVGA RTX 3080 XC3 Ultra HydroCopper GA102
+evga_ampere	220a	3842	4868	2d	EVGA RTX 3080 XC3 Ultra Hybrid 12g LHR
+evga_ampere	220a	3842	4878	2d	EVGA RTX 3080 FTW3 Ultra Hybrid 12g LHR
+evga_ampere	220a	3842	4879	2d	EVGA RTX 3080 FTW3 Ultra HydroCopper 12g LHR
+evga_ampere	220a	3842	4877	2d	EVGA RTX 3080 FTW3 Ultra 12g LHR
+evga_ampere	2216	3842	4881	2d	EVGA RTX 3080 XC3 Black LHR
+evga_ampere	2216	3842	4883	2d	EVGA RTX 3080 XC3 Gaming LHR
+evga_ampere	2216	3842	4888	2d	EVGA RTX 3080 XC3 Ultra Hybrid LHR
+evga_ampere	2216	3842	4889	2d	EVGA RTX 3080 XC3 Ultra HydroCopper
+evga_ampere	2216	3842	4297	2d	EVGA RTX 3080 FTW3 Ultra LHR
+evga_ampere	2216	3842	4898	2d	EVGA RTX 3080 FTW3 Ultra Hybrid LHR
+evga_ampere	2216	3842	4899	2d	EVGA RTX 3080 FTW3 Ultra HydroCopper LHR
+evga_ampere	2216	3842	4885	2d	EVGA RTX 3080 XC3 Ultra LHR
+evga_ampere	2216	3842	4897	2d	EVGA RTX 3080 FTW3 Ultra LHR
+evga_ampere	2482	3842	3783	2d	EVGA RTX 3070Ti XC3 Gaming
+evga_ampere	2482	3842	3785	2d	EVGA RTX 3070Ti XC3 Ultra Gaming
+evga_ampere	2482	3842	3797	2d	EVGA RTX 3070Ti FTW3 Ultra Gaming
+evga_ampere	2482	3842	3497	2d	EVGA RTX 3070Ti FTW3 Ultra Gaming
+evga_ampere	2484	3842	3755	2d	EVGA RTX 3070 XC3 Ultra Gaming
+evga_ampere	2484	3842	3767	2d	EVGA RTX 3070 FTW3 Ultra Gaming
+evga_ampere	2484	3842	3751	2d	EVGA RTX 3070 XC3 Black Edition
+evga_ampere	2484	3842	3753	2d	EVGA RTX 3070 XC3 Gaming
+evga_ampere	2486	3842	3667	2d	EVGA RTX 3060Ti FTW3 Ultra Gaming
+evga_ampere	2486	3842	3665	2d	EVGA RTX 3060Ti FTW3 Gaming
+evga_ampere	2488	3842	4455	2d	EVGA RTX 3070 XC3 Ultra Gaming LHR
+evga_ampere	2488	3842	4755	2d	EVGA RTX 3070 XC3 Ultra LHR
+evga_ampere	2488	3842	4467	2d	EVGA RTX 3070 FTW3 Ultra LHR
+evga_ampere	2488	3842	4767	2d	EVGA RTX 3070 FTW3 Ultra LHR
+evga_ampere	2489	3842	4667	2d	EVGA RTX 3060Ti FTW3 Ultra Gaming LHR
+evga_ampere	2489	3842	4567	2d	EVGA RTX 3060Ti FTW3 Ultra Gaming LHR
+evga_ampere	2489	3842	3667	2d	EVGA RTX 3060Ti FTW3 Ultra Gaming
 gigabyte_gen1	1b06	1458	3752	47	GIGABYTE 1080Ti AORUS
 gigabyte_gen1	1b06	1458	3751	47	GIGABYTE 1080Ti XTREME Edition
 gigabyte_gen1	1b06	1458	374c	47	GIGABYTE 1080Ti Gaming OC

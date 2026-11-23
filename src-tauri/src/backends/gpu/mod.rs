@@ -9,6 +9,7 @@
 mod aura;
 mod ene;
 mod evga;
+mod evga3;
 mod gigabyte;
 mod gigabyte2;
 mod msi;
@@ -35,6 +36,7 @@ enum Family {
     Aura,
     EneGpu,
     EvgaTuring,
+    EvgaAmpere,
     GigabyteGen1,
     GigabyteGen2,
     MsiV1,
@@ -106,6 +108,7 @@ impl GpuBackend {
                 "gigabyte_gen2" => Family::GigabyteGen2,
                 "ene_gpu" => Family::EneGpu,
                 "evga_turing" => Family::EvgaTuring,
+                "evga_ampere" => Family::EvgaAmpere,
                 "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
             };
@@ -115,6 +118,7 @@ impl GpuBackend {
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
                 Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
                 Family::MsiV1 | Family::EvgaTuring => Ok(1),
+                Family::EvgaAmpere => evga3::verify(bus.as_mut(), entry.addr).map(|()| evga3::ZONES as u8),
                 Family::PnyLovelace => Ok(pny::LEDS),
             };
             let leds = match verified {
@@ -188,6 +192,7 @@ impl Backend for GpuBackend {
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
                 Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring => {}
+                Family::EvgaAmpere => evga3::init(card.bus.as_mut(), card.addr)?,
             }
             card.initialized = true;
         }
@@ -198,6 +203,7 @@ impl Backend for GpuBackend {
             Family::EneGpu => ene::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::PnyLovelace => pny::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::EvgaTuring => evga::set_color(card.bus.as_mut(), card.addr, color)?,
+            Family::EvgaAmpere => evga3::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::GigabyteGen2 => gigabyte2::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
         card.last = Some((frame, Instant::now()));

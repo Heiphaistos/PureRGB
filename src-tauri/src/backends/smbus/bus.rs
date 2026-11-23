@@ -24,6 +24,10 @@ pub trait SmbusBus: Send {
     fn write_byte_data(&mut self, addr: u8, reg: u8, value: u8) -> Result<()>;
     /// Bloc SMBus de 1 à 32 octets sur `reg`.
     fn write_block_data(&mut self, addr: u8, reg: u8, data: &[u8]) -> Result<()>;
+    /// Lecture I2C par bloc de `len` octets au registre `reg` (firmware de certaines cartes).
+    fn read_block_data(&mut self, addr: u8, _reg: u8, _len: usize) -> Result<Vec<u8>> {
+        bail!("lecture par bloc non prise en charge (0x{addr:02X})")
+    }
     /// Écriture d'un mot SMBus (2 octets, poids faible envoyé en premier) : sélection de registre des contrôleurs ENE.
     fn write_word_data(&mut self, addr: u8, _reg: u8, _word: u16) -> Result<()> {
         bail!("écriture de mot SMBus non prise en charge (0x{addr:02X})")
