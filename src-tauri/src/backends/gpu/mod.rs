@@ -9,6 +9,7 @@
 mod aura;
 mod ene;
 mod gigabyte;
+mod gigabyte2;
 mod msi;
 mod pny;
 #[cfg(windows)]
@@ -33,6 +34,7 @@ enum Family {
     Aura,
     EneGpu,
     GigabyteGen1,
+    GigabyteGen2,
     MsiV1,
     PnyLovelace,
 }
@@ -99,6 +101,7 @@ impl GpuBackend {
                 "aura_gpu" => Family::Aura,
                 "msi_v1" => Family::MsiV1,
                 "gigabyte_gen1" => Family::GigabyteGen1,
+                "gigabyte_gen2" => Family::GigabyteGen2,
                 "ene_gpu" => Family::EneGpu,
                 "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
@@ -107,6 +110,7 @@ impl GpuBackend {
                 Family::Aura => aura::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
+                Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
                 Family::MsiV1 => Ok(1),
                 Family::PnyLovelace => Ok(pny::LEDS),
             };
@@ -180,7 +184,7 @@ impl Backend for GpuBackend {
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
-                Family::PnyLovelace => {}
+                Family::PnyLovelace | Family::GigabyteGen2 => {}
             }
             card.initialized = true;
         }
@@ -190,6 +194,7 @@ impl Backend for GpuBackend {
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::EneGpu => ene::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::PnyLovelace => pny::set_colors(card.bus.as_mut(), card.addr, &frame)?,
+            Family::GigabyteGen2 => gigabyte2::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
         card.last = Some((frame, Instant::now()));
         Ok(())
