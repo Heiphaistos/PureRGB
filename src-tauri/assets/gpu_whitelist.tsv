@@ -252,6 +252,40 @@ ene_gpu	2c05	1043	8a53	67	ASUS 5070Ti PRO ART
 ene_gpu	2d04	1043	8a08	67	Asus 5060Ti TUF GAMING
 ene_gpu	2f04	1043	89f2	67	Asus 5070 TUF Gaming
 ene_gpu	2f04	1043	8a18	67	Asus 5070 ROG Strix OC
+colorful	2204	7377	140a	61	Colorful 3090 iGame Advanced OC-V
+colorful	2204	7377	120b	61	Colorful 3090 iGame Vulcan
+colorful	2204	7377	1201	61	Colorful 3090 iGame Vulcan
+colorful	2206	7377	140a	61	Colorful 3080 iGame Advanced OC-V
+colorful	2206	7377	120b	61	Colorful 3080 iGame Vulcan
+colorful	2482	7377	1400	61	Colorful 3070Ti iGame Advanced
+colorful	2484	7377	150a	61	Colorful 3070 iGame Ultra OC
+colorful	2489	7377	150a	61	Colorful 3060Ti iGame Ultra OC LHR
+colorful	2489	7377	120b	61	Colorful 3060Ti iGame Vulcan OC LHR
+colorful	24c9	7377	1581	61	Colorful 3060 iGame Ultra OC GDDR6X
+colorful	24c9	7377	1580	61	Colorful 3060Ti iGame Ultra OC GDDR6X
+colorful	2503	7377	150a	61	Colorful 3060 iGame Ultra OC
+colorful	2503	7377	2000	61	Colorful 3060 Battle Axe
+colorful	2504	7377	1501	61	Colorful 3060 iGame Ultra LHR
+colorful	2504	7377	1401	61	Colorful 3060 iGame Advanced OC 12G L-V LHR
+colorful	2504	7377	150a	61	Colorful 3060 iGame Ultra OC
+colorful	2544	7377	1500	61	Colorful 3060 iGame Ultra
+colorful	2705	7377	1500	61	Colorful 4070Ti SUPER iGame Ultra OC
+colorful	2782	7377	1401	61	Colorful 4070Ti iGame Advanced OC
+colorful	2782	7377	1500	61	Colorful 4070Ti iGame Ultra OC
+colorful	2782	7377	2001	61	Colorful 4070Ti Battle Axe
+colorful	2786	7377	2000	61	Colorful 4070 NB EX-V
+colorful	2803	7377	1751	61	Colorful 4060Ti iGame Mini
+colorful	2882	7377	2100	61	Colorful 4060 NB Duo
+colorful	2c02	7377	1500	61	Colorful 5080 iGame Ultra White OC
+colorful	2c02	7377	1501	61	Colorful 5080 iGame Ultra White OC
+colorful	2c02	7377	1401	61	Colorful 5080 Advanced OC
+colorful	2c05	7377	1500	61	Colorful 5070Ti iGame Ultra White OC
+colorful	2c05	7377	1501	61	Colorful 5070Ti iGame Ultra White OC
+colorful	2d04	7377	1500	61	Colorful 5060Ti iGame Ultra White DUO OC 16G
+colorful	2d04	7377	1501	61	Colorful 5060Ti iGame Ultra White OC 16G
+colorful	2f04	7377	1500	61	Colorful 5070 iGame Ultra White OC 12G
+colorful	2f04	7377	1501	61	Colorful 5070 iGame Ultra White OC
+colorful	2f04	7377	1201	61	Colorful 5070 iGame Vulcan
 evga_turing	1e04	3842	2281	49	EVGA RTX 2080Ti Black Edition
 evga_turing	1e07	3842	2282	49	EVGA RTX 2080Ti Black Edition
 evga_turing	1e07	3842	2382	49	EVGA RTX 2080Ti XC Ultra
