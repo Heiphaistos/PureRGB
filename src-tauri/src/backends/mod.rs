@@ -1,3 +1,4 @@
+pub mod gpu;
 pub mod hid;
 pub mod liquidctl;
 pub mod mobo;

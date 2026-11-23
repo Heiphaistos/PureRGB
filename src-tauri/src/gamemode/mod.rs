@@ -8,6 +8,7 @@
 
 pub mod detect;
 
+use crate::backends::gpu::GpuBackend;
 use crate::backends::hid::HidBackend;
 use crate::backends::mobo::MoboFanBackend;
 use crate::backends::openrgb::manager::OpenRgbManager;
@@ -117,6 +118,8 @@ fn enter(app: &AppHandle, game: &str, keep_hid: bool) {
                 m.release_all(); // ventilateurs rendus au BIOS avant de couper sensord
             } else if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
                 sm.set_native_enabled(false); // ferme le handle PawnIO
+            } else if let Some(g) = b.as_any_mut().downcast_mut::<GpuBackend>() {
+                g.set_native_enabled(false); // plus aucun accès au bus de la carte pendant un jeu protégé
             } else if let (false, Some(hid)) = (keep_hid, b.as_any_mut().downcast_mut::<HidBackend>()) {
                 hid.set_native_enabled(false);
             }
@@ -148,6 +151,8 @@ fn exit(app: &AppHandle) {
         for b in reg.backends_mut() {
             if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
                 sm.set_native_enabled(saved.native_drivers_enabled);
+            } else if let Some(g) = b.as_any_mut().downcast_mut::<GpuBackend>() {
+                g.set_native_enabled(saved.native_drivers_enabled);
             } else if let Some(hid) = b.as_any_mut().downcast_mut::<HidBackend>() {
                 hid.set_native_enabled(saved.native_drivers_enabled);
             }

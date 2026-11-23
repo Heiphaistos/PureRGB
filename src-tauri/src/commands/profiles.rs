@@ -1,5 +1,6 @@
 //! Réglages, démarrage avec Windows et profils exportables.
 
+use crate::backends::gpu::GpuBackend;
 use crate::backends::hid::HidBackend;
 use crate::backends::openrgb::OpenRgbBackend;
 use crate::backends::smbus::SmbusBackend;
@@ -151,6 +152,11 @@ pub(crate) fn update_settings(
                 if let Some(sm) = b.as_any_mut().downcast_mut::<SmbusBackend>() {
                     sm.set_native_enabled(native_drivers_enabled);
                     sm.set_writes_enabled(smbus_writes_enabled);
+                }
+            } else if b.name() == "gpu" {
+                if let Some(g) = b.as_any_mut().downcast_mut::<GpuBackend>() {
+                    g.set_native_enabled(native_drivers_enabled);
+                    g.set_writes_enabled(smbus_writes_enabled);
                 }
             }
         }

@@ -1,0 +1,150 @@
+# famille	device PCI (NVIDIA 10DE)	subvendor	subdevice	i2c 7 bits	nom -- source: docs/rgb-protocols/signalrgb-devices.csv
+aura_gpu	1b06	1043	85ea	29	ASUS ROG Strix GTX 1080Ti Gaming
+aura_gpu	1b06	1043	85eb	29	ASUS ROG Strix GTX 1080Ti Gaming OC
+aura_gpu	1b06	1043	85f1	29	ASUS ROG Strix GTX 1080Ti Gaming 11G
+aura_gpu	1b06	1043	85e4	29	ASUS ROG Strix GTX 1080Ti Gaming OC 11G
+aura_gpu	1b06	1043	85ec	29	ASUS 1080Ti POSEIDON
+aura_gpu	1b80	1043	8592	29	ASUS GTX 1080 Strix
+aura_gpu	1b80	1043	8593	29	ASUS GTX 1080 Strix Gaming OC
+aura_gpu	1b80	1043	85e8	29	ASUS GTX 1080 Strix Gaming
+aura_gpu	1b80	1043	85aa	29	ASUS ROG Strix GTX 1080 A8G Gaming
+aura_gpu	1b80	1043	85f9	29	ASUS ROG Strix GTX 1080 OC 11 Gbps
+aura_gpu	1b81	1043	8598	29	ASUS GTX 1070 Strix Gaming
+aura_gpu	1b81	1043	8599	29	ASUS GTX 1070 Strix OC
+aura_gpu	1b82	1043	861e	29	ASUS GTX 1070Ti Strix Gaming
+aura_gpu	1b82	1043	861d	29	ASUS GTX 1070Ti Strix Gaming
+aura_gpu	1c03	1043	85ac	29	ASUS GTX 1060 Strix
+aura_gpu	1c03	1043	85a4	29	ASUS GTX 1060 Strix Gaming FE
+aura_gpu	1c03	1043	854a	29	ASUS GTX 1060 Strix Gaming
+aura_gpu	1c82	1043	85d1	29	ASUS GTX 1050Ti Strix Gaming OC
+aura_gpu	1c82	1043	864b	29	ASUS GTX 1050Ti Strix Gaming OC
+aura_gpu	1e04	1043	8687	2a	ASUS ROG Strix RTX 2080Ti Gaming (TU102)
+aura_gpu	1e07	1043	866a	2a	ASUS ROG Strix RTX 2080Ti Gaming
+aura_gpu	1e07	1043	866b	2a	ASUS ROG Strix RTX 2080Ti Gaming OC
+aura_gpu	1e07	1043	8689	2a	ASUS ROG Strix RTX 2080Ti Call of Duty BO4
+aura_gpu	1e07	1043	8759	2a	ASUS ROG Strix RTX 2080Ti
+aura_gpu	1e07	1043	866c	2a	ASUS Rog Strix RTX 2080Ti Gaming
+aura_gpu	1e07	1043	875a	2a	ASUS ROG Strix RTX 2080Ti Gaming OC White Edition
+aura_gpu	1e81	1043	8711	2a	ASUS ROG Strix RTX 2080 Super Gaming
+aura_gpu	1e81	1043	8713	2a	ASUS ROG Strix RTX 2080 Super Gaming 8G
+aura_gpu	1e81	1043	8712	2a	ASUS ROG Strix RTX 2080 Super Gaming Advanced
+aura_gpu	1e81	1043	876b	2a	ASUS ROG Strix RTX 2080 Super Gaming OC White Edition
+aura_gpu	1e84	1043	8706	2a	ASUS ROG Strix RTX 2070 Super Gaming Advanced
+aura_gpu	1e84	1043	8728	2a	ASUS ROG Strix RTX 2070 Super Gaming Advanced
+aura_gpu	1e84	1043	8729	2a	ASUS ROG Strix RTX 2070 Super Gaming OC
+aura_gpu	1e84	1043	8727	2a	ASUS ROG Strix RTX 2070 Super Gaming OC
+aura_gpu	1e87	1043	865f	2a	ASUS ROG Strix RTX 2080 Gaming OC
+aura_gpu	1e87	1043	8660	2a	ASUS ROG Strix RTX 2080 Gaming Advanced
+aura_gpu	1e87	1043	8661	2a	ASUS ROG Strix RTX 2080 Gaming Advanced
+aura_gpu	1e89	1043	8776	2a	ASUS ROG Strix RTX 2060 Evo V2
+aura_gpu	1e89	1043	8775	2a	ASUS ROG Strix RTX 2060 Evo V2
+aura_gpu	1ec7	1043	86ff	2a	ASUS ROG Strix RTX 2070 Super Gaming Advanced
+aura_gpu	1ec7	1043	8701	2a	ASUS ROG Strix RTX 2070 Super 8GB
+aura_gpu	1f02	1043	867e	2a	ASUS ROG Strix RTX 2070 Gaming
+aura_gpu	1f02	1043	8796	2a	ASUS ROG Strix RTX 2070 Gaming
+aura_gpu	1f06	1043	872f	2a	ASUS ROG Strix RTX 2060 Super Gaming
+aura_gpu	1f06	1043	86fb	2a	ASUS ROG Strix RTX 2060 Super Gaming OC
+aura_gpu	1f06	1043	879f	2a	ASUS ROG Strix RTX 2060 Super Gaming OC
+aura_gpu	1f06	1043	86fc	2a	ASUS ROG Strix RTX 2060 Super Gaming Advanced OC
+aura_gpu	1f06	1043	86fd	2a	ASUS 2060 Super ROG Strix Super Gaming Advanced OC
+aura_gpu	1f06	1043	8730	2a	ASUS ROG Strix RTX 2060 Super EVO Gaming OC
+aura_gpu	1f06	1043	87a0	2a	ASUS ROG Strix RTX 2060 Super EVO Gaming
+aura_gpu	1f07	1043	8671	2a	ASUS ROG Strix RTX 2070 Gaming Advanced
+aura_gpu	1f07	1043	8670	2a	ASUS ROG Strix RTX 2070 Gaming OC
+aura_gpu	1f08	1043	86d1	2a	ASUS ROG Strix RTX 2060 Gaming
+aura_gpu	1f08	1043	868f	2a	ASUS ROG Strix RTX 2060 Gaming 6gb
+aura_gpu	1f08	1043	86d2	2a	ASUS ROG Strix RTX 2060 EVO Gaming
+aura_gpu	1f08	1043	86d3	2a	ASUS ROG Strix RTX 2060 EVO Gaming
+aura_gpu	1f08	1043	868e	2a	ASUS ROG Strix RTX 2060 OC
+aura_gpu	1f08	1043	86f5	2a	ASUS ROG Strix RTX 2060 OC
+aura_gpu	1f08	1043	880b	2a	ASUS ROG Strix RTX 2060 Evo V2
+aura_gpu	1f08	1043	880c	2a	ASUS ROG Strix RTX 2060 Evo
+aura_gpu	1f47	1043	8703	2a	ASUS ROG Strix RTX 2060 Super EVO Gaming
+aura_gpu	1f47	1043	8702	2a	ASUS ROG Strix RTX 2060 Super EVO Gaming
+aura_gpu	1f47	1043	8730	2a	ASUS ROG Strix RTX 2060 Super EVO Gaming OC
+aura_gpu	2182	1043	86a5	2a	ASUS ROG Strix GTX 1660TI OC
+aura_gpu	2182	1043	86a6	2a	ASUS ROG Strix GTX 1660TI OC
+aura_gpu	2182	1043	86a7	2a	ASUS ROG Strix GTX 1660Ti Strix Gaming
+aura_gpu	2187	1043	874f	2a	ASUS ROG Strix GTX 1650 Super OC
+aura_gpu	2187	1043	8750	2a	ASUS ROG Strix GTX 1650 Super Gaming Advanced
+aura_gpu	2187	1043	8751	2a	ASUS ROG Strix GTX 1650 Super Gaming OC
+aura_gpu	21c4	1043	8753	2a	ASUS ROG Strix GTX 1660 Super Gaming Advanced
+aura_gpu	21c4	1043	8752	2a	ASUS ROG Strix GTX 1660 Super Gaming OC
+msi_v1	1b06	1462	3660	68	MSI 1080 Lightning Z
+msi_v1	1b81	1462	3306	68	MSI 1070 Gaming X
+msi_v1	1b81	1462	3302	68	MSI 1070 Gaming X 8G
+msi_v1	1c03	1462	3285	68	MSI 1060 Gaming 3GB
+msi_v1	1c03	1462	3282	68	MSI 1060 Gaming 6GB
+msi_v1	1e07	1462	3715	68	MSI 2080Ti Gaming X Trio
+msi_v1	1e07	1462	371e	68	MSI 2080Ti Gaming Z Trio
+msi_v1	1e07	1462	3717	68	MSI 2080Ti Sea Hawk EK X
+msi_v1	1e07	1462	3770	68	MSI 2080Ti Lightning Z
+msi_v1	1e07	1462	3710	68	MSI 2080Ti DUKE OC
+msi_v1	1e81	1462	c724	68	MSI 2080 Super Gaming X Trio
+msi_v1	1e81	1462	c725	68	MSI 2080 Super Gaming X Trio
+msi_v1	1e81	1462	c72e	68	MSI 2080 Super SEA HAWK EK
+msi_v1	1e82	1462	372e	68	MSI 2080 Gaming Trio
+msi_v1	1e84	1462	c727	68	MSI 2070 Super Gaming Trio
+msi_v1	1e84	1462	373e	68	MSI 2070 Super Gaming X
+msi_v1	1e84	1462	c726	68	MSI 2070 Super Gaming X Trio
+msi_v1	1e84	1462	37b6	68	MSI 2070 Super Gaming Z Trio
+msi_v1	1e87	1462	3726	68	MSI 2080 Gaming X Trio
+msi_v1	1e87	1462	3721	68	MSI 2080 Duke OC
+msi_v1	1e87	1462	3728	68	MSI 2080 Sea Hawk EK x
+msi_v1	1e89	1462	3752	68	MSI 2060 Gaming Z
+msi_v1	1f02	1462	3733	68	MSI 2070 Gaming
+msi_v1	1f02	1462	3734	68	MSI 2070 Armor
+msi_v1	1f06	1462	c752	68	MSI 2060 Super Gaming X
+msi_v1	1f06	1462	c753	68	MSI 2060 Super Gaming
+msi_v1	1f06	1462	c754	68	MSI 2060 Super Armor OC
+msi_v1	1f07	1462	3732	68	MSI 2070 Gaming Z
+msi_v1	1f07	1462	3733	68	MSI 2070 Gaming Z
+msi_v1	1f07	1462	3734	68	MSI 2070 Armor OC
+msi_v1	1f08	1462	3752	68	MSI 2060 Gaming Z
+msi_v1	1f08	1462	3754	68	MSI 2060 Gaming Z
+msi_v1	2182	1462	375a	68	MSI 1060Ti Gaming X
+msi_v1	2182	1462	375c	68	MSI 1060Ti Gaming X
+msi_v1	2184	1462	3790	68	MSI 1660 Gaming X 6G
+msi_v1	21c4	1462	c759	68	MSI 1660 Super Gaming 6G
+msi_v1	21c4	1462	c758	68	MSI 1660 Super Gaming X 6G
+msi_v1	21c4	1462	c75a	68	MSI 1660 Super Ventos XS OC
+msi_v1	2203	1462	5090	68	MSI 3090 TI Suprim X
+msi_v1	2203	1462	5091	68	MSI 3090 TI Gaming Trio
+msi_v1	2204	1462	3884	68	MSI 3090 Gaming X Trio
+msi_v1	2204	1462	3885	68	MSI 3090 Gaming X Trio
+msi_v1	2204	1462	3882	68	MSI 3090 Suprim X
+msi_v1	2206	1462	3895	68	MSI 3080 Suprim
+msi_v1	2206	1462	3893	68	MSI 3080 Gaming Trio
+msi_v1	2206	1462	3892	68	MSI 3080 Gaming X Trio
+msi_v1	2206	1462	3897	68	MSI 3080 Suprim X
+msi_v1	2206	1462	389b	68	MSI 3080 Suprim X
+msi_v1	2208	1462	389b	68	MSI 3080Ti Gaming X Trio
+msi_v1	2208	1462	3897	68	MSI 3080Ti Suprim X
+msi_v1	220a	1462	389b	68	MSI 3080 Gaming Z Trio 12g LHR
+msi_v1	220a	1462	3897	68	MSI 3080 Suprim X 12g
+msi_v1	2216	1462	389b	68	MSI 3080 Gaming Z Trio LHR
+msi_v1	2216	1462	3897	68	MSI 3080 Suprim X LHR
+msi_v1	2482	1462	5052	68	MSI 3070Ti Gaming X Trio
+msi_v1	2482	1462	5051	68	MSI 3070Ti Suprim X
+msi_v1	2484	1462	3903	68	MSI 3070 Gaming X Trio
+msi_v1	2484	1462	3904	68	MSI 3070 Gaming X Trio
+msi_v1	2484	1462	3901	68	MSI 3070 Suprim X
+msi_v1	2484	1462	3902	68	MSI 3070 Suprim X
+msi_v1	2484	1462	390c	68	MSI 3070 Suprim
+msi_v1	2486	1462	3903	68	MSI 3060Ti Gaming X Trio
+msi_v1	2487	1462	3903	68	MSI 3060 Gaming X Trio 12G
+msi_v1	2487	1462	3976	68	MSI 3060 Gaming X 12G (GA104)
+msi_v1	2488	1462	3904	68	MSI 3070 Gaming Z Trio
+msi_v1	2488	1462	3901	68	MSI 3070 Suprim X LHR
+msi_v1	2488	1462	390c	68	MSI 3070 Suprim LHR
+msi_v1	2489	1462	3973	68	MSI 3060Ti Gaming X LHR
+msi_v1	2489	1462	3903	68	MSI 3060Ti Gaming X Trio LHR
+msi_v1	24c9	1462	5058	68	MSI 3060Ti Gaming X Trio LHR
+msi_v1	24c9	1462	505a	68	MSI 3060Ti Super 3X
+msi_v1	2503	1462	3903	68	MSI 3060 Gaming X Trio 12G
+msi_v1	2503	1462	3976	68	MSI 3060 Gaming X 12g
+msi_v1	2504	1462	3976	68	MSI 3060 Gaming X 12G LHR
+msi_v1	2504	1462	3903	68	MSI 3060 Gaming X Trio 12G LHR
+msi_v1	2507	1462	c979	68	MSI 3050 Gaming X 8G
+msi_v1	2b85	1462	5300	68	MSI 5090 SUPRIM LIQUID SOC
+msi_v1	2c02	1462	5312	68	MSI 5080 SUPRIM LIQUID SOC

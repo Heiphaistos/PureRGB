@@ -2,6 +2,7 @@
 //! d'arrière-plan (`--background`). `Modules` décide ce qui est créé : un module décoché n'a ni backend,
 //! ni moteur de courbes, ni processus (pas d'OpenRGB sans « éclairage », pas de courbes sans « ventilateurs »…).
 
+use crate::backends::gpu::GpuBackend;
 use crate::backends::hid::HidBackend;
 use crate::backends::liquidctl::LiquidctlBackend;
 use crate::backends::mobo::MoboFanBackend;
@@ -34,6 +35,7 @@ fn backends_for(saved: &Settings, mods: Modules, sensors: &Arc<SensorHub>) -> Ve
     }
     if mods.lighting {
         v.push(Box::new(SmbusBackend::new(saved.native_drivers_enabled, saved.smbus_writes_enabled)));
+        v.push(Box::new(GpuBackend::new(saved.native_drivers_enabled, saved.smbus_writes_enabled)));
     }
     if mods.lighting || mods.fans {
         v.push(Box::new(LiquidctlBackend::new()));

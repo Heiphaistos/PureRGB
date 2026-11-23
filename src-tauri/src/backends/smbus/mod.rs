@@ -4,7 +4,7 @@
 //! `native_drivers_enabled` est vrai, sous Windows, avec PawnIO prêt. Sinon : scan vide, sans erreur.
 //! La détection n'a lieu qu'une fois par session tant qu'elle trouve quelque chose (« mémoriser l'adresse, ne plus sonder »).
 
-mod bus;
+pub(crate) mod bus;
 mod corsair_dram;
 mod detect;
 #[cfg(windows)]
