@@ -73,8 +73,20 @@ mod tests {
     }
 
     #[test]
+    fn no_card_is_claimed_by_two_entries_with_different_protocols() {
+        let all = entries();
+        for (i, a) in all.iter().enumerate() {
+            for b in &all[i + 1..] {
+                if (a.device, a.subvendor, a.subdevice) == (b.device, b.subvendor, b.subdevice) {
+                    assert!(a.family == b.family && a.addr == b.addr, "carte {:04x}:{:04x}:{:04x} revendiquée deux fois : {} / {}", a.device, a.subvendor, a.subdevice, a.name, b.name);
+                }
+            }
+        }
+    }
+
+    #[test]
     fn every_entry_is_well_formed() {
         assert!(entries().len() >= 140);
-        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2") && e.addr < 0x80));
+        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2" | "palit_v2") && e.addr < 0x80));
     }
 }

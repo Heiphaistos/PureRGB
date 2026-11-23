@@ -15,6 +15,7 @@ FAMILIES = {
     'smbus-i2c-nvapi:gigabyte-gen2-gpu': 'gigabyte_gen2',
     'smbus-i2c-nvapi:pny-xlr8-lovelace-gpu': 'pny_lovelace',
     'smbus-i2c-nvapi:pny-blackwell-gpu': 'pny_epicx',
+    'smbus-i2c-nvapi:pny-turing-ampere-gpu-controller': 'palit_v2',
     'smbus-i2c-nvapi:evga-turing-gpu': 'evga_turing',
     'smbus-i2c-nvapi:evga-ampere-gpu': 'evga_ampere',
 }
@@ -29,5 +30,13 @@ for r in csv.DictReader(open('docs/rgb-protocols/signalrgb-devices.csv', encodin
         continue
     name = r['name'][:m.start()].strip().replace('\t', ' ')
     out.append('\t'.join([family, r['pid'][2:].lower().zfill(4), m.group(1).lower(), m.group(2).lower(), m.group(3).lower(), name]))
+# Une carte annoncée par deux protocoles/adresses différents est ambiguë : écartée (jamais d'écriture au hasard).
+by_key = {}
+for line in out:
+    f = line.split('	')
+    by_key.setdefault(tuple(f[1:4]), set()).add((f[0], f[4]))
+ambiguous = {k for k, v in by_key.items() if len(v) > 1}
+out = [line for line in out if tuple(line.split('	')[1:4]) not in ambiguous]
+print(len(ambiguous), 'cartes ambiguës écartées')
 open('src-tauri/assets/gpu_whitelist.tsv', 'w', encoding='utf-8').write(HEAD + '\n'.join(out) + '\n')
 print(len(out), 'cartes')
