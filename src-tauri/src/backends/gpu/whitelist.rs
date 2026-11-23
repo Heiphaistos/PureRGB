@@ -75,6 +75,6 @@ mod tests {
     #[test]
     fn every_entry_is_well_formed() {
         assert!(entries().len() >= 140);
-        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu") && e.addr < 0x80));
+        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace") && e.addr < 0x80));
     }
 }

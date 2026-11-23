@@ -10,6 +10,7 @@ mod aura;
 mod ene;
 mod gigabyte;
 mod msi;
+mod pny;
 #[cfg(windows)]
 mod nvapi;
 mod whitelist;
@@ -33,6 +34,7 @@ enum Family {
     EneGpu,
     GigabyteGen1,
     MsiV1,
+    PnyLovelace,
 }
 
 struct Card {
@@ -98,6 +100,7 @@ impl GpuBackend {
                 "msi_v1" => Family::MsiV1,
                 "gigabyte_gen1" => Family::GigabyteGen1,
                 "ene_gpu" => Family::EneGpu,
+                "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
             };
             let verified = match family {
@@ -105,6 +108,7 @@ impl GpuBackend {
                 Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
                 Family::MsiV1 => Ok(1),
+                Family::PnyLovelace => Ok(pny::LEDS),
             };
             let leds = match verified {
                 Ok(n) => u32::from(n),
@@ -176,6 +180,7 @@ impl Backend for GpuBackend {
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
+                Family::PnyLovelace => {}
             }
             card.initialized = true;
         }
@@ -184,6 +189,7 @@ impl Backend for GpuBackend {
             Family::MsiV1 => msi::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::EneGpu => ene::set_colors(card.bus.as_mut(), card.addr, &frame)?,
+            Family::PnyLovelace => pny::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
         card.last = Some((frame, Instant::now()));
         Ok(())
