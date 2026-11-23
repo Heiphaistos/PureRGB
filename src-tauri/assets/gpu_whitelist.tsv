@@ -70,6 +70,188 @@ aura_gpu	2187	1043	8750	2a	ASUS ROG Strix GTX 1650 Super Gaming Advanced
 aura_gpu	2187	1043	8751	2a	ASUS ROG Strix GTX 1650 Super Gaming OC
 aura_gpu	21c4	1043	8753	2a	ASUS ROG Strix GTX 1660 Super Gaming Advanced
 aura_gpu	21c4	1043	8752	2a	ASUS ROG Strix GTX 1660 Super Gaming OC
+ene_gpu	2203	1043	8871	67	Asus ROG Strix 3090TI LC
+ene_gpu	2203	1043	8870	67	Asus ROG Strix 3090TI LC OC
+ene_gpu	2203	1043	8874	67	Asus TUF 3090TI Gaming
+ene_gpu	2204	1043	87b3	67	Asus TUF 3090 Gaming OC
+ene_gpu	2204	1043	87b5	67	Asus TUF 3090 Gaming
+ene_gpu	2204	1043	87af	67	Asus ROG Strix 3090 O24G Gaming
+ene_gpu	2204	1043	87ad	67	Asus ROG Strix 3090 O24G Gaming
+ene_gpu	2204	1043	87c5	67	Asus ROG Strix 3090 O24G Gaming
+ene_gpu	2204	1043	87d9	67	Asus ROG Strix 3090 O24G Gaming White
+ene_gpu	2204	1043	87da	67	Asus ROG Strix 3090 O24G Gaming White V2
+ene_gpu	2204	1043	8886	67	Asus ROG Strix 3090 EVA Edition
+ene_gpu	2206	1043	87d1	67	Asus ROG Strix 3080 O10G White Gaming
+ene_gpu	2206	1043	87ce	67	Asus ROG Strix 3080 O10G Gundam
+ene_gpu	2206	1043	87ac	67	Asus ROG Strix 3080 O10G Gaming
+ene_gpu	2206	1043	87aa	67	Asus ROG Strix 3080 Gaming OC
+ene_gpu	2206	1043	87b2	67	Asus TUF 3080 Gaming
+ene_gpu	2206	1043	886a	67	Asus TUF 3080 Gaming OC
+ene_gpu	2206	1043	87c4	67	Asus TUF 3080 Gaming V2
+ene_gpu	2206	1043	87b0	67	Asus TUF 3080 Gaming OC
+ene_gpu	2207	1043	88bc	67	Asus TUF 3070TI Gaming OC
+ene_gpu	2208	1043	8802	67	Asus TUF 3080TI Gaming OC
+ene_gpu	2208	1043	8803	67	Asus TUF 3080TI Gaming
+ene_gpu	2208	1043	8807	67	Asus ROG Strix 3080TI O12G Gaming
+ene_gpu	2208	1043	8808	67	Asus ROG Strix 3080TI O12G Gaming OC
+ene_gpu	2208	1043	8809	67	Asus ROG Strix 3080TI LC Gaming OC
+ene_gpu	2208	1043	880a	67	Asus ROG Strix RTX 3080TI LC
+ene_gpu	220a	1043	886c	67	Asus Strix 3080 Gaming LHR
+ene_gpu	220a	1043	886e	67	Asus TUF 3080 Gaming OC GDDR6X
+ene_gpu	220a	1043	886f	67	Asus TUF 3080 Gaming OC GDDR6X LHR
+ene_gpu	220a	1043	886b	67	Asus ROG Strix 3080 O12G Gaming OC
+ene_gpu	220a	1043	8887	67	Asus ROG Strix 3080 O12G EVA
+ene_gpu	2216	1043	882f	67	Asus ROG Strix 3080 O10G Gaming LHR
+ene_gpu	2216	1043	8830	67	Asus ROG Strix 3080 O10G White OC LHR
+ene_gpu	2216	1043	8822	67	Asus TUF 3080 O10G V2 LHR
+ene_gpu	2216	1043	8823	67	Asus TUF 3080 O10G Gaming LHR
+ene_gpu	2216	1043	882b	67	Asus TUF 3080 O10G Gaming
+ene_gpu	2216	1043	882e	67	Asus ROG Strix 3080 O10G Gaming OC LHR
+ene_gpu	2216	1043	8831	67	Asus ROG Strix 3080 O10G Gaming White V2
+ene_gpu	2482	1043	880e	67	Asus ROG Strix 3070TI O8G Gaming
+ene_gpu	2482	1043	880f	67	Asus ROG Strix 3070TI O8G Gaming
+ene_gpu	2482	1043	8812	67	Asus TUF 3070TI Gaming
+ene_gpu	2482	1043	8813	67	Asus TUF 3070TI Gaming 2
+ene_gpu	2484	1043	87be	67	Asus ROG Strix 3070 O8G Gaming
+ene_gpu	2484	1043	87d8	67	Asus ROG Strix 3070 O8G Gaming OC
+ene_gpu	2484	1043	87b8	67	Asus ROG Strix 3070 O8G Gaming OC
+ene_gpu	2484	1043	87d0	67	Asus ROG Strix 3070 O8G Gaming OC
+ene_gpu	2484	1043	87e0	67	Asus ROG Strix 3070 Gaming OC White
+ene_gpu	2484	1043	87b9	67	Asus TUF 3070 Gaming
+ene_gpu	2484	1043	87c2	67	Asus TUF 3070 Gaming
+ene_gpu	2484	1043	87e1	67	Asus TUF 3070 Gaming OC
+ene_gpu	2484	1043	87c1	67	Asus TUF 3070 Gaming OC 2
+ene_gpu	2486	1043	87ba	67	Asus ROG Strix 3060TI O8G Gaming
+ene_gpu	2486	1043	87bb	67	Asus ROG Strix 3060TI O8G Gaming
+ene_gpu	2486	1043	87ca	67	Asus ROG Strix 3060TI O8G Gaming KO
+ene_gpu	2486	1043	87c6	67	Asus TUF 3060TI O8G Gaming OC
+ene_gpu	2486	1043	87c7	67	Asus TUF 3060TI O8G Gaming OC
+ene_gpu	2487	1043	8865	67	Asus 3060 TUF Gaming O12G Gaming OC V2 GA104
+ene_gpu	2488	1043	8833	67	Asus ROG Strix 3070 Gaming OC White V2
+ene_gpu	2488	1043	882c	67	Asus ROG Strix 3070 Gaming OC LHR
+ene_gpu	2488	1043	8842	67	Asus 3070 KO V2 OC
+ene_gpu	2488	1043	8825	67	Asus TUF 3070 Gaming OC LHR
+ene_gpu	2488	1043	882d	67	Asus ROG Strix 3070 O8G V2 LHR
+ene_gpu	2488	1043	8832	67	Asus ROG Strix 3070 O8G White LHR
+ene_gpu	2488	1043	883a	67	Asus ROG Strix 3070 O8G Gaming LHR
+ene_gpu	2489	1043	8834	67	Asus ROG Strix 3060TI O8G Gaming V2
+ene_gpu	2489	1043	8835	67	Asus ROG Strix 3060TI O8G Gaming V2
+ene_gpu	2489	1043	8827	67	Asus TUF 3060TI O8G Gaming OC LHR
+ene_gpu	2489	1043	8828	67	Asus TUF 3060TI O8G Gaming OC LHR
+ene_gpu	2489	1043	883e	67	Asus ROG Strix 3060TI O8G Gaming KO LHR
+ene_gpu	2489	1043	87ca	67	Asus ROG Strix 3060TI O8G Gaming KO LHR
+ene_gpu	2489	1043	883f	67	Asus ROG Strix 3060TI O8G V2 Gaming KO LHR
+ene_gpu	24c9	1043	88ac	67	Asus TUF 3060TI O8G GDDR6X
+ene_gpu	24c9	1043	88ad	67	Asus TUF 3060TI O8G GDDR6X
+ene_gpu	2503	1043	87f3	67	Asus ROG Strix RTX 3060 O12G Gaming OC
+ene_gpu	2503	1043	87f4	67	Asus ROG Strix RTX 3060 O12G Gaming OC
+ene_gpu	2503	1043	87fb	67	Asus ROG Strix RTX 3060 KO OC
+ene_gpu	2503	1043	87f6	67	Asus TUF RTX 3060 Gaming O12G Gaming OC
+ene_gpu	2503	1043	87f5	67	Asus TUF RTX 3060 Gaming O12G Gaming OC
+ene_gpu	2504	1043	8818	67	Asus ROG Strix RTX 3060 O12G Gaming
+ene_gpu	2504	1043	8819	67	Asus ROG Strix RTX 3060 O12G Gaming V2 LHR
+ene_gpu	2504	1043	8822	67	Asus ROG Strix RTX 3060 KO
+ene_gpu	2504	1043	8821	67	Asus ROG Strix RTX 3060 KO OC
+ene_gpu	2504	1043	8816	67	Asus TUF RTX 3060 Gaming O12G Gaming OC V2
+ene_gpu	2504	1043	8817	67	Asus TUF 3060 Gaming O12G Gaming OC V2 LHR
+ene_gpu	2504	1043	8896	67	Asus TUF 3060 Gaming OC Demon Slayer
+ene_gpu	2507	1043	8872	67	Asus ROG Strix RTX 3050 Gaming
+ene_gpu	2684	1043	889c	67	Asus ROG Strix 4090 Gaming OC
+ene_gpu	2684	1043	889d	67	Asus ROG Strix 4090 Gaming
+ene_gpu	2684	1043	8933	67	Asus 4090 Strix Gaming
+ene_gpu	2684	1043	88ef	67	Asus 4090 ROG Strix Gaming OC
+ene_gpu	2684	1043	8932	67	Asus 4090 ROG Strix Gaming OC
+ene_gpu	2684	1043	88f0	67	Asus 4090 ROG Strix Gaming OC
+ene_gpu	2684	1043	88c4	67	Asus ROG Strix 4090 Gaming White
+ene_gpu	2684	1043	88f2	67	Asus 4090 Strix Gaming White
+ene_gpu	2684	1043	88c3	67	Asus ROG Strix 4090 Gaming White OC
+ene_gpu	2684	1043	88f1	67	Asus ROG Strix 4090 Gaming White OC
+ene_gpu	2684	1043	88e8	67	Asus 4090 ROG Strix LC OC Edition
+ene_gpu	2684	1043	889a	67	Asus 4090 TUF Gaming
+ene_gpu	2684	1043	889b	67	Asus 4090 TUF Gaming
+ene_gpu	2684	1043	88e3	67	Asus 4090 TUF Gaming
+ene_gpu	2684	1043	88e6	67	Asus 4090 TUF Gaming OC
+ene_gpu	2684	1043	88e2	67	Asus 4090 TUF Gaming OC
+ene_gpu	2684	1043	88e7	67	Asus 4090 TUF Gaming OG
+ene_gpu	2684	1043	8934	67	Asus 4090 Matrix
+ene_gpu	2684	1043	893c	67	Asus 4090 Strix BTF
+ene_gpu	2684	1043	890c	67	Asus 4090 Strix EVA-02
+ene_gpu	2689	1043	89b0	67	ASUS TUF 4070Ti Super OC 16GB
+ene_gpu	2689	1043	89af	67	ASUS TUF 4070Ti Super OC 16GB
+ene_gpu	2702	1043	8963	67	Asus TUF RTX 4080 Super Gaming
+ene_gpu	2702	1043	8962	67	Asus TUF RTX 4080 Super Gaming OC
+ene_gpu	2702	1043	8964	67	Asus ROG Strix RTX 4080 Super Gaming
+ene_gpu	2702	1043	8967	67	Asus Strix 4080 Super Gaming
+ene_gpu	2702	1043	8965	67	Asus Strix 4080 Super Gaming
+ene_gpu	2702	1043	8969	67	Asus Strix 4080 Super Gaming White
+ene_gpu	2702	1043	8966	67	Asus Strix 4080 Super Gaming OC
+ene_gpu	2702	1043	8968	67	Asus Strix 4080 Super Gaming OC White
+ene_gpu	2704	1043	88a1	67	Asus TUF RTX 4080 Gaming
+ene_gpu	2704	1043	88a2	67	Asus TUF RTX 4080 Gaming
+ene_gpu	2704	1043	88cb	67	Asus TUF RTX 4080 Gaming
+ene_gpu	2704	1043	889f	67	Asus ROG Strix RTX 4080 Gaming
+ene_gpu	2704	1043	88c0	67	Asus ROG Strix RTX 4080 Gaming
+ene_gpu	2704	1043	88a0	67	Asus ROG Strix RTX 4080 Gaming
+ene_gpu	2704	1043	88bf	67	Asus ROG Strix 4080 Gaming OC
+ene_gpu	2704	1043	88c9	67	Asus ROG Strix 4080 Gaming White
+ene_gpu	2704	1043	88c8	67	Asus ROG Strix 4080 Gaming OC White
+ene_gpu	2704	1043	88ca	67	Asus TUF RTX 4080 Gaming OC
+ene_gpu	2705	1043	896b	67	ASUS ROG Strix 4070Ti Super 16GB
+ene_gpu	2705	1043	896a	67	ASUS 4070Ti Super Strix 16GB
+ene_gpu	2705	1043	896d	67	ASUS 4070Ti Super Strix 16GB
+ene_gpu	2705	1043	8958	67	ASUS TUF 4070Ti Super 16GB
+ene_gpu	2705	1043	8957	67	ASUS TUF 4070Ti Super OC 16GB
+ene_gpu	2705	1043	895b	67	ASUS TUF 4070Ti Super OC White 16GB
+ene_gpu	2705	1043	897a	67	ASUS Rog Strix 4070Ti BTF
+ene_gpu	2782	1043	88a7	67	Asus ROG Strix RTX 4070Ti 12GB Gaming OC
+ene_gpu	2782	1043	88dc	67	Asus ROG Strix RTX 4070Ti 12GB Gaming OC
+ene_gpu	2782	1043	88e5	67	Asus ROG Strix RTX 4070Ti 12GB Gaming OC
+ene_gpu	2782	1043	88e4	67	Asus ROG Strix RTX 4070Ti 12GB Gaming OC
+ene_gpu	2782	1043	88a3	67	Asus TUF RTX 4070Ti Gaming OC
+ene_gpu	2782	1043	88a4	67	Asus TUF RTX 4070Ti Gaming OC
+ene_gpu	2782	1043	8935	67	Asus 4070Ti TUF Gaming OC White
+ene_gpu	2782	1043	88a6	67	Asus TUF RTX 4070Ti 12GB Gaming
+ene_gpu	2782	1043	88dd	67	Asus TUF RTX 4070Ti 12GB Gaming
+ene_gpu	2783	1043	8952	67	Asus 4070 Super TUF Gaming OC
+ene_gpu	2783	1043	8972	67	Asus 4070 Super Strix Gaming
+ene_gpu	2783	1043	8973	67	Asus 4070 Super Strix Gaming
+ene_gpu	2786	1043	88df	67	Asus 4070 TUF Gaming
+ene_gpu	2786	1043	88de	67	Asus 4070 TUF Gaming
+ene_gpu	2786	1043	88eb	67	Asus 4070 TUF Gaming
+ene_gpu	2786	1043	88ec	67	Asus 4070 TUF Gaming OC
+ene_gpu	2786	1043	88f4	67	Asus 4070 Strix Gaming
+ene_gpu	2786	1043	88f3	67	Asus 4070 Strix Gaming
+ene_gpu	2786	1043	88da	67	Asus 4070 Strix Gaming OC
+ene_gpu	2803	1043	88f6	67	Asus 4060Ti TUF Gaming OC
+ene_gpu	2803	1043	88fb	67	Asus 4060Ti Strix Gaming
+ene_gpu	2805	1043	892f	67	Asus 4060Ti Strix Gaming OC
+ene_gpu	2882	1043	8908	67	Asus ROG Strix 4060 Gaming
+ene_gpu	2b85	1043	89ef	67	Asus 5090 TUF GAMING
+ene_gpu	2b85	1043	89ee	67	Asus 5090 TUF GAMING
+ene_gpu	2b85	1043	89ec	67	Asus 5090 ROG Astral
+ene_gpu	2b85	1043	89e3	67	Asus 5090 ROG Astral
+ene_gpu	2b85	1043	89e5	67	Asus 5090 ROG Astral
+ene_gpu	2b85	1043	89e4	67	Asus 5090 ROG Astral
+ene_gpu	2b85	1043	8a5a	67	Asus 5090 ROG Astral
+ene_gpu	2b85	1043	8a3c	67	Asus 5090 ROG Astral BTF Edition
+ene_gpu	2b85	1043	8a2e	67	Asus 5090 ROG Astral WHITE OC Edition
+ene_gpu	2b85	1043	8a61	67	Asus 5090 ROG Matrix Platinum
+ene_gpu	2c02	1043	89de	67	Asus 5080 ASTRAL OC
+ene_gpu	2c02	1043	89df	67	Asus 5080 ASTRAL
+ene_gpu	2c02	1043	89d7	67	Asus 5080 TUF Gaming OC
+ene_gpu	2c02	1043	8a3e	67	ASUS 5080 Astral Doom Edition
+ene_gpu	2c02	1043	8a2b	67	Asus 5080 ASTRAL White
+ene_gpu	2c02	1043	8a2c	67	ASUS 5080 Astral White OC Edition
+ene_gpu	2c02	1043	8a45	67	ASUS 5080 Astral Hatsune Miku OC Edition
+ene_gpu	2c02	1043	8a2d	67	ASUS 5080 Astral Dahab Edition
+ene_gpu	2c05	1043	89f4	67	Asus 5070Ti TUF GAMING
+ene_gpu	2c05	1043	8a0c	67	Asus 5070Ti TUF GAMING
+ene_gpu	2c05	1043	8a0d	67	Asus 5070Ti ROG Strix OC
+ene_gpu	2c05	1043	8a37	67	ASUS 5070Ti BTF OC
+ene_gpu	2c05	1043	8a53	67	ASUS 5070Ti PRO ART
+ene_gpu	2d04	1043	8a08	67	Asus 5060Ti TUF GAMING
+ene_gpu	2f04	1043	89f2	67	Asus 5070 TUF Gaming
+ene_gpu	2f04	1043	8a18	67	Asus 5070 ROG Strix OC
 gigabyte_gen1	1b06	1458	3752	47	GIGABYTE 1080Ti AORUS
 gigabyte_gen1	1b06	1458	3751	47	GIGABYTE 1080Ti XTREME Edition
 gigabyte_gen1	1b06	1458	374c	47	GIGABYTE 1080Ti Gaming OC

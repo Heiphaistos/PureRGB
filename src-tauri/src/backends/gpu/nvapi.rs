@@ -154,6 +154,9 @@ impl SmbusBus for NvBus {
         let mut d = data.to_vec();
         self.call(true, addr, Some(reg), &mut d)
     }
+    fn write_word_data(&mut self, addr: u8, reg: u8, word: u16) -> Result<()> {
+        self.call(true, addr, Some(reg), &mut word.to_le_bytes())
+    }
     fn write_raw(&mut self, addr: u8, data: &[u8]) -> Result<()> {
         let mut d = data.to_vec();
         self.call(true, addr, None, &mut d)

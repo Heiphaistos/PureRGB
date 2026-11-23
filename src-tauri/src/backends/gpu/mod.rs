@@ -3,10 +3,11 @@
 //! Backend « gpu » : éclairage des cartes graphiques NVIDIA en natif, sans OpenRGB (bus I2C de la carte via NVAPI).
 //! Actif seulement si les pilotes natifs sont activés ET si la carte figure dans la liste blanche PCI (`whitelist.rs`).
 //! Écriture réservée au réglage « écriture sur le bus » (comme la mémoire) : sinon la carte est listée, non pilotable.
-//! Familles : ASUS Aura GPU (hérité), MSI Mystic Light v1, Gigabyte Gen1 ; signature vérifiée avant toute écriture quand la note en donne une.
+//! Familles : ASUS Aura GPU (hérité), ASUS ENE (RTX 30/40/50), MSI Mystic Light v1, Gigabyte Gen1 ; signature vérifiée avant toute écriture quand la note en donne une.
 //! Une couleur par carte (toutes les LEDs identiques) ; jamais d'enregistrement permanent dans la mémoire de la carte.
 
 mod aura;
+mod ene;
 mod gigabyte;
 mod msi;
 #[cfg(windows)]
@@ -29,6 +30,7 @@ pub type Source = Box<dyn Fn() -> Vec<(Pci, Box<dyn SmbusBus>)> + Send>;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Family {
     Aura,
+    EneGpu,
     GigabyteGen1,
     MsiV1,
 }
@@ -40,7 +42,7 @@ struct Card {
     addr: u8,
     bus: Box<dyn SmbusBus>,
     initialized: bool,
-    last: Option<(Color, Instant)>,
+    last: Option<(Vec<Color>, Instant)>,
 }
 
 pub struct GpuBackend {
@@ -95,17 +97,22 @@ impl GpuBackend {
                 "aura_gpu" => Family::Aura,
                 "msi_v1" => Family::MsiV1,
                 "gigabyte_gen1" => Family::GigabyteGen1,
+                "ene_gpu" => Family::EneGpu,
                 _ => continue,
             };
             let verified = match family {
-                Family::Aura => aura::verify(bus.as_mut(), entry.addr),
-                Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci),
-                Family::MsiV1 => Ok(()),
+                Family::Aura => aura::verify(bus.as_mut(), entry.addr).map(|()| 1),
+                Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
+                Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
+                Family::MsiV1 => Ok(1),
             };
-            if let Err(e) = verified {
-                log::warn!("gpu {} : {e:#}", entry.name);
-                continue;
-            }
+            let leds = match verified {
+                Ok(n) => u32::from(n),
+                Err(e) => {
+                    log::warn!("gpu {} : {e:#}", entry.name);
+                    continue;
+                }
+            };
             let id = format!("{index}-{:02x}", entry.addr);
             let vendor = entry.name.split_whitespace().next().unwrap_or("GPU").to_string();
             let info = DeviceInfo {
@@ -114,8 +121,8 @@ impl GpuBackend {
                 vendor,
                 backend: String::new(),
                 device_type: DeviceType::Gpu,
-                zones: vec![ZoneInfo { name: "Carte".into(), led_count: 1, zone_type: 0, leds_min: 1, leds_max: 1 }],
-                led_count: 1,
+                zones: vec![ZoneInfo { name: "Carte".into(), led_count: leds, zone_type: 0, leds_min: leds, leds_max: leds }],
+                led_count: leds,
                 fan_channels: Vec::new(),
                 settings: Vec::new(),
                 controllable: self.writes,
@@ -157,9 +164,9 @@ impl Backend for GpuBackend {
         }
         let card = self.cards.iter_mut().find(|c| c.id == local_id).with_context(|| format!("carte inconnue : {local_id}"))?;
         let color = colors.first().copied().unwrap_or_default();
-        if let Some((last, at)) = card.last {
-            let same = last.r == color.r && last.g == color.g && last.b == color.b;
-            if (same && at.elapsed() < Duration::from_secs(5)) || at.elapsed() < MIN_INTERVAL {
+        let frame: Vec<Color> = colors.iter().copied().take(card.info.led_count as usize).collect();
+        if let Some((last, at)) = &card.last {
+            if (*last == frame && at.elapsed() < Duration::from_secs(5)) || at.elapsed() < MIN_INTERVAL {
                 return Ok(());
             }
         }
@@ -168,6 +175,7 @@ impl Backend for GpuBackend {
                 Family::Aura => aura::init(card.bus.as_mut(), card.addr)?,
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
+                Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
             }
             card.initialized = true;
         }
@@ -175,8 +183,9 @@ impl Backend for GpuBackend {
             Family::Aura => aura::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::MsiV1 => msi::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
+            Family::EneGpu => ene::set_colors(card.bus.as_mut(), card.addr, &frame)?,
         }
-        card.last = Some((color, Instant::now()));
+        card.last = Some((frame, Instant::now()));
         Ok(())
     }
 
