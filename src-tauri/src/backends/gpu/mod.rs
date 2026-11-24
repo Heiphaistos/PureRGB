@@ -6,6 +6,7 @@
 //! Familles : ASUS Aura GPU (hérité), ASUS ENE (RTX 30/40/50), MSI Mystic Light v1, Gigabyte Gen1 ; signature vérifiée avant toute écriture quand la note en donne une.
 //! Une couleur par carte (toutes les LEDs identiques) ; jamais d'enregistrement permanent dans la mémoire de la carte.
 
+mod asrock;
 mod aura;
 mod colorful;
 mod ene;
@@ -41,6 +42,7 @@ pub type Source = Box<dyn Fn() -> Vec<(Pci, Box<dyn SmbusBus>)> + Send>;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Family {
     Aura,
+    AsrockGpu,
     /// `true` = paquet « v2 » de 122 octets.
     Colorful(bool),
     EneGpu,
@@ -66,6 +68,8 @@ struct Card {
     addr: u8,
     bus: Box<dyn SmbusBus>,
     initialized: bool,
+    /// Canaux actifs (ASRock) : une couleur par canal.
+    channels: Vec<u8>,
     last: Option<(Vec<Color>, Instant)>,
 }
 
@@ -123,6 +127,7 @@ impl GpuBackend {
             let Some(entry) = whitelist::find(pci) else { continue };
             let family = match entry.family.as_str() {
                 "aura_gpu" => Family::Aura,
+                "asrock_gpu" => Family::AsrockGpu,
                 "colorful" => Family::Colorful(colorful::is_v2(entry.subdevice)),
                 "msi_v1" => Family::MsiV1,
                 "msi_v2" => Family::MsiV2,
@@ -139,7 +144,13 @@ impl GpuBackend {
                 "pny_lovelace" => Family::PnyLovelace,
                 _ => continue,
             };
+            let mut channels: Vec<u8> = Vec::new();
             let verified = match family {
+                Family::AsrockGpu => asrock::detect(bus.as_mut(), entry.addr).map(|c| {
+                    let n = c.len() as u8;
+                    channels = c;
+                    n
+                }),
                 Family::Aura => aura::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::Colorful(_) => colorful::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::GigabyteGen1 => gigabyte::verify(bus.as_mut(), entry.addr, pci).map(|()| 1),
@@ -182,7 +193,7 @@ impl GpuBackend {
                     format!("détectée (adresse 0x{:02X}) : pour la piloter, autorisez l'écriture sur le bus dans Réglages (expérimental)", entry.addr)
                 },
             };
-            self.cards.push(Card { id, info, family, addr: entry.addr, bus, initialized: false, last: None });
+            self.cards.push(Card { id, info, family, addr: entry.addr, bus, initialized: false, channels, last: None });
         }
     }
 }
@@ -223,7 +234,7 @@ impl Backend for GpuBackend {
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
-                Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring | Family::MsiV2 | Family::PalitV2 | Family::Colorful(_) => {}
+                Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring | Family::MsiV2 | Family::PalitV2 | Family::Colorful(_) | Family::AsrockGpu => {}
                 Family::Sapphire(v3) => sapphire::init(card.bus.as_mut(), card.addr, v3)?,
                 Family::GigabyteGen3 => gigabyte3::init(card.bus.as_mut(), card.addr)?,
                 Family::EvgaAmpere => evga3::init(card.bus.as_mut(), card.addr)?,
@@ -237,6 +248,7 @@ impl Backend for GpuBackend {
             Family::MsiV2 => msi::set_color_v2(card.bus.as_mut(), card.addr, color)?,
             Family::GigabyteGen3 => gigabyte3::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::Sapphire(v3) => sapphire::set_color(card.bus.as_mut(), card.addr, v3, color)?,
+            Family::AsrockGpu => asrock::set_colors(card.bus.as_mut(), card.addr, &card.channels, &frame)?,
             Family::PalitV2 => palit::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::Colorful(v2) => colorful::set_color(card.bus.as_mut(), card.addr, v2, color)?,
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
