@@ -19,6 +19,8 @@ mod msi;
 mod palit;
 mod pny;
 #[cfg(windows)]
+mod adl;
+#[cfg(windows)]
 mod nvapi;
 mod whitelist;
 
@@ -74,7 +76,11 @@ pub struct GpuBackend {
 
 #[cfg(windows)]
 fn default_source() -> Source {
-    Box::new(nvapi::enumerate)
+    Box::new(|| {
+        let mut v = nvapi::enumerate();
+        v.extend(adl::enumerate());
+        v
+    })
 }
 
 #[cfg(not(windows))]

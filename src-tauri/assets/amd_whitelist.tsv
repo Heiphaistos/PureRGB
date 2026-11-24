@@ -1,0 +1,129 @@
+# detecteur OpenRGB	device PCI (AMD 1002)	subvendor	subdevice	i2c 7 bits	nom -- faits extraits des detecteurs OpenRGB
+DetectAsusAuraGPUControllers	687f	1043	0555	29	ASUS AREZ STRIX Radeon RX Vega 56 Gaming OC
+DetectAsusAuraGPUControllers	687f	1043	04c4	29	ASUS ROG STRIX Radeon Vega 64
+DetectAsusAuraGPUControllers	67df	1043	04b0	29	ASUS ROG STRIX Radeon RX 470 Gaming OC
+DetectAsusAuraGPUControllers	67df	1043	04fd	29	ASUS ROG STRIX Radeon RX 480 Gaming
+DetectAsusAuraGPUControllers	67df	1043	04fb	29	ASUS ROG STRIX Radeon RX 480 Gaming OC
+DetectAsusAuraGPUControllers	67ff	1043	04bc	29	ASUS ROG STRIX Radeon RX 560 Gaming
+DetectAsusAuraGPUControllers	67ff	1043	04be	29	ASUS ROG STRIX Radeon RX 560 Gaming
+DetectAsusAuraGPUControllers	67df	1043	04c2	29	ASUS ROG STRIX Radeon RX 570 Gaming OC
+DetectAsusAuraGPUControllers	67df	1043	0588	29	ASUS ROG STRIX Radeon RX 570 Gaming OC
+DetectAsusAuraGPUControllers	67df	1043	0517	29	ASUS ROG STRIX Radeon RX 580 Gaming OC
+DetectAsusAuraGPUControllers	67df	1043	0519	29	ASUS ROG STRIX Radeon RX 580 Gaming TOP
+DetectAsusAuraGPUControllers	67df	1043	056a	29	ASUS ROG STRIX Radeon RX 590 Gaming
+DetectAsusAuraGPUControllers	731f	1043	04ec	2a	ASUS ROG STRIX Radeon RX 5600 XT Gaming OC
+DetectAsusAuraGPUControllers	731f	1043	04e4	2a	ASUS ROG STRIX Radeon RX 5700 Gaming OC
+DetectAsusAuraGPUControllers	731f	1043	04e2	2a	ASUS ROG STRIX Radeon RX 5700 XT Gaming OC
+DetectAsusAuraGPUControllers	731f	1043	05c1	2a	ASUS ROG STRIX Radeon RX 5700 XT Gaming OC
+DetectAsusAuraGPUControllers	731f	1043	05c3	2a	ASUS ROG STRIX Radeon RX 5700 XT Gaming OC
+DetectENESMBusGPUControllers	73ff	1043	05d1	67	ASUS ROG STRIX Radeon RX 6600 XT Gaming OC
+DetectENESMBusGPUControllers	73ef	1043	05e1	67	ASUS ROG STRIX Radeon RX 6650 XT Gaming
+DetectENESMBusGPUControllers	73df	1043	05c9	67	ASUS TUF Radeon RX 6700 XT Gaming OC
+DetectENESMBusGPUControllers	73df	1043	05c7	67	ASUS ROG STRIX Radeon RX 6700 XT Gaming OC
+DetectENESMBusGPUControllers	73df	1043	05e5	67	ASUS ROG STRIX Radeon RX 6750 XT Gaming OC
+DetectENESMBusGPUControllers	73bf	1043	04f6	67	ASUS TUF Radeon RX 6800 Gaming OC
+DetectENESMBusGPUControllers	73bf	1043	04f4	67	ASUS ROG STRIX Radeon RX 6800 Gaming OC
+DetectENESMBusGPUControllers	73bf	1043	04f2	67	ASUS TUF Radeon RX 6800 XT Gaming OC
+DetectENESMBusGPUControllers	73bf	1043	04f0	67	ASUS ROG STRIX LC Radeon RX 6800 XT Gaming OC
+DetectENESMBusGPUControllers	73bf	1043	04f8	67	ASUS ROG STRIX LC Radeon RX 6900 XT Gaming OC
+DetectENESMBusGPUControllers	73af	1043	04fc	67	ASUS ROG STRIX LC Radeon RX 6900 XT Gaming OC TOP
+DetectENESMBusGPUControllers	73bf	1043	04fa	67	ASUS TUF Radeon RX 6900 XT Gaming OC
+DetectENESMBusGPUControllers	73af	1043	04fe	67	ASUS TUF Radeon RX 6900 XT T16G Gaming
+DetectENESMBusGPUControllers	73a5	1043	0504	67	ASUS TUF Radeon RX 6950 XT Gaming OC
+DetectENESMBusGPUControllers	73a5	1043	05e9	67	ASUS ROG STRIX LC Radeon RX 6950 XT Gaming OC
+DetectENESMBusGPUControllers	7480	1043	0607	67	ASUS TUF Radeon RX 7600 XT O16G Gaming
+DetectENESMBusGPUControllers	747e	1043	0512	67	ASUS TUF Radeon RX 7700 XT Gaming OC
+DetectENESMBusGPUControllers	747e	1043	05fd	67	ASUS TUF Radeon RX 7800 XT Gaming OC
+DetectENESMBusGPUControllers	747e	1043	0606	67	ASUS TUF Radeon RX 7800 XT Gaming OC
+DetectENESMBusGPUControllers	747e	1043	0601	67	ASUS TUF Radeon RX 7800 XT Gaming White OC
+DetectENESMBusGPUControllers	744c	1043	050c	67	ASUS TUF Radeon RX 7900 GRE Gaming OC
+DetectENESMBusGPUControllers	744c	1043	05ed	67	ASUS TUF Radeon RX 7900 XT Gaming OC
+DetectENESMBusGPUControllers	744c	1043	0506	67	ASUS TUF Radeon RX 7900 XTX Gaming OC
+DetectENESMBusGPUControllers	7550	1043	0614	67	ASUS TUF Radeon RX 9070 Gaming OC
+DetectENESMBusGPUControllers	7550	1043	0613	67	ASUS TUF Radeon RX 9070 XT Gaming OC
+DetectGigabyteRGBFusion2BlackwellGamingLayoutGPUControllers	7590	1458	2434	75	Gigabyte Radeon RX 9060 XT GAMING
+DetectGigabyteRGBFusion2BlackwellGamingLayoutGPUControllers	7590	1458	2429	75	Gigabyte Radeon RX 9060 XT GAMING OC
+DetectGigabyteRGBFusion2BlackwellGamingLayoutGPUControllers	7550	1458	2431	75	Gigabyte Radeon RX 9070 XT GAMING
+DetectGigabyteRGBFusion2GPUControllers	7480	1458	240b	55	Gigabyte Radeon RX 7600 GAMING OC 8G
+DetectGigabyteRGBFusion2GPUControllers	7480	1458	242b	55	Gigabyte Radeon RX 7600 GAMING OC 8G
+DetectGigabyteRGBFusion2GPUControllers	7480	1458	2418	55	Gigabyte Radeon RX 7600 XT GAMING OC 16G
+DetectGigabyteRGBFusion2GPUControllers	73df	1458	2331	63	Gigabyte Radeon RX 6700 XT EAGLE 12G
+DetectGigabyteRGBFusion2GPUControllers	73df	1458	232d	62	Gigabyte Radeon RX 6700 XT GAMING OC 12G
+DetectGigabyteRGBFusion2GPUControllers	73bf	1458	2328	62	Gigabyte Radeon RX 6800 XT GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	73bf	1458	232c	62	Gigabyte Radeon RX 6900 XT GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	747e	1458	2414	62	Gigabyte Radeon RX 7700 XT GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	747e	1458	2413	62	Gigabyte Radeon RX 7800 XT GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	744c	1458	2410	62	Gigabyte Radeon RX 7900 GRE GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	744c	1458	240c	62	Gigabyte Radeon RX 7900 XT GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	744c	1458	240e	62	Gigabyte Radeon RX 7900 XTX GAMING OC
+DetectGigabyteRGBFusion2GPUControllers	744c	1458	240d	71	Gigabyte AORUS Radeon RX 7900 XTX ELITE 24G
+DetectGigabyteRGBFusion2GPUControllers	73df	1458	2407	70	Gigabyte AORUS RX 6750 XT ELITE 12G
+DetectGigabyteRGBFusion2GPUControllers	73df	1458	2408	62	Gigabyte Radeon RX 6750 XT GAMING OC 12G
+DetectGigabyteRGBFusion2GPUControllers	73af	1458	2332	70	Gigabyte AORUS RX 6900 XT MASTER rev 2.0
+DetectGigabyteRGBFusion2GPUControllers	73af	1458	2333	70	Gigabyte AORUS RX 6900 XT EXTREME WATERFORCE WB
+DetectPowerColorRedDevilGPUControllersV1	731f	148c	2399	22	PowerColor Red Devil RX5700
+DetectPowerColorRedDevilGPUControllersV1	731f	148c	2398	22	PowerColor Red Devil RX5700XT
+DetectPowerColorRedDevilGPUControllersV1	73df	148c	2409	22	PowerColor Red Devil RX6700XT
+DetectPowerColorRedDevilGPUControllersV1	73df	148c	2419	22	PowerColor Red Devil RX6750XT
+DetectPowerColorRedDevilGPUControllersV1	73bf	148c	2406	22	PowerColor Red Devil RX6800XT
+DetectPowerColorRedDevilGPUControllersV1	73bf	148c	2408	22	PowerColor Red Devil RX6900XT
+DetectPowerColorRedDevilGPUControllersV1	73af	148c	2408	22	PowerColor Red Devil RX6900XT
+DetectPowerColorRedDevilGPUControllersV1	73af	148c	2414	22	PowerColor Red Devil RX6900XT Ultimate
+DetectPowerColorRedDevilGPUControllersV2	744c	148c	2422	22	PowerColor Red Devil RX7900XTX
+DetectPowerColorRedDevilGPUControllersV2	7550	148c	2435	22	PowerColor Red Devil RX9070XT
+DetectPowerColorRedDevilGPUControllersV2	7550	148c	2436	22	PowerColor Red Devil RX9070
+DetectSapphireV1Controllers	67df	174b	e347	55	Sapphire Radeon RX 470/480 Nitro+
+DetectSapphireV1Controllers	67df	1da2	e366	55	Sapphire Radeon RX 570/580/590 Nitro+
+DetectSapphireV1Controllers	67df	1da2	e399	55	Sapphire Radeon RX 570/580/590 Nitro+
+DetectSapphireV1Controllers	6fdf	1da2	e366	55	Sapphire Radeon RX 580 Nitro+ (2048SP)
+DetectSapphireV1Controllers	687f	1da2	e37f	55	Sapphire Radeon RX Vega 56/64 Nitro+
+DetectSapphireV3Controllers	7340	1da2	e423	28	Sapphire Radeon RX 5500 XT Nitro+
+DetectSapphireV3Controllers	731f	1da2	e409	28	Sapphire Radeon RX 5700 XT Nitro+
+DetectSapphireV3Controllers	731f	1da2	e410	28	Sapphire Radeon RX 5700 XT Nitro+
+DetectSapphireV3Controllers	731f	1da2	426e	28	Sapphire Radeon RX 5700 XT Nitro+
+DetectSapphireV3Controllers	73ff	1da2	e448	28	Sapphire Radeon RX 6600 XT Nitro+
+DetectSapphireV3Controllers	73ef	1da2	e448	28	Sapphire Radeon RX 6650 XT Nitro+
+DetectSapphireV3Controllers	73df	1da2	e445	28	Sapphire Radeon RX 6700 XT Nitro+
+DetectSapphireV3Controllers	73df	1da2	e465	28	Sapphire Radeon RX 6750 XT Nitro+
+DetectSapphireV3Controllers	73bf	1da2	e439	28	Sapphire Radeon RX 6800 Nitro+
+DetectSapphireV3Controllers	73bf	1da2	438e	28	Sapphire Radeon RX 6800 XT Nitro+ SE
+DetectSapphireV3Controllers	73bf	1da2	e438	28	Sapphire Radeon RX 6800 XT/6900 XT Nitro+
+DetectSapphireV3Controllers	73bf	1da2	440e	28	Sapphire Radeon RX 6900 XT Nitro+ SE
+DetectSapphireV3Controllers	73af	1da2	f440	28	Sapphire Radeon RX 6900 XT Toxic
+DetectSapphireV3Controllers	73bf	1da2	440f	28	Sapphire Radeon RX 6900 XT Toxic
+DetectSapphireV3Controllers	73bf	1da2	f441	28	Sapphire Radeon RX 6900 XT Toxic Limited Edition
+DetectSapphireV3Controllers	73a5	1da2	d440	28	Sapphire Radeon RX 6950 XT Toxic
+DetectSapphireV3Controllers	73a5	1da2	441d	28	Sapphire Radeon RX 6950 XT Nitro+
+DetectSapphireV3Controllers	73a5	1da2	440d	28	Sapphire Radeon RX 6950 XT Nitro+ Pure
+DetectSapphireV3Controllers	747e	1da2	f475	28	Sapphire Radeon RX 7700 XT Nitro+
+DetectSapphireV3Controllers	747e	1da2	d475	28	Sapphire Radeon RX 7800 XT Nitro+
+DetectSapphireV3Controllers	744c	1da2	e475	28	Sapphire Radeon RX 7900 GRE Nitro+
+DetectSapphireV3Controllers	744c	1da2	e471	28	Sapphire Radeon RX 7900 XTX Nitro+
+DetectSapphireV3Controllers	7590	1da2	493e	28	Sapphire Radeon RX 9060 XT Pure
+DetectSapphireV3Controllers	7590	1da2	e493	28	Sapphire Radeon RX 9060 XT Nitro+
+DetectSapphireV3Controllers	7550	1da2	4499	28	Sapphire Radeon RX 9070 Pure
+DetectSapphireV3Controllers	7550	1da2	e489	28	Sapphire Radeon RX 9070 XT Nitro+
+DetectSapphireV3Controllers	7550	1da2	4892	28	Sapphire Radeon RX 9070 XT Nitro+
+DetectSapphireV3Controllers	7550	1da2	3490	28	Sapphire Radeon RX 9070 XT Pure
+DetectMSIGPUControllers	731f	1462	c810	68	MSI Radeon RX 5600 XT Gaming X
+DetectMSIGPUControllers	73ff	1462	5020	68	MSI Radeon RX 6600 XT Gaming X
+DetectMSIGPUControllers	73ef	1462	5026	68	MSI Radeon RX 6650 XT Gaming X
+DetectMSIGPUControllers	73df	1462	3981	68	MSI Radeon RX 6700 XT Gaming X
+DetectMSIGPUControllers	73df	1462	3990	68	MSI Radeon RX 6750 XT Gaming X Trio
+DetectMSIGPUControllers	73bf	1462	3956	68	MSI Radeon RX 6800 Gaming Z Trio v1
+DetectMSIGPUControllers	73bf	1462	3961	68	MSI Radeon RX 6800 Gaming X Trio
+DetectMSIGPUControllers	73bf	1462	3951	68	MSI Radeon RX 6800 XT Gaming X Trio
+DetectMSIGPUControllers	73bf	1462	3953	68	MSI Radeon RX 6800 XT Gaming Z Trio
+DetectMSIGPUControllers	73bf	1462	3952	68	MSI Radeon RX 6900 XT Gaming X Trio
+DetectMSIGPUControllers	73af	1462	3955	68	MSI Radeon RX 6900 XT Gaming Z Trio
+DetectMSIGPUControllers	73bf	1462	3955	68	MSI Radeon RX 6950 XT Gaming X Trio
+DetectMSIGPUControllers	73a5	1462	3955	68	MSI Radeon RX 6950 XT Gaming X Trio
+DetectMSIGPUControllers	744c	1462	5200	68	MSI Radeon RX 7900 XTX Gaming X Trio
+DetectMSIGPUControllers	744c	1462	5201	68	MSI Radeon RX 7900 XT Gaming Trio Classic
+DetectASRockGPUSMBusControllers	744c	1849	5304	36	ASRock Radeon RX 7900 XTX Phantom Gaming
+DetectASRockGPUSMBusControllers	744c	1849	5305	36	ASRock Radeon RX 7900 XTX Taichi 24GB OC
+DetectASRockGPUSMBusControllers	744c	1849	5308	36	ASRock Radeon RX 7900 XT Phantom Gaming 20GB OC
+DetectASRockGPUSMBusControllers	7550	1849	5403	36	ASRock Radeon RX 9070 XT Steel Legend
+DetectASRockGPUSMBusControllers	7550	1849	5414	36	ASRock Radeon RX 9070 XT Steel Legend Dark
+DetectASRockGPUSMBusControllers	7550	1849	5401	36	ASRock Radeon RX 9070 XT Taichi 16GB OC
+DetectASRockGPUSMBusControllers	7590	1849	5407	36	ASRock Radeon RX 9060 XT Steel Legend
