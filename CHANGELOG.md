@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## 0.58.0
+
+- **Plus de cartes graphiques NVIDIA reconnues** : la liste blanche complète le catalogue SignalRGB par les faits de détection d'OpenRGB (identifiants PCI et adresses) : 769 puis 873 cartes NVIDIA, 128 AMD. Une carte annoncée avec deux protocoles ou deux adresses différents par deux sources est écartée (23 cartes) : jamais d'écriture au hasard. Nouveaux pilotes : Palit v1 (GTX 10xx, reconnue par la chaîne « PALIT » lue sur la carte ; les Gainward reconnues par une écriture « rapide » ne sont pas prises en charge) et EVGA Pascal. Toujours non pris en charge : Zotac, Galax, Manli, EVGA GP102 (protocoles à état, trop risqués sans carte), PowerColor Red Devil (enregistrement automatique en mémoire de la carte), Gigabyte Gen4.
+- Vérifié : la signature de mise à jour des installeurs publiés se valide avec la clé publique embarquée dans l'application (contrôle hors ligne fait sur 0.57.0).
+
 ## 0.57.0
 
 - **Cartes graphiques AMD en natif (sans OpenRGB)** : nouveau bus I2C par la bibliothèque du pilote AMD (ADL, `atiadlxx.dll`), une carte par numéro de bus PCI, charge utile limitée à 24 octets. Liste blanche de 128 cartes (identifiants PCI exacts, sans carte ambiguë) extraite des faits de détection d'OpenRGB. Familles : ASUS (Aura GPU hérité et ENE), MSI (Mystic Light v1), Gigabyte (Fusion 2), Sapphire (Nitro Glow V1 et V3) et ASRock (Phantom, Taichi, Steel Legend : les canaux actifs sont lus sur la carte). PowerColor Red Devil n'est PAS pris en charge : son mode statique s'enregistre automatiquement dans la mémoire de la carte à chaque écriture, ce qui l'userait ; Gigabyte Gen4 : protocole non retrouvé. Mêmes garde-fous que pour NVIDIA (jamais d'enregistrement permanent, suspendu en jeu protégé, réglage « écriture sur le bus »). Expérimental : aucun essai sur carte réelle (aucune carte AMD sur la machine de test).
