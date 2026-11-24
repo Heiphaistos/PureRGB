@@ -38,6 +38,18 @@ pub fn set_color(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
     body.and(close)
 }
 
+/// GPUv1 (Pascal, GTX 10xx, adresse 0x49) : mode 0x0C <- 0x01 (personnalisé), couleur 0x09/0x0A/0x0B. Détection par liste blanche PCI seulement ;
+/// la sauvegarde (0x23 <- 0xE5) n'est JAMAIS écrite.
+pub fn init_v1(bus: &mut dyn SmbusBus, addr: u8) -> Result<()> {
+    put(bus, addr, 0x0C, 0x01)
+}
+
+pub fn set_color_v1(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
+    put(bus, addr, 0x09, c.r)?;
+    put(bus, addr, 0x0A, c.g)?;
+    put(bus, addr, 0x0B, c.b)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,6 +87,15 @@ mod tests {
             vec![(0x0E, 0xE5), (0x0E, 0xE9), (0x0E, 0xF5), (0x0E, 0xF9), (0x60, 1), (0x6C, 1), (0x6D, 2), (0x6E, 3), (0x6F, 0x64), (0x08, 1), (0x0E, 0xF0), (0x0E, 0xE0)]
         );
         assert!(m.writes.iter().all(|(r, _)| !matches!(r, 0x1F | 0x23)));
+    }
+
+    #[test]
+    fn pascal_v1_frame_and_no_save() {
+        let mut m = Rec::default();
+        init_v1(&mut m, 0x49).expect("init");
+        set_color_v1(&mut m, 0x49, Color { r: 1, g: 2, b: 3 }).expect("couleur");
+        assert_eq!(m.writes, vec![(0x0C, 1), (0x09, 1), (0x0A, 2), (0x0B, 3)]);
+        assert!(m.writes.iter().all(|(r, _)| *r != 0x23));
     }
 
     #[test]

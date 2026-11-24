@@ -31,6 +31,24 @@ pub fn set_color(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
     bus.write_byte_data(addr, REG_BRIGHTNESS, BRIGHTNESS_MAX)
 }
 
+/// v1 (GTX 10xx, adresse 0x08 ou autre) : détection par la chaîne « PALIT » aux registres 0x07..0x0B. Les variantes Gainward que la source de
+/// référence détecte par une écriture « rapide » (sans donnée) ne sont PAS prises en charge : cette écriture est volontairement absente du bus.
+pub fn verify_v1(bus: &mut dyn SmbusBus, addr: u8) -> Result<()> {
+    for (i, ch) in b"PALIT".iter().enumerate() {
+        let v = bus.read_byte_data(addr, 0x07 + i as u8)?;
+        ensure!(v == *ch, "chaîne PALIT absente à 0x{addr:02X} (registre 0x{:02X} = 0x{v:02X})", 0x07 + i);
+    }
+    Ok(())
+}
+
+/// Couleur v1 : R, G, B aux registres 0x03..0x05 puis octet de contrôle 0xFF au registre 0x06.
+pub fn set_color_v1(bus: &mut dyn SmbusBus, addr: u8, c: Color) -> Result<()> {
+    bus.write_byte_data(addr, 0x03, c.r)?;
+    bus.write_byte_data(addr, 0x04, c.g)?;
+    bus.write_byte_data(addr, 0x05, c.b)?;
+    bus.write_byte_data(addr, 0x06, 0xFF)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -59,6 +77,30 @@ mod tests {
         assert!(verify(&mut Rec::default(), 0x49).is_ok());
         assert!(verify(&mut Rec { reg0: 1, ..Default::default() }, 0x49).is_err());
         assert!(verify(&mut Rec { mode: 5, ..Default::default() }, 0x49).is_err());
+    }
+
+    struct Str(Vec<u8>, Vec<(u8, u8)>);
+    impl SmbusBus for Str {
+        fn read_byte_data(&mut self, _: u8, reg: u8) -> Result<u8> {
+            Ok(*self.0.get(usize::from(reg) - 0x07).unwrap_or(&0))
+        }
+        fn write_byte_data(&mut self, _: u8, reg: u8, v: u8) -> Result<()> {
+            self.1.push((reg, v));
+            Ok(())
+        }
+        fn write_block_data(&mut self, _: u8, _: u8, _: &[u8]) -> Result<()> {
+            unreachable!()
+        }
+    }
+
+    #[test]
+    fn v1_needs_the_palit_string_and_writes_four_registers() {
+        assert!(verify_v1(&mut Str(b"PALIT".to_vec(), vec![]), 0x08).is_ok());
+        assert!(verify_v1(&mut Str(b"PALIX".to_vec(), vec![]), 0x08).is_err());
+        assert!(verify_v1(&mut Str(vec![], vec![]), 0x08).is_err());
+        let mut s = Str(vec![], vec![]);
+        set_color_v1(&mut s, 0x08, Color { r: 1, g: 2, b: 3 }).expect("ok");
+        assert_eq!(s.1, vec![(3, 1), (4, 2), (5, 3), (6, 0xFF)]);
     }
 
     #[test]

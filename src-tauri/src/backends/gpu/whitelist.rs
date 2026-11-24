@@ -93,6 +93,8 @@ fn nvidia_family(detector: &str) -> Option<&'static str> {
         "DetectEVGAAmpereGPUControllers" => "evga_ampere",
         "DetectEVGATuringGPUControllers" => "evga_turing",
         "DetectPalitGPUv2Controllers" => "palit_v2",
+        "DetectPalitGPUv1Controllers" => "palit_v1",
+        "DetectEVGAPascalGPUControllers" => "evga_pascal",
         "DetectColorfulGPUControllers" => "colorful",
         "DetectPNYLovelaceGPUControllers" => "pny_lovelace",
         "DetectPNYARGBEpicXGPUSmallControllers" | "DetectPNYARGBEpicXGPULargeControllers" => "pny_epicx",
@@ -167,6 +169,6 @@ mod tests {
     #[test]
     fn every_entry_is_well_formed() {
         assert!(entries().len() >= 140);
-        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2" | "palit_v2" | "colorful" | "gigabyte_gen3" | "sapphire_v1" | "sapphire_v3" | "powercolor_v1" | "powercolor_v2" | "asrock_gpu") && e.addr < 0x80));
+        assert!(entries().iter().all(|e| matches!(e.family.as_str(), "aura_gpu" | "msi_v1" | "gigabyte_gen1" | "ene_gpu" | "pny_lovelace" | "gigabyte_gen2" | "evga_turing" | "evga_ampere" | "pny_epicx" | "msi_v2" | "palit_v2" | "colorful" | "gigabyte_gen3" | "sapphire_v1" | "sapphire_v3" | "powercolor_v1" | "powercolor_v2" | "asrock_gpu" | "palit_v1" | "evga_pascal") && e.addr < 0x80));
     }
 }

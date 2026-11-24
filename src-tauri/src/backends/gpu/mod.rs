@@ -58,6 +58,8 @@ enum Family {
     /// `true` = Nitro Glow V3.
     Sapphire(bool),
     PalitV2,
+    PalitV1,
+    EvgaPascal,
     PnyLovelace,
 }
 
@@ -134,6 +136,8 @@ impl GpuBackend {
                 "sapphire_v1" => Family::Sapphire(false),
                 "sapphire_v3" => Family::Sapphire(true),
                 "palit_v2" => Family::PalitV2,
+                "palit_v1" => Family::PalitV1,
+                "evga_pascal" => Family::EvgaPascal,
                 "gigabyte_gen1" => Family::GigabyteGen1,
                 "gigabyte_gen2" => Family::GigabyteGen2,
                 "gigabyte_gen3" => Family::GigabyteGen3,
@@ -157,6 +161,8 @@ impl GpuBackend {
                 Family::EneGpu => ene::verify(bus.as_mut(), entry.addr),
                 Family::GigabyteGen3 => Ok(gigabyte3::leds()),
                 Family::Sapphire(v3) => sapphire::verify(bus.as_mut(), entry.addr, v3).map(|()| 1),
+                Family::PalitV1 => palit::verify_v1(bus.as_mut(), entry.addr).map(|()| 1),
+                Family::EvgaPascal => Ok(1),
                 Family::PalitV2 => palit::verify(bus.as_mut(), entry.addr).map(|()| 1),
                 Family::GigabyteGen2 => gigabyte2::verify(bus.as_mut(), entry.addr).map(|()| gigabyte2::ZONES as u8),
                 Family::MsiV1 | Family::MsiV2 | Family::EvgaTuring => Ok(1),
@@ -234,7 +240,8 @@ impl Backend for GpuBackend {
                 Family::MsiV1 => msi::init(card.bus.as_mut(), card.addr)?,
                 Family::GigabyteGen1 => gigabyte::init(card.bus.as_mut(), card.addr)?,
                 Family::EneGpu => ene::init(card.bus.as_mut(), card.addr)?,
-                Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring | Family::MsiV2 | Family::PalitV2 | Family::Colorful(_) | Family::AsrockGpu => {}
+                Family::PnyLovelace | Family::GigabyteGen2 | Family::EvgaTuring | Family::MsiV2 | Family::PalitV2 | Family::PalitV1 | Family::Colorful(_) | Family::AsrockGpu => {}
+                Family::EvgaPascal => evga::init_v1(card.bus.as_mut(), card.addr)?,
                 Family::Sapphire(v3) => sapphire::init(card.bus.as_mut(), card.addr, v3)?,
                 Family::GigabyteGen3 => gigabyte3::init(card.bus.as_mut(), card.addr)?,
                 Family::EvgaAmpere => evga3::init(card.bus.as_mut(), card.addr)?,
@@ -249,6 +256,8 @@ impl Backend for GpuBackend {
             Family::GigabyteGen3 => gigabyte3::set_colors(card.bus.as_mut(), card.addr, &frame)?,
             Family::Sapphire(v3) => sapphire::set_color(card.bus.as_mut(), card.addr, v3, color)?,
             Family::AsrockGpu => asrock::set_colors(card.bus.as_mut(), card.addr, &card.channels, &frame)?,
+            Family::PalitV1 => palit::set_color_v1(card.bus.as_mut(), card.addr, color)?,
+            Family::EvgaPascal => evga::set_color_v1(card.bus.as_mut(), card.addr, color)?,
             Family::PalitV2 => palit::set_color(card.bus.as_mut(), card.addr, color)?,
             Family::Colorful(v2) => colorful::set_color(card.bus.as_mut(), card.addr, v2, color)?,
             Family::GigabyteGen1 => gigabyte::set_color(card.bus.as_mut(), card.addr, color)?,
