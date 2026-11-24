@@ -1,6 +1,6 @@
-"""Extrait la liste blanche PCI des cartes AMD (bus ADL) depuis les enregistrements de detection d'OpenRGB (faits : identifiants PCI et adresses).
+"""Extrait les listes blanches PCI des cartes AMD (bus ADL, amd_whitelist.tsv) et NVIDIA (openrgb_nvidia.tsv, en complement du catalogue SignalRGB) depuis les enregistrements de detection d'OpenRGB (faits : identifiants PCI et adresses).
 
-Usage : python tools/gen_amd_whitelist.py <dossier openrgb-src> -> ecrit src-tauri/assets/amd_whitelist.tsv
+Usage : python tools/gen_amd_whitelist.py <dossier openrgb-src> -> ecrit src-tauri/assets/amd_whitelist.tsv et openrgb_nvidia.tsv
 Seuls les identifiants PCI (vendeur 1002, device, sous-vendeur, sous-device) et l'adresse I2C sont repris, jamais de code.
 Les cartes annoncees avec deux adresses/familles differentes sont ecartees (ambiguite = jamais d'ecriture).
 """
@@ -45,25 +45,26 @@ for f in files:
         name, func, ven, dev, sven, sdev, addr = m.groups()
         toks = (ven, dev, sven, sdev, addr)
         vals = [resolve(t) for t in toks]
-        if vals[0] != 0x1002:
+        if vals[0] not in (0x1002, 0x10DE):
             continue
         if None in vals:
             unknown[(func, toks[vals.index(None)])] += 1
             continue
-        rows.append((func, vals[1], vals[2], vals[3], vals[4], name))
+        rows.append((func, vals[1], vals[2], vals[3], vals[4], name, vals[0]))
 
 by_key = collections.defaultdict(set)
 for r in rows:
-    by_key[r[1:4]].add((r[0], r[4]))
+    by_key[(r[6],) + r[1:4]].add((r[0], r[4]))
 ambiguous = {k for k, v in by_key.items() if len(v) > 1}
-seen, out = set(), []
-for r in rows:
-    k = r[1:4]
-    if k in ambiguous or k in seen:
-        continue
-    seen.add(k)
-    out.append('\t'.join([r[0], f'{r[1]:04x}', f'{r[2]:04x}', f'{r[3]:04x}', f'{r[4]:02x}', r[5].replace('\t', ' ')]))
-head = '# detecteur OpenRGB\tdevice PCI (AMD 1002)\tsubvendor\tsubdevice\ti2c 7 bits\tnom -- faits extraits des detecteurs OpenRGB\n'
-pathlib.Path('src-tauri/assets/amd_whitelist.tsv').write_text(head + '\n'.join(out) + '\n', encoding='utf-8')
-print(len(rows), 'lignes AMD,', len(out), 'cartes retenues,', len(ambiguous), 'ambigues ecartees ; constantes inconnues :', dict(unknown))
-print(collections.Counter(l.split('\t')[0] for l in out))
+for vendor, fname, label in ((0x1002, 'amd_whitelist.tsv', 'AMD 1002'), (0x10DE, 'openrgb_nvidia.tsv', 'NVIDIA 10DE')):
+    seen, out = set(), []
+    for r in rows:
+        k = (r[6],) + r[1:4]
+        if r[6] != vendor or k in ambiguous or k in seen:
+            continue
+        seen.add(k)
+        out.append('\t'.join([r[0], f'{r[1]:04x}', f'{r[2]:04x}', f'{r[3]:04x}', f'{r[4]:02x}', r[5].replace('\t', ' ')]))
+    head = f'# detecteur OpenRGB\tdevice PCI ({label})\tsubvendor\tsubdevice\ti2c 7 bits\tnom -- faits extraits des detecteurs OpenRGB\n'
+    pathlib.Path('src-tauri/assets/' + fname).write_text(head + '\n'.join(out) + '\n', encoding='utf-8')
+    print(fname, len(out), 'cartes retenues')
+print(len(rows), 'lignes,', len(ambiguous), 'ambigues ecartees ; constantes inconnues :', dict(unknown))

@@ -53,8 +53,50 @@ fn entries() -> &'static [Entry] {
     static E: OnceLock<Vec<Entry>> = OnceLock::new();
     E.get_or_init(|| {
         let mut v = parse(include_str!("../../../assets/gpu_whitelist.tsv"), NVIDIA, |f| Some(Box::leak(f.to_string().into_boxed_str())));
+        v.extend(parse(include_str!("../../../assets/openrgb_nvidia.tsv"), NVIDIA, nvidia_family));
         v.extend(parse(include_str!("../../../assets/amd_whitelist.tsv"), AMD, amd_family));
-        v
+        consistent(v)
+    })
+}
+
+/// Une carte annoncée par plusieurs sources avec des protocoles ou des adresses DIFFÉRENTS est ambiguë : elle sort de la liste (jamais d'écriture
+/// au hasard). Deux sources d'accord ne donnent qu'une entrée.
+fn consistent(all: Vec<Entry>) -> Vec<Entry> {
+    use std::collections::HashMap;
+    let key = |e: &Entry| (e.vendor, e.device, e.subvendor, e.subdevice);
+    let mut seen: HashMap<(u16, u16, u16, u16), (String, u8)> = HashMap::new();
+    let mut bad: std::collections::HashSet<(u16, u16, u16, u16)> = std::collections::HashSet::new();
+    for e in &all {
+        match seen.get(&key(e)) {
+            Some((f, a)) if *f != e.family || *a != e.addr => {
+                bad.insert(key(e));
+            }
+            Some(_) => {}
+            None => {
+                seen.insert(key(e), (e.family.clone(), e.addr));
+            }
+        }
+    }
+    let mut done = std::collections::HashSet::new();
+    all.into_iter().filter(|e| !bad.contains(&key(e)) && done.insert(key(e))).collect()
+}
+
+/// Famille de pilote pour un détecteur OpenRGB de carte NVIDIA (les autres détecteurs sont ignorés : aucun accès).
+fn nvidia_family(detector: &str) -> Option<&'static str> {
+    Some(match detector {
+        "DetectENESMBusGPUControllers" => "ene_gpu",
+        "DetectAsusAuraGPUControllers" => "aura_gpu",
+        "DetectMSIGPUControllers" => "msi_v1",
+        "DetectMSIGPUv2Controllers" => "msi_v2",
+        "DetectGigabyteRGBFusionGPUControllers" => "gigabyte_gen1",
+        "DetectGigabyteRGBFusion2GPUControllers" => "gigabyte_gen2",
+        "DetectEVGAAmpereGPUControllers" => "evga_ampere",
+        "DetectEVGATuringGPUControllers" => "evga_turing",
+        "DetectPalitGPUv2Controllers" => "palit_v2",
+        "DetectColorfulGPUControllers" => "colorful",
+        "DetectPNYLovelaceGPUControllers" => "pny_lovelace",
+        "DetectPNYARGBEpicXGPUSmallControllers" | "DetectPNYARGBEpicXGPULargeControllers" => "pny_epicx",
+        _ => return None,
     })
 }
 
@@ -102,6 +144,24 @@ mod tests {
                 }
             }
         }
+    }
+
+    fn e(family: &str, addr: u8, sub: u16) -> Entry {
+        Entry { vendor: NVIDIA, family: family.into(), device: 1, subvendor: 2, subdevice: sub, addr, name: "x".into() }
+    }
+
+    #[test]
+    fn consistent_merges_agreeing_sources_and_drops_conflicting_ones() {
+        let all = vec![e("msi_v1", 0x68, 1), e("msi_v1", 0x68, 1), e("aura_gpu", 0x29, 2), e("evga_turing", 0x49, 2), e("palit_v2", 0x49, 3), e("palit_v2", 0x48, 3), e("colorful", 0x61, 4)];
+        let out = consistent(all);
+        let subs: Vec<u16> = out.iter().map(|x| x.subdevice).collect();
+        assert_eq!(subs, vec![1, 4], "1 et 4 seulement : 2 (deux protocoles) et 3 (deux adresses) sont écartées");
+    }
+
+    #[test]
+    fn merged_lists_are_large_and_have_no_conflict_left() {
+        assert!(entries().len() >= 950, "{} entrées", entries().len());
+        assert!(entries().iter().any(|x| x.vendor == AMD) && entries().iter().any(|x| x.vendor == NVIDIA));
     }
 
     #[test]
