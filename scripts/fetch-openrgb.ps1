@@ -1,11 +1,11 @@
-# Télécharge OpenRGB 1.0rc3 portable dans src-tauri/resources/openrgb/
+# Télécharge OpenRGB 1.1 portable dans src-tauri/resources/openrgb/
 # (embarqué ensuite dans l'installeur NSIS par tauri build).
 # Vérifie le SHA-256 officiel avant extraction.
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$url = "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc3/OpenRGB_1.0rc3_Windows_64_6fbcf62.zip"
-$sha = "A6BB0FBCB7B6EB84214287E3808FADAE2777C902EFB3DD6CD1E2976F14271C8C"
+$url = "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_1.1/OpenRGB_1.1_Windows_64_8e16de2.zip"
+$sha = "63291726C6FC84EB479EF2EE752E97E1187F6CE9C49FD27EEE40DED588A8172A"
 $root = Split-Path $PSScriptRoot -Parent
 $dest = Join-Path $root "src-tauri\resources\openrgb"
 

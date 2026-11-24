@@ -175,7 +175,7 @@ pub fn download_pinned(url: &str, sha256: &str, dest: &Path, lim: &DlLimits, pro
 mod tests {
     use super::*;
 
-    const OK: &str = "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc3/OpenRGB_1.0rc3_Windows_64_6fbcf62.zip";
+    const OK: &str = "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_1.1/OpenRGB_1.1_Windows_64_8e16de2.zip";
 
     #[test]
     fn url_pinned_accepted() {

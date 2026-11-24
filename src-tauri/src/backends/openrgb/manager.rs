@@ -22,8 +22,8 @@ use std::process::{Child, Command};
 use std::time::{Duration, Instant};
 
 const OPENRGB_URL: &str =
-    "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc3/OpenRGB_1.0rc3_Windows_64_6fbcf62.zip";
-const OPENRGB_SHA256: &str = "a6bb0fbcb7b6eb84214287e3808fadae2777c902efb3dd6cd1e2976f14271c8c";
+    "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_1.1/OpenRGB_1.1_Windows_64_8e16de2.zip";
+const OPENRGB_SHA256: &str = "63291726c6fc84eb479ef2ee752e97e1187f6ce9c49fd27eee40ded588a8172a";
 /// PawnIO : driver noyau signé requis par OpenRGB 1.0rc pour l'accès SMBus
 /// (RAM RGB, cartes mères). Installé une fois au niveau système.
 const PAWNIO_URL: &str =

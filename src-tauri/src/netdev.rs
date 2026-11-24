@@ -1,7 +1,7 @@
 //! Appareils réseau / maison connectée (ampoules, bandeaux Wi-Fi, panneaux…)
 //! pilotés via les détecteurs réseau d'OpenRGB. PureRGB écrit leur
 //! configuration dans %APPDATA%\OpenRGB\OpenRGB.json (sections et champs
-//! vérifiés dans le binaire 1.0rc3 embarqué + source officiel), puis
+//! vérifiés dans le binaire 1.0rc3 (vérifié à l'époque ; 1.1 depuis) embarqué + source officiel), puis
 //! redémarre le serveur pour qu'ils apparaissent comme n'importe quel
 //! contrôleur RGB.
 
