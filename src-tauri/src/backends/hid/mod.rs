@@ -469,7 +469,7 @@ mod size_tests {
 
     #[test]
     fn saved_sizes_apply_only_to_resizable_zones_within_bounds() {
-        let (_, mut m) = native::probe(0x1462, 0x7D93).unwrap();
+        let (_, mut m) = native::probe(0x1462, 0x7C76).unwrap(); // carte sans mode LED par LED : zones 8 x « une couleur »
         let sizes: HashMap<String, u32> = [
             (format!("{}|JRAINBOW 1", m.name), 40),
             (format!("{}|JRAINBOW 2", m.name), 9999),
@@ -481,5 +481,14 @@ mod size_tests {
         assert_eq!(n("JRAINBOW 1"), 40);
         assert_eq!(n("JRAINBOW 2"), 75);
         assert_eq!(n("JRGB 1"), 1);
+    }
+
+    #[test]
+    fn per_led_boards_clamp_saved_sizes_to_the_connector_maximum() {
+        let (_, mut m) = native::probe(0x1462, 0x7D93).unwrap(); // MS-7D93 : mode LED par LED
+        let sizes: HashMap<String, u32> = [(format!("{}|JRAINBOW 1", m.name), 150), (format!("{}|JRAINBOW 2", m.name), 9999), (format!("{}|LED carte", m.name), 99)].into();
+        apply_zone_sizes(&mut m, &sizes);
+        let n = |name: &str| m.zones.iter().find(|z| z.name == name).unwrap().led_count;
+        assert_eq!((n("JRAINBOW 1"), n("JRAINBOW 2"), n("LED carte")), (150, 240, 6), "LEDs embarquées : taille fixe");
     }
 }
