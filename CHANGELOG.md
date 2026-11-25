@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## 0.59.0
+
+- **Cartes mères MSI : éclairage LED par LED en natif** (85 cartes dont la MS-7D93 Z790 Gaming Pro WiFi) : chaque connecteur ARGB (JRAINBOW 1 et 2, JCORSAIR) reçoit une couleur par LED (60 par défaut, réglable jusqu'à 200 ou 240 selon le connecteur), plus les LEDs embarquées, JPIPE et JRGB, au lieu d'une seule couleur par connecteur. Le pilote intégré offre donc plus de LEDs qu'OpenRGB et devient le pilote principal de ces cartes. Tout est volatil (jamais d'enregistrement dans la carte) et l'état d'origine est rendu à la fermeture. Table de cartes et octets d'activation tirés de l'analyse du contrôleur de référence (voir `docs/rgb-protocols/msi-mystic-light.md`). Non essayé sur carte réelle : en cas de problème d'éclairage, désactiver les pilotes natifs dans Réglages rend la main à OpenRGB. Les cartes MSI hors de cette table gardent le mode « une couleur par connecteur ».
+
 ## 0.58.0
 
 - **Plus de cartes graphiques NVIDIA reconnues** : la liste blanche complète le catalogue SignalRGB par les faits de détection d'OpenRGB (identifiants PCI et adresses) : 769 puis 873 cartes NVIDIA, 128 AMD. Une carte annoncée avec deux protocoles ou deux adresses différents par deux sources est écartée (23 cartes) : jamais d'écriture au hasard. Nouveaux pilotes : Palit v1 (GTX 10xx, reconnue par la chaîne « PALIT » lue sur la carte ; les Gainward reconnues par une écriture « rapide » ne sont pas prises en charge) et EVGA Pascal. Toujours non pris en charge : Zotac, Galax, Manli, EVGA GP102 (protocoles à état, trop risqués sans carte), PowerColor Red Devil (enregistrement automatique en mémoire de la carte), Gigabyte Gen4.

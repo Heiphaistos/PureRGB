@@ -28,6 +28,7 @@ pub mod logitech;
 pub mod logitech_centurion;
 pub mod msi_3zone;
 pub mod msi_mystic;
+mod msi_mystic_perled;
 pub mod nzxt_hue2;
 pub mod razer;
 pub mod roccat;
@@ -119,11 +120,13 @@ pub struct Model {
     pub aux: Option<HidSelect>,
     /// Appareil joint en Bluetooth (renseigné à l'ouverture par le backend) : certains protocoles changent de format de rapport.
     pub bluetooth: bool,
+    /// Variante propre à la famille (ex. PID de la carte pour `msi_mystic`), 0 si inutilisé.
+    pub variant: u32,
 }
 
 impl Model {
     pub fn new(name: impl Into<String>, device_type: DeviceType, zones: Vec<ZoneInfo>) -> Model {
-        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None, aux: None, bluetooth: false }
+        Model { name: name.into(), device_type, zones, fans: 0, interface: None, usage_page: None, usage: None, aux: None, bluetooth: false, variant: 0 }
     }
 
     pub fn led_count(&self) -> u32 {

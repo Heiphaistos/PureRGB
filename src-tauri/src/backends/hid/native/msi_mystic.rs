@@ -13,6 +13,7 @@
 //! connecteurs ARGB (1 à 75) ne fait que dimensionner le tampon d'effet, la 1re LED donne la couleur de zone (voir la doc) ; les 8 zones sont exposées sans savoir lesquelles existent
 //! sur la carte (les zones absentes reçoivent la couleur mais leur effet est INCONNU). `release()` ne fait rien.
 
+use super::msi_mystic_perled as perled;
 use super::{split_by_zone, Family, Hid, Model, NativeRgb};
 use crate::core::{Color, DeviceType, ZoneInfo};
 use anyhow::{bail, Result};
@@ -60,9 +61,14 @@ fn probe(vid: u16, pid: u16) -> Option<Model> {
     if vid != 0x1462 || !is_supported_pid(pid) {
         return None;
     }
-    let zones = ZONES.iter().map(|(n, _)| zone_info(n)).collect();
+    // Carte connue en mode LED par LED : disposition réelle des connecteurs ; sinon les 8 zones « une couleur par connecteur ».
+    let zones = match perled::board(pid) {
+        Some(b) => perled::zones(&b),
+        None => ZONES.iter().map(|(n, _)| zone_info(n)).collect(),
+    };
     let mut m = Model::new("MSI Mystic Light (carte mère)", DeviceType::Motherboard, zones);
     m.usage_page = Some(0x0001);
+    m.variant = u32::from(pid);
     Some(m)
 }
 
@@ -94,7 +100,8 @@ impl NativeRgb for Mystic {
 }
 
 fn open(hid: Box<dyn Hid>, model: &Model) -> Result<Box<dyn NativeRgb>> {
-    if model.zones.len() != ZONES.len() {
+    let board = u16::try_from(model.variant).ok().and_then(perled::board);
+    if board.is_none() && model.zones.len() != ZONES.len() {
         bail!("MSI Mystic : disposition de modèle inattendue");
     }
     let mut buf = [0u8; 200];
@@ -106,6 +113,13 @@ fn open(hid: Box<dyn Hid>, model: &Model) -> Result<Box<dyn NativeRgb>> {
     let mut state = [0u8; LEN];
     state.copy_from_slice(&buf[..LEN]);
     state[SAVE_OFFSET] = 0;
+    if let Some(b) = board {
+        // Mode LED par LED ; si la carte refuse l'activation, repli sur le mode zone (il faut alors les 8 zones : la disposition par défaut).
+        match perled::open(hid, b, model.zones.clone(), state) {
+            Ok(dev) => return Ok(dev),
+            Err(e) => bail!("{e:#} : mode zone indisponible pour cette disposition, repli OpenRGB"),
+        }
+    }
     Ok(Box::new(Mystic { hid, state, zones: model.zones.clone() }))
 }
 
@@ -137,7 +151,7 @@ mod tests {
 
     #[test]
     fn open_refuses_other_report_lengths() {
-        let m = probe(0x1462, 0x7C95).unwrap();
+        let m = probe(0x1462, 0x7C76).unwrap(); // 0x7C76 : carte sans mode LED par LED (zone seulement)
         for len in [162usize, 112, 186, 0] {
             let mut r = vec![0u8; len];
             if len > 0 {
@@ -155,7 +169,7 @@ mod tests {
     #[test]
     fn set_colors_sends_old_then_new_state_without_save() {
         let (mock, _, features) = MockHid::new(vec![state185()]);
-        let m = probe(0x1462, 0x7C95).unwrap();
+        let m = probe(0x1462, 0x7C76).unwrap(); // 0x7C76 : carte sans mode LED par LED (zone seulement)
         let mut d = open(Box::new(mock), &m).unwrap();
         let colors: Vec<Color> = (1..=8).map(|i| Color::new(i, i + 10, i + 20)).collect();
         d.set_colors(&colors).unwrap();
@@ -178,7 +192,7 @@ mod tests {
     #[test]
     fn unchanged_colors_write_nothing() {
         let (mock, _, features) = MockHid::new(vec![state185()]);
-        let m = probe(0x1462, 0x7C95).unwrap();
+        let m = probe(0x1462, 0x7C76).unwrap(); // 0x7C76 : carte sans mode LED par LED (zone seulement)
         let mut d = open(Box::new(mock), &m).unwrap();
         let colors = vec![Color::new(3, 4, 5); 8];
         d.set_colors(&colors).unwrap();
@@ -188,7 +202,7 @@ mod tests {
 
     #[test]
     fn argb_connectors_are_resizable_up_to_75_others_fixed() {
-        let m = probe(0x1462, 0x7D93).unwrap();
+        let m = probe(0x1462, 0x7C76).unwrap();
         for z in &m.zones {
             if ["JPIPE 1", "JPIPE 2", "JRAINBOW 1", "JRAINBOW 2", "JCORSAIR"].contains(&z.name.as_str()) {
                 assert_eq!((z.leds_min, z.leds_max, z.led_count), (1, 75, 1), "{}", z.name);
@@ -201,7 +215,7 @@ mod tests {
     #[test]
     fn resized_connector_sends_one_zone_colour_and_same_frame_layout() {
         let (mock, _, features) = MockHid::new(vec![state185()]);
-        let mut m = probe(0x1462, 0x7D93).unwrap();
+        let mut m = probe(0x1462, 0x7C76).unwrap();
         let rb1 = m.zones.iter().position(|z| z.name == "JRAINBOW 1").unwrap();
         m.zones[rb1].led_count = 3;
         let mut d = open(Box::new(mock), &m).unwrap();

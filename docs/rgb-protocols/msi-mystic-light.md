@@ -150,3 +150,10 @@ canaux. Aucun octet documenté ici. Seul l'effet 32 « fan control » et les cha
 4. Encodage des flags de vitesse/luminosité : `(speed & 3) | (bright_0_10 << 2) | sync<<7`.
 5. Quantification Super I/O : `v>>4` puis `v | v<<4`.
 6. Test de non-régression de détection : à partir d'une longueur de rapport simulée, choisir la bonne famille.
+
+## Mode LED par LED (rapport 0x53) : ajouté en 0.59.0 (faits du contrôleur de référence, aucun code copié)
+
+- Table des cartes : `assets/msi_perled_boards.tsv` (85 cartes, générée par `tools/gen_msi_perled_boards.py` depuis `MSIMotherboard185Controller` d'OpenRGB) : nombre de LEDs embarquées, JPIPE 1/2, JRGB et connecteurs présents. MS-7D93 : 6 LEDs embarquées, 1 JRGB, JRAINBOW 1 et 2.
+- Rapport d'activation : 0x52 de 185 octets, blocs de zone de 10 octets (11 pour JRAINBOW et JCORSAIR). Octets : JRGB 1 `sb=0x08 cf=0x80` ; JPIPE `sb=0x2A cf=0x80` ; JRAINBOW `sb=0x29 cf=0x80 cycle=0x28` ; JCORSAIR `fan=0x29 qty=0 pad[2]=0x82 individuel=0x78` ; embarqué `effet 0x25 (direct) sb=0xA9 cf=0xBF (synchro complète) ou 0xB1 (de base)` ; autres blocs `sb=0x28 cf=0x80` ; JRGB 2 `sb=0x2A cf=0x80`. Disposition « synchro » (JRAINBOW <= 40 LEDs, JCORSAIR <= 120) : effets statiques et nombres 40/40/120 ; sinon JRAINBOW en effet direct (200 et 240 LEDs max) et JCORSAIR individuel 240.
+- Couleurs : rapport 0x53 de 725 octets (`53 25 06 00 00` + 240 x RGB). Synchro : un seul rapport (embarqué, JPIPE 1, JPIPE 2, JRGB puis JRAINBOW 1 sur 40, JRAINBOW 2 sur 40, JCORSAIR sur 120). Sinon : `53 25 04 00 00` JRAINBOW 1, `53 25 04 01 00` JRAINBOW 2, `53 25 05 00 00` JCORSAIR (13 ms entre rapports), puis le rapport embarqué.
+- Sécurité : tout est volatil, `save_data` toujours 0 ; `release()` renvoie l'état d'origine lu à l'ouverture. NON essayé sur carte réelle (INCONNU).
